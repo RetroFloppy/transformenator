@@ -1,0 +1,1 @@
+for /f "usebackq delims=|" %%f in (`dir /b "%1"`) do java org.david.BinaryTransform -t c64rtf.xform < %1\%%f > %1\%%f.rtf
