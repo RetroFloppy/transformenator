@@ -1,0 +1,43 @@
+<html>
+<h1>Transformenator</h1>
+Transformenator is something that should be possible to do with some rudimentary shell scripting.  
+You should be able to run a binary file thorugh sed or awk and have byte sequences to different byte sequences.  
+But you can't.
+You could probably run a file through a hex dumper, change hex values, then un-transform it back to binary.
+But that's kind of a pain too.
+<p>
+Since I am a Java guy, I used the tool that was easiest for me to implement cross-platform... a Java program.
+<h2>Useage</h2>
+Invoke the transformenator jar file from any command line, ant script, or what have you.
+Standard in and standard out are the before and after streams.
+Specify a transform "script" (with the <code>-t [filename]</code> option) to transform byte patterns.
+<p>
+For example:
+<xmp>
+java -jar transformenator.jar -t transform.txt < infile.bin > outfile.bin
+</xmp>
+<p>
+Where:<br>
+<code>transform.txt</code> is the set of transformations you want to make<br>
+<code>infile.bin</code> is the original file<br>
+<code>outfile.bin</code> is the resulting file after running the transforms
+<p>
+A sample <code>transform.txt</code> file might look like this:
+<xmp>
+; Change 0x00 to 0x20
+00 = 20
+</xmp>
+Semicolons denote comment lines.
+The left side of the equals sign is always a byte pattern, given in hex digits, with no other decoration.
+The right side can be blank, another byte pattern given in hex, or if surrounded in double quotes, ASCII text.
+For example:
+<xmp>
+; 0x86 appeared at the beginning of files sometimes, after the preamble.  Remove it.
+86 =
+; Start of heading
+83 = "\par\par\pard\s2\b\fs36 "
+; Italics on
+b12d31 = "\i "
+; Italics off
+b12d30 = "\i0 "
+</xmp>

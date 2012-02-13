@@ -11,7 +11,7 @@ tail = "}"
 0027819331 =
 0027819332 =
 
-; Whack off nulls
+; Lop off nulls
 00 = 
 
 ; Transform a-z down in the control character range up to ASCII (is this PETSCII?)
