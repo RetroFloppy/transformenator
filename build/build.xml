@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="transformenator" default="all" basedir="..">
+	<property name="builddir" value="${basedir}/build" />
+	<target name="all" description="">
+		<jar jarfile="transformenator.jar"
+			manifest="build/manifest.mf"
+			basedir="${basedir}/bin"
+			includes="org/**/*.class org/**/*.java org/**/*.properties org/**/*.png org/**/*.dmp org/**/*.raw LICENSE" />
+	</target>
+</project>
