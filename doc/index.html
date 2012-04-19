@@ -1,12 +1,20 @@
 <html>
 <h1>Transformenator</h1>
-Transformenator is something that should be possible to do with some rudimentary shell scripting.  
-You should be able to run a binary file thorugh sed or awk and have byte sequences to different byte sequences.  
-But you can't.
-You could probably run a file through a hex dumper, change hex values, then un-transform it back to binary.
-But that's kind of a pain too.
+Transformenation is something that should be possible to do with some rudimentary shell scripting.  
+You should be able to run a binary file thorugh sed or awk and have byte sequences change to different byte sequences.  
 <p>
-Since I am a Java guy, I used the tool that was easiest for me to implement cross-platform... a Java program.
+But you can't.
+<p>
+	You could probably run a file through a hex dumper, change hex values, then un-transform it back to binary.
+But that's kind of a pain too.  
+The problem is that sed and awk work on lines, defined as things that are delineated by what they consider line ending characers like 0x0d or 0x0a.
+But what if your data stream contains 0x0d and 0x0a bytes - but you don't want them to count as line endings?
+What if you need to remove nulls, hex zeroes, or whatever you want to call them from a binary file or data stream?
+<p>
+Your're stuck.
+<p>
+Maybe that's why you're here.
+Since I am a Java guy, I used the language that was easiest for me to implement cross-platform... Java.
 <h2>Useage</h2>
 Invoke the transformenator jar file from any command line, ant script, or what have you.
 Standard in and standard out are the before and after streams.
@@ -18,11 +26,11 @@ java -jar transformenator.jar -t transform.txt < infile.bin > outfile.bin
 </xmp>
 <p>
 Where:<br>
-<code>transform.txt</code> is the set of transformations you want to make<br>
+<code>transform.txt</code> is a file containing the set of transformations you want to make<br>
 <code>infile.bin</code> is the original file<br>
 <code>outfile.bin</code> is the resulting file after running the transforms
 <p>
-A sample <code>transform.txt</code> file might look like this:
+A sample <code>transform.txt</code> file might simply look like this:
 <xmp>
 ; Change 0x00 to 0x20
 00 = 20
@@ -41,3 +49,28 @@ b12d31 = "\i "
 ; Italics off
 b12d30 = "\i0 "
 </xmp>
+There is a special case for returns and newlines.  If you need to translate a byte pattern into something that includes them, you need to escape the backslash.  For example:
+<xmp>
+; Justify on
+7a0a1531 = "\\r\\n</pre>"
+</xmp>
+There are three special productions in the transform specification:<br>
+<code>head</code> = specifies a beginning-of-file preamble to add to the beginning of the resultant file<br>
+<code>tail</code> = specifies a end-of-file suffix to add to the end of the resultant file<br>
+<code>regex</code> = specifies one of potentially many regular expressions to run on the output <u>after</u> any binary transforms are complete<br>
+<br>
+An example that makes use of each:
+<xmp>
+; Header for HTML format
+head = "<html>"
+; Closing brace for HTML format
+tail = "</html>"
+; Remove left/right margin specs: zlmxx, :rmxx
+regex = @[z|:][l|r]m[0-9]*@@
+; Remove next file specification
+regex = @znx:.*@@
+</xmp>
+Regular expressions are surrounded by delimiters - the first character in the string serves as that delimiter.
+So the production <code>regex=$abc$123$</code> will use <code>$</code> as the delimiter, and replace all occurrences of <code>abc</code> with <code>123</code>. 
+<h2>Project Page at SourceForge</h2>
+Click Me --> <a href="http://sourceforge.net/projects/transformenator"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=170262&amp;type=13" width="120" height="30" alt="Get Apple Disk Transfer ProDOS at SourceForge.net. Fast, secure and Free Open Source software downloads" /></a>
