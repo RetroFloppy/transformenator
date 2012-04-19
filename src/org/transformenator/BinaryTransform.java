@@ -39,10 +39,6 @@ public class BinaryTransform
 			ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
 			byte[] inb = new byte[1024];
 			int byteCount = 0;
-			if (preamble != null)
-			{
-				buf.write(preamble.getBytes(), 0, preamble.length());
-			}
 			try
 			{
 				while ((byteCount = System.in.read(inb)) > 0)
@@ -54,10 +50,6 @@ public class BinaryTransform
 			{
 				e.printStackTrace();
 			}
-			if (postamble != null)
-			{
-				buf.write(postamble.getBytes(), 0, postamble.length());
-			}
 			byte[] inData = buf.toByteArray();
 			int bytesForward = 0;
 			for (int i = 0; i < inData.length; i++)
@@ -68,8 +60,22 @@ public class BinaryTransform
 				if (bytesForward > 0)
 					i = i + bytesForward - 1;
 			}
-			byte[] stdout = outBuf.toByteArray();
+			if (preamble != null)
+			{
+				System.out.write(preamble.getBytes(), 0, preamble.length());
+			}
+			String tempStr = outBuf.toString();
+			for (int i=0;i<regReplace.size();i++)
+			{
+				// System.err.println("Replacing ["+regPattern.elementAt(i)+"] with ["+regReplace.elementAt(i)+"].");
+				tempStr = tempStr.replaceAll(regPattern.elementAt(i),regReplace.elementAt(i));
+			}
+			byte[] stdout = tempStr.getBytes();
 			System.out.write(stdout, 0, stdout.length);
+			if (postamble != null)
+			{
+				System.out.write(postamble.getBytes(), 0, postamble.length());
+			}
 		}
 	}
 
@@ -182,7 +188,7 @@ public class BinaryTransform
 				String[] result = line.split("=");
 				String leftTemp = "";
 				String rightTemp = "";
-				byte[] rightBytes;
+				byte[] rightBytes = null;
 				st = new StringTokenizer(result[0]);
 				if (st.hasMoreTokens())
 				{
@@ -195,6 +201,10 @@ public class BinaryTransform
 						{
 							skip = true;
 						}
+					}
+					else if (leftTemp.equals("regex")) 
+					{
+						// System.err.println("Left side token: ["+leftTemp+"]");
 					}
 					else
 					{
@@ -217,10 +227,33 @@ public class BinaryTransform
 						}
 						if (rightTemp.trim().charAt(0) == '"')
 						{
+							String newString = "";
 							// System.err.println("Found a string...");
 							rightTemp.trim();
 							rightTemp = rightTemp.substring(1, rightTemp.length() - 2);
-							rightBytes = rightTemp.getBytes();
+							newString = rightTemp.replace("\\\\r", "\r").replace("\\\\n","\n");
+							rightBytes = newString.getBytes();
+						}
+						else if (leftTemp.equals("regex"))
+						{
+							String delim = rightTemp.substring(0,1);
+							// System.err.println("Regex replacement: "+rightTemp+" Delimiter: "+delim);
+							String[] rxTokens = rightTemp.split(delim);
+							if (rxTokens.length > 1)
+							{
+								regPattern.add(rxTokens[1]);
+								// System.err.println("Regex replacement token 1: "+rxTokens[1]);								
+							}
+							if (rxTokens.length > 2)
+							{
+								regReplace.add(rxTokens[2]);
+								// System.err.println("Regex replacement token 2: "+rxTokens[2]);								
+							}
+							else
+							{
+								regReplace.add("");
+								// System.err.println("Regex replacement token 2 is blank.");								
+							}
 						}
 						else
 						{
@@ -235,6 +268,9 @@ public class BinaryTransform
 						else if (leftTemp.equals("tail"))
 						{
 							postamble = rightTemp;
+						}
+						else if (leftTemp.equals("regex"))
+						{
 						}
 						else
 						{
@@ -272,6 +308,8 @@ public class BinaryTransform
 		return buf;
 	}
 
+	static Vector<String> regPattern = new Vector<String>();
+	static Vector<String> regReplace = new Vector<String>();
 	static Vector<byte[]> leftSide = new Vector<byte[]>();
 	static Vector<byte[]> rightSide = new Vector<byte[]>();
 	static String preamble;
