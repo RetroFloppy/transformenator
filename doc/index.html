@@ -18,11 +18,13 @@ Since I am a Java guy, I used the language that was easiest for me to implement 
 <h2>Useage</h2>
 Invoke the transformenator jar file from any command line, ant script, or what have you.
 Standard in and standard out are the before and after streams.
-Specify a transform "script" (with the <code>-t [filename]</code> option) to transform byte patterns.
+You can also simply specify the input file name it it will be read rather than stdin.
+Specify a transform "script" with the <code>-t filename</code> option to transform byte patterns.
 <p>
 For example:
 <xmp>
 java -jar transformenator.jar -t transform.txt < infile.bin > outfile.bin
+java -jar transformenator.jar -t transform.txt infile.bin > outfile.bin
 </xmp>
 <p>
 Where:<br>
