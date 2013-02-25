@@ -18,7 +18,7 @@ public class BinaryTransform
 
 	public static void main(java.lang.String[] args)
 	{
-		boolean rc = true;
+		boolean rc = false;
 		if (args.length > 0)
 		{
 			try
@@ -132,6 +132,11 @@ public class BinaryTransform
 				}
 			}
 		}
+		else
+		{
+			// No args
+			help();
+		}
 	}
 
 	public static int evaluateTransforms(byte[] inData,
@@ -151,6 +156,7 @@ public class BinaryTransform
 			match = true;
 			for (int j = 0; j < leftSide.elementAt(i).length; j++)
 			{
+				// System.err.println("Comparing left byte "+compLeft[j]+" to right byte "+inData[location + j]);
 				if ((compLeft[j]) != inData[location + j])
 				{
 					match = false;
@@ -255,8 +261,7 @@ public class BinaryTransform
 					// System.err.println("Left side token: ["+leftTemp+"]");
 					if (leftTemp.equals("head")
 							|| leftTemp.equals("tail")
-							|| leftTemp.trim()
-									.charAt(0) == (';'))
+							|| leftTemp.trim().charAt(0) == (';'))
 					{
 						if (leftTemp.trim().charAt(0) == (';'))
 						{
@@ -357,6 +362,7 @@ public class BinaryTransform
 				}
 				if (addedLeft & !addedRight)
 				{
+					// System.err.println("Right side token is null.");
 					rightSide.add(null);
 				}
 			}

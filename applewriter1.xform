@@ -3,7 +3,12 @@
 ;
 ; When extracting files with CiderPress, ensure you pay attention to these attributes:
 ;   "Convert to non-Apple II formats" <<<< uncheck
-;   "Don't convert text files" <<<< check - important for Applewriter 1
+;   "Don't convert text files" <<<< check
+;
+; Some command-line environments may do a little chicanery with data passed via stdin -
+;   if transforms aren't working the way you expect, are missing transforms especially on
+;   bytes greater than 0x7f, try passing the literal file instead of stdin, or set your 
+;   console encoding appropriately (-Dconsole.encoding=<your local encoding>).
 ;
 
 ; Transform A-Z in the control character range up to capitals in ASCII
@@ -103,8 +108,10 @@ fd = 3d
 fe = 3e
 ff = 3f
 
-
 ; EOF, SOT, Hard newline
-60 =
-83 =
+60 = "<ABCend of text for all timeXYZ>"
+83 = 
 8d = "\\r\\n"
+
+; Clip off cruft after the EOT marker
+regex = @<ABCend of text for all timeXYZ>.*@@
