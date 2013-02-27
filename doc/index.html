@@ -58,10 +58,11 @@ There is a special case for returns and newlines.  If you need to translate a by
 ; Justify on
 7a0a1531 = "\\r\\n</pre>"
 </xmp>
-There are three special productions in the transform specification:<br>
+There are four special productions in the transform specification:<br>
+<code>trim-leading</code> = specifies the number of bytes to trim off the beginning of the file (in hex bytes) <u>before</u> any binary transforms are applied<br>
 <code>head</code> = specifies a beginning-of-file preamble to add to the beginning of the resultant file<br>
 <code>tail</code> = specifies a end-of-file suffix to add to the end of the resultant file<br>
-<code>regex</code> = specifies one of potentially many regular expressions to run on the output <u>after</u> any and all binary transforms are complete<br>
+<code>regex</code> = specifies one of potentially many regular expressions to run on the output <u>after</u> any and all binary transforms are applied<br>
 <br>
 An example that makes use of each:
 <xmp>

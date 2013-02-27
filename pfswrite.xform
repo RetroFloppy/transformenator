@@ -1,0 +1,12 @@
+;
+; Transform for PFS:Write on the Apple II in Pascal format
+;
+
+; Trim the leading 0x400 bytes - this is a Pascal format file
+trim_leading = 400
+
+; Start of text
+0C =
+
+; End of text
+0E =

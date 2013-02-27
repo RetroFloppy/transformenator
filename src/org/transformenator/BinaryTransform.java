@@ -102,7 +102,8 @@ public class BinaryTransform
 			int bytesForward = 0;
 			if (inData != null)
 			{
-				for (int i = 0; i < inData.length; i++)
+				// System.err.println("trim leading "+trimLeading+" bytes.");
+				for (int i = trimLeading; i < inData.length; i++)
 				{
 					bytesForward = evaluateTransforms(inData, outBuf, i, inData.length);
 					// System.err.println("i=" + i + "; bytesForward=" + bytesForward);
@@ -118,8 +119,7 @@ public class BinaryTransform
 				for (int i = 0; i < regReplace.size(); i++)
 				{
 					// System.err.println("Replacing ["+regPattern.elementAt(i)+"] with ["+regReplace.elementAt(i)+"].");
-					tempStr = tempStr
-							.replaceAll(regPattern
+					tempStr = tempStr.replaceAll(regPattern
 									.elementAt(i),
 									regReplace.elementAt(i));
 				}
@@ -261,6 +261,7 @@ public class BinaryTransform
 					// System.err.println("Left side token: ["+leftTemp+"]");
 					if (leftTemp.equals("head")
 							|| leftTemp.equals("tail")
+							|| leftTemp.equals("trim_leading")
 							|| leftTemp.trim().charAt(0) == (';'))
 					{
 						if (leftTemp.trim().charAt(0) == (';'))
@@ -305,18 +306,13 @@ public class BinaryTransform
 											"\r")
 									.replace("\\\\n",
 											"\n");
-							rightBytes = newString
-									.getBytes();
+							rightBytes = newString.getBytes();
 						}
-						else if (leftTemp
-								.equals("regex"))
+						else if (leftTemp.equals("regex"))
 						{
-							String delim = rightTemp
-									.substring(0,
-											1);
+							String delim = rightTemp.substring(0,1);
 							// System.err.println("Regex replacement: "+rightTemp+" Delimiter: "+delim);
-							String[] rxTokens = rightTemp
-									.split(delim);
+							String[] rxTokens = rightTemp.split(delim);
 							if (rxTokens.length > 1)
 							{
 								regPattern.add(rxTokens[1]);
@@ -335,8 +331,7 @@ public class BinaryTransform
 						}
 						else
 						{
-							rightBytes = asBytes(rightTemp
-									.trim());
+							rightBytes = asBytes(rightTemp.trim());
 						}
 
 						// System.err.println("Right side token: ["+rightTemp+"]");
@@ -344,14 +339,16 @@ public class BinaryTransform
 						{
 							preamble = rightTemp;
 						}
-						else if (leftTemp
-								.equals("tail"))
+						else if (leftTemp.equals("tail"))
 						{
 							postamble = rightTemp;
 						}
-						else if (leftTemp
-								.equals("regex"))
+						else if (leftTemp.equals("regex"))
 						{
+						}
+						else if (leftTemp.equals("trim_leading"))
+						{
+							trimLeading = fromByteArray(rightBytes);
 						}
 						else
 						{
@@ -390,11 +387,34 @@ public class BinaryTransform
 		return buf;
 	}
 
+	static int fromByteArray(byte[] digits)
+	{
+		// Thunk everything to six hex digits
+		int result = 0;
+		byte bytes[] = { 0x00,0x00,0x00,0x00,0x00,0x00 };
+		int len = digits.length;
+		int j = 0;
+		// Right-justify digits
+		for (int i = len-1; i > -1; i--)
+		{
+			bytes[j] = digits[i];
+			j++;
+		}
+		result = (bytes[0] & 0xFF)
+				| (bytes[1] & 0xFF) * 256
+				| (bytes[2] & 0xFF) * 512
+				| (bytes[3] & 0xFF) * 1024
+				| (bytes[4] & 0xFF) * 2048
+				| (bytes[5] & 0xFF) * 4096;
+		return result;
+	}
+
 	static Vector<String> regPattern = new Vector<String>();
 	static Vector<String> regReplace = new Vector<String>();
 	static Vector<byte[]> leftSide = new Vector<byte[]>();
 	static Vector<byte[]> rightSide = new Vector<byte[]>();
 	static String preamble;
 	static String postamble;
+	static int trimLeading;
 
 }
