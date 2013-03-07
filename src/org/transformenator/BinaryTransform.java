@@ -49,7 +49,7 @@ public class BinaryTransform
 			int byteCount = 0;
 			if (args.length > 2)
 			{
-				// System.err.println("Reading input file " + args[2]);
+				System.err.println("Reading input file " + args[2]);
 				File file = new File(args[2]);
 				byte[] result = new byte[(int) file.length()];
 				try
@@ -93,6 +93,7 @@ public class BinaryTransform
 					while ((byteCount = System.in.read(inb)) > 0)
 					{
 						buf.write(inb, 0, byteCount);
+						buf.close();
 					}
 				}
 				catch (IOException e)
@@ -104,19 +105,21 @@ public class BinaryTransform
 			int bytesForward = 0;
 			if (inData != null)
 			{
+				System.err.println("Incoming data length: "+inData.length);
 				if (args[1].toUpperCase().contains("VALDOCS"))
 				{
 					// If they are using a Valdocs transform, let's pick apart the file first.
-					ByteArrayOutputStream buf2 = new ByteArrayOutputStream();
+					System.err.println("De-indexing a valdocs file.");
 					// Figure out the original file name
-					byte[] name = new byte[110];
-					byte[] convertBuf = new byte[512];
+					char[] name = new char[110];
+					byte[] newBuf = new byte[inData.length];
+					int newBufCursor = 0;
 					for (int i = 0;i<110;i++)
 					{
-						name[i] = inData[i+4];
+						name[i] = (char)inData[i+4];
 					}
 					String s1 = new String(name).trim()+".val";
-					System.err.println("Filename: ["+s1+"]");
+					System.err.println("Original filename: ["+s1+"]");
 					// Pick apart the file hunk indices
 					for (int i = 0x802;i<0x90f;i+=2)
 					{
@@ -127,14 +130,16 @@ public class BinaryTransform
 							for (int j = 4;j<0x200;j++)
 							{
 								// Each hunk starts with a header of 0x00002020, so skip first 4 bytes.
-								convertBuf[j-4] = inData[(idx * 512) + j];
+								newBuf[newBufCursor++] = inData[(idx * 512) + j];
 							}
-							buf2.write(convertBuf, 0, 508);
 						}
 					}
-					inData = buf2.toByteArray();
+					inData = new byte[newBufCursor];
+					for (int i = 0;i<newBufCursor;i++)
+						inData[i] = newBuf[i];
+					System.err.println("Data length after de-indexing: "+inData.length);
 				}
-				// System.err.println("trim leading "+trimLeading+" bytes.");
+				// System.err.println("Trimming leading "+trimLeading+" bytes.");
 				for (int i = trimLeading; i < inData.length; i++)
 				{
 					bytesForward = evaluateTransforms(inData, outBuf, i, inData.length);
@@ -151,9 +156,7 @@ public class BinaryTransform
 				for (int i = 0; i < regReplace.size(); i++)
 				{
 					// System.err.println("Replacing ["+regPattern.elementAt(i)+"] with ["+regReplace.elementAt(i)+"].");
-					tempStr = tempStr.replaceAll(regPattern
-									.elementAt(i),
-									regReplace.elementAt(i));
+					tempStr = tempStr.replaceAll(regPattern.elementAt(i),regReplace.elementAt(i));
 				}
 				byte[] stdout = tempStr.getBytes();
 				System.out.write(stdout, 0, stdout.length);
@@ -171,8 +174,8 @@ public class BinaryTransform
 		}
 	}
 
-	public static int evaluateTransforms(byte[] inData,
-			ByteArrayOutputStream outBuf, int location, int max)
+	public static int evaluateTransforms(byte[] incoming,
+			ByteArrayOutputStream outBuf, int offset, int max)
 	{
 		int i = 0;
 		int bytesMatched = 0;
@@ -182,7 +185,7 @@ public class BinaryTransform
 		{
 			RegSpec currentSpec = leftSide.elementAt(i);
 			currLeftLength = currentSpec.leftCompare.length;
-			if (location + currLeftLength > max)
+			if (offset + currLeftLength > max)
 				continue;
 			byte[] compLeft = leftSide.elementAt(i).leftCompare;
 			byte[] maskLeft = leftSide.elementAt(i).leftMask;
@@ -198,16 +201,17 @@ public class BinaryTransform
 				}
 				else
 				{
-					// System.err.println("Comparing left byte "+compLeft[j]+" to right byte "+inData[location + j]);
+					// System.err.println("Comparing left byte "+compLeft[j]+" to right byte "+incoming[offset + j]);
 					care = true;
 				}
-				if (((compLeft[j]) != inData[location + j]) && (care == true))
+				if (((compLeft[j]) != incoming[offset + j]) && (care == true))
 				{
 					match = false;
 				}
 			}
 			if (match == true)
 			{
+				System.err.println("Found a match at offset "+offset);
 				try
 				{
 					// send out new data
@@ -227,7 +231,7 @@ public class BinaryTransform
 		if (bytesMatched == 0)
 		{
 			// System.err.println("Writing out original byte, no comparisons to make. location="+location);
-			outBuf.write(inData[location]);
+			outBuf.write(incoming[offset]);
 			bytesMatched = 1;
 		}
 		return bytesMatched;
