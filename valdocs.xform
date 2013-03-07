@@ -1,6 +1,9 @@
 ;
 ; Valdocs transform
 ;
+; Note - any transform with 'valdocs' in the file name will trigger additional processing to
+;        untangle the indices from the original .val file.
+;
 
 ; All control structures
 3f................3f = "\\r\\n"

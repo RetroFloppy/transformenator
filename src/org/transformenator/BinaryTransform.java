@@ -104,6 +104,36 @@ public class BinaryTransform
 			int bytesForward = 0;
 			if (inData != null)
 			{
+				if (args[1].toUpperCase().contains("VALDOCS"))
+				{
+					// If they are using a Valdocs transform, let's pick apart the file first.
+					ByteArrayOutputStream buf2 = new ByteArrayOutputStream();
+					// Figure out the original file name
+					byte[] name = new byte[110];
+					byte[] convertBuf = new byte[512];
+					for (int i = 0;i<110;i++)
+					{
+						name[i] = inData[i+4];
+					}
+					String s1 = new String(name).trim()+".val";
+					System.err.println("Filename: ["+s1+"]");
+					// Pick apart the file hunk indices
+					for (int i = 0x802;i<0x90f;i+=2)
+					{
+						int idx = (int)inData[i]+(int)inData[i+1]*256;
+						if (idx > 0)
+						{
+							// System.err.print(" "+idx);
+							for (int j = 4;j<0x200;j++)
+							{
+								// Each hunk starts with a header of 0x00002020, so skip first 4 bytes.
+								convertBuf[j-4] = inData[(idx * 512) + j];
+							}
+							buf2.write(convertBuf, 0, 508);
+						}
+					}
+					inData = buf2.toByteArray();
+				}
 				// System.err.println("trim leading "+trimLeading+" bytes.");
 				for (int i = trimLeading; i < inData.length; i++)
 				{

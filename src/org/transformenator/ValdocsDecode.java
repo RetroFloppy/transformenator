@@ -4,25 +4,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.ByteArrayOutputStream;
 import java.io.BufferedInputStream;
 
 import java.io.InputStream;
-import java.util.Arrays;
 
 public class ValdocsDecode
 {
 
 	public static void main(java.lang.String[] args)
 	{
-		boolean rc = false;
 		if (args.length == 1)
 		{
-			ByteArrayOutputStream buf = new ByteArrayOutputStream();
-			ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
-			byte[] inb = new byte[10240];
 			byte[] inData = null;
-			int byteCount = 0;
 			if (args.length > 0)
 			{
 				System.err.println("Reading input file " + args[0]);
@@ -103,45 +96,6 @@ public class ValdocsDecode
 	public static void help()
 	{
 		System.err.println("Syntax: Valdocs in.foo > out.foo");
-	}
-
-	public static byte[] asBytes(String str)
-	{
-		if ((str.length() % 2) == 1)
-			str = "0" + str; // pad leading 0 if needed
-		byte[] buf = new byte[str.length() / 2];
-		int i = 0;
-
-		for (char c : str.toCharArray())
-		{
-			byte b = Byte.parseByte(String.valueOf(c), 16);
-			buf[i / 2] |= (b << (((i % 2) == 0) ? 4 : 0));
-			i++;
-		}
-
-		return buf;
-	}
-
-	static int fromByteArray(byte[] digits)
-	{
-		// Thunk everything to six hex digits
-		int result = 0;
-		byte bytes[] = { 0x00,0x00,0x00,0x00,0x00,0x00 };
-		int len = digits.length;
-		int j = 0;
-		// Right-justify digits
-		for (int i = len-1; i > -1; i--)
-		{
-			bytes[j] = digits[i];
-			j++;
-		}
-		result = (bytes[0] & 0xFF)
-				| (bytes[1] & 0xFF) * 256
-				| (bytes[2] & 0xFF) * 512
-				| (bytes[3] & 0xFF) * 1024
-				| (bytes[4] & 0xFF) * 2048
-				| (bytes[5] & 0xFF) * 4096;
-		return result;
 	}
 
 }
