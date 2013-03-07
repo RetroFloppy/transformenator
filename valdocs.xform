@@ -1,0 +1,6 @@
+;
+; Valdocs transform
+;
+
+; All control structures
+3f................3f = "\\r\\n"
