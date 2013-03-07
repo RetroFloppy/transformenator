@@ -13,6 +13,8 @@ import java.io.InputStream;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.transformenator.RegSpec;
+
 public class BinaryTransform
 {
 
@@ -146,18 +148,30 @@ public class BinaryTransform
 		int bytesMatched = 0;
 		int currLeftLength = 0;
 		boolean match = false;
-		for (i = 0; i < leftSide.size(); i++)
+		for (i = 0; i < leftSide.size(); i++)  // For each left specification
 		{
-			currLeftLength = leftSide.elementAt(i).length;
+			RegSpec currentSpec = leftSide.elementAt(i);
+			currLeftLength = currentSpec.leftCompare.length;
 			if (location + currLeftLength > max)
 				continue;
-			byte[] compLeft = leftSide.elementAt(i);
+			byte[] compLeft = leftSide.elementAt(i).leftCompare;
+			byte[] maskLeft = leftSide.elementAt(i).leftMask;
+			boolean care = true;
 			byte[] replRight = rightSide.elementAt(i);
 			match = true;
-			for (int j = 0; j < leftSide.elementAt(i).length; j++)
+			for (int j = 0; j < compLeft.length; j++)
 			{
-				// System.err.println("Comparing left byte "+compLeft[j]+" to right byte "+inData[location + j]);
-				if ((compLeft[j]) != inData[location + j])
+				if (maskLeft[j] == 1)
+				{
+					// System.err.println("Don't care byte - it will match");
+					care = false;
+				}
+				else
+				{
+					// System.err.println("Comparing left byte "+compLeft[j]+" to right byte "+inData[location + j]);
+					care = true;
+				}
+				if (((compLeft[j]) != inData[location + j]) && (care == true))
 				{
 					match = false;
 				}
@@ -187,20 +201,6 @@ public class BinaryTransform
 			bytesMatched = 1;
 		}
 		return bytesMatched;
-	}
-
-	public static byte transformOneByte(byte datum)
-	{
-		byte newDatum = datum;
-		for (int i = 0; i < leftSide.size(); i++)
-		{
-			byte compare[] = leftSide.elementAt(i);
-			if (datum == compare[0])
-			{
-				newDatum = rightSide.elementAt(i)[0];
-			}
-		}
-		return newDatum;
 	}
 
 	public static boolean readTransform(String[] args)
@@ -275,9 +275,11 @@ public class BinaryTransform
 					}
 					else
 					{
-						byte[] leftBytes = asBytes(leftTemp);
+						RegSpec newRegSpec = new RegSpec();
+						newRegSpec.leftCompare = asBytes(leftTemp);
+						newRegSpec.leftMask = maskBytes(leftTemp);
 						// System.err.println("Left bytes length: " + leftBytes.length);
-						leftSide.add(leftBytes);
+						leftSide.add(newRegSpec);
 						addedLeft = true;
 					}
 				}
@@ -379,11 +381,42 @@ public class BinaryTransform
 
 		for (char c : str.toCharArray())
 		{
-			byte b = Byte.parseByte(String.valueOf(c), 16);
-			buf[i / 2] |= (b << (((i % 2) == 0) ? 4 : 0));
+			try
+			{
+				byte b = Byte.parseByte(String.valueOf(c), 16);
+				buf[i / 2] |= (b << (((i % 2) == 0) ? 4 : 0));
+			}
+			catch (java.lang.NumberFormatException ex)
+			{
+				buf[i/2] = 0; // Going to need a "don't care" here, probably
+			}
 			i++;
 		}
 
+		return buf;
+	}
+
+	public static byte[] maskBytes(String str)
+	{
+		if ((str.length() % 2) == 1)
+			str = "0" + str; // pad leading 0 if needed
+		byte[] buf = new byte[str.length() / 2];
+		int i = 0;
+		for (char c : str.toCharArray())
+		{
+			try
+			{
+				// Try to parse as a byte... if it fails, we know we have an ignorable byte
+				Byte.parseByte(String.valueOf(c), 16);
+				buf[i/2] = 0;
+			}
+			catch (NumberFormatException ex)
+			{
+				buf[i/2] = 1;
+				// System.err.println("Ignoring byte at position "+i/2);
+			}
+			i++;
+		}
 		return buf;
 	}
 
@@ -411,7 +444,9 @@ public class BinaryTransform
 
 	static Vector<String> regPattern = new Vector<String>();
 	static Vector<String> regReplace = new Vector<String>();
-	static Vector<byte[]> leftSide = new Vector<byte[]>();
+	static Vector<RegSpec> leftSide = new Vector<RegSpec>();
+	//static Vector<byte[]> leftSide = new Vector<byte[]>();
+	//static Vector<byte[]> leftDontCare = new Vector<byte[]>();
 	static Vector<byte[]> rightSide = new Vector<byte[]>();
 	static String preamble;
 	static String postamble;
