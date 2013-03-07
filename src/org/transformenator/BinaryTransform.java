@@ -105,11 +105,11 @@ public class BinaryTransform
 			int bytesForward = 0;
 			if (inData != null)
 			{
-				System.err.println("Incoming data length: "+inData.length);
+				// System.err.println("Incoming data length: "+inData.length);
 				if (args[1].toUpperCase().contains("VALDOCS"))
 				{
 					// If they are using a Valdocs transform, let's pick apart the file first.
-					System.err.println("De-indexing a valdocs file.");
+					// System.err.println("De-indexing a valdocs file.");
 					// Figure out the original file name
 					char[] name = new char[110];
 					byte[] newBuf = new byte[inData.length];
@@ -118,8 +118,8 @@ public class BinaryTransform
 					{
 						name[i] = (char)inData[i+4];
 					}
-					String s1 = new String(name).trim()+".val";
-					System.err.println("Original filename: ["+s1+"]");
+					String s1 = new String(name).trim();
+					System.err.println("Original filename: "+s1);
 					// Pick apart the file hunk indices
 					for (int i = 0x802;i<0x90f;i+=2)
 					{
@@ -137,7 +137,7 @@ public class BinaryTransform
 					inData = new byte[newBufCursor];
 					for (int i = 0;i<newBufCursor;i++)
 						inData[i] = newBuf[i];
-					System.err.println("Data length after de-indexing: "+inData.length);
+					// System.err.println("Data length after de-indexing: "+inData.length);
 				}
 				// System.err.println("Trimming leading "+trimLeading+" bytes.");
 				for (int i = trimLeading; i < inData.length; i++)
@@ -211,7 +211,7 @@ public class BinaryTransform
 			}
 			if (match == true)
 			{
-				System.err.println("Found a match at offset "+offset);
+				// System.err.println("Found a match at offset "+offset);
 				try
 				{
 					// send out new data
