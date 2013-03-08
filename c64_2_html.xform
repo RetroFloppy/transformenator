@@ -14,13 +14,13 @@
 
 ; Header for HTML format
 head = "<html>"
-; Closing brace for HTML format
+; Trailer for HTML format
 tail = "</html>"
 
 ; Regular expressions run _after_ all binary replacements.
 ; Remove left/right margin specs: zlmxx, :rmxx
 regex = @[z|:][l|r]m[0-9]*@@
-; Remove next file specification
+; Remove "next file" specification
 regex = @znx:.*@@
 
 ; Crazy gorp at the front
@@ -81,7 +81,7 @@ c4c6ff28fe636363636363636363e4636363636363636363e4636363636363636363e46363636363
 70 = 22
 1b = 22
 
-; Transform a-z down in the control character range up to ASCII (is this PETSCII?)
+; Transform a-z down in the control character range up to ASCII
 01 = 61
 02 = 62
 03 = 63
@@ -109,6 +109,6 @@ c4c6ff28fe636363636363636363e4636363636363636363e4636363636363636363e46363636363
 19 = 79
 1a = 7a
 
-; End of line/paragraph becomes </b>\r\n (plus) <p>
-; Need to turn off some things that don't have an explicit off switch (i.e. headings)
+; End of line/paragraph becomes </b>\r\n<p>
+; Also need to turn off some things that don't have an explicit off switch (i.e. headings)
 1f = "</title></b>\\r\\n<p>"
