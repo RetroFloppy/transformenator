@@ -1,3 +1,23 @@
+/*
+ * Transformenator - perform transformation operations on binary files
+ * Copyright (C) 2012 - 2013 by David Schmidt
+ * david__schmidt at users.sourceforge.net
+ *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the 
+ * Free Software Foundation; either version 2 of the License, or (at your 
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along 
+ * with this program; if not, write to the Free Software Foundation, Inc., 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
+
 package org.transformenator;
 
 import java.io.BufferedReader;
@@ -8,6 +28,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ByteArrayOutputStream;
 import java.io.BufferedInputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 import java.io.InputStream;
 import java.util.StringTokenizer;
@@ -241,27 +263,53 @@ public class BinaryTransform
 	{
 		boolean isOK = true;
 		FileReader fr = null;
-		try
-		{
-			if (args.length < 2)
-			{
-				isOK = false;
-				help();
-			}
-			else
-			{
-				// System.err.println("Reading file " + args[1] + ".");
-				fr = new FileReader(args[1]);
-				parseTransforms(fr);
-				// System.err.println("Completed reading.");
-			}
-		}
-		catch (FileNotFoundException ex)
+		if (args.length < 2)
 		{
 			isOK = false;
-			System.err.println("Unable to read transform file \""
-					+ args[1] + "\".");
+			help();
 		}
+		else
+		{
+			// First try to load an external transform file.  That should take precedence over an internal one.
+			try
+			{
+				fr = new FileReader(args[1]);
+				if (fr != null)
+				{
+					isOK = true;
+					parseTransforms(fr);
+					System.err.println("Using external transform file " + args[1] + ".");
+				}
+			}
+			catch (FileNotFoundException ex)
+			{
+				isOK = false;
+			}
+			if (isOK == false)
+			{
+				// Didn't find an external one; how about that same specification as an internal one?
+				try
+				{
+					InputStream is;
+					is = BinaryTransform.class.getResourceAsStream("/org/transformenator/transforms/"+args[1]);
+					if (is != null)
+					{
+						InputStreamReader isr = new InputStreamReader(is);
+						parseTransforms(isr);
+						System.err.println("Using internal transform \""+args[1]+"\".");
+						isOK = true;					
+					}
+					else
+						isOK = false;
+				}
+				catch (Exception e)
+				{
+					isOK = false;
+				}
+			}
+		}
+		if (isOK == false)
+			System.err.println("Unable to locate transform named \""+args[1]+"\".");
 		return isOK;
 	}
 
@@ -271,7 +319,7 @@ public class BinaryTransform
 		System.err.println("        BinaryTransform -t transformFile in.foo > out.foo");
 	}
 
-	public static void parseTransforms(FileReader fr)
+	public static void parseTransforms(Reader fr)
 	{
 		String line;
 		try
@@ -479,8 +527,6 @@ public class BinaryTransform
 	static Vector<String> regPattern = new Vector<String>();
 	static Vector<String> regReplace = new Vector<String>();
 	static Vector<RegSpec> leftSide = new Vector<RegSpec>();
-	//static Vector<byte[]> leftSide = new Vector<byte[]>();
-	//static Vector<byte[]> leftDontCare = new Vector<byte[]>();
 	static Vector<byte[]> rightSide = new Vector<byte[]>();
 	static String preamble;
 	static String postamble;

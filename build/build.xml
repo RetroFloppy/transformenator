@@ -5,6 +5,6 @@
 		<jar jarfile="transformenator.jar"
 			manifest="build/manifest.mf"
 			basedir="${basedir}/bin"
-			includes="org/**/*.class org/**/*.java org/**/*.properties org/**/*.png org/**/*.dmp org/**/*.raw LICENSE" />
+			includes="org/**/*.class org/**/*.java org/**/*.properties org/**/*.png org/**/*.dmp org/**/**/* LICENSE" />
 	</target>
 </project>

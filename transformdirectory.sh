@@ -1,5 +1,5 @@
 #!/bin/sh
-# Usage: transformdirectories.sh transform origindir destdir
+# Usage: transformdirectory.sh transform origindir destdir
 if [ "$2" != "" ]
 then
   export MY_HOME="`pwd`"
@@ -10,5 +10,5 @@ then
   done
   cd $MY_HOME
 else
-  echo "Usage: transformdirectories.sh transform origindir destdir"
+  echo "Usage: transformdirectory.sh transform origindir destdir"
 fi
