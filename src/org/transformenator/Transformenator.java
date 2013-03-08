@@ -40,13 +40,13 @@ import java.util.zip.ZipInputStream;
 
 import org.transformenator.RegSpec;
 
-public class BinaryTransform
+public class Transformenator
 {
 
 	public static void main(java.lang.String[] args)
 	{
 		boolean rc = false;
-		if (args.length > 0)
+		if (args.length > 1)
 		{
 			try
 			{
@@ -62,133 +62,133 @@ public class BinaryTransform
 			catch (Exception ex)
 			{
 				ex.printStackTrace();
-				help();
 			}
-		}
-		if (rc == true)
-		{
-			ByteArrayOutputStream buf = new ByteArrayOutputStream();
-			ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
-			byte[] inb = new byte[10240];
-			byte[] inData = null;
-			int byteCount = 0;
-			if (args.length > 2)
+			if (rc == true)
 			{
-				System.err.println("Reading input file " + args[2]);
-				File file = new File(args[2]);
-				byte[] result = new byte[(int) file.length()];
-				try
+				ByteArrayOutputStream buf = new ByteArrayOutputStream();
+				ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
+				byte[] inb = new byte[10240];
+				byte[] inData = null;
+				int byteCount = 0;
+				if (args.length > 2)
 				{
-					InputStream input = null;
+					// System.err.println("Reading input file " + args[2]);
+					File file = new File(args[2]);
+					byte[] result = new byte[(int) file.length()];
 					try
 					{
-						int totalBytesRead = 0;
-						input = new BufferedInputStream(new FileInputStream(file));
-						while (totalBytesRead < result.length)
+						InputStream input = null;
+						try
 						{
-							int bytesRemaining = result.length - totalBytesRead;
-							// input.read() returns -1, 0, or more :
-							int bytesRead = input.read(result,totalBytesRead,bytesRemaining);
-							if (bytesRead > 0)
+							int totalBytesRead = 0;
+							input = new BufferedInputStream(new FileInputStream(file));
+							while (totalBytesRead < result.length)
 							{
-								totalBytesRead = totalBytesRead + bytesRead;
+								int bytesRemaining = result.length - totalBytesRead;
+								// input.read() returns -1, 0, or more :
+								int bytesRead = input.read(result, totalBytesRead, bytesRemaining);
+								if (bytesRead > 0)
+								{
+									totalBytesRead = totalBytesRead + bytesRead;
+								}
 							}
+							inData = result;
 						}
-						inData = result;
-					}
-					finally
-					{
-						if (input != null)
-							input.close();
-					}
-				}
-				catch (FileNotFoundException ex)
-				{
-					System.err.println("Input file "+file+" not found.");
-				}
-				catch (IOException ex)
-				{
-					ex.printStackTrace();
-				}
-			}
-			else
-			{
-				try
-				{
-					while ((byteCount = System.in.read(inb)) > 0)
-					{
-						buf.write(inb, 0, byteCount);
-						buf.close();
-					}
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-				inData = buf.toByteArray();
-			}
-			int bytesForward = 0;
-			if (inData != null)
-			{
-				// System.err.println("Incoming data length: "+inData.length);
-				if (args[1].toUpperCase().contains("VALDOCS"))
-				{
-					// If they are using a Valdocs transform, let's pick apart the file first.
-					// System.err.println("De-indexing a valdocs file.");
-					// Figure out the original file name
-					char[] name = new char[110];
-					byte[] newBuf = new byte[inData.length];
-					int newBufCursor = 0;
-					for (int i = 0;i<110;i++)
-					{
-						name[i] = (char)inData[i+4];
-					}
-					String s1 = new String(name).trim();
-					System.err.println("Original filename: "+s1);
-					// Pick apart the file hunk indices
-					for (int i = 0x802;i<0x90f;i+=2)
-					{
-						int idx = (int)inData[i]+(int)inData[i+1]*256;
-						if (idx > 0)
+						finally
 						{
-							// System.err.print(" "+idx);
-							for (int j = 4;j<0x200;j++)
-							{
-								// Each hunk starts with a header of 0x00002020, so skip first 4 bytes.
-								newBuf[newBufCursor++] = inData[(idx * 512) + j];
-							}
+							if (input != null)
+								input.close();
 						}
 					}
-					inData = new byte[newBufCursor];
-					for (int i = 0;i<newBufCursor;i++)
-						inData[i] = newBuf[i];
-					// System.err.println("Data length after de-indexing: "+inData.length);
+					catch (FileNotFoundException ex)
+					{
+						System.err.println("Input file \"" + file + "\" not found.");
+					}
+					catch (IOException ex)
+					{
+						ex.printStackTrace();
+					}
 				}
-				// System.err.println("Trimming leading "+trimLeading+" bytes.");
-				for (int i = trimLeading; i < inData.length; i++)
+				else
 				{
-					bytesForward = evaluateTransforms(inData, outBuf, i, inData.length);
-					// System.err.println("i=" + i + "; bytesForward=" + bytesForward);
-					if (bytesForward > 0)
-						i = i + bytesForward - 1;
+					try
+					{
+						while ((byteCount = System.in.read(inb)) > 0)
+						{
+							buf.write(inb, 0, byteCount);
+							buf.close();
+						}
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+					inData = buf.toByteArray();
 				}
-				if (preamble != null)
+				int bytesForward = 0;
+				if (inData != null)
 				{
-					System.out.write(preamble.getBytes(),
-							0, preamble.length());
-				}
-				String tempStr = outBuf.toString();
-				for (int i = 0; i < regReplace.size(); i++)
-				{
-					// System.err.println("Replacing ["+regPattern.elementAt(i)+"] with ["+regReplace.elementAt(i)+"].");
-					tempStr = tempStr.replaceAll(regPattern.elementAt(i),regReplace.elementAt(i));
-				}
-				byte[] stdout = tempStr.getBytes();
-				System.out.write(stdout, 0, stdout.length);
-				if (postamble != null)
-				{
-					System.out.write(postamble.getBytes(),
-							0, postamble.length());
+					// System.err.println("Incoming data length: "+inData.length);
+					if (args[1].toUpperCase().contains("VALDOCS"))
+					{
+						// If they are using a Valdocs transform, let's pick
+						// apart the file first.
+						// System.err.println("De-indexing a valdocs file.");
+						// Figure out the original file name
+						char[] name = new char[110];
+						byte[] newBuf = new byte[inData.length];
+						int newBufCursor = 0;
+						for (int i = 0; i < 110; i++)
+						{
+							name[i] = (char) inData[i + 4];
+						}
+						String s1 = new String(name).trim();
+						System.err.println("Original filename: " + s1);
+						// Pick apart the file hunk indices
+						for (int i = 0x802; i < 0x90f; i += 2)
+						{
+							int idx = (int) inData[i] + (int) inData[i + 1] * 256;
+							if (idx > 0)
+							{
+								// System.err.print(" "+idx);
+								for (int j = 4; j < 0x200; j++)
+								{
+									// Each hunk starts with a header of
+									// 0x00002020, so skip first 4 bytes.
+									newBuf[newBufCursor++] = inData[(idx * 512) + j];
+								}
+							}
+						}
+						inData = new byte[newBufCursor];
+						for (int i = 0; i < newBufCursor; i++)
+							inData[i] = newBuf[i];
+						// System.err.println("Data length after de-indexing: "+inData.length);
+					}
+					// System.err.println("Trimming leading "+trimLeading+" bytes.");
+					for (int i = trimLeading; i < inData.length; i++)
+					{
+						bytesForward = evaluateTransforms(inData, outBuf, i, inData.length);
+						// System.err.println("i=" + i + "; bytesForward=" +
+						// bytesForward);
+						if (bytesForward > 0)
+							i = i + bytesForward - 1;
+					}
+					if (preamble != null)
+					{
+						System.out.write(preamble.getBytes(), 0, preamble.length());
+					}
+					String tempStr = outBuf.toString();
+					for (int i = 0; i < regReplace.size(); i++)
+					{
+						// System.err.println("Replacing ["+regPattern.elementAt(i)+"] with ["+regReplace.elementAt(i)+"].");
+						tempStr = tempStr.replaceAll(regPattern.elementAt(i), regReplace.elementAt(i));
+					}
+					byte[] stdout = tempStr.getBytes();
+					System.out.write(stdout, 0, stdout.length);
+					if (postamble != null)
+					{
+						System.out.write(postamble.getBytes(), 0, postamble.length());
+					}
 				}
 			}
 		}
@@ -196,18 +196,16 @@ public class BinaryTransform
 		{
 			// No args
 			help();
-			listInternalTransforms();
 		}
 	}
 
-	public static int evaluateTransforms(byte[] incoming,
-			ByteArrayOutputStream outBuf, int offset, int max)
+	public static int evaluateTransforms(byte[] incoming, ByteArrayOutputStream outBuf, int offset, int max)
 	{
 		int i = 0;
 		int bytesMatched = 0;
 		int currLeftLength = 0;
 		boolean match = false;
-		for (i = 0; i < leftSide.size(); i++)  // For each left specification
+		for (i = 0; i < leftSide.size(); i++) // For each left specification
 		{
 			RegSpec currentSpec = leftSide.elementAt(i);
 			currLeftLength = currentSpec.leftCompare.length;
@@ -227,7 +225,8 @@ public class BinaryTransform
 				}
 				else
 				{
-					// System.err.println("Comparing left byte "+compLeft[j]+" to right byte "+incoming[offset + j]);
+					// System.err.println("Comparing left byte "+compLeft[j]+" to right byte "+incoming[offset
+					// + j]);
 					care = true;
 				}
 				if (((compLeft[j]) != incoming[offset + j]) && (care == true))
@@ -270,11 +269,11 @@ public class BinaryTransform
 		if (args.length < 2)
 		{
 			isOK = false;
-			help();
 		}
 		else
 		{
-			// First try to load an external transform file.  That should take precedence over an internal one.
+			// First try to load an external transform file. That should take
+			// precedence over an internal one.
 			try
 			{
 				fr = new FileReader(args[1]);
@@ -291,17 +290,18 @@ public class BinaryTransform
 			}
 			if (isOK == false)
 			{
-				// Didn't find an external one; how about that same specification as an internal one?
+				// Didn't find an external one; how about that same
+				// specification as an internal one?
 				try
 				{
 					InputStream is;
-					is = BinaryTransform.class.getResourceAsStream("/org/transformenator/transforms/"+args[1]);
+					is = Transformenator.class.getResourceAsStream("/org/transformenator/transforms/" + args[1]);
 					if (is != null)
 					{
 						InputStreamReader isr = new InputStreamReader(is);
 						parseTransforms(isr);
-						System.err.println("Using internal transform file \""+args[1]+"\".");
-						isOK = true;					
+						System.err.println("Using internal transform file \"" + args[1] + "\".");
+						isOK = true;
 					}
 					else
 						isOK = false;
@@ -313,53 +313,57 @@ public class BinaryTransform
 			}
 		}
 		if (isOK == false)
-			System.err.println("Unable to locate transform file named \""+args[1]+"\".");
+			System.err.println("Unable to locate transform file named \"" + args[1] + "\".");
 		return isOK;
 	}
 
 	public static void help()
 	{
-		System.err.println("Syntax: BinaryTransform -t transformFile < in.foo > out.foo");
-		System.err.println("        BinaryTransform -t transformFile in.foo > out.foo");
+		System.err.println();
+		System.err.println("Transformenator v1.0 - perform transformation operations on binary files.");
+		System.err.println();
+		System.err.println("Syntax: Transformenator -t transformFile [<] in.foo > out.foo");
+		listInternalTransforms();
 	}
 
 	public static void listInternalTransforms()
 	{
 		boolean printedHeaderYet = false;
-		CodeSource src = BinaryTransform.class.getProtectionDomain().getCodeSource();
+		CodeSource src = Transformenator.class.getProtectionDomain().getCodeSource();
 
-		if( src != null ) {
-		    URL jar = src.getLocation();
-		    ZipInputStream zip;
+		if (src != null)
+		{
+			URL jar = src.getLocation();
+			ZipInputStream zip;
 			try
 			{
 				zip = new ZipInputStream(jar.openStream());
-			    ZipEntry ze = null;
+				ZipEntry ze = null;
 
-			    while((ze = zip.getNextEntry() ) != null )
-			    {
-			        String entryName = ze.getName();
-			        String prefix = "org/transformenator/transforms/";
-			        if( entryName.startsWith(prefix))
-			        {
-			        	String finalName = entryName.substring(prefix.length());
-			        	if (finalName.length() > 0)
-			        	{
-			        		if (printedHeaderYet == false)
-			        		{
-			        			System.err.println("Available internal transform files:");
-			        			printedHeaderYet = true;
-			        		}
-			        		System.err.println("  "+finalName);
-			        	}
-			        }
-			    }
-		    }
+				while ((ze = zip.getNextEntry()) != null)
+				{
+					String entryName = ze.getName();
+					String prefix = "org/transformenator/transforms/";
+					if (entryName.startsWith(prefix))
+					{
+						String finalName = entryName.substring(prefix.length());
+						if (finalName.length() > 0)
+						{
+							if (printedHeaderYet == false)
+							{
+								System.err.println("Available internal transform files:");
+								printedHeaderYet = true;
+							}
+							System.err.println("  " + finalName);
+						}
+					}
+				}
+			}
 			catch (IOException e)
 			{
 				e.printStackTrace();
 			}
-		 }
+		}
 	}
 
 	public static void parseTransforms(Reader fr)
@@ -384,10 +388,7 @@ public class BinaryTransform
 					leftTemp = st.nextToken();
 					skip = false;
 					// System.err.println("Left side token: ["+leftTemp+"]");
-					if (leftTemp.equals("head")
-							|| leftTemp.equals("tail")
-							|| leftTemp.equals("trim_leading")
-							|| leftTemp.trim().charAt(0) == (';'))
+					if (leftTemp.equals("head") || leftTemp.equals("tail") || leftTemp.equals("trim_leading") || leftTemp.trim().charAt(0) == (';'))
 					{
 						if (leftTemp.trim().charAt(0) == (';'))
 						{
@@ -403,7 +404,8 @@ public class BinaryTransform
 						RegSpec newRegSpec = new RegSpec();
 						newRegSpec.leftCompare = asBytes(leftTemp);
 						newRegSpec.leftMask = maskBytes(leftTemp);
-						// System.err.println("Left bytes length: " + leftBytes.length);
+						// System.err.println("Left bytes length: " +
+						// leftBytes.length);
 						leftSide.add(newRegSpec);
 						addedLeft = true;
 					}
@@ -416,28 +418,20 @@ public class BinaryTransform
 						rightTemp = "";
 						while (st.hasMoreTokens())
 						{
-							rightTemp = rightTemp
-									+ st.nextToken()
-									+ " ";
+							rightTemp = rightTemp + st.nextToken() + " ";
 						}
 						if (rightTemp.trim().charAt(0) == '"')
 						{
 							String newString = "";
 							// System.err.println("Found a string...");
 							rightTemp.trim();
-							rightTemp = rightTemp
-									.substring(1,
-											rightTemp.length() - 2);
-							newString = rightTemp
-									.replace("\\\\r",
-											"\r")
-									.replace("\\\\n",
-											"\n");
+							rightTemp = rightTemp.substring(1, rightTemp.length() - 2);
+							newString = rightTemp.replace("\\\\r", "\r").replace("\\\\n", "\n");
 							rightBytes = newString.getBytes();
 						}
 						else if (leftTemp.equals("regex"))
 						{
-							String delim = rightTemp.substring(0,1);
+							String delim = rightTemp.substring(0, 1);
 							// System.err.println("Regex replacement: "+rightTemp+" Delimiter: "+delim);
 							String[] rxTokens = rightTemp.split(delim);
 							if (rxTokens.length > 1)
@@ -513,7 +507,7 @@ public class BinaryTransform
 			}
 			catch (java.lang.NumberFormatException ex)
 			{
-				buf[i/2] = 0; // Going to need a "don't care" here, probably
+				buf[i / 2] = 0; // Going to need a "don't care" here, probably
 			}
 			i++;
 		}
@@ -531,13 +525,14 @@ public class BinaryTransform
 		{
 			try
 			{
-				// Try to parse as a byte... if it fails, we know we have an ignorable byte
+				// Try to parse as a byte... if it fails, we know we have an
+				// ignorable byte
 				Byte.parseByte(String.valueOf(c), 16);
-				buf[i/2] = 0;
+				buf[i / 2] = 0;
 			}
 			catch (NumberFormatException ex)
 			{
-				buf[i/2] = 1;
+				buf[i / 2] = 1;
 				// System.err.println("Ignoring byte at position "+i/2);
 			}
 			i++;
@@ -549,21 +544,16 @@ public class BinaryTransform
 	{
 		// Thunk everything to six hex digits
 		int result = 0;
-		byte bytes[] = { 0x00,0x00,0x00,0x00,0x00,0x00 };
+		byte bytes[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 		int len = digits.length;
 		int j = 0;
 		// Right-justify digits
-		for (int i = len-1; i > -1; i--)
+		for (int i = len - 1; i > -1; i--)
 		{
 			bytes[j] = digits[i];
 			j++;
 		}
-		result = (bytes[0] & 0xFF)
-				| (bytes[1] & 0xFF) * 256
-				| (bytes[2] & 0xFF) * 512
-				| (bytes[3] & 0xFF) * 1024
-				| (bytes[4] & 0xFF) * 2048
-				| (bytes[5] & 0xFF) * 4096;
+		result = (bytes[0] & 0xFF) | (bytes[1] & 0xFF) * 256 | (bytes[2] & 0xFF) * 512 | (bytes[3] & 0xFF) * 1024 | (bytes[4] & 0xFF) * 2048 | (bytes[5] & 0xFF) * 4096;
 		return result;
 	}
 

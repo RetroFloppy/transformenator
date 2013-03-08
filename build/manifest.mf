@@ -1,2 +1,2 @@
 Manifest-Version: 1.0
-Main-Class: org.transformenator.BinaryTransform
+Main-Class: org.transformenator.Transformenator
