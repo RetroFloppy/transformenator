@@ -30,10 +30,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.BufferedInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-
 import java.io.InputStream;
+import java.net.URL;
+import java.security.CodeSource;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.transformenator.RegSpec;
 
@@ -193,6 +196,7 @@ public class BinaryTransform
 		{
 			// No args
 			help();
+			listInternalTransforms();
 		}
 	}
 
@@ -278,7 +282,7 @@ public class BinaryTransform
 				{
 					isOK = true;
 					parseTransforms(fr);
-					System.err.println("Using external transform file " + args[1] + ".");
+					System.err.println("Using external transform file \"" + args[1] + "\".");
 				}
 			}
 			catch (FileNotFoundException ex)
@@ -296,7 +300,7 @@ public class BinaryTransform
 					{
 						InputStreamReader isr = new InputStreamReader(is);
 						parseTransforms(isr);
-						System.err.println("Using internal transform \""+args[1]+"\".");
+						System.err.println("Using internal transform file \""+args[1]+"\".");
 						isOK = true;					
 					}
 					else
@@ -309,7 +313,7 @@ public class BinaryTransform
 			}
 		}
 		if (isOK == false)
-			System.err.println("Unable to locate transform named \""+args[1]+"\".");
+			System.err.println("Unable to locate transform file named \""+args[1]+"\".");
 		return isOK;
 	}
 
@@ -317,6 +321,45 @@ public class BinaryTransform
 	{
 		System.err.println("Syntax: BinaryTransform -t transformFile < in.foo > out.foo");
 		System.err.println("        BinaryTransform -t transformFile in.foo > out.foo");
+	}
+
+	public static void listInternalTransforms()
+	{
+		boolean printedHeaderYet = false;
+		CodeSource src = BinaryTransform.class.getProtectionDomain().getCodeSource();
+
+		if( src != null ) {
+		    URL jar = src.getLocation();
+		    ZipInputStream zip;
+			try
+			{
+				zip = new ZipInputStream(jar.openStream());
+			    ZipEntry ze = null;
+
+			    while((ze = zip.getNextEntry() ) != null )
+			    {
+			        String entryName = ze.getName();
+			        String prefix = "org/transformenator/transforms/";
+			        if( entryName.startsWith(prefix))
+			        {
+			        	String finalName = entryName.substring(prefix.length());
+			        	if (finalName.length() > 0)
+			        	{
+			        		if (printedHeaderYet == false)
+			        		{
+			        			System.err.println("Available internal transform files:");
+			        			printedHeaderYet = true;
+			        		}
+			        		System.err.println("  "+finalName);
+			        	}
+			        }
+			    }
+		    }
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		 }
 	}
 
 	public static void parseTransforms(Reader fr)
