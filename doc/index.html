@@ -5,7 +5,7 @@ You should be able to run a binary file through sed or awk and have byte sequenc
 <p>
 But you can't.
 <p>
-	You could probably run a file through a hex dumper, change hex values, then un-transform it back to binary.
+You could probably run a file through a hex dumper, change hex values, then un-transform it back to binary.
 But that's kind of a pain too.  
 The problem is that sed and awk work on lines, defined as things that are delineated by what they consider line ending characters like 0x0d or 0x0a.
 But what if your data stream contains 0x0d and 0x0a bytes - but you don't want them to count as line endings?
@@ -22,7 +22,7 @@ Standard in is transformed to standard out according to a set of rules you speci
 named with the <code>-t</code> option.
 Several sample transforms are included in the distribution jar file.
 <p>
-You can also simply specify the input file name it it will be read rather than stdin.
+You can also simply specify the input file name and it will be read rather than stdin.
 Using the stdin redirection method may cause undesirable pre-transformations to happen based on your console settings,
 so the direct file method may be preferable.  See the binary <a href="#Notes">notes</a> below for more information.
 <p>
@@ -37,7 +37,7 @@ Where:<br>
 <code>infile.bin</code> is the original file<br>
 <code>outfile.bin</code> is the resulting file after running the transforms
 <p>
-<h2>Tramsform Specifications</h2>
+<h2>Transform Specifications</h2>
 The Transformenator project comes with several example transforms used to convert various early binary word processor
 formats to RTF, HTML, or plain ASCII text. 
 A sample <code>transform.xform</code> file might simply look like this:
