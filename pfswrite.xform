@@ -10,3 +10,5 @@ trim_leading = 400
 
 ; End of text
 0E =
+
+0d = "\\r\\n"
