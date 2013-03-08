@@ -35,15 +35,37 @@ Where:<br>
 <code>infile.bin</code> is the original file<br>
 <code>outfile.bin</code> is the resulting file after running the transforms
 <p>
+<h2>Tramsform Specifications</h2>
+The Transformenator project comes with several example transforms used to convert various early binary word processor
+formats to RTF, HTML, or plain ASCII text. 
 A sample <code>transform.xform</code> file might simply look like this:
-<xmp>
-; Change 0x00 to 0x20
-00 = 20
-</xmp>
+<xmp>; Change 0x00 to 0x20
+00 = 20</xmp>
 Semicolons denote comment lines.
-The left side of the equals sign is always a byte pattern, given in hex digits, with no other decoration.
-The right side can be blank, another byte pattern given in undecorated hex, or if surrounded in double quotes, ASCII text.
-For example:
+The left side of the equals sign is one of these things:
+<ul>
+<li>A byte pattern, given in even numbers of hex digits, with no other decoration<br>
+<xmp>0d0a32ea4f</xmp>
+<li>A byte pattern combined with "don't care" values consisting of even numbers of non-hex digits<br>
+<xmp>0d0a....4f</xmp>
+<li><code>head</code> specifies a beginning-of-file preamble to add to the beginning of the resultant file<br>
+<xmp>; Header for HTML format
+head = "<html>"</xmp>
+<li><code>tail</code> specifies a end-of-file suffix to add to the end of the resultant file<br>
+<xmp>; Trailer for HTML format
+tail = "</html>"</xmp>
+<li><code>trim-leading</code> specifies a number of bytes to trim off the beginning of the file (in hex bytes) <u>before</u> any binary transforms are applied<br>
+<xmp>; Trim the leading 0x400 bytes - this is a Pascal format file
+trim_leading = 0400</xmp>
+<li><code>regex</code> specifies a regular expression to run on the output <u>after</u> any and all binary transforms are applied;
+multiple <code>regex</code> expressions are allowed, one per line<br>
+<xmp>; Remove left/right margin specs: zlmxx, :rmxx
+regex = @[z|:][l|r]m[0-9]*@@
+; Remove next file specification
+regex = @znx:.*@@</xmp>
+</ul>
+The right side can be blank, another byte pattern given in undecorated hex, or ASCII text if surrounded in double quotes.
+Examples:
 <xmp>
 ; 0x86 appeared at the beginning of files sometimes, after the preamble.  Remove it.
 86 =
@@ -54,32 +76,12 @@ b12d31 = "\i "
 ; Italics off
 b12d30 = "\i0 "
 </xmp>
-There is a special case for returns and newlines.
+There is a special case for specifying returns and newlines.
 If you need to translate a byte pattern into something that includes them, you need to escape the backslash.
 For example:
-<xmp>
-; Justify on
-7a0a1531 = "\\r\\n</pre>"
-</xmp>
-There are four special productions in the transform specification:<br>
-<code>head</code> = specifies a beginning-of-file preamble to add to the beginning of the resultant file<br>
-<code>tail</code> = specifies a end-of-file suffix to add to the end of the resultant file<br>
-<code>trim-leading</code> = specifies a number of bytes to trim off the beginning of the file (in hex bytes) <u>before</u> any binary transforms are applied<br>
-<code>regex</code> = specifies one of potentially many regular expressions to run on the output <u>after</u> any and all binary transforms are applied<br>
-<br>
-An example that makes use of each:
-<xmp>
-; Header for HTML format
-head = "<html>"
-; Closing brace for HTML format
-tail = "</html>"
-; Trim the leading 0x400 bytes - this is a Pascal format file
-trim_leading = 400
-; Remove left/right margin specs: zlmxx, :rmxx
-regex = @[z|:][l|r]m[0-9]*@@
-; Remove next file specification
-regex = @znx:.*@@
-</xmp>
+<xmp>; Justify on
+7a0a1531 = "\\r\\n</pre>"</xmp>
+
 Regular expressions are surrounded by delimiters - the first character in the string serves as that delimiter.
 So the production <code>regex=$abc$123$</code> will use <code>$</code> as the delimiter, and replace all occurrences of <code>abc</code> with <code>123</code>.
 
