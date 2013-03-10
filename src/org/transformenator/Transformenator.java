@@ -24,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.ByteArrayOutputStream;
@@ -46,18 +47,12 @@ public class Transformenator
 	public static void main(java.lang.String[] args)
 	{
 		boolean rc = false;
-		if (args.length > 1)
+		String valdocsName = null;
+		if (args.length == 3)
 		{
 			try
 			{
-				if ("-t".equalsIgnoreCase(args[0]))
-				{
-					rc = readTransform(args);
-				}
-				else
-				{
-					help();
-				}
+				rc = readTransform(args[0]);
 			}
 			catch (Exception ex)
 			{
@@ -65,74 +60,51 @@ public class Transformenator
 			}
 			if (rc == true)
 			{
-				ByteArrayOutputStream buf = new ByteArrayOutputStream();
 				ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
-				byte[] inb = new byte[10240];
 				byte[] inData = null;
-				int byteCount = 0;
-				if (args.length > 2)
+				// System.err.println("Reading input file " + args[1]);
+				File file = new File(args[1]);
+				byte[] result = new byte[(int) file.length()];
+				try
 				{
-					// System.err.println("Reading input file " + args[2]);
-					File file = new File(args[2]);
-					byte[] result = new byte[(int) file.length()];
+					InputStream input = null;
 					try
 					{
-						InputStream input = null;
-						try
+						int totalBytesRead = 0;
+						input = new BufferedInputStream(new FileInputStream(file));
+						while (totalBytesRead < result.length)
 						{
-							int totalBytesRead = 0;
-							input = new BufferedInputStream(new FileInputStream(file));
-							while (totalBytesRead < result.length)
+							int bytesRemaining = result.length - totalBytesRead;
+							// input.read() returns -1, 0, or more :
+							int bytesRead = input.read(result, totalBytesRead, bytesRemaining);
+							if (bytesRead > 0)
 							{
-								int bytesRemaining = result.length - totalBytesRead;
-								// input.read() returns -1, 0, or more :
-								int bytesRead = input.read(result, totalBytesRead, bytesRemaining);
-								if (bytesRead > 0)
-								{
-									totalBytesRead = totalBytesRead + bytesRead;
-								}
+								totalBytesRead = totalBytesRead + bytesRead;
 							}
-							inData = result;
 						}
-						finally
-						{
-							if (input != null)
-								input.close();
-						}
+						inData = result;
 					}
-					catch (FileNotFoundException ex)
+					finally
 					{
-						System.err.println("Input file \"" + file + "\" not found.");
-					}
-					catch (IOException ex)
-					{
-						ex.printStackTrace();
+						if (input != null)
+							input.close();
 					}
 				}
-				else
+				catch (FileNotFoundException ex)
 				{
-					try
-					{
-						while ((byteCount = System.in.read(inb)) > 0)
-						{
-							buf.write(inb, 0, byteCount);
-							buf.close();
-						}
-					}
-					catch (IOException e)
-					{
-						e.printStackTrace();
-					}
-					inData = buf.toByteArray();
+					System.err.println("Input file \"" + file + "\" not found.");
+				}
+				catch (IOException ex)
+				{
+					ex.printStackTrace();
 				}
 				int bytesForward = 0;
 				if (inData != null)
 				{
 					// System.err.println("Incoming data length: "+inData.length);
-					if (args[1].toUpperCase().contains("VALDOCS"))
+					if (args[0].toUpperCase().contains("VALDOCS"))
 					{
-						// If they are using a Valdocs transform, let's pick
-						// apart the file first.
+						// If they are using a Valdocs transform, let's pick apart the file first.
 						// System.err.println("De-indexing a valdocs file.");
 						// Figure out the original file name
 						char[] name = new char[110];
@@ -142,8 +114,8 @@ public class Transformenator
 						{
 							name[i] = (char) inData[i + 4];
 						}
-						String s1 = new String(name).trim();
-						System.err.println("Original filename: " + s1);
+						valdocsName = new String(name).trim();
+						// System.err.println("Original filename: " + valdocsName);
 						// Pick apart the file hunk indices
 						for (int i = 0x802; i < 0x90f; i += 2)
 						{
@@ -173,21 +145,34 @@ public class Transformenator
 						if (bytesForward > 0)
 							i = i + bytesForward - 1;
 					}
-					if (preamble != null)
+					try
 					{
-						System.out.write(preamble.getBytes(), 0, preamble.length());
+						String outfile = args[2];
+						if (valdocsName != null)
+							outfile = outfile + File.separator + valdocsName + ".txt";
+						FileOutputStream out = new FileOutputStream(outfile);
+						if (preamble != null)
+						{
+							out.write(preamble.getBytes(), 0, preamble.length());
+						}
+						String tempStr = outBuf.toString();
+						for (int i = 0; i < regReplace.size(); i++)
+						{
+							// System.err.println("Replacing ["+regPattern.elementAt(i)+"] with ["+regReplace.elementAt(i)+"].");
+							tempStr = tempStr.replaceAll(regPattern.elementAt(i), regReplace.elementAt(i));
+						}
+						byte[] stdout = tempStr.getBytes();
+						out.write(stdout, 0, stdout.length);
+						if (postamble != null)
+						{
+							out.write(postamble.getBytes(), 0, postamble.length());
+						}
+						out.flush();
+						out.close();
 					}
-					String tempStr = outBuf.toString();
-					for (int i = 0; i < regReplace.size(); i++)
+					catch (Exception ex)
 					{
-						// System.err.println("Replacing ["+regPattern.elementAt(i)+"] with ["+regReplace.elementAt(i)+"].");
-						tempStr = tempStr.replaceAll(regPattern.elementAt(i), regReplace.elementAt(i));
-					}
-					byte[] stdout = tempStr.getBytes();
-					System.out.write(stdout, 0, stdout.length);
-					if (postamble != null)
-					{
-						System.out.write(postamble.getBytes(), 0, postamble.length());
+						ex.printStackTrace();
 					}
 				}
 			}
@@ -262,67 +247,60 @@ public class Transformenator
 		return bytesMatched;
 	}
 
-	public static boolean readTransform(String[] args)
+	public static boolean readTransform(String filename)
 	{
 		boolean isOK = true;
 		FileReader fr = null;
-		if (args.length < 2)
+		// First try to load an external transform file. That should take
+		// precedence over an internal one.
+		try
+		{
+			fr = new FileReader(filename);
+			if (fr != null)
+			{
+				isOK = true;
+				parseTransforms(fr);
+				System.err.println("Using external transform file \"" + filename + "\".");
+			}
+		}
+		catch (Exception e)
 		{
 			isOK = false;
 		}
-		else
+		if (isOK == false)
 		{
-			// First try to load an external transform file. That should take
-			// precedence over an internal one.
+			// Didn't find an external one; how about that same specification as an internal one?
 			try
 			{
-				fr = new FileReader(args[1]);
-				if (fr != null)
+				InputStream is;
+				is = Transformenator.class.getResourceAsStream("/org/transformenator/transforms/" + filename);
+				if (is != null)
 				{
+					InputStreamReader isr = new InputStreamReader(is);
+					parseTransforms(isr);
+					System.err.println("Using internal transform file \"" + filename + "\".");
 					isOK = true;
-					parseTransforms(fr);
-					System.err.println("Using external transform file \"" + args[1] + "\".");
 				}
+				else
+					isOK = false;
 			}
-			catch (FileNotFoundException ex)
+			catch (Exception e)
 			{
 				isOK = false;
 			}
-			if (isOK == false)
-			{
-				// Didn't find an external one; how about that same
-				// specification as an internal one?
-				try
-				{
-					InputStream is;
-					is = Transformenator.class.getResourceAsStream("/org/transformenator/transforms/" + args[1]);
-					if (is != null)
-					{
-						InputStreamReader isr = new InputStreamReader(is);
-						parseTransforms(isr);
-						System.err.println("Using internal transform file \"" + args[1] + "\".");
-						isOK = true;
-					}
-					else
-						isOK = false;
-				}
-				catch (Exception e)
-				{
-					isOK = false;
-				}
-			}
 		}
 		if (isOK == false)
-			System.err.println("Unable to locate transform file named \"" + args[1] + "\".");
+			System.err.println("Unable to locate transform file named \"" + filename + "\".");
 		return isOK;
 	}
 
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("Transformenator v1.0 - perform transformation operations on binary files.");
+		System.err.println("Transformenator v1.1 - perform transformation operations on binary files.");
 		System.err.println();
-		System.err.println("Syntax: Transformenator -t transformFile [<] in.foo > out.foo");
+		System.err.println("Syntax: Transformenator transform infile outfile");
+		System.err.println("  Note: If using a Valdocs transform, outfile specifies an output directory.");
 		listInternalTransforms();
 	}
 

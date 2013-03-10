@@ -1,12 +1,12 @@
 #!/bin/sh
 # Usage: transformdirectory.sh transform origindir destdir
-if [ "$2" != "" ]
+if [ "$3" != "" ]
 then
   export MY_HOME="`pwd`"
   cd $2
   for file in ./*
   do
-    java -jar $MY_HOME/transformenator.jar -t $MY_HOME/$1 $file > $3/$file.txt
+    java -jar $MY_HOME/transformenator.jar $1 $file $3/$file.txt
   done
   cd $MY_HOME
 else
