@@ -112,21 +112,25 @@ public class Transformenator
 						int newBufCursor = 0;
 						for (int i = 0; i < 110; i++)
 						{
-							name[i] = (char) inData[i + 4];
+							char newChar = (char) inData[i + 4];
+							if (newChar == ':')
+								newChar = '-';
+							name[i] = newChar;
 						}
 						valdocsName = new String(name).trim();
 						// System.err.println("Original filename: " + valdocsName);
 						// Pick apart the file hunk indices
-						for (int i = 0x802; i < 0x90f; i += 2)
+						// The first few indices seem to be non-useful... so start in at 0x80a
+						for (int i = 0x80a; i < 0x90f; i += 2)
 						{
-							int idx = (int) inData[i] + (int) inData[i + 1] * 256;
-							if (idx > 0)
+							int idx = UnsignedByte.intValue(inData[i],inData[i + 1]);
+							if (idx < 32768)
 							{
-								// System.err.print(" "+idx);
-								for (int j = 4; j < 0x200; j++)
+								// Chunks may start with a pointer to skip over blank space
+								int offset = UnsignedByte.intValue(inData[(idx * 512)],inData[(idx * 512) + 1]);
+								// Pull out the data in the chunk
+								for (int j = offset + 4; j < 0x200; j++)
 								{
-									// Each hunk starts with a header of
-									// 0x00002020, so skip first 4 bytes.
 									newBuf[newBufCursor++] = inData[(idx * 512) + j];
 								}
 							}

@@ -13,5 +13,10 @@
 8f................8d = "\\r\\n"
 9b................9c = "\\r\\n"
 
+; End of text
+8484848484 = "<abcEND OF TEXTabc>"
+regex = @<abcEND OF TEXTabc>.*@@
+
 ; Header
 8181818181 =
+ 
