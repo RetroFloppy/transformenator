@@ -9,5 +9,4 @@ Your're stuck.
 Maybe that's why you're here. Transformenator can help.
 
 Invocation:
-java -jar transformenator.jar -t transform.xform infile.bin > outfile.bin
-
+java -jar transformenator.jar transform infile.bin outfile.bin
