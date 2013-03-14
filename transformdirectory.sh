@@ -4,9 +4,10 @@ if [ "$3" != "" ]
 then
   export MY_HOME="`pwd`"
   cd $2
+  mkdir $3
   for file in ./*
   do
-    java -jar $MY_HOME/transformenator.jar $1 $file $3/$file.txt
+    java -jar $MY_HOME/transformenator.jar $1 $file $3
   done
   cd $MY_HOME
 else
