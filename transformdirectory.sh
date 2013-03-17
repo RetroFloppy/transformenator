@@ -7,7 +7,7 @@ then
   mkdir $3
   for file in ./*
   do
-    java -jar $MY_HOME/transformenator.jar $1 $file $3
+    java -jar $MY_HOME/transformenator.jar "$1" "$file" "$3.txt"
   done
   cd $MY_HOME
 else
