@@ -1,0 +1,32 @@
+;
+; Tandy 100/102/200/WP-2
+;
+
+; Did we accidentally pull in a sector header?  Lop it off.
+000073656b696e65................................................................................................................................................................................................................................................ =
+
+; Start of text
+04 =
+
+; Line breaks
+08 = 20
+
+; Form feed
+0c = 0d0a
+
+; Newline
+0d = 0d0a
+
+; Start/end of heading (can't tell which is on and which is off)
+01 =
+
+; Bullet list
+05 = "*"
+
+; Nulls (sometimes part of junk at the end of the file, past the ctrl-Z
+00 =
+
+; End of text (ctrl-Z)
+1a = "AbC end of text for all time aBc"
+regex = @AbC end of text for all time aBc.*@@
+
