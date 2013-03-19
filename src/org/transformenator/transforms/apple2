@@ -1,0 +1,122 @@
+;
+; Unknown Apple II word processor
+;
+
+; Start of text
+40030802 =
+
+0040..08 =
+00400302 = 0d0a
+00400106 = 
+004003 =
+400102 =
+400302 =
+
+; Newline
+02 = 0d0a
+0d = 0d0a
+
+; Spaces
+a0 = 20
+9a = 20
+9b = 20
+9c = 20
+9d = 20
+9e = 20
+9f = 20
+
+; Punctuation
+a1 = 21
+a2 = 22
+a3 = 23
+a4 = 24
+a5 = 25
+a6 = 26
+a7 = 27
+a8 = 28
+a9 = 29
+aa = 2a
+ab = 2b
+ac = 2c
+ad = 2d
+ae = 2e
+af = 2f
+
+ba = 3a
+bb = 3b
+bc = 3c
+bd = 3d
+be = 3e
+bf = 3f
+
+; Numbers
+b0 = 30
+b1 = 31
+b2 = 32
+b3 = 33
+b4 = 34
+b5 = 35
+b6 = 36
+b7 = 37
+b8 = 38
+b9 = 39
+
+; Strip high bit from capitals
+c1 = 41
+c2 = 42
+c3 = 43
+c4 = 44
+c5 = 45
+c6 = 46
+c7 = 47
+c8 = 48
+c9 = 49
+ca = 4a
+cb = 4b
+cc = 4c
+cd = 4d
+ce = 4e
+cf = 4f
+d0 = 50
+d1 = 51
+d2 = 52
+d3 = 53
+d4 = 54
+d5 = 55
+d6 = 56
+d7 = 57
+d8 = 58
+d9 = 59
+da = 5a
+
+; Lower case
+e1 = 61
+e2 = 62
+e3 = 63
+e4 = 64
+e5 = 65
+e6 = 66
+e7 = 67
+e8 = 68
+e9 = 69
+ea = 6a
+eb = 6b
+ec = 6c
+ed = 6d
+ee = 6e
+ef = 6f
+f0 = 70
+f1 = 71
+f2 = 72
+f3 = 73
+f4 = 74
+f5 = 75
+f6 = 76
+f7 = 77
+f8 = 78
+f9 = 79
+fa = 7a
+
+; Strip off nulls
+00 = 
+ff =
