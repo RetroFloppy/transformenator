@@ -61,7 +61,7 @@ b7 = 37
 b8 = 38
 b9 = 39
 
-; Strip high bit from capitals
+; Strip high bits from capitals
 c1 = 41
 c2 = 42
 c3 = 43
@@ -89,7 +89,7 @@ d8 = 58
 d9 = 59
 da = 5a
 
-; Lower case
+; Strip high bits from lower case
 e1 = 61
 e2 = 62
 e3 = 63
