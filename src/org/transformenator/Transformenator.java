@@ -148,6 +148,9 @@ public class Transformenator
 						// bytesForward);
 						if (bytesForward > 0)
 							i = i + bytesForward - 1;
+						if (bytesForward == -1)
+							// EOF reached
+							break;
 					}
 					try
 					{
@@ -214,8 +217,7 @@ public class Transformenator
 				}
 				else
 				{
-					// System.err.println("Comparing left byte "+compLeft[j]+" to right byte "+incoming[offset
-					// + j]);
+					// System.err.println("Comparing left byte "+compLeft[j]+" to right byte "+incoming[offset + j]);
 					care = true;
 				}
 				if (((compLeft[j]) != incoming[offset + j]) && (care == true))
@@ -225,21 +227,30 @@ public class Transformenator
 			}
 			if (match == true)
 			{
-				// System.err.println("Found a match at offset "+offset);
-				try
+				System.err.println("Found a match at offset "+offset);
+				if (currentSpec.command == 0)
 				{
-					// send out new data
-					if (replRight != null)
+					try
 					{
-						outBuf.write(replRight);
+						// send out new data
+						if (replRight != null)
+						{
+							outBuf.write(replRight);
+						}
 					}
+					catch (Exception ex)
+					{
+						ex.printStackTrace();
+					}
+					bytesMatched = currLeftLength;
+					break;
 				}
-				catch (Exception ex)
+				else
 				{
-					ex.printStackTrace();
+					// EOF reached
+					bytesMatched = -1;
+					break;
 				}
-				bytesMatched = currLeftLength;
-				break;
 			}
 		}
 		if (bytesMatched == 0)
@@ -357,7 +368,8 @@ public class Transformenator
 			StringTokenizer st;// = new StringTokenizer("=");
 			while ((line = br.readLine()) != null)
 			{
-				boolean addedLeft = false;
+				RegSpec newRegSpec = new RegSpec();
+				boolean addLeft = false;
 				boolean addedRight = false;
 				boolean skip = false;
 				String[] result = line.split("=");
@@ -383,13 +395,10 @@ public class Transformenator
 					}
 					else
 					{
-						RegSpec newRegSpec = new RegSpec();
 						newRegSpec.leftCompare = asBytes(leftTemp);
 						newRegSpec.leftMask = maskBytes(leftTemp);
-						// System.err.println("Left bytes length: " +
-						// leftBytes.length);
-						leftSide.add(newRegSpec);
-						addedLeft = true;
+						// System.err.println("Left bytes length: " + leftBytes.length);
+						addLeft = true;
 					}
 				}
 				if ((result.length > 1) && !skip)
@@ -402,7 +411,14 @@ public class Transformenator
 						{
 							rightTemp = rightTemp + st.nextToken() + " ";
 						}
-						if (rightTemp.trim().charAt(0) == '"')
+						// System.err.println("Found a string: ["+rightTemp.trim()+"]");
+						if (rightTemp.trim().equals("\"{@@<FiLe_EoF>@@}\""))
+						{
+							System.err.println("Found an EOF specification...");
+							// Need to add an EOF command to the left side spec.
+							newRegSpec.command = 1;
+						}
+						else if (rightTemp.trim().charAt(0) == '"')
 						{
 							String newString = "";
 							// System.err.println("Found a string...");
@@ -460,7 +476,9 @@ public class Transformenator
 						}
 					}
 				}
-				if (addedLeft & !addedRight)
+				if (addLeft)
+					leftSide.add(newRegSpec);
+				if (addLeft & !addedRight)
 				{
 					// System.err.println("Right side token is null.");
 					rightSide.add(null);
@@ -535,7 +553,9 @@ public class Transformenator
 			bytes[j] = digits[i];
 			j++;
 		}
-		result = (bytes[0] & 0xFF) | (bytes[1] & 0xFF) * 256 | (bytes[2] & 0xFF) * 512 | (bytes[3] & 0xFF) * 1024 | (bytes[4] & 0xFF) * 2048 | (bytes[5] & 0xFF) * 4096;
+		result = (bytes[0] & 0xFF) | (bytes[1] & 0xFF) * 256
+				| (bytes[2] & 0xFF) * 512 | (bytes[3] & 0xFF) * 1024
+				| (bytes[4] & 0xFF) * 2048 | (bytes[5] & 0xFF) * 4096;
 		return result;
 	}
 

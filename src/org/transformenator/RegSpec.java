@@ -25,4 +25,5 @@ public class RegSpec
 	// Just struct-ifying this data type
 	public byte[] leftCompare;
 	public byte[] leftMask;
+	public int command = 0;
 }

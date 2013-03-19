@@ -73,6 +73,10 @@ b12d31 = "\i "
 ; Italics off
 b12d30 = "\i0 "
 </xmp>
+There is a special case for representing the end of file. 
+When specifying the byte pattern that signifies the end of file marker, the right side should be this production:
+<xmp>; EOF is ctrl-Z
+1a = "{@@<FiLe_EoF>@@}"</xmp> 
 There is a special case for specifying returns and newlines.
 If you need to translate a byte pattern into something that includes them, you need to escape the backslash.
 For example:
