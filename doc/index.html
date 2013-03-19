@@ -31,7 +31,23 @@ Where:<br>
 <code>transform</code> is a file containing the set of transformations you want to make<br>
 <code>infile.bin</code> is the original file<br>
 <code>outfile.bin</code> is the resulting file after running the transforms
-<p>
+<h2>Example</h2>
+Say you have the file below named infile.bin, represented in a typical hex editor:
+<xmp>(Offset) (Hex data)                               (ASCII representation)
+0000000: 6162 6364 0000 6566 6768 696a 1a67 6574  abcd..efghij.get
+0000010: 2072 6964 206f 6620 6d65 210a             rid of me!.
+</xmp>
+Say we want to change the hex zeroes in the middle to spaces, and eliminate anything after the EOF (0x1a).
+Create a transform file named transform to do that:
+<xmp>; Swap spaces for nulls
+00 = 20
+; EOF really means EOF
+1a = "{@@<FiLe_EoF>@@}"</xmp>
+So, we run infile.bin through the transform file and send the output to a file named outfile.bin:
+<xmp>%java -jar transformenator.jar transform infile.bin outfile.bin</xmp>
+The resulting outfile.bin looks like this in a hex editor:
+<xmp>(Offset) (Hex data)                               (ASCII representation)
+0000000: 6162 6364 2020 6566 6768 696a            abcd  efghij</xmp>
 <h2>Transform Specifications</h2>
 The Transformenator project comes with several example transforms used to convert various early binary word processor
 formats to RTF, HTML, or plain ASCII text. 
