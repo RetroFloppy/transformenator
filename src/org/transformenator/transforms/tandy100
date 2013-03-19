@@ -20,13 +20,11 @@
 ; Start/end of heading (can't tell which is on and which is off)
 01 =
 
-; Bullet list
+; Bulleted list
 05 = "*"
 
-; Nulls (sometimes part of junk at the end of the file, past the ctrl-Z
-00 =
-
 ; End of text (ctrl-Z)
-1a = "AbC end of text for all time aBc"
-regex = @AbC end of text for all time aBc.*@@
+1a = "{@@<FiLe_EoF>@@}"
 
+; Nulls
+00 =

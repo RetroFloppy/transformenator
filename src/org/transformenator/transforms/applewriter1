@@ -109,9 +109,6 @@ fe = 3e
 ff = 3f
 
 ; EOF, SOT, Hard newline
-60 = "<ABCend of text for all timeXYZ>"
+60 = "{@@<FiLe_EoF>@@}"
 83 = 
 8d = "\\r\\n"
-
-; Clip off cruft after the EOT marker
-regex = @<ABCend of text for all timeXYZ>.*@@

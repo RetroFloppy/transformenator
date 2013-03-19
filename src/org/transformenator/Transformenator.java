@@ -44,6 +44,16 @@ import org.transformenator.RegSpec;
 public class Transformenator
 {
 
+	public static void help()
+	{
+		System.err.println();
+		System.err.println("Transformenator v1.2 - perform transformation operations on binary files.");
+		System.err.println();
+		System.err.println("Syntax: Transformenator transform infile outfile");
+		System.err.println("  Note: If using a Valdocs transform, outfile specifies an output directory.");
+		listInternalTransforms();
+	}
+
 	public static void main(java.lang.String[] args)
 	{
 		boolean rc = false;
@@ -118,7 +128,7 @@ public class Transformenator
 							name[i] = newChar;
 						}
 						valdocsName = new String(name).trim();
-						// System.err.println("Original filename: " + valdocsName);
+						// System.err.println("Found file: \"" + valdocsName+"\"");
 						// Pick apart the file hunk indices
 						// The first few indices seem to be non-useful... so start in at 0x80a
 						for (int i = 0x80a; i < 0x90f; i += 2)
@@ -156,7 +166,10 @@ public class Transformenator
 					{
 						String outfile = args[2];
 						if (valdocsName != null)
+						{
 							outfile = outfile + File.separator + valdocsName + ".txt";
+							System.err.println("Creating file: \"" + outfile+"\"");
+						}
 						FileOutputStream out = new FileOutputStream(outfile);
 						if (preamble != null)
 						{
@@ -227,7 +240,7 @@ public class Transformenator
 			}
 			if (match == true)
 			{
-				System.err.println("Found a match at offset "+offset);
+				// System.err.println("Found a match at offset "+offset);
 				if (currentSpec.command == 0)
 				{
 					try
@@ -307,16 +320,6 @@ public class Transformenator
 		if (isOK == false)
 			System.err.println("Unable to locate transform file named \"" + filename + "\".");
 		return isOK;
-	}
-
-	public static void help()
-	{
-		System.err.println();
-		System.err.println("Transformenator v1.1 - perform transformation operations on binary files.");
-		System.err.println();
-		System.err.println("Syntax: Transformenator transform infile outfile");
-		System.err.println("  Note: If using a Valdocs transform, outfile specifies an output directory.");
-		listInternalTransforms();
 	}
 
 	public static void listInternalTransforms()
@@ -414,7 +417,7 @@ public class Transformenator
 						// System.err.println("Found a string: ["+rightTemp.trim()+"]");
 						if (rightTemp.trim().equals("\"{@@<FiLe_EoF>@@}\""))
 						{
-							System.err.println("Found an EOF specification...");
+							// System.err.println("Found an EOF specification...");
 							// Need to add an EOF command to the left side spec.
 							newRegSpec.command = 1;
 						}

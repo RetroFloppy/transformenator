@@ -6,9 +6,9 @@
 trim_leading = 400
 
 ; Start of text
-0C =
+0c =
 
 ; End of text
-0E =
+0e = "{@@<FiLe_EoF>@@}"
 
 0d = "\\r\\n"
