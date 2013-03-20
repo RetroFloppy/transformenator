@@ -10,3 +10,5 @@ Maybe that's why you're here. Transformenator can help.
 
 Invocation:
 java -jar transformenator.jar transform infile.bin outfile.bin
+
+See http://transformenator.sourceforge.net for details.
