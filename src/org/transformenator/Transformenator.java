@@ -50,7 +50,8 @@ public class Transformenator
 		System.err.println("Transformenator v1.2 - perform transformation operations on binary files.");
 		System.err.println();
 		System.err.println("Syntax: Transformenator transform infile outfile");
-		System.err.println("  Note: If using a Valdocs transform, outfile specifies an output directory.");
+		System.err.println("  See http://transformenator.sourceforge.net/ for transform file specification.");
+		System.err.println("  If using the Valdocs transform, outfile specifies an output directory.");
 		listInternalTransforms();
 	}
 
