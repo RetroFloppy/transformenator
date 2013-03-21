@@ -11,3 +11,6 @@
 ; Link tag
 03........................................00......2c = 
 
+; Special begin-end characters... maybe chevrons, etc.
+93 = "<"
+94 = ">"
