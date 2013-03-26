@@ -1,5 +1,8 @@
 #!/bin/sh
+#
 # Usage: transformdirectory.sh transform origindir destdir
+# Set TRANSFORM_HOME to the location of the transformenator.jar file.
+#
 if [ "$3" != "" ]
 then
   export MY_HOME="`pwd`"
@@ -7,7 +10,7 @@ then
   mkdir $3
   for file in ./*
   do
-    java -jar $MY_HOME/transformenator.jar "$1" "$file" "$3.txt"
+    java -jar $TRANSFORM_HOME/transformenator.jar "$1" "$file" "$3/$file.txt"
   done
   cd $MY_HOME
 else
