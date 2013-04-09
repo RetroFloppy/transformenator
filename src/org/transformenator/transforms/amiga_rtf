@@ -1,0 +1,32 @@
+;
+; Unknown Amiga word processor
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Preambles
+8080........c3 =
+8080..........c3 = 
+8080099d9c =
+80800a099d =
+
+; Turns something on or off
+83 =
+
+; Line endings
+0d = 20
+0a = "\par\par "
+
+; Bold on
+9d = "\b1"
+; Bold off
+9c = "\b0"
+
+; endash
+a9 = 2d
+
+; Some crazy garbage
+dc6600000000..00dc.. = 20

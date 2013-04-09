@@ -1,0 +1,26 @@
+;
+; Unknown Amiga word processor
+;
+
+; Preambles
+8080........c3 =
+8080..........c3 = 
+8080099d9c =
+80800a099d =
+
+; Turns something on or off
+83 =
+
+; Line endings
+0d = 20
+0a = "<p>"
+
+; Bold on/off
+9d = "<b>"
+9c = "</b>"
+
+; endash
+a9 = 2d
+
+; Some crazy garbage
+dc6600000000..00dc.. = 20
