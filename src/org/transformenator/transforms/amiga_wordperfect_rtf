@@ -21,9 +21,9 @@ tail = "}"
 0a = "\par\par "
 
 ; Bold on
-9d = "\b1"
+9d = "\b1 "
 ; Bold off
-9c = "\b0"
+9c = "\b0 "
 
 ; endash
 a9 = 2d

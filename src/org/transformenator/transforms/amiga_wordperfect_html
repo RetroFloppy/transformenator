@@ -2,6 +2,11 @@
 ; Unknown Amiga word processor
 ;
 
+; Header for HTML format
+head = "<html>"
+; Trailer for HTML format
+tail = "</html>"
+
 ; Preambles
 8080........c3 =
 8080..........c3 = 
