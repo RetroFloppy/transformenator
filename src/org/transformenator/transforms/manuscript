@@ -1,0 +1,88 @@
+;
+; Lotus Manuscript transform
+;
+
+;2 1 ( 1 1 b 2 8 7 3 3 . 3 . 5 6    = 
+3231283131623238373333..33..353600 =
+
+; Start of text - convert '*B.' to '*B'
+0d0a2a42..0d0a = 0d0a2a420d0a0d0a
+ 
+; Start of text - '*B'
+0d0a2a420d0a = "{@@<FiLe_SoF>@@}"
+
+; End of text - '*E'
+0d0a2a450d0a = "{@@<FiLe_EoF>@@}"
+
+; Newline
+1d = 0a
+
+; New page? "=1"
+0d0a3d31 =
+
+; May be beginning of line, or centering
+133233281329 =
+13372831 =
+1329 =
+
+; Unknown... 18(26000
+3138283236303030 =
+
+; 3...
+0d0a33......0d0a = 0d0a
+
+; B.....
+0d0a42..........0d0a = 0d0a
+
+; B....
+0d0a42........0d0a = 0d0a
+
+; B...
+0d0a42......0d0a = 0d0a
+
+; B..
+0d0a42....0d0a = 0d0a
+
+; B
+0d0a420d0a = 0d0a
+
+; C...
+0d0a43......0d0a = 0d0a
+
+; C..
+0d0a43....0d0a = 0d0a
+
+; E.
+0d0a45..0d0a = 0d0a
+
+; S...
+0d0a53......0d0a = 0d0a
+
+; S..
+0d0a53....0d0a = 0d0a
+
+; S.
+0d0a53..0d0a = 0d0a
+
+; S
+0d0a53 = 
+
+; New text line
+0d0a54 =
+
+0d0a = 
+
+; Stray control characters
+01 = 
+04 =
+05 =
+10 =
+12 = 
+13 =
+80 =
+
+; Lop off nulls
+00 =
+
+; Ctrl-/
+1c =
