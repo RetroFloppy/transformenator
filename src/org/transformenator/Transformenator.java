@@ -47,7 +47,7 @@ public class Transformenator
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("Transformenator v1.2 - perform transformation operations on binary files.");
+		System.err.println("Transformenator v1.3 - perform transformation operations on binary files.");
 		System.err.println();
 		System.err.println("Syntax: Transformenator transform infile outfile");
 		System.err.println("  See http://transformenator.sourceforge.net/ for transform file specification.");
@@ -58,6 +58,7 @@ public class Transformenator
 	public static void main(java.lang.String[] args)
 	{
 		boolean rc = false;
+		foundSOF = false;
 		String valdocsName = null;
 		if (args.length == 3)
 		{
@@ -155,10 +156,11 @@ public class Transformenator
 					for (int i = trimLeading; i < inData.length; i++)
 					{
 						bytesForward = evaluateTransforms(inData, outBuf, i, inData.length);
-						// System.err.println("i=" + i + "; bytesForward=" +
-						// bytesForward);
+						// System.err.println("i=" + i + "; bytesForward=" + bytesForward+"; backupBytes="+backupBytes);
 						if (bytesForward > 0)
 							i = i + bytesForward - 1;
+						if (backupBytes > 0)
+							i = i - backupBytes;
 						if (bytesForward == -1)
 							// EOF reached
 							break;
@@ -207,10 +209,11 @@ public class Transformenator
 
 	public static int evaluateTransforms(byte[] incoming, ByteArrayOutputStream outBuf, int offset, int max)
 	{
-		int i = 0;
+		int i = 0, k = 0;
 		int bytesMatched = 0;
 		int currLeftLength = 0;
 		boolean match = false;
+		backupBytes = 0;
 		for (i = 0; i < leftSide.size(); i++) // For each left specification
 		{
 			RegSpec currentSpec = leftSide.elementAt(i);
@@ -241,7 +244,7 @@ public class Transformenator
 			}
 			if (match == true)
 			{
-				// System.err.println("Found a match at offset "+offset);
+				// System.err.println("Found a match at offset "+offset+"; left length = "+currLeftLength);
 				if (currentSpec.command == 0)
 				{
 					try
@@ -249,7 +252,15 @@ public class Transformenator
 						// send out new data
 						if (replRight != null)
 						{
-							outBuf.write(replRight);
+							// outBuf.write(replRight);
+							// Push the replacement back onto incoming
+							for (k = 0; k < replRight.length; k++)
+							{
+								int calc = offset + compLeft.length - replRight.length + k;
+								// System.err.println("Pushing byte: "+calc);								
+								incoming[offset + compLeft.length - replRight.length + k] = replRight[k];
+							}
+							backupBytes = replRight.length;
 						}
 					}
 					catch (Exception ex)
@@ -259,17 +270,33 @@ public class Transformenator
 					bytesMatched = currLeftLength;
 					break;
 				}
-				else
+				else if (currentSpec.command == 1)
 				{
 					// EOF reached
 					bytesMatched = -1;
+					break;
+				}
+				else if (currentSpec.command == 2)
+				{
+					// SOF reached
+					bytesMatched = currLeftLength;
+					if (foundSOF == false)
+						outBuf.reset();
+					foundSOF = true;
+					break;
+				}
+				else if (currentSpec.command == 3)
+				{
+					// SOF (greedy) reached
+					bytesMatched = currLeftLength;
+					outBuf.reset();
 					break;
 				}
 			}
 		}
 		if (bytesMatched == 0)
 		{
-			// System.err.println("Writing out original byte, no comparisons to make. location="+location);
+			// System.err.println("Writing out original byte, no comparisons to make.");
 			outBuf.write(incoming[offset]);
 			bytesMatched = 1;
 		}
@@ -422,6 +449,18 @@ public class Transformenator
 							// Need to add an EOF command to the left side spec.
 							newRegSpec.command = 1;
 						}
+						else if (rightTemp.trim().equals("\"{@@<FiLe_SoF>@@}\""))
+						{
+							// System.err.println("Found an SOF specification...");
+							// Need to add an SOF command to the left side spec.
+							newRegSpec.command = 2;
+						}
+						else if (rightTemp.trim().equals("\"{@@<FiLe_SoF_GrEeDy>@@}\""))
+						{
+							// System.err.println("Found a greedy SOF specification...");
+							// Need to add an SOF command to the left side spec.
+							newRegSpec.command = 3;
+						}
 						else if (rightTemp.trim().charAt(0) == '"')
 						{
 							String newString = "";
@@ -570,5 +609,7 @@ public class Transformenator
 	static String preamble;
 	static String postamble;
 	static int trimLeading;
+	static boolean foundSOF;
+	static int backupBytes;
 
 }
