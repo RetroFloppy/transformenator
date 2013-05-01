@@ -73,7 +73,7 @@ public class Transformenator
 			if (rc == true)
 			{
 				ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
-				byte[] inData = null;
+				inData = null;
 				// System.err.println("Reading input file " + args[1]);
 				File file = new File(args[1]);
 				byte[] result = new byte[(int) file.length()];
@@ -155,7 +155,8 @@ public class Transformenator
 					// System.err.println("Trimming leading "+trimLeading+" bytes.");
 					for (int i = trimLeading; i < inData.length; i++)
 					{
-						bytesForward = evaluateTransforms(inData, outBuf, i, inData.length);
+						backupBytes = 0;
+						bytesForward = evaluateTransforms(outBuf, i, inData.length);
 						// System.err.println("i=" + i + "; bytesForward=" + bytesForward+"; backupBytes="+backupBytes);
 						if (bytesForward > 0)
 							i = i + bytesForward - 1;
@@ -207,7 +208,7 @@ public class Transformenator
 		}
 	}
 
-	public static int evaluateTransforms(byte[] incoming, ByteArrayOutputStream outBuf, int offset, int max)
+	public static int evaluateTransforms(ByteArrayOutputStream outBuf, int offset, int max)
 	{
 		int i = 0, k = 0;
 		int bytesMatched = 0;
@@ -237,7 +238,7 @@ public class Transformenator
 					// System.err.println("Comparing left byte "+compLeft[j]+" to right byte "+incoming[offset + j]);
 					care = true;
 				}
-				if (((compLeft[j]) != incoming[offset + j]) && (care == true))
+				if (((compLeft[j]) != inData[offset + j]) && (care == true))
 				{
 					match = false;
 				}
@@ -252,15 +253,32 @@ public class Transformenator
 						// send out new data
 						if (replRight != null)
 						{
-							// outBuf.write(replRight);
 							// Push the replacement back onto incoming
+							int calc = offset + compLeft.length - replRight.length;
+							// System.err.println("calc: "+calc+" offset: "+offset);								
+							if (calc < 0)
+							{
+								System.err.println("calc: "+calc+" offset: "+offset);								
+								int bump = Math.abs(calc);
+								byte newInData[] = new byte[inData.length - calc];
+								for (int q = 0; q < inData.length; q++)
+								{
+									newInData[q+bump] = inData[q];
+								}
+								inData = newInData;
+								offset += replRight.length - compLeft.length;
+							}
 							for (k = 0; k < replRight.length; k++)
 							{
-								int calc = offset + compLeft.length - replRight.length + k;
-								// System.err.println("Pushing byte: "+calc);								
-								incoming[offset + compLeft.length - replRight.length + k] = replRight[k];
+								// System.err.println("Pushing byte: "+k);								
+								inData[offset + compLeft.length - replRight.length + k] = replRight[k];
 							}
 							backupBytes = replRight.length;
+							if (calc < 0)
+							{
+								backupBytes += calc;
+							}
+							// System.out.println("Backing up "+replRight.length+" bytes.");
 						}
 					}
 					catch (Exception ex)
@@ -297,7 +315,7 @@ public class Transformenator
 		if (bytesMatched == 0)
 		{
 			// System.err.println("Writing out original byte, no comparisons to make.");
-			outBuf.write(incoming[offset]);
+			outBuf.write(inData[offset]);
 			bytesMatched = 1;
 		}
 		return bytesMatched;
@@ -602,6 +620,7 @@ public class Transformenator
 		return result;
 	}
 
+	static byte inData[] = null;
 	static Vector<String> regPattern = new Vector<String>();
 	static Vector<String> regReplace = new Vector<String>();
 	static Vector<RegSpec> leftSide = new Vector<RegSpec>();
