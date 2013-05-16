@@ -223,23 +223,17 @@ public class Transformenator
 				continue;
 			byte[] compLeft = leftSide.elementAt(i).leftCompare;
 			byte[] maskLeft = leftSide.elementAt(i).leftMask;
-			boolean care = true;
 			byte[] replRight = rightSide.elementAt(i);
 			match = true;
 			for (int j = 0; j < compLeft.length; j++)
 			{
-				if (maskLeft[j] == 1)
+				if (((compLeft[j]) != inData[offset + j]) && (maskLeft[j] == 0))
 				{
-					// System.err.println("Don't care byte - it will match");
-					care = false;
+					match = false;
 				}
-				else
+				else if ((inData[offset + j] == 0) && (maskLeft[j] == 2))
 				{
-					// System.err.println("Comparing left byte "+compLeft[j]+" to right byte "+incoming[offset + j]);
-					care = true;
-				}
-				if (((compLeft[j]) != inData[offset + j]) && (care == true))
-				{
+					// System.err.println("Found a non-zero byte at "+j);								
 					match = false;
 				}
 			}
@@ -258,7 +252,7 @@ public class Transformenator
 							// System.err.println("calc: "+calc+" offset: "+offset);								
 							if (calc < 0)
 							{
-								System.err.println("calc: "+calc+" offset: "+offset);								
+								// System.err.println("calc: "+calc+" offset: "+offset);								
 								int bump = Math.abs(calc);
 								byte newInData[] = new byte[inData.length - calc];
 								for (int q = 0; q < inData.length; q++)
@@ -593,8 +587,16 @@ public class Transformenator
 			}
 			catch (NumberFormatException ex)
 			{
-				buf[i / 2] = 1;
-				// System.err.println("Ignoring byte at position "+i/2);
+				if (c == '!')
+				{
+					// System.err.println("Byte at position "+i/2+" must be non-zero.");
+					buf[i / 2] = 2;
+				}
+				else
+				{
+					// System.err.println("Ignoring byte at position "+i/2);
+					buf[i / 2] = 1;
+				}
 			}
 			i++;
 		}
