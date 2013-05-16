@@ -1,3 +1,13 @@
+New for v1.3:
+
+ * Recursive transform specs - changes are now fed back to input stream and exposed to subsequent transforms
+   - This can cause loops if your specs change data to the same thing (i.e. "0d = 0d0a")
+   - Use the hashmark instead of equals sign in these cases (i.e. "0d # 0d0a") to move past once substituted
+
+ * "Must be non-zero" specification ("!!") - similar to "don't care," but allows any value except zero to match
+
+Transformenator introduction:
+
 Transformenation is something that should be possible to do with some rudimentary shell scripting. You should be able to run a binary file through sed or awk and have byte sequences change to different byte sequences.
 
 But you can't.

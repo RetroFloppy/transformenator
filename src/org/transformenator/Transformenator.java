@@ -51,7 +51,7 @@ public class Transformenator
 		System.err.println();
 		System.err.println("Syntax: Transformenator transform infile outfile");
 		System.err.println("  See http://transformenator.sourceforge.net/ for transform file specification.");
-		System.err.println("  If using the Valdocs transform, outfile specifies an output directory.");
+		System.err.println("  If using a valdocs transform, outfile specifies an output directory.");
 		listInternalTransforms();
 	}
 

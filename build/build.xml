@@ -2,9 +2,11 @@
 <project name="transformenator" default="all" basedir="..">
 	<property name="builddir" value="${basedir}/build" />
 	<target name="all" description="">
+		<copy file="${basedir}/LICENSE" tofile="${basedir}/bin/LICENSE" />
 		<jar jarfile="transformenator.jar"
 			manifest="build/manifest.mf"
 			basedir="${basedir}/bin"
-			includes="org/**/*.class org/**/*.java org/**/*.properties org/**/*.png org/**/*.dmp org/**/**/* LICENSE" />
+			includes="org/**/*.class org/**/*.java org/**/*.properties org/**/*.png org/**/*.dmp org/**/**/* LICENSE"
+			excludes="org/**/**/test" />
 	</target>
 </project>
