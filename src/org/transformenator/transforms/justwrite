@@ -1,0 +1,21 @@
+;
+; JustWrite word processor
+;
+
+; Trim the leading 0x0400 bytes
+trim_leading = 400
+
+; Start of a new section/page
+ff9b = 0d
+
+; Other control sequences
+ff.. =
+
+; Mid-sentence breaks: byte, zero, non-zero, zero 
+..00!!00 =
+
+; Lop off nulls
+00 =
+
+; Not sure what these are... seem to be page breaks of some sort
+2e2e2e092e2e2e2e092e2e2e2e092e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e =
