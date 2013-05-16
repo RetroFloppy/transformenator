@@ -15,7 +15,7 @@
 0c = 0d0a
 
 ; Newline
-0d = 0d0a
+0d # 0d0a
 
 ; Start/end of heading (can't tell which is on and which is off)
 01 =

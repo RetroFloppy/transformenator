@@ -54,6 +54,15 @@ formats to RTF, HTML, or plain ASCII text.
 A sample <code>transform</code> file might simply look like this:
 <xmp>; Change 0x00 to 0x20
 00 = 20</xmp>
+Note that replacement bytes are "fed back" to all transform specifications again - so you can get
+yourself into a loop with a specification like this:
+<xmp>20 = 20</xmp>
+It may be desirable to "move past" a substitution once it's been made - eliminating it from any
+further processing by subsequent specifications.  
+The "hash" ("#") character is used instead of the equals sign in that case:
+<xmp>; Move past the end-of-line substitution once it's been made
+0d # 0d0a</xmp> 
+<p>
 Semicolons denote comment lines.
 The left side of the equals sign is one of these things:
 <ul>
@@ -61,6 +70,8 @@ The left side of the equals sign is one of these things:
 <xmp>0d0a32ea4f</xmp>
 <li>A byte pattern combined with "don't care" values consisting of even numbers of non-hex digits<br>
 <xmp>0d0a....4f</xmp>
+<li>A byte pattern requiring a non-zero byte between two zero bytes<br>
+<xmp>00!!00</xmp>
 <li><code>head</code> specifies a beginning-of-file preamble to add to the beginning of the resultant file<br>
 <xmp>; Header for HTML format
 head = "<html>"</xmp>

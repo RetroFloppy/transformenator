@@ -11,5 +11,4 @@ trim_leading = 400
 ; End of text
 0e = "{@@<FiLe_EoF>@@}"
 
-; This would be a bad thing(tm) when the parser is recursive.
-;0d = "\\r\\n"
+0d # "\\r\\n"

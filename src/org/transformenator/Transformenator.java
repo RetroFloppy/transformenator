@@ -245,7 +245,7 @@ public class Transformenator
 					try
 					{
 						// send out new data
-						if (replRight != null)
+						if ((replRight != null) && (currentSpec.backtrack == true))
 						{
 							// Push the replacement back onto incoming
 							int calc = offset + compLeft.length - replRight.length;
@@ -273,6 +273,10 @@ public class Transformenator
 								backupBytes += calc;
 							}
 							// System.out.println("Backing up "+replRight.length+" bytes.");
+						}
+						else if ((replRight != null) && (currentSpec.backtrack == false))
+						{
+							outBuf.write(replRight);
 						}
 					}
 					catch (Exception ex)
@@ -415,11 +419,25 @@ public class Transformenator
 				boolean addLeft = false;
 				boolean addedRight = false;
 				boolean skip = false;
-				String[] result = line.split("=");
+				String[] result1 = line.split("=");
+				String[] result2 = line.split("#");
+				String[] result;
 				String leftTemp = "";
 				String rightTemp = "";
 				byte[] rightBytes = null;
-				st = new StringTokenizer(result[0]);
+				// System.err.println("Splits on '=': "+result1.length+" splits on '#': "+result2.length);
+				if (result2.length > 1)
+				{
+					st = new StringTokenizer(result2[0]);
+					result = result2;
+					newRegSpec.backtrack = false;
+				}
+				else
+				{
+					st = new StringTokenizer(result1[0]);
+					result = result1;
+					newRegSpec.backtrack = true;
+				}
 				if (st.hasMoreTokens())
 				{
 					leftTemp = st.nextToken();

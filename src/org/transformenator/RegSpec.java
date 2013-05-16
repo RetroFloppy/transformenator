@@ -26,4 +26,5 @@ public class RegSpec
 	public byte[] leftCompare;
 	public byte[] leftMask;
 	public int command = 0;
+	public boolean backtrack = true;
 }

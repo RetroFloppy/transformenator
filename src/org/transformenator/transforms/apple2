@@ -14,7 +14,7 @@
 
 ; Newline
 02 = 0d0a
-0d = 0d0a
+0d # 0d0a
 
 ; Spaces
 a0 = 20
