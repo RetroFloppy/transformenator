@@ -529,7 +529,23 @@ public class Transformenator
 						// System.err.println("Right side token: ["+rightTemp+"]");
 						if (leftTemp.equals("head"))
 						{
-							preamble = rightTemp;
+							rightTemp = result[1];
+							for (int j = 2; j < result.length;j++)
+							{
+								// System.err.println("Token: ["+result[j]+"]");
+								rightTemp = rightTemp + "=" + result[j];
+							}
+							if (rightTemp.trim().charAt(0) == '"')
+							{
+								String newString = "";
+								// System.err.println("Found a string...");
+								rightTemp = rightTemp.trim();
+								rightTemp = rightTemp.substring(1, rightTemp.length() - 1);
+								newString = rightTemp.replace("\\\\r", "\r").replace("\\\\n", "\n");
+								preamble = newString;
+							}
+							else
+								preamble = rightTemp;
 						}
 						else if (leftTemp.equals("tail"))
 						{
