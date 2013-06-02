@@ -1,0 +1,29 @@
+;
+; Transform for C64 Easyscript to HTML
+;
+
+; Header for HTML format
+head = "<html><font face="courier">"
+;<font face&#61;courier>"
+
+; Closing brace for HTML format
+tail = "</font></html>"
+
+0d = "<p>"
+00 =
+2020 = "&nbsp;&nbsp;"
+
+; Centering on and off
+regex = @\*cn1@<center>@
+regex = @\*cn0@</center>@
+
+; Right alignment on and off
+regex = @\*ra[0|1]@@
+
+; Remove margin controls
+regex = @\*[l|r]m[0-9]*@@
+
+; Remove random control characters
+regex = @\*vp[0-9]@@
+regex = @\*sp[0-9]@@
+regex = @\*ft.*@@
