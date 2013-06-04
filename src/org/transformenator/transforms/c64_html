@@ -1,0 +1,58 @@
+;
+; Transform for an unknown C64 word processor to HTML
+;
+
+; Header for HTML format
+head = "<html>"
+; Closing brace for HTML format
+tail = "</html>"
+
+; The preamble to files seems to be one of these two productions:
+0027819331 =
+0027819332 =
+
+; Lop off nulls
+00 = 
+
+; Transform a-z down in the control character range up to ASCII (is this PETSCII?)
+01 = 61
+02 = 62
+03 = 63
+04 = 64
+05 = 65
+06 = 66
+07 = 67
+08 = 68
+09 = 69
+0a = 6a
+0b = 6b
+0c = 6c
+0d = 6d
+0e = 6e
+0f = 6f
+10 = 70
+11 = 71
+12 = 72
+13 = 73
+14 = 74
+15 = 75
+16 = 76
+17 = 77
+18 = 78
+19 = 79
+1a = 7a
+
+; End of line/paragraph becomes \r\n (plus) <p>
+; Need to turn off some things that don't have an explicit off switch (i.e. headings)
+1f = 0d0a3c703e
+
+; Start of heading: <h2>
+83 = "<h2>"
+
+; 0x86 appeared at the beginning of files sometimes, after the preamble.  Whack it.
+86 =
+
+; Italics on
+b12d31 = "<i>"
+; Italics off
+b12d30 = "</i>"
