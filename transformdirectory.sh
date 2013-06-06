@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Usage: transformdirectory.sh transform origindir destdir
+# Usage: transformdirectory.sh transform origindir destdir [suffix]
 # Set TRANSFORM_HOME to the location of the transformenator.jar file.
 #
 if [ "$3" != "" ]
@@ -10,9 +10,14 @@ then
   mkdir $3
   for file in ./*
   do
-    java -jar $TRANSFORM_HOME/transformenator.jar "$1" "$file" "$3/$file.txt"
+    if [ "$4" != "" ]
+    then
+      java -jar $TRANSFORM_HOME/transformenator.jar "$1" "$file" "$3/$file.$4"
+    else
+      java -jar $TRANSFORM_HOME/transformenator.jar "$1" "$file" "$3/$file.txt"
+    fi
   done
   cd $MY_HOME
 else
-  echo "Usage: transformdirectory.sh transform origindir destdir"
+  echo "Usage: transformdirectory.sh transform origindir destdir [suffix]"
 fi
