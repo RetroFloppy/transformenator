@@ -1,5 +1,5 @@
 ;
-; AT&T 5700/Olvetti word processor
+; AT&T 5700/Olivetti word processor
 ;
 
 ; SOF is four bytes of $FF 
@@ -18,7 +18,7 @@ cd #
 d2 #
 ff #
 
-; Some kindof bulleted list, maybe
+; Some kind of bulleted list, maybe
 ..7f #
 
 0d # 0d0a
