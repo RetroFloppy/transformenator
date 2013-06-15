@@ -75,13 +75,17 @@ public class RevealDirectoryEntries
 			if (inData != null)
 			{
 				// System.err.println("Read " + inData.length + " bytes.");
-				for (int i = 0x5000; i < 0x5400; i += 0x20)
+				for (int i = 0x2800; i < 0x2C00; i += 0x20)
 				{
-					if (inData[i] == 0x60)
-					{
+					if (isValdocFile(inData, i))
 						// Make the directory entry visible
 						inData[i] = 0x00;
-					}
+				}
+				for (int i = 0x5000; i < 0x5400; i += 0x20)
+				{
+					if (isValdocFile(inData, i))
+						// Make the directory entry visible
+						inData[i] = 0x00;
 				}
 				// Cleaned up the directory - now write the resulting image
 				FileOutputStream out;
@@ -103,6 +107,33 @@ public class RevealDirectoryEntries
 			// wrong args
 			help();
 		}
+	}
+
+	public static boolean isValdocFile(byte inData[], int offset)
+	{
+		boolean retval = false;
+		int i;
+		if (inData[offset] == 0x60)
+		{
+			for (i = 1; i < 9; i++)
+			{
+				if ((inData[offset + i] < 0x30) || (inData[offset + i] > 0x39))
+				{
+					// Non-numeric data
+					retval = false;
+					break;
+				}
+				retval = true;
+			}
+			if (retval == true)
+			{
+				if ((inData[offset + 9] == 0x56) && (inData[offset + 10] == 0x41) && (inData[offset + 11] == 0x4c))
+					retval = true; // Yes, redundant
+				else
+					retval = false;
+			}
+		}
+		return retval;
 	}
 
 	public static void help()
