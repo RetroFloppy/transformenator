@@ -135,18 +135,24 @@ public class Transformenator
 						// System.err.println("Found file: \"" + valdocsName+"\"");
 						// Pick apart the file hunk indices
 						// The first few indices seem to be non-useful... so start in at 0x80a
-						for (int i = 0x80a; i < 0x90f; i += 2)
+						for (int i = 0x80a; i < 0xa00; i += 2)
 						{
 							int idx = UnsignedByte.intValue(inData[i],inData[i + 1]);
 							if (idx < 32768)
 							{
-								// Chunks may start with a pointer to skip over blank space
-								int offset = UnsignedByte.intValue(inData[(idx * 512)],inData[(idx * 512) + 1]);
-								// Pull out the data in the chunk
-								for (int j = offset + 4; j < 0x200; j++)
+								// System.err.println("idx: "+idx);
+								if (((idx*512) + 1) < inData.length)
 								{
-									newBuf[newBufCursor++] = inData[(idx * 512) + j];
+									// Chunks may start with a pointer to skip over blank space
+									int offset = UnsignedByte.intValue(inData[(idx * 512)],inData[(idx * 512) + 1]);
+									// Pull out the data in the chunk
+									for (int j = offset + 4; j < 0x200; j++)
+									{
+										newBuf[newBufCursor++] = inData[(idx * 512) + j];
+									}
 								}
+								//else
+									//System.err.println("Found an index out of bounds: "+idx);
 							}
 						}
 						inData = new byte[newBufCursor];
