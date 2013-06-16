@@ -117,7 +117,7 @@ public class Transformenator
 					if (args[0].toUpperCase().contains("VALDOCS"))
 					{
 						// If they are using a Valdocs transform, let's pick apart the file first.
-						// System.err.println("De-indexing a valdocs file.");
+						System.err.println("De-indexing valdocs file " + file + ".");
 						// Figure out the original file name
 						char[] name = new char[110];
 						byte[] newBuf = new byte[inData.length];
@@ -126,6 +126,8 @@ public class Transformenator
 						{
 							char newChar = (char) inData[i + 4];
 							if (newChar == ':')
+								newChar = '-';
+							else if (newChar == '/')
 								newChar = '-';
 							name[i] = newChar;
 						}
