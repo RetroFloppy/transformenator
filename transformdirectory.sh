@@ -10,11 +10,16 @@ then
   mkdir $3
   for file in ./*
   do
-    if [ "$4" != "" ]
+    if [ "$1" = "valdocs" ]
     then
-      java -jar $TRANSFORM_HOME/transformenator.jar "$1" "$file" "$3/$file.$4"
+      java -jar $TRANSFORM_HOME/transformenator.jar "$1" "$file" "$3"
     else
-      java -jar $TRANSFORM_HOME/transformenator.jar "$1" "$file" "$3/$file.txt"
+      if [ "$4" != "" ]
+      then
+        java -jar $TRANSFORM_HOME/transformenator.jar "$1" "$file" "$3/$file.$4"
+      else
+        java -jar $TRANSFORM_HOME/transformenator.jar "$1" "$file" "$3/$file.txt"
+      fi
     fi
   done
   cd $MY_HOME
