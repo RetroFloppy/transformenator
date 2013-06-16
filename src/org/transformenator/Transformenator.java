@@ -129,6 +129,8 @@ public class Transformenator
 								newChar = '-';
 							else if (newChar == '/')
 								newChar = '-';
+							else if (newChar == '?')
+								newChar = 'x';
 							name[i] = newChar;
 						}
 						valdocsName = new String(name).trim();
