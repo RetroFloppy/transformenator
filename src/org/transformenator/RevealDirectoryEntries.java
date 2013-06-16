@@ -75,12 +75,6 @@ public class RevealDirectoryEntries
 			if (inData != null)
 			{
 				// System.err.println("Read " + inData.length + " bytes.");
-				for (int i = 0x2800; i < 0x2C00; i += 0x20)
-				{
-					if (isValdocFile(inData, i))
-						// Make the directory entry visible
-						inData[i] = 0x00;
-				}
 				for (int i = 0x5000; i < 0x5400; i += 0x20)
 				{
 					if (isValdocFile(inData, i))
@@ -115,7 +109,7 @@ public class RevealDirectoryEntries
 		int i;
 		if (inData[offset] == 0x60)
 		{
-			for (i = 1; i < 9; i++)
+			for (i = 1; i < 3; i++)
 			{
 				if ((inData[offset + i] < 0x30) || (inData[offset + i] > 0x39))
 				{
