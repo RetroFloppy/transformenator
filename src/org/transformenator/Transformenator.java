@@ -49,7 +49,8 @@ public class Transformenator
 		System.err.println();
 		System.err.println("Transformenator v1.3 - perform transformation operations on binary files.");
 		System.err.println();
-		System.err.println("Syntax: Transformenator transform infile outfile");
+		System.err.println("Syntax: Transformenator [transform] [infile] [outfile]");
+		System.err.println();
 		System.err.println("  See http://transformenator.sourceforge.net/ for transform file specification.");
 		System.err.println("  If using a valdocs transform, outfile specifies an output directory.");
 		listInternalTransforms();
@@ -135,8 +136,14 @@ public class Transformenator
 						}
 						valdocsName = new String(name).trim();
 						// System.err.println("Found file: \"" + valdocsName+"\"");
-						// Pick apart the file hunk indices
-						// The first few indices seem to be non-useful... so start in at 0x80a
+						/*
+						 * Pick apart the file hunk indices.  The first few indices seem to be non-useful... 
+						 * so start in at 0x80a.  It's unclear how deep the indices can go.  
+						 * It's possible it should look deeper than it does, but the field of 
+						 * 0xFFs has some noise near the end.
+						 * 
+						 * Each index is a pointer to the next 512 bytes (a sector) of data in the file.
+						 */
 						for (int i = 0x80a; i < 0xa00; i += 2)
 						{
 							int idx = UnsignedByte.intValue(inData[i],inData[i + 1]);
@@ -185,9 +192,9 @@ public class Transformenator
 							System.err.println("Creating file: \"" + outfile+"\"");
 						}
 						FileOutputStream out = new FileOutputStream(outfile);
-						if (preamble != null)
+						if (prefix != null)
 						{
-							out.write(preamble.getBytes(), 0, preamble.length());
+							out.write(prefix.getBytes(), 0, prefix.length());
 						}
 						String tempStr = outBuf.toString();
 						for (int i = 0; i < regReplace.size(); i++)
@@ -197,9 +204,9 @@ public class Transformenator
 						}
 						byte[] stdout = tempStr.getBytes();
 						out.write(stdout, 0, stdout.length);
-						if (postamble != null)
+						if (suffix != null)
 						{
-							out.write(postamble.getBytes(), 0, postamble.length());
+							out.write(suffix.getBytes(), 0, suffix.length());
 						}
 						out.flush();
 						out.close();
@@ -552,14 +559,14 @@ public class Transformenator
 								rightTemp = rightTemp.trim();
 								rightTemp = rightTemp.substring(1, rightTemp.length() - 1);
 								newString = rightTemp.replace("\\\\r", "\r").replace("\\\\n", "\n");
-								preamble = newString;
+								prefix = newString;
 							}
 							else
-								preamble = rightTemp;
+								prefix = rightTemp;
 						}
 						else if (leftTemp.equals("tail"))
 						{
-							postamble = rightTemp;
+							suffix = rightTemp;
 						}
 						else if (leftTemp.equals("regex"))
 						{
@@ -671,8 +678,8 @@ public class Transformenator
 	static Vector<String> regReplace = new Vector<String>();
 	static Vector<RegSpec> leftSide = new Vector<RegSpec>();
 	static Vector<byte[]> rightSide = new Vector<byte[]>();
-	static String preamble;
-	static String postamble;
+	static String prefix;
+	static String suffix;
 	static int trimLeading;
 	static boolean foundSOF;
 	static int backupBytes;
