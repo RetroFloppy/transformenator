@@ -28,6 +28,13 @@ import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 
+/*
+ * RevealDirectoryEntries
+ * 
+ * The intent of this helper app is to "un-hide" the CP/M directory entries of files that 
+ * have a leading byte of 0x60.  These typically come from Epson QX-10 TPM-II Valdocs disks.  
+ *
+ */
 public class RevealDirectoryEntries
 {
 
@@ -77,7 +84,7 @@ public class RevealDirectoryEntries
 				// System.err.println("Read " + inData.length + " bytes.");
 				for (int i = 0x5000; i < 0x5400; i += 0x20)
 				{
-					if (isValdocFile(inData, i))
+					if (isValdocsFile(inData, i))
 						// Make the directory entry visible
 						inData[i] = 0x00;
 				}
@@ -103,17 +110,32 @@ public class RevealDirectoryEntries
 		}
 	}
 
-	public static boolean isValdocFile(byte inData[], int offset)
+	/**
+	 * isValdocsFile - determine if a directory entry is likely to be a Valdocs file
+	 */
+	public static boolean isValdocsFile(byte inData[], int offset)
 	{
 		boolean retval = false;
 		int i;
+		/*
+		 * First check: is the first byte a 0x60?
+		 */
 		if (inData[offset] == 0x60)
 		{
+			/*
+			 * Second check: are the first two bytes numeric?  All Valdocs files
+			 * have the form NNxxxnnnVAL, where NN are numeric.  Generally all 
+			 * the rest of the x elements are numeric as well, but not always.
+			 * The n elements are probably always numeric, as they are counters
+			 * (001, 002, 003, etc.)  
+			 */
 			for (i = 1; i < 3; i++)
 			{
 				if ((inData[offset + i] < 0x30) || (inData[offset + i] > 0x39))
 				{
-					// Non-numeric data
+					/*
+					 * A non-numeric value found in the first two bytes, so bail out now.
+					 */
 					retval = false;
 					break;
 				}
@@ -121,10 +143,13 @@ public class RevealDirectoryEntries
 			}
 			if (retval == true)
 			{
+				/*
+				 * Are the final three bytes "VAL?" 
+				 */
 				if ((inData[offset + 9] == 0x56) && (inData[offset + 10] == 0x41) && (inData[offset + 11] == 0x4c))
-					retval = true; // Yes, redundant
+					retval = true; // Yes, this assignment is redundant... but I didn't want to tangle the logic more
 				else
-					retval = false;
+					retval = false; // No match
 			}
 		}
 		return retval;
@@ -137,5 +162,4 @@ public class RevealDirectoryEntries
 		System.err.println();
 		System.err.println("Syntax: RevealDirectoryEntries inputFile outputFile");
 	}
-
 }
