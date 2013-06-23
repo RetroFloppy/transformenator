@@ -91,4 +91,28 @@ public class UnsignedByte
     return ("" + c + "" + c1);
   }
 
+  /**
+   * Returns the string representation of the specified integer in unsigned form as
+   * a two-digit hex value.
+   * 
+   * @param b
+   *          the byte to represent as a hex string
+   * @return b represented as a hex string.
+   */
+
+  public static String toString(int i)
+  {
+    char c;
+    if (i / 16 < 10) c = (char) (i / 16 + 48);
+    else
+      c = (char) (i / 16 + 55);
+
+    char c1;
+    if (i % 16 < 10) c1 = (char) (i % 16 + 48);
+    else
+      c1 = (char) (i % 16 + 55);
+
+    return ("" + c + "" + c1);
+  }
+
 }

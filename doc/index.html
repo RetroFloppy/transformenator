@@ -72,6 +72,8 @@ The left side of the equals sign is one of these things:
 <xmp>0d0a....4f</xmp>
 <li>A byte pattern combined with "must not be zero" values consisting of even numbers of exclamation points<br>
 <xmp>0d0a32!!4f</xmp>
+<li>A byte range to be shifted byte-for-byte to a different range:<br>
+<xmp>[41..5a] = 61</xmp>
 <li><code>head</code> specifies a beginning-of-file preamble to add to the beginning of the resultant file<br>
 <xmp>; Header for HTML format
 head = "<html>"</xmp>

@@ -160,8 +160,8 @@ public class Transformenator
 										newBuf[newBufCursor++] = inData[(idx * 512) + j];
 									}
 								}
-								//else
-									//System.err.println("Found an index out of bounds: "+idx);
+								// else
+									// System.err.println("Found an index out of bounds: "+idx);
 							}
 						}
 						inData = new byte[newBufCursor];
@@ -246,6 +246,8 @@ public class Transformenator
 			{
 				if (((compLeft[j]) != inData[offset + j]) && (maskLeft[j] == 0))
 				{
+					// If the byte doesn't match and there's no mask...
+					// Then it's not a match.
 					match = false;
 				}
 				else if ((inData[offset + j] == 0) && (maskLeft[j] == 2))
@@ -256,7 +258,7 @@ public class Transformenator
 			}
 			if (match == true)
 			{
-				// System.err.println("Found a match at offset "+offset+"; left length = "+currLeftLength);
+				// System.err.println("Found a match at offset "+offset+"; left length = "+currLeftLength+" command: "+currentSpec.command+" backtrack: "+currentSpec.backtrack);
 				if (currentSpec.command == 0)
 				{
 					try
@@ -471,6 +473,65 @@ public class Transformenator
 					{
 						// System.err.println("Left side token: ["+leftTemp+"]");
 					}
+					else if ((leftTemp.trim().startsWith("[")) && leftTemp.trim().endsWith("]") && leftTemp.trim().length() == 8)
+					{
+						addLeft = false;
+						skip = true;
+						// Ok, we have opening and closing braces.  Check for two digits.
+						// String firstByte, endByte;
+						byte firstByte, endByte;
+						int firstInt, endInt;
+						int anchorByte = 0;
+						firstByte = asByte(leftTemp.substring(1, 3));
+						endByte = asByte(leftTemp.substring(5, 7));
+						firstInt = UnsignedByte.intValue(firstByte);
+						endInt = UnsignedByte.intValue(endByte);
+						if (endInt > firstInt)
+						{
+							// System.err.println("We have a range: 0x"+UnsignedByte.toString(firstByte)+" through 0x"+UnsignedByte.toString(endInt));
+							// Take care of adding specs right here...
+							st = new StringTokenizer(result[1]);
+							if (st.hasMoreTokens())
+							{
+								// Add a pile of left sides with incrementing right sides
+								rightTemp = st.nextToken();
+								anchorByte = asByte(rightTemp);
+								// System.err.println("Right anchor: 0x"+UnsignedByte.toString(anchorByte));
+								for (int i = firstByte; i <= endByte; i++)
+								{
+									newRegSpec.leftCompare = asBytes(UnsignedByte.loByte(i));
+									// No mask is possible with ranges
+									newRegSpec.leftMask = asBytes(0);
+									leftSide.add(newRegSpec);
+									// System.err.println("Adding spec 0x"+UnsignedByte.toString(UnsignedByte.loByte(i))+" = 0x"+UnsignedByte.toString(anchorByte)+" (decimal "+anchorByte+")");
+									byte b[] = new byte[1];
+									b[0] = UnsignedByte.loByte(anchorByte);
+									rightSide.add(b);
+									boolean backtrack = newRegSpec.backtrack;
+									newRegSpec = new RegSpec();
+									newRegSpec.backtrack = backtrack;
+									anchorByte++;
+								}
+							}
+							else
+							{
+								// Add a pile of left sides with null right sides
+								for (int i = firstByte; i <= endByte; i++)
+								{
+									newRegSpec.leftCompare = asBytes(i);
+									// No mask is possible with ranges
+									newRegSpec.leftMask = asBytes(0);
+									leftSide.add(newRegSpec);
+									// System.err.println("Adding null spec 0x"+UnsignedByte.toString(UnsignedByte.loByte(i)));
+									// System.err.println("Right side token is null.");
+									rightSide.add(null);
+									boolean backtrack = newRegSpec.backtrack;
+									newRegSpec = new RegSpec();
+									newRegSpec.backtrack = backtrack;
+								}
+							}
+						}
+					}
 					else
 					{
 						newRegSpec.leftCompare = asBytes(leftTemp);
@@ -489,7 +550,7 @@ public class Transformenator
 						{
 							rightTemp = rightTemp + st.nextToken() + " ";
 						}
-						// System.err.println("Found a string: ["+rightTemp.trim()+"]");
+						System.err.println("Found a string: ["+rightTemp.trim()+"]");
 						if (rightTemp.trim().equals("\"{@@<FiLe_EoF>@@}\""))
 						{
 							// System.err.println("Found an EOF specification...");
@@ -614,6 +675,36 @@ public class Transformenator
 			catch (java.lang.NumberFormatException ex)
 			{
 				buf[i / 2] = 0; // Going to need a "don't care" here, probably
+			}
+			i++;
+		}
+
+		return buf;
+	}
+
+	public static byte[] asBytes(int val)
+	{
+		byte[] buf = new byte[1];
+		buf[0] = UnsignedByte.loByte(val);
+		return buf;
+	}
+
+	public static byte asByte(String str)
+	{
+		if ((str.length() % 2) == 1)
+			str = "0" + str; // pad leading 0 if needed
+		byte buf = 0;
+		int i = 0;
+		for (char c : str.toCharArray())
+		{
+			try
+			{
+				byte b = Byte.parseByte(String.valueOf(c), 16);
+				buf |= (b << (((i % 2) == 0) ? 4 : 0));
+			}
+			catch (java.lang.NumberFormatException ex)
+			{
+				buf = 0; // Going to need a "don't care" here, probably
 			}
 			i++;
 		}
