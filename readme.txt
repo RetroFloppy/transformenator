@@ -1,10 +1,10 @@
-New for v1.3:
+New for v1.4:
 
- * Recursive transform specs - changes are now fed back to input stream and exposed to subsequent transforms
-   - This can cause loops if your specs change data to the same thing (i.e. "0d = 0d0a")
-   - Use the hashmark instead of equals sign in these cases (i.e. "0d # 0d0a") to move past once substituted
+ * Bytes within a range can be shifted by a constant value.
+   - This makes PETSCII or similar shifted-ASCII changes simple (i.e. [41..5a] = 61)
 
- * "Must be non-zero" specification ("!!") - similar to "don't care," but allows any value except zero to match
+ * Recursive transform specs - the meaning of '=' and '#' have been swapped since being introduced in 1.3.  The default '=' is now to move past the substitution, which is expected to be the typical intention.  The much less commonly needed '#' now means to feed the substitution back for subsequent rules to act on.
+   - This can cause loops if your specs change data to the same thing (i.e. "0d # 0d0a")
 
 Transformenator introduction:
 

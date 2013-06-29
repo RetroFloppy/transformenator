@@ -47,7 +47,7 @@ public class Transformenator
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("Transformenator v1.3 - perform transformation operations on binary files.");
+		System.err.println("Transformenator v1.4 - perform transformation operations on binary files.");
 		System.err.println();
 		System.err.println("Syntax: Transformenator [transform] [infile] [outfile]");
 		System.err.println();
@@ -291,7 +291,7 @@ public class Transformenator
 							{
 								backupBytes += calc;
 							}
-							// System.out.println("Backing up "+replRight.length+" bytes.");
+							// System.err.println("Backing up "+replRight.length+" bytes.");
 						}
 						else if ((replRight != null) && (currentSpec.backtrack == false))
 						{
@@ -438,26 +438,29 @@ public class Transformenator
 				boolean addLeft = false;
 				boolean addedRight = false;
 				boolean skip = false;
-				String[] result1 = line.split("=");
-				String[] result2 = line.split("#");
+				String[] hashSplits = line.split("#");
+				String[] equalsSplits = line.split("=");
 				String[] result;
 				String leftTemp = "";
 				String rightTemp = "";
 				byte[] rightBytes = null;
-				// System.err.println("Splits on '=': "+result1.length+" splits on '#': "+result2.length);
-				if (result2.length > 1)
+				// System.err.println("Splits on '=': "+equalsSplits.length+" splits on '#': "+hashSplits.length+" line.indexOf('='): "+line.indexOf("=")+ " line.indexOf('#'): "+line.indexOf("#"));
+				if ((line.indexOf("=") > 0 && line.indexOf("#") < 0) || 
+					(line.indexOf("=") > 0 && line.indexOf("=") < line.indexOf("#")))
 				{
-					st = new StringTokenizer(result2[0]);
-					result = result2;
+					// System.err.println("This is an equals production.");
+					st = new StringTokenizer(equalsSplits[0]);
+					result = equalsSplits;
 					newRegSpec.backtrack = false;
 				}
 				else
 				{
-					st = new StringTokenizer(result1[0]);
-					result = result1;
+					// System.err.println("This is a hash production.");
+					st = new StringTokenizer(hashSplits[0]);
+					result = hashSplits;
 					newRegSpec.backtrack = true;
 				}
-				if (st.hasMoreTokens())
+				if (st != null && st.hasMoreTokens())
 				{
 					leftTemp = st.nextToken();
 					skip = false;
@@ -490,27 +493,30 @@ public class Transformenator
 						{
 							// System.err.println("We have a range: 0x"+UnsignedByte.toString(firstByte)+" through 0x"+UnsignedByte.toString(endInt));
 							// Take care of adding specs right here...
-							st = new StringTokenizer(result[1]);
-							if (st.hasMoreTokens())
+							if (result.length > 1)
 							{
-								// Add a pile of left sides with incrementing right sides
-								rightTemp = st.nextToken();
-								anchorByte = asByte(rightTemp);
-								// System.err.println("Right anchor: 0x"+UnsignedByte.toString(anchorByte));
-								for (int i = firstByte; i <= endByte; i++)
+								st = new StringTokenizer(result[1]);
+								if (st.hasMoreTokens())
 								{
-									newRegSpec.leftCompare = asBytes(UnsignedByte.loByte(i));
-									// No mask is possible with ranges
-									newRegSpec.leftMask = asBytes(0);
-									leftSide.add(newRegSpec);
-									// System.err.println("Adding spec 0x"+UnsignedByte.toString(UnsignedByte.loByte(i))+" = 0x"+UnsignedByte.toString(anchorByte)+" (decimal "+anchorByte+")");
-									byte b[] = new byte[1];
-									b[0] = UnsignedByte.loByte(anchorByte);
-									rightSide.add(b);
-									boolean backtrack = newRegSpec.backtrack;
-									newRegSpec = new RegSpec();
-									newRegSpec.backtrack = backtrack;
-									anchorByte++;
+									// Add a pile of left sides with incrementing right sides
+									rightTemp = st.nextToken();
+									anchorByte = asByte(rightTemp);
+									// System.err.println("Right anchor: 0x"+UnsignedByte.toString(anchorByte));
+									for (int i = firstByte; i <= endByte; i++)
+									{
+										newRegSpec.leftCompare = asBytes(UnsignedByte.loByte(i));
+										// No mask is possible with ranges
+										newRegSpec.leftMask = asBytes(0);
+										leftSide.add(newRegSpec);
+										// System.err.println("Adding spec 0x"+UnsignedByte.toString(UnsignedByte.loByte(i))+" = 0x"+UnsignedByte.toString(anchorByte)+" (decimal "+anchorByte+")");
+										byte b[] = new byte[1];
+										b[0] = UnsignedByte.loByte(anchorByte);
+										rightSide.add(b);
+										boolean backtrack = newRegSpec.backtrack;
+										newRegSpec = new RegSpec();
+										newRegSpec.backtrack = backtrack;
+										anchorByte++;
+									}
 								}
 							}
 							else
@@ -540,17 +546,18 @@ public class Transformenator
 						addLeft = true;
 					}
 				}
-				if ((result.length > 1) && !skip)
+				if (result != null && (result.length > 1) && !skip)
 				{
-					st = new StringTokenizer(result[1]);
-					if (st.hasMoreTokens())
+					if (newRegSpec.backtrack == false) // We are using '=' as separator
 					{
-						rightTemp = "";
-						while (st.hasMoreTokens())
-						{
-							rightTemp = rightTemp + st.nextToken() + " ";
-						}
-						System.err.println("Found a string: ["+rightTemp.trim()+"]");
+						rightTemp = line.substring(line.indexOf("=")+1);
+					}
+					else
+					{
+						rightTemp = line.substring(line.indexOf("#")+1);
+					}
+					{
+						// System.err.println("Found a right side string: ["+rightTemp.trim()+"]");
 						if (rightTemp.trim().equals("\"{@@<FiLe_EoF>@@}\""))
 						{
 							// System.err.println("Found an EOF specification...");
@@ -572,9 +579,8 @@ public class Transformenator
 						else if (rightTemp.trim().charAt(0) == '"')
 						{
 							String newString = "";
-							// System.err.println("Found a string...");
-							rightTemp.trim();
-							rightTemp = rightTemp.substring(1, rightTemp.length() - 2);
+							rightTemp = rightTemp.trim();
+							rightTemp = rightTemp.substring(1, rightTemp.length() - 1);
 							newString = rightTemp.replace("\\\\r", "\r").replace("\\\\n", "\n");
 							rightBytes = newString.getBytes();
 						}

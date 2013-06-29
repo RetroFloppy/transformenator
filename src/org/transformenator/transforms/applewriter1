@@ -12,101 +12,23 @@
 ;
 
 ; Transform A-Z in the control character range up to capitals in ASCII
-01 = 41
-02 = 42
-03 = 43
-04 = 44
-05 = 45
-06 = 46
-07 = 47
-08 = 48
-09 = 49
-0a = 4a
-0b = 4b
-0c = 4c
-0d = 4d
-0e = 4e
-0f = 4f
-10 = 50
-11 = 51
-12 = 52
-13 = 53
-14 = 54
-15 = 55
-16 = 56
-17 = 57
-18 = 58
-19 = 59
-1a = 5a
+[01..1a] = 41
 
 ; Strip high bit from lower case letters
-c1 = 61
-c2 = 62
-c3 = 63
-c4 = 64
-c5 = 65
-c6 = 66
-c7 = 67
-c8 = 68
-c9 = 69
-ca = 6a
-cb = 6b
-cc = 6c
-cd = 6d
-ce = 6e
-cf = 6f
-d0 = 70
-d1 = 71
-d2 = 72
-d3 = 73
-d4 = 74
-d5 = 75
-d6 = 76
-d7 = 77
-d8 = 78
-d9 = 79
-da = 7a
+[c1..da] = 61
 
 ; Shifted spaces
 a0 = 20
 e0 = 20
 
 ; Punctuation
-e1 = 21
-e2 = 22
-e3 = 23
-e4 = 24
-e5 = 25
-e6 = 26
-e7 = 27
-e8 = 28
-e9 = 29
-ea = 2a
-eb = 2b
-ec = 2c
-ed = 2d
-ee = 2e
-ef = 2f
+[e1..ef] = 21
 
 ; Numbers
-f0 = 30
-f1 = 31
-f2 = 32
-f3 = 33
-f4 = 34
-f5 = 35
-f6 = 36
-f7 = 37
-f8 = 38
-f9 = 39
+[f0..f9] = 30
 
 ; More punctuation
-fa = 3a
-fb = 3b
-fc = 3c
-fd = 3d
-fe = 3e
-ff = 3f
+[fa..ff] = 3a
 
 ; EOF, SOT, Hard newline
 60 = "{@@<FiLe_EoF>@@}"

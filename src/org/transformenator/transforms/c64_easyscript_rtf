@@ -11,7 +11,7 @@ tail = "}"
 ; End of line/paragraph becomes \r\n (plus) \par \par \li0 \b0 \fs24
 ; Need to turn off some things that don't have an explicit off switch (i.e. headings)
 ; Don't consider the replacement for further replacements
-0d # "\par "
+0d = "\par "
 
 ; Remove nulls
 00 =

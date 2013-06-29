@@ -1,4 +1,5 @@
 <html>
+<title>Transformenator</title>
 <a href="http://sourceforge.net/projects/transformenator/files/"><img src="xfmn.png"></a>
 <h1>Transformenator <a href="http://sourceforge.net/projects/transformenator/files/">(Download)</a></h1>
 Transformenation is something that should be possible to do with some rudimentary shell scripting.  
@@ -39,32 +40,34 @@ Say you have the file below named infile.bin, represented in a typical hex edito
 </xmp>
 Say we want to change the hex zeroes in the middle to spaces, and eliminate anything after the EOF (0x1a).
 Create a transform file named transform to do that:
-<xmp>; Swap spaces for nulls
+<xmp>; Make nulls into spaces
 00 = 20
-; EOF really means EOF
+; ASCII EOF character really means EOF
 1a = "{@@<FiLe_EoF>@@}"</xmp>
 So, we run infile.bin through the transform file and send the output to a file named outfile.bin:
 <xmp>%java -jar transformenator.jar transform infile.bin outfile.bin</xmp>
 The resulting outfile.bin looks like this in a hex editor:
 <xmp>(Offset) (Hex data)                               (ASCII representation)
 0000000: 6162 6364 2020 6566 6768 696a            abcd  efghij</xmp>
+Observe that nulls became spaces, and other trailing stuff after the EOF character has been removed.
 <h2>Transform Specifications</h2>
 The Transformenator project comes with several example transforms used to convert various early binary word processor
 formats to RTF, HTML, or plain ASCII text. 
 A sample <code>transform</code> file might simply look like this:
 <xmp>; Change 0x00 to 0x20
 00 = 20</xmp>
-Note that replacement bytes are "fed back" to all transform specifications again - so you can get
-yourself into a loop with a specification like this:
-<xmp>20 = 20</xmp>
-It may be desirable to "move past" a substitution once it's been made - eliminating it from any
-further processing by subsequent specifications.  
+It may be desirable to continue processing a data stream including a substitution that has just been made - exposing it to further processing by subsequent specifications.
 The "hash" ("#") character is used instead of the equals sign in that case:
-<xmp>; Move past the end-of-line substitution once it's been made
-0d # 0d0a</xmp> 
+<xmp>; Add a newline - may need to add an additional one
+8d # 0d0a
+0d0a9d = 0d0a0d0a</xmp>
+Note that replacement bytes that are "fed back" this way can form a tight loop with itself and subsequent specifications.  
+For example, this production will never complete:
+<xmp>20 # 20</xmp>
 <p>
 Semicolons denote comment lines.
-The left side of the equals sign is one of these things:
+<xmp>; This is a comment</xmp>
+The left side of the equals sign or hash mark is one of these things:
 <ul>
 <li>A byte pattern, given in even numbers of hex digits, with no other decoration<br>
 <xmp>0d0a32ea4f</xmp>
@@ -72,29 +75,12 @@ The left side of the equals sign is one of these things:
 <xmp>0d0a....4f</xmp>
 <li>A byte pattern combined with "must not be zero" values consisting of even numbers of exclamation points<br>
 <xmp>0d0a32!!4f</xmp>
-<li>A byte range to be shifted byte-for-byte to a different range:<br>
-<xmp>[41..5a] = 61</xmp>
-<li><code>head</code> specifies a beginning-of-file preamble to add to the beginning of the resultant file<br>
-<xmp>; Header for HTML format
-head = "<html>"</xmp>
-<li><code>tail</code> specifies a end-of-file suffix to add to the end of the resultant file<br>
-<xmp>; Trailer for HTML format
-tail = "</html>"</xmp>
-<li><code>trim-leading</code> specifies a number of bytes to trim off the beginning of the input file (in hex bytes) <u>before</u> any binary transforms are applied<br>
-<xmp>; Trim the leading 0x400 bytes - this is a Pascal format file
-trim_leading = 0400</xmp>
-<li><code>regex</code> specifies a regular expression to run on the output <u>after</u> any and all binary transforms are applied;
-multiple <code>regex</code> expressions are allowed, one per line<br>
-<xmp>; Remove left/right margin specs: zlmxx, :rmxx
-regex = @[z|:][l|r]m[0-9]*@@
-; Remove next file specification
-regex = @znx:.*@@</xmp>
-Regular expressions are surrounded by delimiters - the first character in the string serves as that delimiter.
-So the production <code>regex=$abc$123$</code> will use <code>$</code> as the delimiter, and replace all occurrences of <code>abc</code> with <code>123</code>.
 </ul>
 The right side can be blank, another byte pattern given in undecorated hex, or ASCII text if surrounded in double quotes.
 Examples:
-<xmp>; 0x86 appeared at the beginning of files sometimes, after the preamble.  Remove it.
+<xmp>; Hard newline
+8d = 0d0a
+; 0x86 appeared at the beginning of files sometimes, after the preamble.  Remove it.
 86 =
 ; Start of heading
 83 = "\par\par\pard\s2\b\fs36 "
@@ -103,6 +89,31 @@ b12d31 = "\i "
 ; Italics off
 b12d30 = "\i0 "
 </xmp>
+Some special processing can take place:
+<ul>
+<li>A byte range can be shifted byte-for-byte to a different range starting at the value after the equals sign, or removed altogether:<br>
+<xmp>;Shift 0x41 through 0x5a up to 0x61
+[41..5a] = 61
+; Remove 0xf0 through 0xff
+[f0..ff] = </xmp>
+<li><code>head</code> specifies a beginning-of-file prefix to add to the beginning of the resultant file:<br>
+<xmp>; Header for HTML format
+head = "<html>"</xmp>
+<li><code>tail</code> specifies a end-of-file suffix to add to the end of the resultant file:<br>
+<xmp>; Trailer for HTML format
+tail = "</html>"</xmp>
+<li><code>trim-leading</code> specifies a number of bytes to trim off the beginning of the input file (in hex bytes) <u>before</u> any binary transforms are applied:<br>
+<xmp>; Trim the leading 0x400 bytes - this is a Pascal format file
+trim_leading = 0400</xmp>
+<li><code>regex</code> specifies a regular expression to run on the output <u>after</u> any and all binary transforms are applied;
+multiple <code>regex</code> expressions are allowed, one per line:<br>
+<xmp>; Remove left/right margin specs: zlmxx, :rmxx
+regex = @[z|:][l|r]m[0-9]*@@
+; Remove next file specification
+regex = @znx:.*@@</xmp>
+Regular expressions are surrounded by delimiters - the first character in the string serves as that delimiter.
+So the production <code>regex=$abc$123$</code> will use <code>$</code> as the delimiter, and replace all occurrences of <code>abc</code> with <code>123</code>.
+</ul>
 There are special cases for representing the beginning and the end of a file. 
 When specifying the byte pattern that signifies the beginning of the file, the right side must be the production in the example below:
 <xmp>; SOF is \r\nS

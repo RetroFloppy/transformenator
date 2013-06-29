@@ -14,33 +14,8 @@ tail = "}"
 ; Lop off nulls
 00 = 
 
-; Transform a-z down in the control character range up to ASCII (is this PETSCII?)
-01 = 61
-02 = 62
-03 = 63
-04 = 64
-05 = 65
-06 = 66
-07 = 67
-08 = 68
-09 = 69
-0a = 6a
-0b = 6b
-0c = 6c
-0d = 6d
-0e = 6e
-0f = 6f
-10 = 70
-11 = 71
-12 = 72
-13 = 73
-14 = 74
-15 = 75
-16 = 76
-17 = 77
-18 = 78
-19 = 79
-1a = 7a
+; Translate a-z down in the control character range up to ASCII (is this PETSCII?)
+[01..1a] = 61
 
 ; End of line/paragraph becomes \r\n (plus) \par \par \li0 \b0 \fs24
 ; Need to turn off some things that don't have an explicit off switch (i.e. headings)

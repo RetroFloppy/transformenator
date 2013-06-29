@@ -6,7 +6,7 @@
 trim_leading = 400
 
 ; Newlines
-0d # 0d0a
+0d = 0d0a
 
 ; Start of a new section/page
 ff9b = 0d0a
