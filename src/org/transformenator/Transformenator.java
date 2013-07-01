@@ -576,7 +576,7 @@ public class Transformenator
 							// Need to add an SOF command to the left side spec.
 							newRegSpec.command = 3;
 						}
-						else if (rightTemp.trim().charAt(0) == '"')
+						else if (rightTemp.trim().length() > 0 && rightTemp.trim().charAt(0) == '"')
 						{
 							String newString = "";
 							rightTemp = rightTemp.trim();
