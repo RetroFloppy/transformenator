@@ -1,0 +1,36 @@
+;
+; Early PC WordPerfect word processor, output in RTF
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Start of file
+c10204c1 = "{@@<FiLe_SoF>@@}"
+c7........c7 =
+c6....c6 = 
+
+; Line endings
+0d = " "
+0a09 = "\par\par "
+0a0a = "\par\par "
+
+; Emdash
+a9 = "\emdash "
+
+; Endash
+aa = "\endash "
+
+; Underline on/off
+94 = "\ul "
+95 = "\ul0 "
+
+; Bold on/off
+9d = "\b1 "
+9c = "\b0 "
+
+; Page breaks?
+dc..00000000..00dc.. = 20
+
