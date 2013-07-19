@@ -14,7 +14,7 @@ New for v1.4:
    subsequent rules to act on.
 
    - This can cause loops if your specs change data to the same thing (i.e.
-     "0d # 0d0a")
+     0d # 0d0a)
 
 
 Transformenator introduction:
