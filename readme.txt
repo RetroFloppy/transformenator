@@ -1,12 +1,24 @@
 New for v1.4:
+=============
 
- * Bytes within a range can be shifted by a constant value.
-   - This makes PETSCII or similar shifted-ASCII changes simple (i.e. [41..5a] = 61)
+ * Bytes within a range can be shifted to a new range given a starting
+   value.
 
- * Recursive transform specs - the meaning of '=' and '#' have been swapped since being introduced in 1.3.  The default '=' is now to move past the substitution, which is expected to be the typical intention.  The much less commonly needed '#' now means to feed the substitution back for subsequent rules to act on.
-   - This can cause loops if your specs change data to the same thing (i.e. "0d # 0d0a")
+   - This makes PETSCII or similar shifted-ASCII changes simple (i.e. 
+     [41..5a] = 61)
+
+ * Recursive transform specs - the meaning of '=' and '#' have been swapped
+   since being introduced in 1.3.  The default '=' is now to move past the
+   substitution, which is expected to be the typical intention.  The much 
+   less commonly needed '#' now means to feed the substitution back for
+   subsequent rules to act on.
+
+   - This can cause loops if your specs change data to the same thing (i.e.
+     "0d # 0d0a")
+
 
 Transformenator introduction:
+=============================
 
 Transformenation is something that should be possible to do with some rudimentary shell scripting. You should be able to run a binary file through sed or awk and have byte sequences change to different byte sequences.
 
