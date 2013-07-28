@@ -47,7 +47,7 @@ public class Transformenator
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("Transformenator v1.4 - perform transformation operations on binary files.");
+		System.err.println("Transformenator v1.5 - perform transformation operations on binary files.");
 		System.err.println();
 		System.err.println("Syntax: Transformenator [transform] [infile] [outfile]");
 		System.err.println();
@@ -199,7 +199,7 @@ public class Transformenator
 						String tempStr = outBuf.toString();
 						for (int i = 0; i < regReplace.size(); i++)
 						{
-							// System.err.println("Replacing ["+regPattern.elementAt(i)+"] with ["+regReplace.elementAt(i)+"].");
+							// System.err.println("DEBUG Replacing ["+regPattern.elementAt(i)+"] with ["+regReplace.elementAt(i)+"].");
 							tempStr = tempStr.replaceAll(regPattern.elementAt(i), regReplace.elementAt(i));
 						}
 						byte[] stdout = tempStr.getBytes();
@@ -241,6 +241,7 @@ public class Transformenator
 			byte[] compLeft = leftSide.elementAt(i).leftCompare;
 			byte[] maskLeft = leftSide.elementAt(i).leftMask;
 			byte[] replRight = rightSide.elementAt(i);
+			byte[] replRightToggle = rightToggle.elementAt(i);
 			match = true;
 			for (int j = 0; j < compLeft.length; j++)
 			{
@@ -295,7 +296,16 @@ public class Transformenator
 						}
 						else if ((replRight != null) && (currentSpec.backtrack == false))
 						{
-							outBuf.write(replRight);
+							if (currentSpec.toggle == true)
+							{
+								if (currentSpec.toggleState)
+									outBuf.write(replRight);
+								else
+									outBuf.write(replRightToggle);
+								currentSpec.toggleState = !currentSpec.toggleState;
+							}
+							else
+								outBuf.write(replRight);
 						}
 					}
 					catch (Exception ex)
@@ -431,7 +441,7 @@ public class Transformenator
 		try
 		{
 			BufferedReader br = new BufferedReader(fr);
-			StringTokenizer st;// = new StringTokenizer("=");
+			StringTokenizer st;
 			while ((line = br.readLine()) != null)
 			{
 				RegSpec newRegSpec = new RegSpec();
@@ -440,31 +450,54 @@ public class Transformenator
 				boolean skip = false;
 				String[] hashSplits = line.split("#");
 				String[] equalsSplits = line.split("=");
+				String[] toggleSplits = line.split("%");
 				String[] result;
 				String leftTemp = "";
-				String rightTemp = "";
+				String rightTemp1 = "";
+				String rightTemp2 = "";
 				byte[] rightBytes = null;
-				// System.err.println("Splits on '=': "+equalsSplits.length+" splits on '#': "+hashSplits.length+" line.indexOf('='): "+line.indexOf("=")+ " line.indexOf('#'): "+line.indexOf("#"));
-				if ((line.indexOf("=") > 0 && line.indexOf("#") < 0) || 
-					(line.indexOf("=") > 0 && line.indexOf("=") < line.indexOf("#")))
+				// System.err.println("Splits on '=': "+equalsSplits.length+" splits on '#': "+hashSplits.length+" splits on '%': "+toggleSplits.length+"\n line.indexOf('='): "+line.indexOf("=")+ " line.indexOf('#'): "+line.indexOf("#")+ " line.indexOf('%'): "+line.indexOf("%"));
+				if ((line.indexOf("%") > 0 && line.indexOf("=") < 0 && line.indexOf("#") < 0) || 
+					(line.indexOf("%") > 0 && (line.indexOf("%") < line.indexOf("=")) && (line.indexOf("%") < line.indexOf("#"))))
 				{
-					// System.err.println("This is an equals production.");
+					// System.err.println("DEBUG This is a toggle production.");
+					st = new StringTokenizer(toggleSplits[0]);
+					result = toggleSplits;
+					newRegSpec.backtrack = false;					
+					newRegSpec.toggle = true;					
+				}
+				else if ((line.indexOf("=") > 0 && line.indexOf("%") < 0 && line.indexOf("#") < 0) || 
+					(line.indexOf("=") > 0 && (line.indexOf("=") < line.indexOf("%")) && (line.indexOf("=") < line.indexOf("#"))))
+				{
+					// System.err.println("DEBUG This is an equals production.");
 					st = new StringTokenizer(equalsSplits[0]);
 					result = equalsSplits;
 					newRegSpec.backtrack = false;
+					newRegSpec.toggle = false;					
 				}
-				else
+				else if ((line.indexOf("#") > 0 && line.indexOf("=") < 0 && line.indexOf("%") < 0) || 
+					(line.indexOf("#") > 0 && (line.indexOf("#") < line.indexOf("=")) && (line.indexOf("#") < line.indexOf("%"))))
+						
 				{
-					// System.err.println("This is a hash production.");
+					// System.err.println("DEBUG This is a hash production.");
 					st = new StringTokenizer(hashSplits[0]);
 					result = hashSplits;
 					newRegSpec.backtrack = true;
+					newRegSpec.toggle = false;					
+				}
+				else
+				{
+					// System.err.println("DEBUG Don't know what this is.");
+					st = new StringTokenizer(equalsSplits[0]);
+					result = equalsSplits;
+					newRegSpec.backtrack = false;
+					newRegSpec.toggle = false;					
 				}
 				if (st != null && st.hasMoreTokens())
 				{
 					leftTemp = st.nextToken();
 					skip = false;
-					// System.err.println("Left side token: ["+leftTemp+"]");
+					// System.err.println("DEBUG Left side token: ["+leftTemp+"]");
 					if (leftTemp.equals("head") || leftTemp.equals("tail") || leftTemp.equals("trim_leading") || leftTemp.trim().charAt(0) == (';'))
 					{
 						if (leftTemp.trim().charAt(0) == (';'))
@@ -474,10 +507,11 @@ public class Transformenator
 					}
 					else if (leftTemp.equals("regex"))
 					{
-						// System.err.println("Left side token: ["+leftTemp+"]");
+						// System.err.println("DEBUG Left side token: ["+leftTemp+"]");
 					}
 					else if ((leftTemp.trim().startsWith("[")) && leftTemp.trim().endsWith("]") && leftTemp.trim().length() == 8)
 					{
+						// We have a translation (i.e. [41..5a] = 61)
 						addLeft = false;
 						skip = true;
 						// Ok, we have opening and closing braces.  Check for two digits.
@@ -499,8 +533,8 @@ public class Transformenator
 								if (st.hasMoreTokens())
 								{
 									// Add a pile of left sides with incrementing right sides
-									rightTemp = st.nextToken();
-									anchorByte = asByte(rightTemp);
+									rightTemp1 = st.nextToken();
+									anchorByte = asByte(rightTemp1);
 									// System.err.println("Right anchor: 0x"+UnsignedByte.toString(anchorByte));
 									for (int i = firstByte; i <= endByte; i++)
 									{
@@ -512,6 +546,7 @@ public class Transformenator
 										byte b[] = new byte[1];
 										b[0] = UnsignedByte.loByte(anchorByte);
 										rightSide.add(b);
+										rightToggle.add(null); // Keep up with the toggle side
 										boolean backtrack = newRegSpec.backtrack;
 										newRegSpec = new RegSpec();
 										newRegSpec.backtrack = backtrack;
@@ -531,6 +566,7 @@ public class Transformenator
 									// System.err.println("Adding null spec 0x"+UnsignedByte.toString(UnsignedByte.loByte(i)));
 									// System.err.println("Right side token is null.");
 									rightSide.add(null);
+									rightToggle.add(null); // Keep up with the toggle side
 									boolean backtrack = newRegSpec.backtrack;
 									newRegSpec = new RegSpec();
 									newRegSpec.backtrack = backtrack;
@@ -540,59 +576,68 @@ public class Transformenator
 					}
 					else
 					{
+						// System.err.println("DEBUG leftCompare: ["+leftTemp+"]");
 						newRegSpec.leftCompare = asBytes(leftTemp);
 						newRegSpec.leftMask = maskBytes(leftTemp);
-						// System.err.println("Left bytes length: " + leftBytes.length);
 						addLeft = true;
 					}
 				}
 				if (result != null && (result.length > 1) && !skip)
 				{
-					if (newRegSpec.backtrack == false) // We are using '=' as separator
+					if (result == equalsSplits) // We are using '=' as separator
 					{
-						rightTemp = line.substring(line.indexOf("=")+1);
+						rightTemp1 = line.substring(line.indexOf("=")+1);
 					}
-					else
+					else if (result == hashSplits) // We are using '#' as separator
 					{
-						rightTemp = line.substring(line.indexOf("#")+1);
+						rightTemp1 = line.substring(line.indexOf("#")+1);
+					}
+					else // We are using '%' as separator
+					{
+						String rightTemp = line.substring(line.indexOf("%")+1);
+						// System.err.println("DEBUG toggling... right side is: "+rightTemp);
+						rightTemp1 = rightTemp.substring(1,rightTemp.indexOf(","));
+						rightTemp2 = rightTemp.substring(rightTemp.indexOf(",")+1);
+						// System.err.println("DEBUG Toggle on : ["+rightTemp1+"]");
+						// System.err.println("DEBUG Toggle off: ["+rightTemp2+"]");
 					}
 					{
-						// System.err.println("Found a right side string: ["+rightTemp.trim()+"]");
-						if (rightTemp.trim().equals("\"{@@<FiLe_EoF>@@}\""))
+						// System.err.println("DEBUG Found a right side string: ["+rightTemp1.trim()+"]");
+						if (rightTemp1.trim().equals("\"{@@<FiLe_EoF>@@}\""))
 						{
 							// System.err.println("Found an EOF specification...");
 							// Need to add an EOF command to the left side spec.
 							newRegSpec.command = 1;
 						}
-						else if (rightTemp.trim().equals("\"{@@<FiLe_SoF>@@}\""))
+						else if (rightTemp1.trim().equals("\"{@@<FiLe_SoF>@@}\""))
 						{
 							// System.err.println("Found an SOF specification...");
 							// Need to add an SOF command to the left side spec.
 							newRegSpec.command = 2;
 						}
-						else if (rightTemp.trim().equals("\"{@@<FiLe_SoF_GrEeDy>@@}\""))
+						else if (rightTemp1.trim().equals("\"{@@<FiLe_SoF_GrEeDy>@@}\""))
 						{
 							// System.err.println("Found a greedy SOF specification...");
 							// Need to add an SOF command to the left side spec.
 							newRegSpec.command = 3;
 						}
-						else if (rightTemp.trim().length() > 0 && rightTemp.trim().charAt(0) == '"')
+						else if (rightTemp1.trim().length() > 0 && rightTemp1.trim().charAt(0) == '"')
 						{
 							String newString = "";
-							rightTemp = rightTemp.trim();
-							rightTemp = rightTemp.substring(1, rightTemp.length() - 1);
-							newString = rightTemp.replace("\\\\r", "\r").replace("\\\\n", "\n");
+							rightTemp1 = rightTemp1.trim();
+							rightTemp1 = rightTemp1.substring(1, rightTemp1.length() - 1);
+							newString = rightTemp1.replace("\\\\r", "\r").replace("\\\\n", "\n");
 							rightBytes = newString.getBytes();
 						}
 						else if (leftTemp.equals("regex"))
 						{
-							String delim = rightTemp.substring(0, 1);
-							// System.err.println("Regex replacement: "+rightTemp+" Delimiter: "+delim);
-							String[] rxTokens = rightTemp.split(delim);
+							String delim = rightTemp1.trim().substring(0, 1);
+							// System.err.println("DEBUG Delimeter: "+delim);
+							String[] rxTokens = rightTemp1.split(delim);
 							if (rxTokens.length > 1)
 							{
 								regPattern.add(rxTokens[1]);
-								// System.err.println("Regex replacement token 1: "+rxTokens[1]);
+								// System.err.println("DEBUG Regex replacement token 1: "+rxTokens[1]);
 							}
 							if (rxTokens.length > 2)
 							{
@@ -602,38 +647,38 @@ public class Transformenator
 							else
 							{
 								regReplace.add("");
-								// System.err.println("Regex replacement token 2 is blank.");
+								// System.err.println("DEBUG Regex replacement token 2 is blank.");
 							}
 						}
 						else
 						{
-							rightBytes = asBytes(rightTemp.trim());
+							rightBytes = asBytes(rightTemp1.trim());
 						}
 
-						// System.err.println("Right side token: ["+rightTemp+"]");
+						// System.err.println("DEBUG Right side token: ["+rightTemp1+"]");
 						if (leftTemp.equals("head"))
 						{
-							rightTemp = result[1];
+							rightTemp1 = result[1];
 							for (int j = 2; j < result.length;j++)
 							{
 								// System.err.println("Token: ["+result[j]+"]");
-								rightTemp = rightTemp + "=" + result[j];
+								rightTemp1 = rightTemp1 + "=" + result[j];
 							}
-							if (rightTemp.trim().charAt(0) == '"')
+							if (rightTemp1.trim().charAt(0) == '"')
 							{
 								String newString = "";
 								// System.err.println("Found a string...");
-								rightTemp = rightTemp.trim();
-								rightTemp = rightTemp.substring(1, rightTemp.length() - 1);
-								newString = rightTemp.replace("\\\\r", "\r").replace("\\\\n", "\n");
+								rightTemp1 = rightTemp1.trim();
+								rightTemp1 = rightTemp1.substring(1, rightTemp1.length() - 1);
+								newString = rightTemp1.replace("\\\\r", "\r").replace("\\\\n", "\n");
 								prefix = newString;
 							}
 							else
-								prefix = rightTemp;
+								prefix = rightTemp1;
 						}
 						else if (leftTemp.equals("tail"))
 						{
-							suffix = rightTemp;
+							suffix = rightTemp1;
 						}
 						else if (leftTemp.equals("regex"))
 						{
@@ -646,6 +691,29 @@ public class Transformenator
 						{
 							rightSide.add(rightBytes);
 							addedRight = true;
+							// Add toggle, if necessary
+							if (rightTemp2.trim().length() > 0)
+							{
+								rightTemp2 = rightTemp2.trim();
+								if (rightTemp2.trim().charAt(0) == '"')
+								{
+									// This production is surrounded by quotes
+									// System.err.println("DEBUG Adding toggle ["+rightTemp2+"]");
+									String newString = "";
+									rightTemp2 = rightTemp2.substring(1, rightTemp2.length() - 1);
+									newString = rightTemp2.replace("\\\\r", "\r").replace("\\\\n", "\n");
+									rightBytes = newString.getBytes();
+									rightToggle.add(rightBytes);
+								}
+								else
+								{
+									// No quotes surrounding this production
+									rightBytes = asBytes(rightTemp2);
+									rightToggle.add(rightBytes);
+								}
+							}
+							else
+								rightToggle.add(null);
 						}
 					}
 				}
@@ -655,6 +723,7 @@ public class Transformenator
 				{
 					// System.err.println("Right side token is null.");
 					rightSide.add(null);
+					rightToggle.add(null); // Keep up with the toggle side
 				}
 			}
 		}
@@ -775,6 +844,7 @@ public class Transformenator
 	static Vector<String> regReplace = new Vector<String>();
 	static Vector<RegSpec> leftSide = new Vector<RegSpec>();
 	static Vector<byte[]> rightSide = new Vector<byte[]>();
+	static Vector<byte[]> rightToggle = new Vector<byte[]>();
 	static String prefix;
 	static String suffix;
 	static int trimLeading;

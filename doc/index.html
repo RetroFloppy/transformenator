@@ -65,9 +65,15 @@ Note that replacement bytes that are "fed back" this way can form a tight loop w
 For example, this production will never complete:
 <xmp>20 # 20</xmp>
 <p>
+Sometimes it is desirable to "toggle" between two output values when a particular byte sequence is encountered.
+Some word processors, for example, have a single byte sequence that signifies to start and stop a particular attribute.
+For these situations, the percent sign ("%") character is used, and the two toggling values are separated by a comma:
+<xmp>; Toggle italics on and off
+7f047f % "\i1 ","\i0 "</xmp>
+<p>
 Semicolons denote comment lines.
 <xmp>; This is a comment</xmp>
-The left side of the equals sign or hash mark is one of these things:
+The left side of the equals sign, hash mark, or percent sign is one of these things:
 <ul>
 <li>A byte pattern, given in even numbers of hex digits, with no other decoration<br>
 <xmp>0d0a32ea4f</xmp>

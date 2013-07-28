@@ -27,4 +27,6 @@ public class RegSpec
 	public byte[] leftMask;
 	public int command = 0;
 	public boolean backtrack = true;
+	public boolean toggle = false;
+	public boolean toggleState = true; // Start out in "true" state for toggling specifications
 }
