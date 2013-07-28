@@ -1,0 +1,55 @@
+;
+; Wordstar 2000 word processor, output in RTF
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Line endings:
+; \par - return
+; \ql - reset to left-aligned paragraph
+0a = "\par\ql "
+
+; EOF
+7f017f = "{@@<FiLe_EoF>@@}"
+
+; Page numbering specification: "&%PAGE&" or "&%page&"
+26255041474526 =
+26257061676526 =
+
+; Hard line breaks
+7f037f =
+
+; Page break?
+7f48..............................487f = "\par "
+
+; Paragraph beginnings
+7f02........027f =
+7f49..497f =
+
+; Conditional word break
+7f037f =
+
+; Toggle italics
+7f047f % "\i1 ","\i0 "
+
+; Toggle bold
+7f057f % "\b1 ","\b0 "
+
+; Toggle underline
+7f067f % "\ul ","\ul0 "
+
+; Paragraph centered
+7f137f = "\qc "
+
+; Appeared as part of conditional line break?
+7f1e7f =
+7f1f7f =
+
+; Toggle remaining (heretofore unknown) command structures
+7f % "<on>","<off>"
+
+; Remove all instances of <on>...<off>
+regex = @<on>.+?<off>@@
