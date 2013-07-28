@@ -1,0 +1,36 @@
+;
+; Tandy 100/102/200/WP-2, output in RTF
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Did we accidentally pull in a sector header?  Lop it off.
+000073656b696e65................................................................................................................................................................................................................................................ =
+
+; Start of text
+04 =
+
+; Line breaks
+08 = 20
+
+; Form feed
+0c = "\par "
+
+; Newline
+0d = "\par "
+
+; Toggle underline
+01 % "\ul ","\ul0 "
+
+; Indentation level
+0531 = "\li1 "
+0532 = "\li0 "
+
+; End of text (ctrl-Z)
+1a = "{@@<FiLe_EoF>@@}"
+
+; Nulls
+00 =
