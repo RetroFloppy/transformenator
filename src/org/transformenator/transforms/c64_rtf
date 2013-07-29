@@ -19,7 +19,6 @@ tail = "}"
 
 ; End of line/paragraph becomes \r\n (plus) \par \par \li0 \b0 \fs24
 ; Need to turn off some things that don't have an explicit off switch (i.e. headings)
-;1f = 0d0a5c706172205c706172205c6c69305c62305c6673323420
 1f = "\par\par\li0\b0\fs24 "
 
 ; Start of heading
@@ -29,6 +28,6 @@ tail = "}"
 86 =
 
 ; Italics on
-b12d31 = "\i"
+b12d31 = "\i "
 ; Italics off
-b12d30 = "\i0"
+b12d30 = "\i0 "
