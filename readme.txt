@@ -1,20 +1,11 @@
-New for v1.4:
+New for v1.5:
 =============
 
- * Bytes within a range can be shifted to a new range given a starting
-   value.
+ * Added the ability to "toggle" between two values based on the appearance of a byte sequence - useful for word processors that used the same marker to toggle emphasis of some sort on and off
 
-   - This makes PETSCII or similar shifted-ASCII changes simple (i.e. 
-     [41..5a] = 61)
+ * Removed several built-in html transforms, enhanced others with more/better RTF formatting
 
- * Recursive transform specs - the meaning of '=' and '#' have been swapped
-   since being introduced in 1.3.  The default '=' is now to move past the
-   substitution, which is expected to be the typical intention.  The much 
-   less commonly needed '#' now means to feed the substitution back for
-   subsequent rules to act on.
-
-   - This can cause loops if your specs change data to the same thing (i.e.
-     0d # 0d0a)
+ * Fixed a bug in regex parsing that kept regular expressions from being detected correctly
 
 
 Transformenator introduction:
