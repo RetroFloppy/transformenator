@@ -50,30 +50,109 @@ The resulting outfile.bin looks like this in a hex editor:
 <xmp>(Offset) (Hex data)                               (ASCII representation)
 0000000: 6162 6364 2020 6566 6768 696a            abcd  efghij</xmp>
 Observe that nulls became spaces, and other trailing stuff after the EOF character has been removed.
+
 <h2>Transform Specifications</h2>
+
+<table border="1">
+<tbody>
+<tr>
+<th align="center"><b>Construct</b></th>
+<th align="left"><b>Explanation</b></th>
+<th align="left"><b>Example</b></th>
+</tr>
+<tr>
+<td align="center"><xmp>;</xmp></td>
+<td align="left">Comment, will be ignored</td>
+<td align="left"><xmp>; This text will not be considered.</xmp></td>
+</tr>
+<tr>
+<td align="center"><xmp>=</xmp></td>
+<td align="left">Replace the left side of the equals with what's on the right side and move past the replacement looking for the next match</td>
+<td align="left"><xmp>; Replace nulls with spaces
+00 = 20</xmp></td>
+</tr>
+<tr>
+<td align="center"><xmp>#</xmp></td>
+<td align="left">Replace the left side of the hash with what's on the right side and re-consider the just-replaced data for more matches</td>
+<td align="left"><xmp>; Add a newline - may need to add two
+8d # 0d0a
+0d0a9d = 0d0a0d0a</xmp></td>
+</tr>
+<tr>
+<td align="center"><xmp>%</xmp></td>
+<td align="left">Replace the left side of the percent with what's on the right side, alternating between the two values separated by commas</td>
+<td align="left"><xmp>; Toggle italics on and off
+7f047f % "\i1 ","\i0 "</xmp></td>
+</tr>
+<tr>
+<td align="center"><xmp>[xx..yy] = zz</xmp></td>
+<td align="left">Shift a byte range byte-for-byte to a different range starting at the value after the equals sign, or remove them altogether</td>
+<td align="left"><xmp>; Shift 0x41 through 0x5a up to 0x61
+[41..5a] = 61
+; Remove 0xf0 through 0xff
+[f0..ff] = </xmp></td>
+</tr>
+<tr>
+<td align="center"><xmp>head</xmp></td>
+<td align="left">Specifies a beginning-of-file prefix to add to the beginning of the resultant file</td>
+<td align="left"><xmp>; Header for HTML format
+head = "<html>"</xmp></td>
+</tr>
+<tr>
+<td align="center"><xmp>tail</xmp></td>
+<td align="left">Specifies an end-of-file suffix to add to the end of the resultant file</td>
+<td align="left"><xmp>; Trailer for HTML format
+tail = "</html>"</xmp></td>
+</tr>
+<tr>
+<td align="center"><xmp>trim_leading</xmp></td>
+<td align="left">Specifies a number of bytes to trim off the beginning of the input file (in hex bytes) before any binary transforms are applied</td>
+<td align="left"><xmp>; Trim the leading 0x400 bytes - this is a Pascal format file
+trim_leading = 0400</xmp></td>
+</tr>
+<tr>
+<td align="center"><xmp>regex</xmp></td>
+<td align="left">Specifies a regular expression to run on the output after any and all binary transforms are applied; multiple regex expressions are allowed, one per line</td>
+<td align="left"><xmp>; Remove left/right margin specs: zlmxx, :rmxx
+regex = @[z|:][l|r]m[0-9]*@@
+; Remove next file specification
+regex = @znx:.*@@</xmp></td>
+</tr>
+<tr>
+<td align="center"><xmp>{@@<FiLe_SoF>@@}</xmp></td>
+<td align="left">Special command value signifying the start of file; when the value specified on left side of the equals is first found, everything up to that point will be discarded</td>
+<td align="left"><xmp>; SOF is \r\nS
+0d0a53 = "{@@<FiLe_SoF>@@}"</xmp></td>
+</tr>
+<tr>
+<td align="center"><xmp>{@@<FiLe_SoF_GrEeDy>@@}</xmp></td>
+<td align="left">Special command value signifying the start of file; when the value specified on left side of the equals is found for the final time in a file, everything up to that point will be discarded</td>
+<td align="left"><xmp>; SOF may appear several times before it really starts
+1f = "{@@<FiLe_SoF_GrEeDy>@@}"</xmp></td>
+</tr>
+<tr>
+<td align="center"><xmp>{@@<FiLe_EoF>@@}</xmp></td>
+<td align="left">Special command value signifying the end of file; everything found after that point will be discarded</td>
+<td align="left"><xmp>; EOF is ctrl-Z
+1a = "{@@<FiLe_EoF>@@}"</xmp></td>
+</tr>
+</tbody>
+</table>
+<p>
 The Transformenator project comes with several example transforms used to convert various early binary word processor
-formats to RTF, HTML, or plain ASCII text. 
+formats to RTF, HTML, or plain ASCII text.
+You can see the list of available "internal" transforms by invoking the transformenator jar with no parameters, like so:
+<p>
+<xmp>%java -jar transformenator.jar</xmp>
+
 A sample <code>transform</code> file might simply look like this:
 <xmp>; Change 0x00 to 0x20
 00 = 20</xmp>
-It may be desirable to continue processing a data stream including a substitution that has just been made - exposing it to further processing by subsequent specifications.
-The "hash" ("#") character is used instead of the equals sign in that case:
-<xmp>; Add a newline - may need to add an additional one
-8d # 0d0a
-0d0a9d = 0d0a0d0a</xmp>
-Note that replacement bytes that are "fed back" this way can form a tight loop with itself and subsequent specifications.  
-For example, this production will never complete:
-<xmp>20 # 20</xmp>
+
 <p>
-Sometimes it is desirable to "toggle" between two output values when a particular byte sequence is encountered.
-Some word processors, for example, have a single byte sequence that signifies to start and stop a particular attribute.
-For these situations, the percent sign ("%") character is used, and the two toggling values are separated by a comma:
-<xmp>; Toggle italics on and off
-7f047f % "\i1 ","\i0 "</xmp>
-<p>
-Semicolons denote comment lines.
-<xmp>; This is a comment</xmp>
-The left side of the equals sign, hash mark, or percent sign is one of these things:
+
+The left side of the equals sign, hash mark, or percent sign is the byte pattern to search for.
+To specify it, the following conventions are used:
 <ul>
 <li>A byte pattern, given in even numbers of hex digits, with no other decoration<br>
 <xmp>0d0a32ea4f</xmp>
@@ -95,38 +174,10 @@ b12d31 = "\i "
 ; Italics off
 b12d30 = "\i0 "
 </xmp>
-Some special processing can take place:
-<ul>
-<li>A byte range can be shifted byte-for-byte to a different range starting at the value after the equals sign, or removed altogether:<br>
-<xmp>;Shift 0x41 through 0x5a up to 0x61
-[41..5a] = 61
-; Remove 0xf0 through 0xff
-[f0..ff] = </xmp>
-<li><code>head</code> specifies a beginning-of-file prefix to add to the beginning of the resultant file:<br>
-<xmp>; Header for HTML format
-head = "<html>"</xmp>
-<li><code>tail</code> specifies a end-of-file suffix to add to the end of the resultant file:<br>
-<xmp>; Trailer for HTML format
-tail = "</html>"</xmp>
-<li><code>trim-leading</code> specifies a number of bytes to trim off the beginning of the input file (in hex bytes) <u>before</u> any binary transforms are applied:<br>
-<xmp>; Trim the leading 0x400 bytes - this is a Pascal format file
-trim_leading = 0400</xmp>
-<li><code>regex</code> specifies a regular expression to run on the output <u>after</u> any and all binary transforms are applied;
-multiple <code>regex</code> expressions are allowed, one per line:<br>
-<xmp>; Remove left/right margin specs: zlmxx, :rmxx
-regex = @[z|:][l|r]m[0-9]*@@
-; Remove next file specification
-regex = @znx:.*@@</xmp>
+<p>
 Regular expressions are surrounded by delimiters - the first character in the string serves as that delimiter.
 So the production <code>regex=$abc$123$</code> will use <code>$</code> as the delimiter, and replace all occurrences of <code>abc</code> with <code>123</code>.
-</ul>
-There are special cases for representing the beginning and the end of a file. 
-When specifying the byte pattern that signifies the beginning of the file, the right side must be the production in the example below:
-<xmp>; SOF is \r\nS
-0d0a53 = "{@@<FiLe_SoF>@@}"</xmp> 
-When specifying the byte pattern that signifies the end of file marker, the right side must be the production in the example below:
-<xmp>; EOF is ctrl-Z
-1a = "{@@<FiLe_EoF>@@}"</xmp> 
+<p>
 There is a special case for specifying returns and newlines.
 If you need to translate a byte pattern into something that includes them, you need to escape the backslash.
 For example:
