@@ -63,7 +63,7 @@ Observe that nulls became spaces, and other trailing stuff after the EOF charact
 <tr>
 <td align="center"><xmp>;</xmp></td>
 <td align="left">Comment, will be ignored</td>
-<td align="left"><xmp>; This text will not be considered.</xmp></td>
+<td align="left"><xmp>; This text will not be considered</xmp></td>
 </tr>
 <tr>
 <td align="center"><xmp>=</xmp></td>
@@ -107,13 +107,13 @@ tail = "</html>"</xmp></td>
 <tr>
 <td align="center"><xmp>trim_leading</xmp></td>
 <td align="left">Specifies a number of bytes to trim off the beginning of the input file (in hex bytes) before any binary transforms are applied</td>
-<td align="left"><xmp>; Trim the leading 0x400 bytes - this is a Pascal format file
+<td align="left"><xmp>; Trim the leading 0x400 bytes
 trim_leading = 0400</xmp></td>
 </tr>
 <tr>
 <td align="center"><xmp>regex</xmp></td>
 <td align="left">Specifies a regular expression to run on the output after any and all binary transforms are applied; multiple regex expressions are allowed, one per line</td>
-<td align="left"><xmp>; Remove left/right margin specs: zlmxx, :rmxx
+<td align="left"><xmp>; Remove margin specs: zlmxx, :rmxx
 regex = @[z|:][l|r]m[0-9]*@@
 ; Remove next file specification
 regex = @znx:.*@@</xmp></td>
@@ -127,7 +127,7 @@ regex = @znx:.*@@</xmp></td>
 <tr>
 <td align="center"><xmp>{@@<FiLe_SoF_GrEeDy>@@}</xmp></td>
 <td align="left">Special command value signifying the start of file; when the value specified on left side of the equals is found for the final time in a file, everything up to that point will be discarded</td>
-<td align="left"><xmp>; SOF may appear several times before it really starts
+<td align="left"><xmp>; SOF may appear several times
 1f = "{@@<FiLe_SoF_GrEeDy>@@}"</xmp></td>
 </tr>
 <tr>
