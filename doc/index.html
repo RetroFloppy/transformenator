@@ -39,19 +39,19 @@ Say you have the file below named infile.bin, represented in a typical hex edito
 0000010: 2072 6964 206f 6620 6d65 210a             rid of me!.
 </xmp>
 Say we want to change the hex zeroes in the middle to spaces, and eliminate anything after the EOF (0x1a).
-Create a transform file named transform to do that:
+Create a transform file named <code>transform</code> to do that:
 <xmp>; Make nulls into spaces
 00 = 20
 ; ASCII EOF character really means EOF
 1a = "{@@<FiLe_EoF>@@}"</xmp>
-So, we run infile.bin through the transform file and send the output to a file named outfile.bin:
+So, we run <code>infile.bin</code> through the <code>transform</code> file and send the output to a file named <code>outfile.bin</code>:
 <xmp>%java -jar transformenator.jar transform infile.bin outfile.bin</xmp>
 The resulting outfile.bin looks like this in a hex editor:
 <xmp>(Offset) (Hex data)                               (ASCII representation)
 0000000: 6162 6364 2020 6566 6768 696a            abcd  efghij</xmp>
 Observe that nulls became spaces, and other trailing stuff after the EOF character has been removed.
 
-<h2>Transform Specifications</h2>
+<h2>Transform Specification</h2>
 
 <table border="1">
 <tbody>
@@ -80,7 +80,7 @@ Observe that nulls became spaces, and other trailing stuff after the EOF charact
 </tr>
 <tr>
 <td align="center"><xmp>%</xmp></td>
-<td align="left">Replace the left side of the percent with what's on the right side, alternating between the two values separated by commas</td>
+<td align="left">Replace the left side of the percent with what's on the right side, alternating between two values separated by commas</td>
 <td align="left"><xmp>; Toggle italics on and off
 7f047f % "\i1 ","\i0 "</xmp></td>
 </tr>
@@ -94,13 +94,13 @@ Observe that nulls became spaces, and other trailing stuff after the EOF charact
 </tr>
 <tr>
 <td align="center"><xmp>head</xmp></td>
-<td align="left">Specifies a beginning-of-file prefix to add to the beginning of the resultant file</td>
+<td align="left">Specifies a prefix to add to the beginning of the resultant file</td>
 <td align="left"><xmp>; Header for HTML format
 head = "<html>"</xmp></td>
 </tr>
 <tr>
 <td align="center"><xmp>tail</xmp></td>
-<td align="left">Specifies an end-of-file suffix to add to the end of the resultant file</td>
+<td align="left">Specifies a suffix to add to the end of the resultant file</td>
 <td align="left"><xmp>; Trailer for HTML format
 tail = "</html>"</xmp></td>
 </tr>
@@ -144,7 +144,9 @@ formats to RTF, HTML, or plain ASCII text.
 You can see the list of available "internal" transforms by invoking the transformenator jar with no parameters, like so:
 <p>
 <xmp>%java -jar transformenator.jar</xmp>
-
+The source to these internal transforms is available in CVS at
+<a target="_new" href="http://transformenator.cvs.sourceforge.net/viewvc/transformenator/transformenator/src/org/transformenator/transforms/">this link.</a>
+<p>
 A sample <code>transform</code> file might simply look like this:
 <xmp>; Change 0x00 to 0x20
 00 = 20</xmp>
