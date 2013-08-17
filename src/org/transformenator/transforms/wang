@@ -1,0 +1,72 @@
+;
+; Transform for Wang OIS Word Processor
+;
+
+; Page control commands - one is probably page eject
+; ^B^QT, ^B^QV...
+0211.. =
+02185614122037 =
+
+121b38 =
+14121750 =
+1c4d04 = 
+141137 =
+1538 =
+162037 =
+182038 =
+
+; Document control commands - clustered at the beginnings of documents
+1c21262b2e3842 =
+1c21262b2e38 =
+1d22272c31 =
+; #(
+1e23282d32373c41 =
+1e23282e3842 =
+1e23282d32 =
+1e23282d37 =
+1e23282d4d =
+1e23282d51 =
+1e23282d52 =
+; Yes, there was one all by itself
+1e23282d =
+1e232837 =
+1e233707362e =
+1e2328 =
+1e2337 =
+1e38 =
+; Control sequence in ASCII range $).O
+1f24292e4f =
+1f24292e3842 =
+1f3751 =
+
+11 =
+12 =
+13 =
+14 =
+15 =
+16 =
+17 =
+18 =
+19 =
+1a =
+1b =
+1e =
+1f =
+
+; Center line - no toggle, no closing
+08 =
+
+; Newlines
+04 = 0d0a
+05 = 0d0a
+
+; Line break
+07 =
+
+01 =
+a0 =
+02185618122037 =
+0218561c122037 =
+
+; Remove some high-bit stuff
+[a6..f9] =

@@ -6,19 +6,19 @@
 if [ "$3" != "" ]
 then
   export MY_HOME="`pwd`"
-  cd $2
   mkdir $3
+  cd $2
   for file in ./*
   do
     if [ "$1" = "valdocs" ]
     then
-      java -jar $TRANSFORM_HOME/transformenator.jar "$1" "$file" "$3"
+      java -jar $TRANSFORM_HOME/transformenator.jar "$1" "$file" $MY_HOME/"$3"
     else
       if [ "$4" != "" ]
       then
-        java -jar $TRANSFORM_HOME/transformenator.jar "$1" "$file" "$3/$file.$4"
+        java -jar $TRANSFORM_HOME/transformenator.jar "$1" "$file" $MY_HOME/"$3/$file.$4"
       else
-        java -jar $TRANSFORM_HOME/transformenator.jar "$1" "$file" "$3/$file.txt"
+        java -jar $TRANSFORM_HOME/transformenator.jar "$1" "$file" $MY_HOME/"$3/$file.txt"
       fi
     fi
   done

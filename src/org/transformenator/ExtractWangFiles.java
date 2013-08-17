@@ -36,7 +36,7 @@ import java.util.Arrays;
  * Wang word processor disks.    
  *
  */
-public class UnpackWangFiles
+public class ExtractWangFiles
 {
 
 	public static void main(java.lang.String[] args)
@@ -88,8 +88,7 @@ public class UnpackWangFiles
 																// specification
 				byte range[] = Arrays.copyOfRange(inData, 0x00, 0x04);
 
-				if (Arrays.equals(range, eyecatcher)) // Is the WANG eyecatcher
-														// in the disk image?
+				if (Arrays.equals(range, eyecatcher)) // Is the WANG eyecatcher in the disk image?
 				{
 					int catalogSectors = 0;
 					int preambleOffset = 0x100; // Space for WVD preamble
@@ -108,22 +107,34 @@ public class UnpackWangFiles
 					{
 						System.err.println("Error: disk index type is " + inData[0x100] + ", expected 0.  Will need new means of interpreting disk image.");
 					}
-					if (catalogSectors > 0) // Ok, we have a reasonable catalog
-											// number
+					if (catalogSectors > 0) // Ok, we have a reasonable catalog number
 					{
+						if (args.length == 2)
+						{
+							/*
+							 * If they wanted an output directory, go ahead and make it.
+							 */
+							try
+							{
+								Runtime.getRuntime().exec("mkdir "+args[1]);
+							}
+							catch (IOException e)
+							{
+								// e.printStackTrace();
+								/*
+								 *  The natural course of events will 
+								 *  be to have errors reported by the 
+								 *  attempt to eventually write the file.
+								 *  No need to complain here if, say, the
+								 *  directory already exists.
+								 */
+							}
+						}
 						// System.err.println("Number of catalog sectors: "+catalogSectors);
 						preambleOffset += catalogSectors * 256;
 						catalogOffset += (catalogSectors + 2) * 256;
 						// System.err.println("preambleOffset: "+preambleOffset+" catalogOffset: "+catalogOffset);
-						int fileIndexOffset = catalogOffset + 4; // The first
-																	// file in
-																	// the file
-																	// index is
-																	// 4 bytes
-																	// past the
-																	// start of
-																	// the index
-																	// sector
+						int fileIndexOffset = catalogOffset + 4; // The first file in the file index is 4 bytes past the start of the index sector
 						do
 						{
 							// System.err.println("Next index byte: "+UnsignedByte.toString(inData[fileHeaderPointer]));
@@ -132,13 +143,9 @@ public class UnpackWangFiles
 								byte fnb[] = new byte[10];
 								fnb = Arrays.copyOfRange(inData, fileIndexOffset + 2, fileIndexOffset + 12);
 								String fileName = new String(fnb).trim().replace("\\", "-").replace("/", "-").replace("?", "-");
-								if (args.length == 2)
-								{
-									fileName = new String(args[1]) + File.separator + fileName;
-								}
+								fileName = new String(args[1]) + File.separator + fileName;
 								int fileHeaderSector = UnsignedByte.intValue(inData[fileIndexOffset + 1], inData[fileIndexOffset]);
-								// System.err.println("We have a file: " +
-								// fileName+" at raw sector: "+fileHeaderSector);
+								// System.err.println("File found: " + fileName+" at raw sector: "+fileHeaderSector);
 								decodeFile(inData, fileName, fileHeaderSector, preambleOffset);
 								shouldContinue = true;
 							}
@@ -165,7 +172,7 @@ public class UnpackWangFiles
 	{
 		/*
 		 * Incoming, we have the sector address of the file header; use that to
-		 * find the rest of the file. ...intValue(lo,hi)
+		 * find the rest of the file.
 		 */
 		int fileHeaderOffset = fileHeaderSector * 256 + preambleOffset;
 		// System.err.println("fileHeaderSector: "+fileHeaderSector+" fileHeaderOffset: "+fileHeaderOffset);
