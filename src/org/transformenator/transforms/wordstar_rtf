@@ -5,15 +5,31 @@
 ;
 
 ; Header for RTF format
-head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt ;}\f0 "
+head = "{\rtf1{\*\generator David Schmidt ;}\f0 "
 ; Closing brace for RTF format
 tail = "}"
+
+; Newlines - remove line breaks
+0d0a = "\\r\\n\par "
+8d0a =
+
+; Ruler line removal
+2e72720d =
 
 ; Strip high bits
 [80..ff] # 00
 
+; Remove overstrike/backspace
+08 =
+
 ; Toggle Underline mode
 13 % "\ul ","\ul0 "
+
+; Toggle superscripting - ^T
+14 % "\super ","\nosupersub "
+
+; Toggle subcripting - ^V
+16 % "\sub ","\nosupersub "
 
 ; Page break
 regex = @\\par \.pa@\\page @
@@ -27,10 +43,6 @@ regex = @\\par \.f5.*@@
 
 ; Page numbering removal
 regex = @\\par \.pn.*@@
-
-; Ruler line removal
-regex = @\\par \.rr.+?@@
-regex = @^\.rr.+?@@
 
 ; Continuous underlining
 regex = @\\par \.[ulon|ULON].*@@
@@ -46,6 +58,3 @@ regex = @\\par \.mt.*@@
 
 ; Character width
 regex = @\\par \.cw.*@@
-
-; Newlines
-0d0a = "\\r\\n\par "
