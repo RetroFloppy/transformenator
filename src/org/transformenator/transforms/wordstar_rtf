@@ -1,0 +1,51 @@
+;
+; WordStar word processor, output in RTF
+;
+; Helpful URL: http://justsolve.archiveteam.org/wiki/WordStar
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Strip high bits
+[80..ff] # 00
+
+; Toggle Underline mode
+13 % "\ul ","\ul0 "
+
+; Page break
+regex = @\\par \.pa@\\page @
+
+; Footer removal
+regex = @\\par \.fo.*@@
+regex = @\\par \.f2.*@@
+regex = @\\par \.f3.*@@
+regex = @\\par \.f4.*@@
+regex = @\\par \.f5.*@@
+
+; Page numbering removal
+regex = @\\par \.pn.*@@
+
+; Ruler line removal
+regex = @\\par \.rr.+?@@
+regex = @^\.rr.+?@@
+
+; Continuous underlining
+regex = @\\par \.[ulon|ULON].*@@
+regex = @\\par \.[uloff|ULOFF].*@@
+
+; Header lines
+regex = @\\par \.he(\.*)@\\r\\n\\par @
+regex = @\\par \.h2(\.*)@\\r\\n\\par @
+regex = @\\par \.h3(\.*)@\\r\\n\\par @
+regex = @\\par \.h4(\.*)@\\r\\n\\par @
+regex = @\\par \.h5(\.*)@\\r\\n\\par @
+regex = @\\par \.mt.*@@
+
+; Character width
+regex = @\\par \.cw.*@@
+
+; Newlines
+0d0a = "\\r\\n\par "
