@@ -1,0 +1,29 @@
+;
+; XyWrite word processor, output in RTF
+;
+
+; Header for RTF format
+head = "{\rtf1{\*\generator David Schmidt ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Underline
+ae4d444252af = "\ul "
+ae4d444e4daf = "\ul0 "
+
+; Bold
+ae555342af = "\b1 "
+ae555341af = "\b0 "
+
+; Newlines
+0d0a = "\\r\\n\par "
+
+; All remaining command structures
+ae = "<on>"
+af = "<off>"
+
+; Remove all instances of <on>...<off>
+regex = @<on>.+?<off>@@
+
+; End of text
+1a = "{@@<FiLe_EoF>@@}"
