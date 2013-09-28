@@ -1,9 +1,12 @@
 ;
-; AT&T 5700/Olivetti word processor
+; AT&T 5700/7700 / Olivetti ETV240/250 word processors
 ;
 
-; SOF is four bytes of $FF 
-ffffffff = "{@@<FiLe_SoF>@@}"
+; SOF is $d4 bytes in
+trim_leading = d4
+
+; End of text
+ff = "{@@<FiLe_EoF>@@}"
 
 00 =
 0b =
@@ -16,7 +19,6 @@ cb =
 cc =
 cd =
 d2 =
-ff =
 
 ; Some kind of bulleted list, maybe
 ..7f =
@@ -39,7 +41,10 @@ ff =
 8b = 20
 8c = 20
 
-; Emphasis of some sort
+; Dollar sign
+a4 = "$"
+
+; Emphasis of some sort placed before EVERY character
 01 =
 02 =
 03 =
