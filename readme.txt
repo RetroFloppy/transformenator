@@ -1,12 +1,7 @@
-New for v1.5:
-=============
+New for this version:
+=====================
 
- * Added the ability to "toggle" between two values based on the appearance of a byte sequence - useful for word processors that used the same marker to toggle emphasis of some sort on and off
-
- * Removed several built-in html transforms, enhanced others with more/better RTF formatting
-
- * Fixed a bug in regex parsing that kept regular expressions from being detected correctly
-
+ * Added a file extractor for 13-sector Apple II-based Cap'n Software EasyWriter and its transform
 
 Transformenator introduction:
 =============================

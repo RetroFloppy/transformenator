@@ -1,0 +1,147 @@
+;
+; Transform John Draper's EasyWriter (Cap'n Software) to RTF
+;
+; Based on extant files with no particular technical reference - may be breathtakingly incomplete
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Space?
+25 = 20
+
+; Italics on
+3c = "\i1 "
+bc = " \i1 "
+
+; Italics off
+3e = "\i0 "
+be = " \i0 "
+
+; Center on: #E
+2345 = "\qc " 
+a345 = "\qc "
+
+; Center off: #F
+2346 = "\ql "
+a346 = "\ql "
+
+; Commands
+; .c
+00ae63 =
+; .u*160
+00ae75..313630 =
+; .u#27
+00ae75233237 =
+; .u <<< This may be too greedy >>>
+00ae75
+; .t*67
+00ae742a3637 =
+; .j1
+00ae6a31 =
+
+; indent on: .l66
+00ae6c3636 = "\li725 "
+; indent off: .l70
+00ae6c3730 = "\li0 "
+00 =
+
+; Quote range
+a2 = 2022
+a3 = 2023
+a4 = 2024
+a5 = 2025
+a6 = 2026
+a7 = 2027
+a8 = 2028
+a9 = 2029
+aa = 202a
+ab = 202b
+ac = 202c
+ad = 202d
+ae = 202e
+
+b0 = 2030
+b1 = 2031
+b2 = 2032
+b3 = 2033
+b4 = 2034
+b5 = 2035
+b6 = 2036
+b7 = 2037
+b8 = 2038
+b9 = 2039
+
+; Uppercase letters
+c1 = 2041
+c2 = 2042
+c3 = 2043
+c4 = 2044
+c5 = 2045
+c6 = 2046
+c7 = 2047
+c8 = 2048
+c9 = 2049
+ca = 204a
+cb = 204b
+cc = 204c
+cd = 204d
+ce = 204e
+cf = 204f
+d0 = 2050
+d1 = 2051
+d2 = 2052
+d3 = 2053
+d4 = 2054
+d5 = 2055
+d6 = 2056
+d7 = 2057
+d8 = 2058
+d9 = 2059
+da = 205a
+
+; Lowercase letters
+e1 = 2061
+e2 = 2062
+e3 = 2063
+e4 = 2064
+e5 = 2065
+e6 = 2066
+e7 = 2067
+e8 = 2068
+e9 = 2069
+ea = 206a
+eb = 206b
+ec = 206c
+ed = 206d
+ee = 206e
+ef = 206f
+f0 = 2070
+f1 = 2071
+f2 = 2072
+f3 = 2073
+f4 = 2074
+f5 = 2075
+f6 = 2076
+f7 = 2077
+f8 = 2078 
+f9 = 2079
+fa = 207a
+
+; Newlines
+5d = "\\r\\n\par " 
+dd = "\\r\\n\par\par "
+
+; Remove leading space
+regex = @\\par  @\\par @
+
+; Remove .i followed by digits
+regex = @\.i[\d]*@@
+
+; Remove .l followed by digits
+regex = @\.l[\d]*@@
+
+; Remove .m followed by digits
+regex = @\.m[\d]*@@
