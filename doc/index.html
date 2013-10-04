@@ -53,6 +53,44 @@ Observe that nulls became spaces, and other trailing stuff after the EOF charact
 
 <h2>Transform Specification</h2>
 
+<p>
+The instructions for making the various transformations you want are simply listed in a plain text file.
+A <code>transform</code> file might look like this, for example:
+<xmp>; Change 0x00 to 0x20
+00 = 20</xmp>
+<p>
+
+The left side of the equals sign, hash mark, or percent sign is the byte pattern to search for.
+To specify it, the following conventions are used:
+<ul>
+<li>A byte pattern, given in even numbers of hex digits, with no other decoration<br>
+<xmp>0d0a32ea4f</xmp>
+<li>A byte pattern combined with "don't care" values consisting of even numbers of non-hex digits (periods/full stops are preferred but not enforced)<br>
+<xmp>0d0a....4f</xmp>
+<li>A byte pattern combined with "must not be zero" values consisting of even numbers of exclamation points<br>
+<xmp>0d0a32!!4f</xmp>
+</ul>
+The right side can be blank, another byte pattern given in undecorated hex, or ASCII text if surrounded in double quotes.
+Examples:
+<xmp>; Hard newline
+8d = 0d0a
+; 0x86 appeared at the beginning of files sometimes, after the preamble.  Remove it.
+86 =
+; Start of heading
+83 = "\par\par\pard\s2\b\fs36 "
+; Italics on
+b12d31 = "\i "
+; Italics off
+b12d30 = "\i0 "
+</xmp>
+<p>
+There is a special case for specifying returns and newlines.
+If you need to translate a byte pattern into something that includes them, you need to escape the backslash.
+For example:
+<xmp>; Justify on
+7a0a1531 = "\\r\\n</pre>"</xmp>
+<p>
+The table below lists the special processing capabilities of Transformenator.
 <table border="1">
 <tbody>
 <tr>
@@ -112,7 +150,7 @@ trim_leading = 0400</xmp></td>
 </tr>
 <tr>
 <td align="center"><xmp>regex</xmp></td>
-<td align="left">Specifies a regular expression to run on the output after any and all binary transforms are applied; multiple regex expressions are allowed, one per line</td>
+<td align="left">Specifies a regular expression to run on the output after any and all binary transforms are applied; multiple regex expressions are allowed, one per line; the first character in the string serves as the delimiter</td>
 <td align="left"><xmp>; Remove margin specs: zlmxx, :rmxx
 regex = @[z|:][l|r]m[0-9]*@@
 ; Remove next file specification
@@ -146,47 +184,9 @@ You can see the list of available "internal" transforms by invoking the transfor
 <xmp>%java -jar transformenator.jar</xmp>
 The source to these internal transforms is available in CVS at
 <a target="_new" href="http://transformenator.cvs.sourceforge.net/viewvc/transformenator/transformenator/src/org/transformenator/transforms/">this link.</a>
-<p>
-A sample <code>transform</code> file might simply look like this:
-<xmp>; Change 0x00 to 0x20
-00 = 20</xmp>
-
-<p>
-
-The left side of the equals sign, hash mark, or percent sign is the byte pattern to search for.
-To specify it, the following conventions are used:
-<ul>
-<li>A byte pattern, given in even numbers of hex digits, with no other decoration<br>
-<xmp>0d0a32ea4f</xmp>
-<li>A byte pattern combined with "don't care" values consisting of even numbers of non-hex digits (periods/full stops are preferred but not enforced)<br>
-<xmp>0d0a....4f</xmp>
-<li>A byte pattern combined with "must not be zero" values consisting of even numbers of exclamation points<br>
-<xmp>0d0a32!!4f</xmp>
-</ul>
-The right side can be blank, another byte pattern given in undecorated hex, or ASCII text if surrounded in double quotes.
-Examples:
-<xmp>; Hard newline
-8d = 0d0a
-; 0x86 appeared at the beginning of files sometimes, after the preamble.  Remove it.
-86 =
-; Start of heading
-83 = "\par\par\pard\s2\b\fs36 "
-; Italics on
-b12d31 = "\i "
-; Italics off
-b12d30 = "\i0 "
-</xmp>
-<p>
-Regular expressions are surrounded by delimiters - the first character in the string serves as that delimiter.
-So the production <code>regex=$abc$123$</code> will use <code>$</code> as the delimiter, and replace all occurrences of <code>abc</code> with <code>123</code>.
-<p>
-There is a special case for specifying returns and newlines.
-If you need to translate a byte pattern into something that includes them, you need to escape the backslash.
-For example:
-<xmp>; Justify on
-7a0a1531 = "\\r\\n</pre>"</xmp>
 
 <h2>Related Projects</h2>
+
 Binary Block Editor (<a href="http://bbe-.sourceforge.net/">bbe</a>) is a related sed-like editor for binary files.
 
 <h2>Transformenator Project Page at SourceForge</h2>
