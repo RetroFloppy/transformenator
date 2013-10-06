@@ -1,0 +1,71 @@
+;
+; Transform PC EasyWriter to text
+;
+; Based on extant files with no particular technical reference - may be breathtakingly incomplete
+;
+
+; Page breaks
+dc..............dc = 
+
+; Line breaks
+0d = 20
+0b = 20
+0c = 
+8c =
+; Tabs
+14 = "     "
+0f = "     "
+
+; Commands
+c0........c0 =
+c1....c1 =
+c2..c2 = 
+c300....c3 =
+c6....c6 =
+c7........c7 =
+c9................................................................................c9 =
+cc =
+ce....ce =
+d0........d0 =
+d5....d5 =
+de....de =
+e0....e0 =
+89 =
+ac =
+
+; Probably centering 
+82 =
+83 =
+
+; Seemed to precede a page number
+2d =
+
+; Emphasis on
+9d =
+; Emphasis off
+9c =
+
+; Emphasis on
+94 =
+; Emphasis off
+95 =
+
+; Emphasis on
+df1b34df =
+; Emphasis off
+df1b35df = 
+
+; Emphasis (Bold?) on
+df1b5731df =
+; Emphasis (Bold?) off
+df1b5730df =
+
+; Indented paragraph
+e00005e0 = 
+
+; Dashes
+a9 = "-"
+aa = "-"
+
+; Superscript one character
+bc =
