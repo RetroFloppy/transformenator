@@ -1,0 +1,90 @@
+;
+; Transform PC EasyWriter to RTF	
+;
+; Based on extant files with no particular technical reference - may be breathtakingly incomplete
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Newlines
+0a = "\\r\\n\par\pard "
+8c = "\\r\\n\par "
+
+; Page breaks
+dc..............dc = 
+
+; Line breaks
+0d = 20
+0b = 20
+0c = 
+19 =
+; Tabs
+14 = 09
+0f = 09
+
+; Commands
+c0........c0 =
+c1....c1 =
+c2..c2 = 
+c6....c6 =
+c7........c7 =
+c9................................................................................c9 =
+cc =
+ce....ce =
+cf..cf =
+d0........d0 =
+d5....d5 =
+de....de =
+e0....e0 =
+89 =
+ac =
+
+; Center on
+c300....c3 = "\\r\\n\qc "
+
+; Probably centering or some other emphasis 
+82 =
+; Stop centering "\ql "
+83 = 
+
+; Seemed to precede a page number
+2d =
+
+; Bold on
+9d = "\b1 "
+; Bold off
+9c = "\b0 "
+
+; Emphasis on
+94 = "\i1 "
+; Emphasis off
+95 = "\i0 "
+
+; Italics on
+df1b34df = "\i1 "
+; Italics off
+df1b35df = "\i0 "
+
+; Center on (W1)
+df1b5731df = "\qc "
+df1b573120df = "\qc "
+df1b57312020df = "\qc "
+; Center off (W0)
+df1b5730df = 
+
+; Indented paragraph
+e00005e0 = 
+
+; Dashes
+a9 = "-"
+aa = "-"
+
+; Trademark symbol
+bc54bc4d = "\'99"
+
+; Superscript one character
+bc =
+
