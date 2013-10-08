@@ -101,7 +101,7 @@ public class TransformDirectory
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("TransformDirectory - Recursively apply transforms to all files in a filesystem");
+		System.err.println("TransformDirectory - Recursively apply transform to all files in a filesystem");
 		System.err.println();
 		System.err.println("Usage: TransformDirectory transform in_directory out_directory [suffix]");
 	}

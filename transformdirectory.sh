@@ -16,5 +16,5 @@ then
     java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.TransformDirectory "$1" "$2" "$3"
   fi
 else
-  echo "Usage: transformdirectory.sh transform in_directory out_directory [suffix]"
+  java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.TransformDirectory
 fi

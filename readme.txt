@@ -1,8 +1,10 @@
 New for this version:
 =====================
 
- * Added a file extractor for 13-sector Apple II-based Cap'n Software EasyWriter and its transform
+ * Added a file extractor for 13-sector Apple II-based Cap'n Software EasyWriter and its transforms (Apple II and PC)
 
+ * Added recursive "apply transform to all subdirectories" to native code rather than via shell scripting
+ 
 Transformenator introduction:
 =============================
 
@@ -17,6 +19,6 @@ Your're stuck.
 Maybe that's why you're here. Transformenator can help.
 
 Invocation:
-java -jar transformenator.jar transform infile.bin outfile.bin
+java -jar transformenator.jar transform infile outfile
 
 See http://transformenator.sourceforge.net for details.
