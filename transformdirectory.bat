@@ -3,23 +3,23 @@
 @rem Set TRANSFORM_HOME to the location of the transformenator.jar file.
 @rem
 
+@if "%TRANSFORM_HOME%" == "" goto local
+goto next
+:local
+set TRANSFORM_HOME="."
+
+:next
 @if "%3" == "" goto usage
 @if "%4" == "" goto nosuffix
 
-@rem
-@rem Add a suffix to all transformations performed
-@rem
-@for /f "usebackq delims=|" %%f in (`dir /b "%2"`) do java -jar %TRANSFORM_HOME%\transformenator.jar %1 "%2\%%f" "%3\%%f.%4"
+java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.TransformDirectory "%1" "%2" "%3" "%4"
 @goto end
 
 :nosuffix
-@rem
-@rem Don't add any suffix at all - just put the new file in the new destination with the old name
-@rem 
-@for /f "usebackq delims=|" %%f in (`dir /b "%2"`) do java -jar %TRANSFORM_HOME%\transformenator.jar %1 "%2\%%f" "%3\%%f"
+java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.TransformDirectory "%1" "%2" "%3"
 @goto end
 
 :usage
-@echo Usage: transformdirectory.bat transform origindir destdir [suffix]
+@echo Usage: transformdirectory.bat transform  in_directory out_directory [suffix]
 
 :end

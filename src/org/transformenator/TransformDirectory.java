@@ -63,28 +63,38 @@ public class TransformDirectory
 		 *  - If a directory: recursively call tranformDirectory
 		 */
 		File inDirFile = new File(in_directory);
-		File outDirFile = new File(out_directory);
-		outDirFile.mkdirs();
-		// System.out.println("mkdirs:  "+out_directory);
-		try
+		if (inDirFile.exists())
 		{
-			File[] files = inDirFile.listFiles();
-			for (int i = 0; i < files.length; i++)
+			File outDirFile = new File(out_directory);
+			outDirFile.mkdirs();
+			// System.out.println("mkdirs:  "+out_directory);
+			try
 			{
-				if (files[i].isDirectory())
+				File[] files = inDirFile.listFiles();
+				if (files != null)
 				{
-					tranformDirectory(transform,transform_name,in_directory + java.io.File.separator + files[i].getName(),out_directory + java.io.File.separator + files[i].getName(), file_suffix);
-				}
-				else if (!files[i].isHidden())
-				{
-					System.out.println("Transforming file: "+files[i]+" to file: "+out_directory + java.io.File.separator + files[i].getName()+"."+file_suffix);
-					transform.createOutput(files[i].toString(), out_directory + java.io.File.separator + files[i].getName()+"."+file_suffix, file_suffix);
+					for (int i = 0; i < files.length; i++)
+					{
+						if (files[i].isDirectory())
+						{
+							tranformDirectory(transform,transform_name,in_directory + java.io.File.separator + files[i].getName(),out_directory + java.io.File.separator + files[i].getName(), file_suffix);
+						}
+						else if (!files[i].isHidden())
+						{
+							System.out.println("Transforming file: "+files[i]+" to file: "+out_directory + java.io.File.separator + files[i].getName()+"."+file_suffix);
+							transform.createOutput(files[i].toString(), out_directory + java.io.File.separator + files[i].getName()+"."+file_suffix, file_suffix);
+						}
+					}
 				}
 			}
+			catch (Throwable t1)
+			{
+				t1.printStackTrace();
+			}
 		}
-		catch (Throwable t1)
+		else
 		{
-			System.err.println(t1);
+			System.err.println("Error: Specified in_directory does not exist.");
 		}
 	}
 
@@ -93,6 +103,6 @@ public class TransformDirectory
 		System.err.println();
 		System.err.println("TransformDirectory - Recursively apply transforms to all files in a filesystem");
 		System.err.println();
-		System.err.println("Syntax: TransformDirectory transform in_directory out_directory [suffix]");
+		System.err.println("Usage: TransformDirectory transform in_directory out_directory [suffix]");
 	}
 }
