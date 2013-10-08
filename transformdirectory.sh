@@ -1,7 +1,9 @@
 #!/bin/sh
 #
-# Usage: transformdirectory.sh transform in_directory out_directory [suffix]
-# Set TRANSFORM_HOME to the location of the transformenator.jar file.
+# Shell script invoker for TransformDirectory - call with no parameters for usage instructions 
+#
+# Set TRANSFORM_HOME to the location of the transformenator.jar file.  The default
+# location is the current working directory otherwise.
 #
 if [ "$TRANSFORM_HOME" == "" ]
 then
