@@ -1,5 +1,5 @@
 @rem
-@rem Usage: transformdirectory.bat transform origindir destdir [suffix]
+@rem Usage: transformdirectory.bat transform in_directory out_directory [suffix]
 @rem Set TRANSFORM_HOME to the location of the transformenator.jar file.
 @rem
 
@@ -12,11 +12,11 @@ set TRANSFORM_HOME="."
 @if "%3" == "" goto usage
 @if "%4" == "" goto nosuffix
 
-java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.TransformDirectory "%1" "%2" "%3" "%4"
+@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.TransformDirectory "%1" "%2" "%3" "%4"
 @goto end
 
 :nosuffix
-java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.TransformDirectory "%1" "%2" "%3"
+@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.TransformDirectory "%1" "%2" "%3"
 @goto end
 
 :usage
