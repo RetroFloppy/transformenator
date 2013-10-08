@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2012 - 2013 by David Schmidt
+ * Copyright (C) 2013 by David Schmidt
  * david__schmidt at users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -20,11 +20,9 @@
 
 package org.transformenator;
 
-public class Transformenator
+public class TransformFile
 {
-/*
- * This has just become an alias of TransformFile.
- */
+
 	public static void help()
 	{
 		System.err.println();
