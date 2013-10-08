@@ -1,12 +1,14 @@
 @rem
-@rem Usage: transformdirectory.bat transform in_directory out_directory [suffix]
-@rem Set TRANSFORM_HOME to the location of the transformenator.jar file.
+@rem Batch file Invoker for TransformDirectory - call with no parameters for usage instructions 
+@rem
+@rem Set TRANSFORM_HOME to the location of the transformenator.jar file.  The default
+@rem location is the current working directory otherwise.
 @rem
 
 @if "%TRANSFORM_HOME%" == "" goto local
-goto next
+@goto next
 :local
-set TRANSFORM_HOME="."
+@set TRANSFORM_HOME="."
 
 :next
 @if "%3" == "" goto usage
@@ -20,6 +22,6 @@ set TRANSFORM_HOME="."
 @goto end
 
 :usage
-@echo Usage: transformdirectory.bat transform  in_directory out_directory [suffix]
+@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.TransformDirectory
 
 :end
