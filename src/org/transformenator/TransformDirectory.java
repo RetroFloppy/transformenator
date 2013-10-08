@@ -25,9 +25,6 @@ import java.io.File;
 public class TransformDirectory
 {
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args)
 	{
 		if (args.length > 2)
@@ -47,7 +44,7 @@ public class TransformDirectory
 	public static void tranformDirectory(Transformation transform, String transform_name, String in_directory, String out_directory)
 	{
 		/*
-		 * Pick a suitable file suffix based on the final part of the transform name
+		 * Guess a suitable file suffix based on the final part of the transform name
 		 */
 		String suffix_guess = "txt";
 		if (transform_name.toLowerCase().endsWith("_rtf"))
@@ -63,7 +60,7 @@ public class TransformDirectory
 		 * Get the files in the in_directory
 		 * For each file, check if it's a file or a directory.  
 		 *  - If a file: Transform it
-		 *  - If a directory: recursively call the directory checker
+		 *  - If a directory: recursively call tranformDirectory
 		 */
 		File inDirFile = new File(in_directory);
 		File outDirFile = new File(out_directory);
@@ -81,7 +78,7 @@ public class TransformDirectory
 				else if (!files[i].isHidden())
 				{
 					System.out.println("Transforming file: "+files[i]+" to file: "+out_directory + java.io.File.separator + files[i].getName()+"."+file_suffix);
-					transform.createOutput(""+files[i],out_directory + java.io.File.separator + files[i].getName()+"."+file_suffix);
+					transform.createOutput(files[i].toString(), out_directory + java.io.File.separator + files[i].getName()+"."+file_suffix, file_suffix);
 				}
 			}
 		}
@@ -94,7 +91,7 @@ public class TransformDirectory
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("TransformDirectory - Recursively apply transforms to a filesystem");
+		System.err.println("TransformDirectory - Recursively apply transforms to all files in a filesystem");
 		System.err.println();
 		System.err.println("Syntax: TransformDirectory transform in_directory out_directory [suffix]");
 	}

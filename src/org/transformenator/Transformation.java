@@ -49,6 +49,19 @@ public class Transformation
 
 	public boolean createOutput(String inFile, String outFile)
 	{
+		return createOutput(inFile, outFile, "txt");
+	}
+
+	public boolean createOutput(String inFile, String outFile, String fileSuffix)
+	{
+		/*
+		 * We specify the literal outFile in the general case.  For Valdocs, though,
+		 * we discover the real filename once we start looking inside the file 
+		 * itself.  So in those cases where we need to re-create the outFile filename,
+		 * we look up the directory where outFile should be placed and generate a
+		 * new filename using the supplied fileSuffix along with the newly
+		 * discovered filename.  
+		 */
 		String valdocsName = null;
 		foundSOF = false;
 		if (isOK)
@@ -167,7 +180,31 @@ public class Transformation
 				{
 					if (valdocsName != null)
 					{
-						outFile = outFile + File.separator + valdocsName + ".txt";
+						/*
+						 * Valdocs files contain their own names internally.
+						 * If the outFile was passed in to us as a literal filename,
+						 * then get the parent directory's name and use that instead
+						 * along with the newly discovered file name.  If outFile was passed
+						 * in as a directory, then use it as the place to write the
+						 * newly discovered file name.
+						 */
+						File tmpOutFile = new File(outFile);
+						if (tmpOutFile.isDirectory())
+						{
+							/*
+							 * We have a directory - so just append the newly discovered filename.
+							 */
+							outFile = outFile + File.separator + valdocsName + "." + fileSuffix;
+						}
+						else
+						{
+							/*
+							 * Get the directory parent of the specified file and use that 
+							 * to re-generate a new file path with the newly discovered filename.
+							 */
+							outFile = tmpOutFile.getAbsoluteFile().getParentFile().toString() +
+									File.separator + valdocsName + "." + fileSuffix;
+						}
 						System.err.println("Creating file: \"" + outFile+"\"");
 					}
 					FileOutputStream out = new FileOutputStream(outFile);

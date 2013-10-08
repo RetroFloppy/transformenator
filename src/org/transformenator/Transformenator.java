@@ -30,7 +30,7 @@ public class Transformenator
 		System.err.println();
 		System.err.println("TransformFile - perform transformation operations on binary files.");
 		System.err.println();
-		System.err.println("Syntax: TransformFile [transform] [infile] [outfile]");
+		System.err.println("Syntax: TransformFile transform infile outfile");
 		System.err.println();
 		System.err.println("  See http://transformenator.sourceforge.net/ for transform file specification.");
 		System.err.println("  If using a valdocs transform, outfile specifies an output directory.");

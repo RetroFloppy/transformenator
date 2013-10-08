@@ -287,6 +287,6 @@ public class ExtractEasyWriterFiles
 		System.err.println();
 		System.err.println("ExtractAppleWriterFiles v1.0 - Extract files from AppleWriter word processor disk images.");
 		System.err.println();
-		System.err.println("Syntax: ExtractAppleWriterFiles inputFile {outputDirectory}");
+		System.err.println("Syntax: ExtractAppleWriterFiles inputFile [outputDirectory]");
 	}
 }
