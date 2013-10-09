@@ -28,7 +28,7 @@ public class Transformenator
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("TransformFile - perform transformation operations on binary files.");
+		System.err.println("TransformFile v1.6 - perform transformation operations on binary files.");
 		System.err.println();
 		System.err.println("Syntax: TransformFile transform infile outfile");
 		System.err.println();

@@ -234,8 +234,8 @@ public class ExtractWangFiles
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractWangFiles v1.0 - Extract files from Wang word processor disk images.");
+		System.err.println("ExtractWangFiles v1.6 - Extract files from Wang word processor disk images.");
 		System.err.println();
-		System.err.println("Syntax: ExtractWangFiles inputFile [outputDirectory]");
+		System.err.println("Syntax: ExtractWangFiles infile [out_directory]");
 	}
 }

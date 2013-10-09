@@ -158,8 +158,8 @@ public class RevealDirectoryEntries
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("RevealDirectoryEntries v1.0 - perform transformation operations on image files.");
+		System.err.println("RevealDirectoryEntries v1.6 - perform transformation operations on image files.");
 		System.err.println();
-		System.err.println("Syntax: RevealDirectoryEntries inputFile outputFile");
+		System.err.println("Syntax: RevealDirectoryEntries infile outfile");
 	}
 }
