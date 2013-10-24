@@ -111,7 +111,7 @@ public class Transformation
 				if (transformName.toUpperCase().contains("VALDOCS"))
 				{
 					// If they are using a Valdocs transform, let's pick apart the file first.
-					System.err.println("De-indexing valdocs file " + file + ".");
+					System.err.println("De-indexing valdocs file " + file);
 					// Figure out the original file name
 					char[] name = new char[110];
 					byte[] newBuf = new byte[inData.length];
@@ -155,6 +155,70 @@ public class Transformation
 							}
 							// else
 								// System.err.println("Found an index out of bounds: "+idx);
+						}
+					}
+					inData = new byte[newBufCursor];
+					for (int i = 0; i < newBufCursor; i++)
+						inData[i] = newBuf[i];
+					// System.err.println("Data length after de-indexing: "+inData.length);
+				}
+				else if (transformName.toUpperCase().contains("DISPLAYWRITE_3"))
+				{
+					// If they are using a pc3 transform, let's pick apart the file first.
+					System.err.println("De-indexing DisplayWrite 3 file " + file);
+					/*
+					 * Pick apart the file hunk indices.  Hunk indices start at 0x6b 
+					 * and follow 3 bytes of 0xaa.  There are a maximum of 59 indices.
+					 * 
+					 * Each index is a pointer to a hunk at 512 bytes * the index number in the file.
+					 */
+					byte[] newBuf = new byte[inData.length];
+					int newBufCursor = 0;
+					for (int i = 0x6b; i < 0x200; i += 7)
+					{
+						if (	((UnsignedByte.intValue(inData[i]) == 0xaa) &&
+								(UnsignedByte.intValue(inData[i+1]) == 0xaa) &&
+								(UnsignedByte.intValue(inData[i+2]) == 0xaa)) ||
+								((UnsignedByte.intValue(inData[i]) == 0x00) &&
+								(UnsignedByte.intValue(inData[i+1]) > 0x00) &&
+								(UnsignedByte.intValue(inData[i+2]) == 0x00)))
+						{
+							int idx = UnsignedByte.intValue(inData[i+4],inData[i+3]);
+							int len = UnsignedByte.intValue(inData[i+6],inData[i+5]) + 6;
+							// System.err.println("idx: 0x"+UnsignedByte.toString(idx)+" length: "+len);
+							if (idx < 32768)
+							{
+								if (((idx*512) + 1) < inData.length)
+								{
+									// System.err.println("Pulling data from "+idx*512+" to "+((idx*512)+len)+".");
+									/*
+									 * Need to hunt for the SOT.  It will be 3 bytes: 0xe80700. 
+									 */
+									int offset = 0;
+									for (int j = 0; j<0xff;j++)
+									{
+										if (	(UnsignedByte.intValue(inData[(idx * 512) + j + 0]) == 0xe8) &&
+												(UnsignedByte.intValue(inData[(idx * 512) + j + 1]) == 0x07) &&
+												(UnsignedByte.intValue(inData[(idx * 512) + j + 2]) == 0x00))
+										{
+											offset = j+3;
+											// System.err.println("Found start of text at offset 0x"+UnsignedByte.toString(offset));
+										}
+									}
+									if (offset == 0)
+									{
+										System.err.println("No SOT found for index 0x"+UnsignedByte.toString(idx)+".");
+										continue;
+									}
+									// Pull out the data in the chunk
+									for (int k = offset; k < len; k++)
+									{
+										newBuf[newBufCursor++] = inData[(idx * 512) + k];
+									}
+								}
+								else
+									System.err.println("Found an index out of bounds: "+idx);
+							}
 						}
 					}
 					inData = new byte[newBufCursor];
