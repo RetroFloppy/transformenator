@@ -1,31 +1,46 @@
 ;
-; DisplayWrite 3 format, output in RTF
+; DisplayWrite (3?) format, output in RTF
+;
+; Note - any transform with 'displaywrite' in the file name will trigger additional processing to
+;        untangle the indices from the original file.
 ;
 
 ; Header for RTF format
-head = "{\rtf1{\*\generator David Schmidt ;}\f0 "
+head = "{\rtf1{\*\generator David Schmidt - Transformenator;}\f0 "
 ; Closing brace for RTF format
 tail = "}"
 
-; Space
-40 = 20
+; Toggle Underline mode
+7f = % "\ul ","\ul0 "
+2bd4040a0100 = % "\ul ","\ul0 "
 
-; Bold or something - H1 sorts of tags
-2bd1028a =
-2bd1028e =
-2ae807d1028a =
-2bd4030b03 =
-2ae807d1028a =
-2ae80700 =
-2bd4020e =
+; Bold on/off 
+2bd1028a = "\b1 "
+2bd1028e = "\b0 "
+
+; More emphasis
+2ae80700 = 
+2ae807d1028a = 
+2bd106010067010000 = 
+2bd40204 = 
+2bd4020e = 
+
+; Unknown emphasis pair
 2bd1060100670100 =
-2bd40204 =
+2bd10601015401038d =
+
+; Unknown emphasis (no matching pair)
+2bd4030b03 = 
 
 ; Had to do with an indented quotation
 2bd40202 =
 2bd41805 =
 00500078010067010007802a3000f0040100066401042bd20901000000080300282bd402 =
 
+; Space
+40 = 20
+
+; Lower case letters
 81 = "a"
 82 = "b"
 83 = "c"
@@ -55,7 +70,7 @@ a7 = "x"
 a8 = "y"
 a9 = "z"
 
-; Capitals
+; Capital letters
 c1 = "A"
 c2 = "B"
 c3 = "C"
@@ -132,12 +147,7 @@ f9 = "9"
 ca =
 4d......5d =
 
-; Italics toggle
-7f % "\i1 ","\i0 "
-2bd4040a0100 % "\i1 ","\i0 "
-
 ; Bold on
 4a = "\b1 "
-
 ; Bold off
 5a = "\b0 "

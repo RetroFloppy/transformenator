@@ -162,10 +162,10 @@ public class Transformation
 						inData[i] = newBuf[i];
 					// System.err.println("Data length after de-indexing: "+inData.length);
 				}
-				else if (transformName.toUpperCase().contains("DISPLAYWRITE_3"))
+				else if (transformName.toUpperCase().contains("DISPLAYWRITE"))
 				{
 					// If they are using a pc3 transform, let's pick apart the file first.
-					System.err.println("De-indexing DisplayWrite 3 file " + file);
+					System.err.println("De-indexing DisplayWrite file " + file);
 					/*
 					 * Pick apart the file hunk indices.  Hunk indices start at 0x6b 
 					 * and follow 3 bytes of 0xaa.  There are a maximum of 59 indices.
