@@ -3,7 +3,7 @@
 ;
 
 ; Header for RTF format
-head = "{\rtf1{\*\generator David Schmidt ;}\f0 "
+head = "{\rtf1{\*\generator David Schmidt - Transformenator ;}\f0 "
 ; Closing brace for RTF format
 tail = "}"
 

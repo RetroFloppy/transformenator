@@ -2,6 +2,6 @@
 ; Do-nothing 'transform' - except it wraps the output in RTF tags
 ;
 ; Header for RTF format
-head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt ;}\f0 "
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
 ; Closing brace for RTF format
 tail = "}"
