@@ -25,5 +25,8 @@ af = "<off>"
 ; Remove all instances of <on>...<off>
 regex = @<on>.+?<off>@@
 
+; If any offs are still hanging around... lop 'em off
+regex = @<off>@@
+
 ; End of text
 1a = "{@@<FiLe_EoF>@@}"
