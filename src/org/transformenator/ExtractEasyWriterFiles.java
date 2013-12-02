@@ -30,10 +30,10 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 /*
- * UnpackWangFiles
+ * UnpackEasyWriterFiles
  * 
  * The intent of this helper app is to pull the files off of the virtual file system of
- * AppleWriter word processor disks in D13 format.    
+ * EasyWriter word processor disks in .D13 format.    
  *
  */
 public class ExtractEasyWriterFiles
@@ -88,22 +88,12 @@ public class ExtractEasyWriterFiles
 					/*
 					 * If they wanted an output directory, go ahead and make it.
 					 */
-					try
+					File baseDirFile = new File(args[1]);
+					if (!baseDirFile.isAbsolute())
 					{
-						// System.err.println("mkdir "+args[1]);
-						Runtime.getRuntime().exec("mkdir "+args[1]);
+						baseDirFile = new File("./"+args[1]);
 					}
-					catch (IOException e)
-					{
-						// e.printStackTrace();
-						/*
-						 *  The natural course of events will 
-						 *  be to have errors reported by the 
-						 *  attempt to eventually write the file.
-						 *  No need to complain here if, say, the
-						 *  directory already exists.
-						 */
-					}
+					baseDirFile.mkdir();
 				}
 				int fat = 8 * (256 * 13); // FAT starts at track 8, sector 0
 				int num = 0;
@@ -285,8 +275,8 @@ public class ExtractEasyWriterFiles
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractAppleWriterFiles v1.6 - Extract files from AppleWriter word processor disk image.");
+		System.err.println("ExtractEasyWriterFiles v1.6 - Extract files from EasyWriter word processor .D13 disk images.");
 		System.err.println();
-		System.err.println("Syntax: ExtractAppleWriterFiles infile [out_directory]");
+		System.err.println("Syntax: ExtractEasyWriterFiles infile [out_directory]");
 	}
 }

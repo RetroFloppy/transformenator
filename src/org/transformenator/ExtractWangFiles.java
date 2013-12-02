@@ -114,21 +114,12 @@ public class ExtractWangFiles
 							/*
 							 * If they wanted an output directory, go ahead and make it.
 							 */
-							try
+							File baseDirFile = new File(args[1]);
+							if (!baseDirFile.isAbsolute())
 							{
-								Runtime.getRuntime().exec("mkdir "+args[1]);
+								baseDirFile = new File("./"+args[1]);
 							}
-							catch (IOException e)
-							{
-								// e.printStackTrace();
-								/*
-								 *  The natural course of events will 
-								 *  be to have errors reported by the 
-								 *  attempt to eventually write the file.
-								 *  No need to complain here if, say, the
-								 *  directory already exists.
-								 */
-							}
+							baseDirFile.mkdir();
 						}
 						// System.err.println("Number of catalog sectors: "+catalogSectors);
 						preambleOffset += catalogSectors * 256;

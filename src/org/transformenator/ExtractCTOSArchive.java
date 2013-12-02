@@ -99,7 +99,11 @@ public class ExtractCTOSArchive
 					/*
 					 * If they wanted an output directory, go ahead and make it.
 					 */
-					File baseDirFile = new File("./"+args[1]);
+					File baseDirFile = new File(args[1]);
+					if (!baseDirFile.isAbsolute())
+					{
+						baseDirFile = new File("./"+args[1]);
+					}
 					baseDirFile.mkdir();
 				}
 				/*
