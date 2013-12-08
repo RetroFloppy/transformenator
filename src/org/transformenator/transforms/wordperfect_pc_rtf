@@ -1,5 +1,5 @@
 ;
-; Early PC WordPerfect word processor, output in RTF
+; DOS WordPerfect 4.2 word processor, output in RTF
 ;
 
 ; Header for RTF format
@@ -8,14 +8,30 @@ head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transf
 tail = "}"
 
 ; Start of file
-c10204c1 = "{@@<FiLe_SoF>@@}"
-c7........c7 =
+c0........c0 =
+c1..............c1 =
+c10204c1 =
+c2..c2 =
+c3......c3 = "\par "
+c4......c4 = "\par "
 c6....c6 = 
+c7........c7 =
+cb........cb =
+cc....cc =
+d0....................d0 =
+de....de =
+e182e1 = 
 
 ; Line endings
 0d = " "
 0a09 = "\par\par "
 0a0a = "\par\par "
+0a = "\par "
+82 =
+83 =
+84 =
+89 =
+9a =
 
 ; Emdash
 a9 = "\emdash "
