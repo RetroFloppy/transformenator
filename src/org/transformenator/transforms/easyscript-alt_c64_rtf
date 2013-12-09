@@ -1,0 +1,34 @@
+;
+; Transform for C64 Easyscript to RTF
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator;}\f0 "
+
+; Closing brace for RTF format
+tail = "}"
+
+; End of line/paragraph becomes \r\n (plus) \par \par \li0 \b0 \fs24
+; Need to turn off some things that don't have an explicit off switch (i.e. headings)
+; Don't consider the replacement for further replacements
+0d = "\par "
+
+; Remove nulls
+00 =
+
+; Centering on and off
+regex = @\*cn1@\\qc @
+regex = @\*cn0@\\pard\\slmulti @
+
+; Right alignment on and off
+regex = @\*ra1@\\qr @
+regex = @\*ra0@\\pard\\slmulti @
+
+; Remove margin controls
+regex = @\*[l|r]m[0-9][0-9]@@
+regex = @\*[l|r]m[0-9]@@
+
+; Remove random control characters
+regex = @\*vp[0-9]@@
+regex = @\*sp[0-9]@@
+regex = @\*ft.*@@

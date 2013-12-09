@@ -1,0 +1,70 @@
+;
+; Transform for C64 Easyscript from PETSCII to RTF
+;
+; ... a different approach than the original Easyscript transform
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator;}\f0 "
+
+; Closing brace for RTF format
+tail = "}"
+
+; Fatten up newlines a little bit
+0d = 0d0a
+ 
+; Transform capitals to lowercase
+[41..5a] = 61
+
+; Strip high bit from capitals
+[c1..da] = 41
+
+; Shifted spaces
+a0 = 20
+e0 = 20
+
+; Remove c0 
+c0 = 
+
+; To deal with the Easyscript control structures, we first break them up into individual elements.
+
+; Four elements, terminated
+regex = @€\*(.*?):(.*?):(.*?):(.*?);@<~$1~><~$2~><~$3~><~$4~>@
+; Three elements, terminated
+regex = @€\*(.*?):(.*?):(.*?);@<~$1~><~$2~><~$3~>@
+; Two elements, terminated
+regex = @€\*(.*?):(.*?);@<~$1~><~$2~>@
+; One element, terminated
+regex = @€\*(.*?);@<~$1~>@
+
+; Four elements, non-terminated
+regex = @€\*(.*?):(.*?):(.*?):(.*)@<~$1~><~$2~><~$3~><~$4~>@
+; Three elements, non-terminated
+regex = @€\*(.*?):(.*?):(.*)@<~$1~><~$2~><~$3~>@
+; Two elements, non-terminated
+regex = @€\*(.*?):(.*)@<~$1~><~$2~>@
+; One element, non-terminated
+regex = @€\*(.*)@<~$1~>@
+
+; Now that the elements are broken apart, deal with each type.
+
+; Center on
+regex = @<~cn1~>@\\qc @
+; Center off
+regex = @<~cn0~>@\\pard\\slmulti\\par @
+
+; Remove: left margin, right margin, page length, "ps(?), fp0"
+regex = @<~lm.*?~>@@
+regex = @<~rm.*?~>@@
+regex = @<~pl.*?~>@@
+regex = @<~ps~>@@
+regex = @<~fp0~>@@
+
+; Newline
+regex = @\<~ln1~>@\\par @
+regex = @\<~ln2~>@\\par\\par @
+regex = @\<~ln.*?~>@\\par\\par @
+regex = @\n@\\par @
+
+; Remove all remaining control structures
+regex = @<~.*?~>@@
