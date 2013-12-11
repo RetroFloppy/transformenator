@@ -1,7 +1,7 @@
 ;
 ; Transform for C64 Easyscript from PETSCII to RTF
 ;
-; ... a different approach than the original Easyscript transform
+; Expects PETSCII-exported files from tools like DirMaster; these would typically have a .PRG suffix
 ;
 
 ; Header for RTF format
@@ -28,22 +28,22 @@ c0 =
 
 ; To deal with the Easyscript control structures, we first break them up into individual elements.
 
-; Four elements, terminated
+; Four control elements, terminated
 regex = @€\*(.*?):(.*?):(.*?):(.*?);@<~$1~><~$2~><~$3~><~$4~>@
-; Three elements, terminated
+; Three control elements, terminated
 regex = @€\*(.*?):(.*?):(.*?);@<~$1~><~$2~><~$3~>@
-; Two elements, terminated
+; Two control elements, terminated
 regex = @€\*(.*?):(.*?);@<~$1~><~$2~>@
-; One element, terminated
+; One control element, terminated
 regex = @€\*(.*?);@<~$1~>@
 
-; Four elements, non-terminated
+; Four control elements, non-terminated
 regex = @€\*(.*?):(.*?):(.*?):(.*)@<~$1~><~$2~><~$3~><~$4~>@
-; Three elements, non-terminated
+; Three control elements, non-terminated
 regex = @€\*(.*?):(.*?):(.*)@<~$1~><~$2~><~$3~>@
-; Two elements, non-terminated
+; Two control elements, non-terminated
 regex = @€\*(.*?):(.*)@<~$1~><~$2~>@
-; One element, non-terminated
+; One control element, non-terminated
 regex = @€\*(.*)@<~$1~>@
 
 ; Now that the elements are broken apart, deal with each type.
@@ -66,5 +66,6 @@ regex = @\<~ln2~>@\\par\\par @
 regex = @\<~ln.*?~>@\\par\\par @
 regex = @\n@\\par @
 
-; Remove all remaining control structures
+; Remove all remaining control structures until we figure out what they are supposed to do
+; ...comment this regex out to see what got missed 
 regex = @<~.*?~>@@

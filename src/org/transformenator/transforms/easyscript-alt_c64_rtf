@@ -1,6 +1,9 @@
 ;
 ; Transform for C64 Easyscript to RTF
 ;
+; ... an alternate approach to an Easyscript transform: assumes ASCII export from 
+; tools like DirMaster
+;
 
 ; Header for RTF format
 head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator;}\f0 "
