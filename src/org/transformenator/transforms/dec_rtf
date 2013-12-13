@@ -1,0 +1,20 @@
+;
+; DEC RX50K-based word processor (Rainbow?) to RTF
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+0d = "\par\par "
+8d = "\\r\\n\par "
+
+; Toggle underlining (trigger character: '_')
+5f % "\ul ","\ul0 "
+
+; Toggle bold (trigger character: '^')
+5e % "\b1 ", "\b0 "
+
+; EOF
+1a = "{@@<FiLe_EoF>@@}"

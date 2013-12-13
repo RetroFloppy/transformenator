@@ -11,8 +11,8 @@ head = "{\rtf1{\*\generator David Schmidt - Transformenator;}\f0 "
 tail = "}"
 
 ; Toggle Underline mode
-7f = % "\ul ","\ul0 "
-2bd4040a0100 = % "\ul ","\ul0 "
+7f % "\ul ","\ul0 "
+2bd4040a0100 % "\ul ","\ul0 "
 
 ; Bold on/off 
 2bd1028a = "\b1 "

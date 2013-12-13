@@ -28,5 +28,9 @@ public class RegSpec
 	public int command = 0;
 	public boolean backtrack = true;
 	public boolean toggle = false;
-	public boolean toggleState = true; // Start out in "true" state for toggling specifications
+	/*
+	 *  Start out in "false" state for toggling specifications -
+	 *  the first action will be to emit the first element, or "on" state
+	 */
+	public boolean toggleState = false;
 }

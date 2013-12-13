@@ -68,7 +68,7 @@ public class Transformation
 		{
 			ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
 			inData = null;
-			// System.err.println("Reading input file " + in_file);
+			// System.err.println("DEBUG Reading input file " + in_file);
 			File file = new File(inFile);
 			byte[] result = new byte[(int) file.length()];
 			try
@@ -349,6 +349,7 @@ public class Transformation
 
 	public void parseTransforms(Reader fr)
 	{
+		int id = 0;
 		String line;
 		try
 		{
@@ -437,7 +438,7 @@ public class Transformation
 						endInt = UnsignedByte.intValue(endByte);
 						if (endInt > firstInt)
 						{
-							// System.err.println("We have a range: 0x"+UnsignedByte.toString(firstByte)+" through 0x"+UnsignedByte.toString(endInt));
+							// System.err.println("DEBUG We have a range: 0x"+UnsignedByte.toString(firstByte)+" through 0x"+UnsignedByte.toString(endInt));
 							// Take care of adding specs right here...
 							if (result.length > 1)
 							{
@@ -447,14 +448,14 @@ public class Transformation
 									// Add a pile of left sides with incrementing right sides
 									rightTemp1 = st.nextToken();
 									anchorByte = asByte(rightTemp1);
-									// System.err.println("Right anchor: 0x"+UnsignedByte.toString(anchorByte));
+									// System.err.println("DEBUG Right anchor: 0x"+UnsignedByte.toString(anchorByte));
 									for (int i = firstByte; i <= endByte; i++)
 									{
 										newRegSpec.leftCompare = asBytes(UnsignedByte.loByte(i));
 										// No mask is possible with ranges
 										newRegSpec.leftMask = asBytes(0);
 										leftSide.add(newRegSpec);
-										// System.err.println("Adding spec 0x"+UnsignedByte.toString(UnsignedByte.loByte(i))+" = 0x"+UnsignedByte.toString(anchorByte)+" (decimal "+anchorByte+")");
+										// System.err.println("DEBUG Adding spec 0x"+UnsignedByte.toString(UnsignedByte.loByte(i))+" = 0x"+UnsignedByte.toString(anchorByte)+" (decimal "+anchorByte+")");
 										byte b[] = new byte[1];
 										b[0] = UnsignedByte.loByte(anchorByte);
 										rightSide.add(b);
@@ -475,8 +476,8 @@ public class Transformation
 									// No mask is possible with ranges
 									newRegSpec.leftMask = asBytes(0);
 									leftSide.add(newRegSpec);
-									// System.err.println("Adding null spec 0x"+UnsignedByte.toString(UnsignedByte.loByte(i)));
-									// System.err.println("Right side token is null.");
+									// System.err.println("DEBUG Adding null spec 0x"+UnsignedByte.toString(UnsignedByte.loByte(i)));
+									// System.err.println("DEBUG Right side token is null.");
 									rightSide.add(null);
 									rightToggle.add(null); // Keep up with the toggle side
 									boolean backtrack = newRegSpec.backtrack;
@@ -517,19 +518,19 @@ public class Transformation
 						// System.err.println("DEBUG Found a right side string: ["+rightTemp1.trim()+"]");
 						if (rightTemp1.trim().equals("\"{@@<FiLe_EoF>@@}\""))
 						{
-							// System.err.println("Found an EOF specification...");
+							// System.err.println("DEBUG Found an EOF specification...");
 							// Need to add an EOF command to the left side spec.
 							newRegSpec.command = 1;
 						}
 						else if (rightTemp1.trim().equals("\"{@@<FiLe_SoF>@@}\""))
 						{
-							// System.err.println("Found an SOF specification...");
+							// System.err.println("DEBUG Found an SOF specification...");
 							// Need to add an SOF command to the left side spec.
 							newRegSpec.command = 2;
 						}
 						else if (rightTemp1.trim().equals("\"{@@<FiLe_SoF_GrEeDy>@@}\""))
 						{
-							// System.err.println("Found a greedy SOF specification...");
+							// System.err.println("DEBUG Found a greedy SOF specification...");
 							// Need to add an SOF command to the left side spec.
 							newRegSpec.command = 3;
 						}
@@ -554,7 +555,7 @@ public class Transformation
 							if (rxTokens.length > 2)
 							{
 								regReplace.add(rxTokens[2]);
-								// System.err.println("Regex replacement token 2: "+rxTokens[2]);
+								// System.err.println("DEBUG Regex replacement token 2: "+rxTokens[2]);
 							}
 							else
 							{
@@ -573,13 +574,13 @@ public class Transformation
 							rightTemp1 = result[1];
 							for (int j = 2; j < result.length;j++)
 							{
-								// System.err.println("Token: ["+result[j]+"]");
+								// System.err.println("DEBUG Token: ["+result[j]+"]");
 								rightTemp1 = rightTemp1 + "=" + result[j];
 							}
 							if (rightTemp1.trim().charAt(0) == '"')
 							{
 								String newString = "";
-								// System.err.println("Found a string...");
+								// System.err.println("DEBUG Found a string...");
 								rightTemp1 = rightTemp1.trim();
 								rightTemp1 = rightTemp1.substring(1, rightTemp1.length() - 1);
 								newString = rightTemp1.replace("\\\\r", "\r").replace("\\\\n", "\n");
@@ -610,7 +611,7 @@ public class Transformation
 								if (rightTemp2.trim().charAt(0) == '"')
 								{
 									// This production is surrounded by quotes
-									// System.err.println("DEBUG Adding toggle ["+rightTemp2+"]");
+									//System.err.println("DEBUG Adding toggle ["+rightTemp2+"]");
 									String newString = "";
 									rightTemp2 = rightTemp2.substring(1, rightTemp2.length() - 1);
 									newString = rightTemp2.replace("\\\\r", "\r").replace("\\\\n", "\n");
@@ -630,10 +631,12 @@ public class Transformation
 					}
 				}
 				if (addLeft)
+				{
 					leftSide.add(newRegSpec);
+				}
 				if (addLeft & !addedRight)
 				{
-					// System.err.println("Right side token is null.");
+					// System.err.println("DEBUG Right side token is null.");
 					rightSide.add(null);
 					rightToggle.add(null); // Keep up with the toggle side
 				}
@@ -717,12 +720,12 @@ public class Transformation
 			{
 				if (c == '!')
 				{
-					// System.err.println("Byte at position "+i/2+" must be non-zero.");
+					// System.err.println("DEBUG Byte at position "+i/2+" must be non-zero.");
 					buf[i / 2] = 2;
 				}
 				else
 				{
-					// System.err.println("Ignoring byte at position "+i/2);
+					// System.err.println("DEBUG Ignoring byte at position "+i/2);
 					buf[i / 2] = 1;
 				}
 			}
@@ -759,13 +762,13 @@ public class Transformation
 				}
 				else if ((inData[offset + j] == 0) && (maskLeft[j] == 2))
 				{
-					// System.err.println("Found a non-zero byte at "+j);								
+					// System.err.println("DEBUG Found a non-zero byte at "+j);								
 					match = false;
 				}
 			}
 			if (match == true)
 			{
-				// System.err.println("Found a match at offset "+offset+"; left length = "+currLeftLength+" command: "+currentSpec.command+" backtrack: "+currentSpec.backtrack);
+				// System.err.println("DEBUG Found a match at offset "+offset+"; left length = "+currLeftLength+" command: "+currentSpec.command+" backtrack: "+currentSpec.backtrack);
 				if (currentSpec.command == 0)
 				{
 					try
@@ -775,10 +778,10 @@ public class Transformation
 						{
 							// Push the replacement back onto incoming
 							int calc = offset + compLeft.length - replRight.length;
-							// System.err.println("calc: "+calc+" offset: "+offset);								
+							// System.err.println("DEBUG calc: "+calc+" offset: "+offset);								
 							if (calc < 0)
 							{
-								// System.err.println("calc: "+calc+" offset: "+offset);								
+								// System.err.println("DEBUG calc: "+calc+" offset: "+offset);								
 								int bump = Math.abs(calc);
 								byte newInData[] = new byte[inData.length - calc];
 								for (int q = 0; q < inData.length; q++)
@@ -790,7 +793,7 @@ public class Transformation
 							}
 							for (k = 0; k < replRight.length; k++)
 							{
-								// System.err.println("Pushing byte: "+k);								
+								// System.err.println("DEBUG Pushing byte: "+k);								
 								inData[offset + compLeft.length - replRight.length + k] = replRight[k];
 							}
 							backupBytes = replRight.length;
@@ -798,17 +801,29 @@ public class Transformation
 							{
 								backupBytes += calc;
 							}
-							// System.err.println("Backing up "+replRight.length+" bytes.");
+							// System.err.println("DEBUG Backing up "+replRight.length+" bytes.");
 						}
 						else if ((replRight != null) && (currentSpec.backtrack == false))
 						{
 							if (currentSpec.toggle == true)
 							{
-								if (currentSpec.toggleState)
-									outBuf.write(replRight);
-								else
-									outBuf.write(replRightToggle);
-								currentSpec.toggleState = !currentSpec.toggleState;
+								/*
+								String temp1 = "", temp2 = "";
+								for (int q = 0; q < replRight.length; q++)
+								{
+									temp1 += (char)replRight[q];
+								}
+								for (int q = 0; q < replRightToggle.length; q++)
+								{
+									temp2 += (char)replRightToggle[q];
+								}
+								*/
+								if (currentSpec.toggleState == false) // Toggle state was "false"
+									outBuf.write(replRight); // Write out "on" value
+								else // Toggle state was "true"
+									outBuf.write(replRightToggle); // Write out "off" value
+								currentSpec.toggleState = !currentSpec.toggleState; // Toggle the state
+								// System.err.println("DEBUG currentSpec id: "+currentSpec.id+" ("+temp1+"),("+temp2+") toggleState: "+currentSpec.toggleState);
 							}
 							else
 								outBuf.write(replRight);
@@ -847,7 +862,7 @@ public class Transformation
 		}
 		if (bytesMatched == 0)
 		{
-			// System.err.println("Writing out original byte, no comparisons to make.");
+			// System.err.println("DEBUG Writing out original byte, no comparisons to make.");
 			outBuf.write(inData[offset]);
 			bytesMatched = 1;
 		}
