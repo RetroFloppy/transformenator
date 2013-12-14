@@ -1,9 +1,9 @@
 New for this version:
 =====================
 
- * Added a file extractor for 13-sector Apple II-based Cap'n Software EasyWriter and its transforms (Apple II and PC)
+ * Added a file extractor for CTOS file archives (a little like tar files in CTOS)
 
- * Added recursive "apply transform to all subdirectories" to native code rather than via shell scripting
+ * Added a new transform for Easyscript for C64
  
 Transformenator introduction:
 =============================
