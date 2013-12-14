@@ -3,7 +3,9 @@ New for this version:
 
  * Added a file extractor for CTOS file archives (a little like tar files in CTOS)
 
- * Added a new transform for Easyscript for C64
+ * Added new transforms: Easyscript for C64, and a DEC word processor
+ 
+ * Updated transforms: Wordperfect 4.2, Displaywrite
  
 Transformenator introduction:
 =============================
