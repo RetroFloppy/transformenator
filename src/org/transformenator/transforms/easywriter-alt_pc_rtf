@@ -1,5 +1,6 @@
 ;
-; Unknown PC word processor, output in RTF
+; Transform very early PC (possibly) EasyWriter for PC, output in RTF
+;
 ; Native file suffix: EWF
 ;
 
