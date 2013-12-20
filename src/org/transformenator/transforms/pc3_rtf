@@ -1,0 +1,29 @@
+;
+; Unknown PC word processor, output in RTF
+; Native file suffix: EWF
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Newlines
+0d00 = "\\r\\n\par "
+00 = "\\r\\n\par "
+
+; Command characters
+01 = 20
+1b45 =
+1b47 =
+
+; Trim off leading 0x80 bytes
+trim_leading = 80
+
+; End of file
+1a = "{@@<FiLe_EoF>@@}"
+
+; Directives
+regex = @\.SPACE[0-2]@@
+regex = @\.EOL@@
+regex = @\.PAGE@@
