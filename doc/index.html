@@ -30,46 +30,6 @@ Where:<br>
 <code>infile</code> is the original file<br>
 <code>outfile</code> is the resulting file after making all transformations
 
-<p>
-The transformenator.jar also includes several supporting utilities.  They are:
-<table border="1">
-<tbody>
-<tr>
-<th align="left"><b>Utility: <code>org.transformenator.(...)</code></b></th>
-<th align="left"><b>Parameters</b></th>
-<th align="left"><b>Summary</b></th>
-</tr>
-<tr>
-<td align="left"><code>TransformFile</code></td>
-<td align="left"><code>transform infile outfile</code></td>
-<td align="left">Make transformations in a single file</td>
-</tr>
-<tr>
-<td align="left"><code>TransformDirectory</code></td>
-<td align="left"><code>transform in_directory out_directory</code></td>
-<td align="left">Make transformations to all files in a filesystem tree</td>
-</tr>
-<tr>
-<td align="left"><code>ExtractEasyWriterFiles</code></td>
-<td align="left"><code>infile [out_directory]</code></td>
-<td align="left">Extract EasyWriter word processing files from 13-sector Apple II disk image</td>
-</tr>
-<tr>
-<td align="left"><code>ExtractWangFiles</code></td>
-<td align="left"><code>infile [out_directory]</code></td>
-<td align="left">Extract Wang OIS word processing files from Wang <a target="_new" href="http://wang2200.org/disk_org.html">disk image</td>
-</tr>
-<tr>
-<td align="left"><code>RevealDirectoryEntries</code></td>
-<td align="left"><code>infile outfile</code></td>
-<td align="left">"Un-hide" the CP/M directory entries of files that have a leading byte of 0x60 in a disk image - typical of Valdocs files on Epson QX-10 TPM-II disk images</td>
-</tr>
-</tbody>
-</table>
-<p>
-Each is invokable with a Java command like this:<xmp>java -cp transformenator.jar org.transformenator.TransformDirectory in_directory out_directory</xmp>
-
-
 <h2>Example</h2>
 Say you have the file below named <code>infile</code>, represented in a typical hex editor:
 <xmp>(Offset) (Hex data)                               (ASCII representation)
@@ -222,6 +182,56 @@ You can see the list of available "internal" transforms by invoking the transfor
 <xmp>%java -jar transformenator.jar</xmp>
 The source to these internal transforms is available in CVS at
 <a target="_new" href="http://transformenator.cvs.sourceforge.net/viewvc/transformenator/transformenator/src/org/transformenator/transforms/">this link.</a>
+
+<h2>Utility Functions</h2>
+<p>
+The transformenator.jar also includes several supporting utilities.  They are:
+<table border="1">
+<tbody>
+<tr>
+<th align="left"><b>Utility: <code>org.transformenator.(...)</code></b></th>
+<th align="left"><b>Parameters</b></th>
+<th align="left"><b>Summary</b></th>
+</tr>
+<tr>
+<td align="left"><code>TransformFile</code></td>
+<td align="left"><code>transform infile outfile</code></td>
+<td align="left">Make transformations in a single file</td>
+</tr>
+<tr>
+<td align="left"><code>TransformDirectory</code></td>
+<td align="left"><code>transform in_directory out_directory</code></td>
+<td align="left">Make transformations to all files in a filesystem tree</td>
+</tr>
+<tr>
+<td align="left"><code>ExtractCTOSArchive</code></td>
+<td align="left"><code>infile [out_directory]</code></td>
+<td align="left">Extract files from the tar-like archive in CTOS (incomplete)</td>
+</tr>
+<tr>
+<td align="left"><code>ExtractEasyWriterFiles</code></td>
+<td align="left"><code>infile [out_directory]</code></td>
+<td align="left">Extract EasyWriter word processing files from 13-sector Apple II disk image</td>
+</tr>
+<tr>
+<td align="left"><code>ExtractWangFiles</code></td>
+<td align="left"><code>infile [out_directory]</code></td>
+<td align="left">Extract Wang OIS word processing files from Wang <a target="_new" href="http://wang2200.org/disk_org.html">disk image</td>
+</tr>
+<tr>
+<td align="left"><code>RevealDirectoryEntries</code></td>
+<td align="left"><code>infile outfile</code></td>
+<td align="left">"Un-hide" the CP/M directory entries of files that have a leading byte of 0x60 in a disk image - typical of Valdocs files on Epson QX-10 TPM-II disk images</td>
+</tr>
+<tr>
+<td align="left"><code>UpdateDOSImage</code></td>
+<td align="left"><code>infile outfile</code></td>
+<td align="left">Add the BIOS Parameter Block (BPB) to older DOS disk images to make them mountable - fixes those pesky "no mountable filesystems" errors</td>
+</tr>
+</tbody>
+</table>
+<p>
+Each is invokable with a Java command like this:<xmp>java -cp transformenator.jar org.transformenator.TransformDirectory in_directory out_directory</xmp>
 
 <h2>Related Projects</h2>
 
