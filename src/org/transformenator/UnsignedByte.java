@@ -30,8 +30,8 @@ public class UnsignedByte
    * Returns the value of the specified byte in unsigned form as an integer.
    * 
    * @param b
-   *          the byte the unsign and return as an int.
-   * @return unsigned b represened as an integer.
+   *          the byte to be returned as an int.
+   * @return unsigned b represented as an integer.
    */
 
   public static int intValue(byte b)
