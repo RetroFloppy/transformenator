@@ -150,7 +150,7 @@ public class UpdateDOSImage
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 	        };
 
-		if ((inData[512] == (byte)0xfe) && inData.length == 163840)
+		if ((inData[512] == (byte)0xfe) && inData.length == 160*1024)
 		{
 			for (int i = 0; i < bpb_160k.length; i++)
 				inData[i] = bpb_160k[i];
@@ -171,7 +171,7 @@ public class UpdateDOSImage
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 		};
 
-		if ((inData[512] == (byte)0xfc) && inData.length == 184320)
+		if ((inData[512] == (byte)0xfc) && inData.length == 180*1024)
 		{
 			for (int i = 0; i < bpb_180k.length; i++)
 				inData[i] = bpb_180k[i];
@@ -192,7 +192,7 @@ public class UpdateDOSImage
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 		};
 
-		if ((inData[512] == (byte)0xfa) && inData.length == 327680)
+		if ((inData[512] == (byte)0xfa) && inData.length == 320*1024)
 		{
 			for (int i = 0; i < bpb_320k.length; i++)
 				inData[i] = bpb_320k[i];
@@ -246,14 +246,27 @@ public class UpdateDOSImage
 		 * First check: is the first byte a jmp?
 		 */
 		firstByte = UnsignedByte.loByte(inData[0]);
-		if (firstByte == UnsignedByte.loByte(0xe9) || firstByte == UnsignedByte.loByte(0xeb) || firstByte == UnsignedByte.loByte(0x69))
+		if (firstByte == UnsignedByte.loByte(0xe9) ||
+			firstByte == UnsignedByte.loByte(0xeb) ||
+			firstByte == UnsignedByte.loByte(0x69))
 		{
 			// System.err.println("isFAT12(): first test passed: first byte is a jmp instruction.");
 			/*
 			 * Second check: do we have a valid media descriptor?
 			 */
 			mediaDescriptor = UnsignedByte.loByte(inData[0x200]);
-			if (mediaDescriptor == UnsignedByte.loByte(0xe5) || mediaDescriptor == UnsignedByte.loByte(0xed) || mediaDescriptor == UnsignedByte.loByte(0xf0) || mediaDescriptor == UnsignedByte.loByte(0xf8) || mediaDescriptor == UnsignedByte.loByte(0xf9) || mediaDescriptor == UnsignedByte.loByte(0xfa) || mediaDescriptor == UnsignedByte.loByte(0xfb) || mediaDescriptor == UnsignedByte.loByte(0xfc) || mediaDescriptor == UnsignedByte.loByte(0xfd) || mediaDescriptor == UnsignedByte.loByte(0xfe) || mediaDescriptor == UnsignedByte.loByte(0xff))
+			if (
+				mediaDescriptor == UnsignedByte.loByte(0xe5) ||
+				mediaDescriptor == UnsignedByte.loByte(0xed) ||
+				mediaDescriptor == UnsignedByte.loByte(0xf0) ||
+				mediaDescriptor == UnsignedByte.loByte(0xf8) ||
+				mediaDescriptor == UnsignedByte.loByte(0xf9) ||
+				mediaDescriptor == UnsignedByte.loByte(0xfa) ||
+				mediaDescriptor == UnsignedByte.loByte(0xfb) ||
+				mediaDescriptor == UnsignedByte.loByte(0xfc) ||
+				mediaDescriptor == UnsignedByte.loByte(0xfd) ||
+				mediaDescriptor == UnsignedByte.loByte(0xfe) ||
+				mediaDescriptor == UnsignedByte.loByte(0xff))
 			{
 				// System.err.println("isFAT12(): second test passed: media descriptor is one we like.");
 				retval = true;
@@ -270,39 +283,32 @@ public class UpdateDOSImage
 		boolean retval = false;
 		int mediaDescriptor;
 		/*
-		 * First check: is the first byte a jmp?
+		 * First check: do we have a valid media descriptor inside the BPB?
 		 */
-		// System.err.println("hasBPB(): first test passed: first byte is a jmp instruction.");
-		if (UnsignedByte.loByte(inData[0]) == UnsignedByte.loByte(0xe9) || UnsignedByte.loByte(inData[0]) == UnsignedByte.loByte(0xeb) || UnsignedByte.loByte(inData[0]) == UnsignedByte.loByte(0x69))
+		mediaDescriptor = UnsignedByte.loByte(inData[0x15]);
+		if (
+			mediaDescriptor == UnsignedByte.loByte(0xe5) ||
+			mediaDescriptor == UnsignedByte.loByte(0xed) ||
+			mediaDescriptor == UnsignedByte.loByte(0xf0) ||
+			mediaDescriptor == UnsignedByte.loByte(0xf8) ||
+			mediaDescriptor == UnsignedByte.loByte(0xf9) ||
+			mediaDescriptor == UnsignedByte.loByte(0xfa) ||
+			mediaDescriptor == UnsignedByte.loByte(0xfb) ||
+			mediaDescriptor == UnsignedByte.loByte(0xfc) ||
+			mediaDescriptor == UnsignedByte.loByte(0xfd) ||
+			mediaDescriptor == UnsignedByte.loByte(0xfe) ||
+			mediaDescriptor == UnsignedByte.loByte(0xff))
 		{
+			// System.err.println("hasBPB(): first test passed: media descriptor smells like BPB.");
 			/*
-			 * Second check: do we have a valid media descriptor?
+			 * Second check: do we have the end-of-sector signature?
 			 */
-			mediaDescriptor = UnsignedByte.loByte(inData[0x15]);
 			if (
-				mediaDescriptor == UnsignedByte.loByte(0xe5) ||
-				mediaDescriptor == UnsignedByte.loByte(0xed) ||
-				mediaDescriptor == UnsignedByte.loByte(0xf0) ||
-				mediaDescriptor == UnsignedByte.loByte(0xf8) ||
-				mediaDescriptor == UnsignedByte.loByte(0xf9) ||
-				mediaDescriptor == UnsignedByte.loByte(0xfa) ||
-				mediaDescriptor == UnsignedByte.loByte(0xfb) ||
-				mediaDescriptor == UnsignedByte.loByte(0xfc) ||
-				mediaDescriptor == UnsignedByte.loByte(0xfd) ||
-				mediaDescriptor == UnsignedByte.loByte(0xfe) ||
-				mediaDescriptor == UnsignedByte.loByte(0xff))
+				UnsignedByte.loByte(inData[510]) == UnsignedByte.loByte(0x55) &&
+				UnsignedByte.loByte(inData[511]) == UnsignedByte.loByte(0xaa))
 			{
-				// System.err.println("hasBPB(): second test passed: media descriptor smells like bpb.");
-				/*
-				 * Third check: do we have the end-of-sector signature?
-				 */
-				if (
-					UnsignedByte.loByte(inData[510]) == UnsignedByte.loByte(0x55) &&
-					UnsignedByte.loByte(inData[511]) == UnsignedByte.loByte(0xaa))
-				{
-					// System.err.println("hasBPB(): third test passed: end-of-sector marker smells like bpb.  Calling it a bpb.");
-					retval = true;
-				}
+				// System.err.println("hasBPB(): second test passed: end-of-sector marker smells like BPB.  Calling it a BPB.");
+				retval = true;
 			}
 		}
 		return retval;
