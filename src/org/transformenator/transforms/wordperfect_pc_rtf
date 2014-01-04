@@ -18,10 +18,15 @@ c6....c6 =
 c7........c7 =
 cb........cb =
 cc....cc =
+cf..cf =
 c9................................................................................c9 =
 d0....................d0 =
+da....da =
+dc..............dc =
 de....de =
-e182e1 = 
+e1..e1 = 
+e4........e4 =
+
 
 ; Line endings
 0d = " "
@@ -31,7 +36,9 @@ e182e1 =
 82 =
 83 =
 84 =
+86 =
 89 =
+8c =
 9a =
 
 ; Emdash
@@ -51,3 +58,8 @@ aa = "\endash "
 ; Page breaks?
 dc..00000000..00dc.. = 20
 
+; Footnotes, probably
+e2 % "<footnote>","</footnote>"
+
+; Remove footnotes
+regex = @<footnote>.+?</footnote>@@
