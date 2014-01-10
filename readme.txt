@@ -9,7 +9,7 @@ New for this version:
 
  * Updated transforms: Wordperfect 4.2, Displaywrite
  
- * Reorganized the code a little bit to separate out the utility functions - affecting the shell and batch invocations
+ * Reorganized the code to separate out the invokable utility functions - shell and batch scripts now call org.transformenator.util.* instead of just org.transformenator.*
  
  * Renamed the utility function RevealDirectoryEntries to RevealValdocsEntries to better indicate what it really does
  
