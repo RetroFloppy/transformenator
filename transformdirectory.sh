@@ -18,6 +18,5 @@ then
     java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.util.TransformDirectory "$1" "$2" "$3"
   fi
 else
-  echo java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.util.TransformDirectory
   java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.util.TransformDirectory
 fi
