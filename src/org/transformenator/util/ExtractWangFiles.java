@@ -18,7 +18,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.transformenator;
+package org.transformenator.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
+
+import org.transformenator.UnsignedByte;
 
 /*
  * UnpackWangFiles
@@ -225,8 +227,8 @@ public class ExtractWangFiles
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractWangFiles v1.6 - Extract files from Wang word processor disk images.");
+		System.err.println("ExtractWangFiles v1.7 - Extract files from Wang word processor disk images.");
 		System.err.println();
-		System.err.println("Syntax: ExtractWangFiles infile [out_directory]");
+		System.err.println("Usage: ExtractWangFiles infile [out_directory]");
 	}
 }

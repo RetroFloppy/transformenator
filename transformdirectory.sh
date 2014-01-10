@@ -13,10 +13,11 @@ if [ "$3" != "" ]
 then
   if [ "$4" != "" ]
   then
-    java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.TransformDirectory "$1" "$2" "$3" "$4"
+    java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.util.TransformDirectory "$1" "$2" "$3" "$4"
   else
-    java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.TransformDirectory "$1" "$2" "$3"
+    java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.util.TransformDirectory "$1" "$2" "$3"
   fi
 else
-  java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.TransformDirectory
+  echo java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.util.TransformDirectory
+  java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.util.TransformDirectory
 fi

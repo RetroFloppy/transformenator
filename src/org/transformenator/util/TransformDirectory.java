@@ -18,9 +18,11 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.transformenator;
+package org.transformenator.util;
 
 import java.io.File;
+
+import org.transformenator.Transformation;
 
 public class TransformDirectory
 {
@@ -101,7 +103,7 @@ public class TransformDirectory
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("TransformDirectory v1.6 - Recursively apply transform to all files in a filesystem");
+		System.err.println("TransformDirectory v1.7 - Recursively apply transform to all files in a filesystem");
 		System.err.println();
 		System.err.println("Usage: TransformDirectory transform in_directory out_directory [suffix]");
 	}

@@ -4,8 +4,14 @@ New for this version:
  * Added a file extractor for CTOS file archives (a little like tar files in CTOS)
 
  * Added new transforms: Easyscript for C64, and a DEC word processor
- 
+
+ * Added utility function UpdateDOSImage to add a BIOS Parameter Block to a FAT12 disk image that lacks one (i.e. earlier than PC DOS 2.0)
+
  * Updated transforms: Wordperfect 4.2, Displaywrite
+ 
+ * Reorganized the code a little bit to separate out the utility functions - affecting the shell and batch invocations
+ 
+ * Renamed the utility function RevealDirectoryEntries to RevealValdocsEntries to better indicate what it really does
  
 Transformenator introduction:
 =============================

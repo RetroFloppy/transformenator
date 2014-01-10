@@ -891,6 +891,7 @@ public class Transformation
 	public static void listInternalTransforms()
 	{
 		boolean printedHeaderYet = false;
+		String prefix = "org/transformenator/transforms/";
 		CodeSource src = Transformation.class.getProtectionDomain().getCodeSource();
 
 		if (src != null)
@@ -905,7 +906,6 @@ public class Transformation
 				while ((ze = zip.getNextEntry()) != null)
 				{
 					String entryName = ze.getName();
-					String prefix = "org/transformenator/transforms/";
 					if (entryName.startsWith(prefix))
 					{
 						String finalName = entryName.substring(prefix.length());
@@ -924,6 +924,20 @@ public class Transformation
 			catch (IOException e)
 			{
 				e.printStackTrace();
+			}
+			if (!printedHeaderYet)
+			{
+				File path = new File(jar.getPath() + prefix);
+				File[] listOfFiles = path.listFiles();
+				if (listOfFiles != null)
+				{
+					int offset = path.toString().length() + 1;
+					System.err.println("Available internal transform files:");
+				        for (int i = 0; i < listOfFiles.length; i++)
+				        {
+						System.err.println("  " + listOfFiles[i].toString().substring(offset));
+				        }
+				}
 			}
 		}
 	}

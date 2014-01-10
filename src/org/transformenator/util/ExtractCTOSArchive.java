@@ -18,7 +18,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.transformenator;
+package org.transformenator.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -197,8 +197,8 @@ public class ExtractCTOSArchive
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractCTOSArchive v1.6 - Extract files from CTOS archives.");
+		System.err.println("ExtractCTOSArchive v1.7 - Extract files from CTOS archives.");
 		System.err.println();
-		System.err.println("Syntax: ExtractCTOSArchive infile [out_directory]");
+		System.err.println("Usage: ExtractCTOSArchive infile [out_directory]");
 	}
 }

@@ -18,7 +18,9 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.transformenator;
+package org.transformenator.util;
+
+import org.transformenator.Transformation;
 
 public class TransformFile
 {
@@ -26,7 +28,7 @@ public class TransformFile
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("TransformFile v1.6 - perform transformation operations on binary files.");
+		System.err.println("TransformFile v1.7 - perform transformation operations on binary files.");
 		System.err.println();
 		System.err.println("Usage: TransformFile transform infile outfile");
 		System.err.println();

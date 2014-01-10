@@ -18,7 +18,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.transformenator;
+package org.transformenator.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,7 +35,7 @@ import java.io.InputStream;
  * have a leading byte of 0x60.  These typically come from Epson QX-10 TPM-II Valdocs disks.  
  *
  */
-public class RevealDirectoryEntries
+public class RevealValdocsEntries
 {
 
 	public static void main(java.lang.String[] args)
@@ -158,8 +158,8 @@ public class RevealDirectoryEntries
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("RevealDirectoryEntries v1.6 - perform transformation operations on image files.");
+		System.err.println("RevealValdocsEntries v1.7 - un-hide CP/M directory entries of Valdocs files in disk image files.");
 		System.err.println();
-		System.err.println("Syntax: RevealDirectoryEntries infile outfile");
+		System.err.println("Usage: RevealValdocsEntries infile outfile");
 	}
 }

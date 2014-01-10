@@ -18,7 +18,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.transformenator;
+package org.transformenator.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,6 +27,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+
+import org.transformenator.UnsignedByte;
 
 /*
  * UpdateDOSImage
@@ -317,8 +319,8 @@ public class UpdateDOSImage
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("UpdateDOSImage v1.6 - Update the BIOS Parameter Block of a DOS disk image.");
+		System.err.println("UpdateDOSImage v1.7 - Update the BIOS Parameter Block of a DOS disk image.");
 		System.err.println();
-		System.err.println("Syntax: UpdateDOSImage infile outfile");
+		System.err.println("Usage: UpdateDOSImage infile outfile");
 	}
 }
