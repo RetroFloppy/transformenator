@@ -1,0 +1,50 @@
+;
+; TRS-80 Scripsit word processor format found on Model 4 LDOS 6.x disks
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Page footer/page number
+8c = "%%Footer%%"
+
+; Line break
+8d = "\\n\par\par "
+
+; Indented paragraph
+8e % "\par\li1\par ","\par\li0\par "
+
+; Command beginnings
+regex = @>@@
+
+; Justification
+regex = @J=Y@@
+regex = @J=N@@
+
+; Line spacing
+regex = @LS=[0-9]*@@
+
+; Center on
+regex = @C=Y@\\qc @
+
+; Center off
+regex = @C=N@\\ql @
+
+; Left margin
+regex = @LM=[0-9]*@@
+
+; Right margin
+regex = @RM=[0-9]*@@
+
+; Unknown commands
+regex = @H=[0-9]*@@
+regex = @BM=[0-9]*@@
+regex = @PF=[0-9]*@@
+regex = @PN=[0-9]*@@
+regex = @TM=[0-9]*@@
+regex = @WS=[Y|N]@@
+
+; Remove footers/page numbers
+regex = @%%Footer%%.*[0-9]*\n\\par\\par @@
