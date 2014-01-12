@@ -10,6 +10,12 @@ tail = "}"
 ; Page footer/page number
 8c = "%%Footer%%"
 
+; Unknown cruft
+97d0be232323 =
+97d0be2323 =
+97c6d3be =
+9b =
+
 ; Line break
 8d = "\\n\par\par "
 
