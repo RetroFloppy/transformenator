@@ -68,7 +68,7 @@ public class Transformation
 		{
 			ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
 			inData = null;
-			// System.err.println("DEBUG Reading input file " + in_file);
+			// System.err.println("DEBUG Reading input file " + inFile);
 			File file = new File(inFile);
 			byte[] result = new byte[(int) file.length()];
 			try
@@ -218,6 +218,55 @@ public class Transformation
 								}
 								else
 									System.err.println("Found an index out of bounds: "+idx);
+							}
+						}
+					}
+					inData = new byte[newBufCursor];
+					for (int i = 0; i < newBufCursor; i++)
+						inData[i] = newBuf[i];
+					// System.err.println("Data length after de-indexing: "+inData.length);
+				}
+				else if (transformName.toUpperCase().contains("LEADING_EDGE"))
+				{
+					// If they are using a Leading Edge Word Processor transform, let's pick apart the file first.
+					System.err.println("De-indexing Leading Edge file " + file);
+					/*
+					 * Pick apart the file hunk indices.  Hunk indices start at 0x1200. 
+					 * 
+					 * Each index is a pointer to a hunk at 512 bytes * the index number in the file.
+					 */
+					byte[] newBuf = new byte[inData.length];
+					int newBufCursor = 0;
+					for (int indexIndex = 0x414;indexIndex<0x500;indexIndex+=2)
+					{
+						int indexStart = UnsignedByte.intValue(inData[indexIndex],inData[indexIndex+1]);
+						if (indexStart == 65520)
+							break;
+						indexStart *= 512;
+						// System.err.println("Found index table 0x"+UnsignedByte.toString(inData[indexIndex+1])+UnsignedByte.toString(inData[indexIndex])+" at "+indexStart);
+						for (int i = indexStart; i < indexStart+256; i += 2)
+						{
+							int block = UnsignedByte.intValue(inData[i],inData[i+1]);
+							// System.err.print("byte ["+i+"] = "+UnsignedByte.toString(inData[i]));
+							// System.err.println(" byte ["+(i+1)+"] = "+UnsignedByte.toString(inData[i+1]));
+							int index = block * 512;
+							//System.err.println("block: 0x"+UnsignedByte.toString(inData[i+1])+UnsignedByte.toString(inData[i])
+							//		+" at file offset: 0x"+UnsignedByte.toString(UnsignedByte.hiByte(index))+UnsignedByte.toString(UnsignedByte.loByte(index)));
+							if (block == 0)
+								break;
+							if (block < 32768)
+							{
+								if (index + 1 < inData.length)
+								{
+									// Pull out the data in the chunk
+									for (int k = 0; k < 512; k++)
+									{
+										if (inData[index + k] != 0x00)
+												newBuf[newBufCursor++] = inData[index + k];
+									}
+								}
+								else
+									System.err.println("Found an index out of bounds: "+block);
 							}
 						}
 					}
