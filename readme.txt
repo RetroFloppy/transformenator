@@ -1,8 +1,10 @@
 New for this version:
 =====================
 
- * Added new transform: TRS-80 Scripsit
-
+ * New transform: Leading Edge Word Processor (LEWP), a descendant of Wang
+ 
+ * New transform: TRS-80 Scripsit
+ 
 Transformenator introduction:
 =============================
 
