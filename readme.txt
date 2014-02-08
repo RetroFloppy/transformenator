@@ -5,6 +5,8 @@ New for this version:
  
  * New transform: TRS-80 Scripsit
  
+ * New transformation keyword: trim_trailing - trims a static amount of data from the end of input before any work begins
+ 
 Transformenator introduction:
 =============================
 

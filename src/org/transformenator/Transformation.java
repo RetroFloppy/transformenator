@@ -284,11 +284,12 @@ public class Transformation
 						inData[i] = newBuf[i];
 					// System.err.println("Data length after de-indexing: "+inData.length);
 				}
-				// System.err.println("Trimming leading "+trimLeading+" bytes.");
-				for (int i = trimLeading; i < inData.length; i++)
+				// System.err.println("Trimming leading "+trimLeading+" and "+ trimTrailing +" trailing bytes.");
+				trimmedEnd = inData.length-trimTrailing;
+				for (int i = trimLeading; i < trimmedEnd; i++)
 				{
 					backupBytes = 0;
-					bytesForward = evaluateTransforms(outBuf, i, inData.length);
+					bytesForward = evaluateTransforms(outBuf, i, trimmedEnd);
 					// System.err.println("i=" + i + "; bytesForward=" + bytesForward+"; backupBytes="+backupBytes);
 					if (bytesForward > 0)
 						i = i + bytesForward - 1;
@@ -469,7 +470,7 @@ public class Transformation
 					leftTemp = st.nextToken();
 					skip = false;
 					// System.err.println("DEBUG Left side token: ["+leftTemp+"]");
-					if (leftTemp.equals("head") || leftTemp.equals("tail") || leftTemp.equals("trim_leading") || leftTemp.trim().charAt(0) == (';'))
+					if (leftTemp.equals("head") || leftTemp.equals("tail") || leftTemp.equals("trim_leading") || leftTemp.equals("trim_trailing") || leftTemp.trim().charAt(0) == (';'))
 					{
 						if (leftTemp.trim().charAt(0) == (';'))
 						{
@@ -658,6 +659,10 @@ public class Transformation
 						{
 							trimLeading = fromByteArray(rightBytes);
 						}
+						else if (leftTemp.equals("trim_trailing"))
+						{
+							trimTrailing = fromByteArray(rightBytes);
+						}
 						else
 						{
 							rightSide.add(rightBytes);
@@ -841,8 +846,8 @@ public class Transformation
 							{
 								// System.err.println("DEBUG calc: "+calc+" offset: "+offset);								
 								int bump = Math.abs(calc);
-								byte newInData[] = new byte[inData.length - calc];
-								for (int q = 0; q < inData.length; q++)
+								byte newInData[] = new byte[trimmedEnd - calc];
+								for (int q = 0; q < trimmedEnd; q++)
 								{
 									newInData[q+bump] = inData[q];
 								}
@@ -1028,7 +1033,7 @@ public class Transformation
 	Vector<byte[]> rightToggle = new Vector<byte[]>();
 	String prefix, suffix;
 	String inFile, outFile, transformName;
-	int trimLeading;
+	int trimLeading, trimTrailing, trimmedEnd;
 	boolean isOK, foundSOF;
 	int backupBytes;
 }
