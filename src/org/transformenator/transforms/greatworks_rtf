@@ -1,0 +1,23 @@
+;
+; Symantec Greatworks text
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fhelvetica\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Find the beginning of the file very simplistically - by searching for the last null.
+; The file format actually has a complex system of pointers at the beginning.
+00 = "{@@<FiLe_SoF_GrEeDy>@@}"
+; The last 0xf6 bytes is always a trailer.  This gets us the "meat" of the file.
+trim_trailing = f6
+
+; Newlines
+0d = "\\n\par\pard "
+
+; "Smart" quotes
+d2 = """
+d3 = """
+d4 = "'"
+d5 = "'"
