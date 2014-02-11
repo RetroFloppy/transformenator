@@ -38,17 +38,41 @@ import org.transformenator.UnsignedByte;
  * mountable on systems that don't pay attention to the media descriptor byte, but 
  * instead require the BPB to tell them what the disk geometry is.
  *
+ * It also checks for and removes the Stoned virus:
+ *   http://en.wikipedia.org/wiki/Stoned_%28computer_virus%29
+ *
  */
 public class UpdateDOSImage
 {
 
 	public static void main(java.lang.String[] args)
 	{
-		if (args.length == 2)
+		if ((args.length == 2) || (args.length == 3))
 		{
 			byte[] inData = null;
 			System.err.println("Reading input file " + args[0]);
 			File file = new File(args[0]);
+			int force = 0;
+			if (args.length == 3)
+			{
+				if (args[2].equalsIgnoreCase("force160"))
+				{
+					force = 160;
+				}
+				else if (args[2].equalsIgnoreCase("force180"))
+				{
+					force = 180;
+				}
+				else if (args[2].equalsIgnoreCase("force320"))
+				{
+					force = 320;
+				}
+				else if (args[2].equalsIgnoreCase("force360"))
+				{
+					force = 360;
+				}
+			}
+
 			byte[] result = new byte[(int) file.length()];
 			try
 			{
@@ -68,9 +92,9 @@ public class UpdateDOSImage
 						}
 					}
 					inData = result;
-					if (isFixable(inData))
+					if (isFixable(inData) || (force > 0))
 					{
-						if (modifyImage(inData))
+						if (modifyImage(inData, force))
 						{
 							FileOutputStream out;
 							try
@@ -121,28 +145,32 @@ public class UpdateDOSImage
 	/*
 	 * modifyImage - make bpb changes to image
 	 */
-	public static boolean modifyImage(byte inData[])
+	public static boolean modifyImage(byte inData[], int force)
 	{
-		if (is160k(inData))
+		if (is160k(inData, force))
 		{
 			return true;
 		}
-		else if (is180k(inData))
+		else if (is180k(inData, force))
 		{
 			return true;
 		}
-		else if (is320k(inData))
+		else if (is320k(inData, force))
 		{
 			return true;
 		}
-		else if (is360k(inData))
+		else if (is360k(inData, force))
+		{
+			return true;
+		}
+		else if (is1200k(inData, force))
 		{
 			return true;
 		}
 		return false;
 	}
 
-	public static boolean is160k(byte[] inData)
+	public static boolean is160k(byte[] inData, int force)
 	{
 		byte bpb_160k[]={
 			(byte)0xeb, 0x34, (byte)0x90, 0x4d, 0x53, 0x44, 0x4f, 0x53,
@@ -152,7 +180,7 @@ public class UpdateDOSImage
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 	        };
 
-		if ((inData[512] == (byte)0xfe) && inData.length == 160*1024)
+		if (((inData[512] == (byte)0xfe) && inData.length == 160*1024) || (force == 160))
 		{
 			for (int i = 0; i < bpb_160k.length; i++)
 				inData[i] = bpb_160k[i];
@@ -163,7 +191,7 @@ public class UpdateDOSImage
 		return false;
 	}
 
-	public static boolean is180k(byte[] inData)
+	public static boolean is180k(byte[] inData, int force)
 	{
 		byte bpb_180k[]={
 			(byte)0xeb, 0x34, (byte)0x90, 0x4d, 0x53, 0x44, 0x4f, 0x53,
@@ -173,7 +201,7 @@ public class UpdateDOSImage
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 		};
 
-		if ((inData[512] == (byte)0xfc) && inData.length == 180*1024)
+		if (((inData[512] == (byte)0xfc) && inData.length == 180*1024) || (force == 180))
 		{
 			for (int i = 0; i < bpb_180k.length; i++)
 				inData[i] = bpb_180k[i];
@@ -184,7 +212,7 @@ public class UpdateDOSImage
 		return false;
 	}
 	
-	public static boolean is320k(byte[] inData)
+	public static boolean is320k(byte[] inData, int force)
 	{
 		byte bpb_320k[]={
 			(byte)0xeb, 0x34, (byte)0x90, 0x4d, 0x53, 0x44, 0x4f, 0x53,
@@ -194,7 +222,7 @@ public class UpdateDOSImage
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 		};
 
-		if ((inData[512] == (byte)0xfa) && inData.length == 320*1024)
+		if (((inData[512] == (byte)0xfa) && inData.length == 320*1024) || (force == 320))
 		{
 			for (int i = 0; i < bpb_320k.length; i++)
 				inData[i] = bpb_320k[i];
@@ -205,7 +233,7 @@ public class UpdateDOSImage
 		return false;
 	}
 	
-	public static boolean is360k(byte[] inData)
+	public static boolean is360k(byte[] inData, int force)
 	{
 		byte bpb_360k[]={
 			(byte)0xeb, 0x34, (byte)0x90, 0x4d, 0x53, 0x44, 0x4f, 0x53,
@@ -214,7 +242,19 @@ public class UpdateDOSImage
 			0x09, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 		};
-		if ((inData[512] == (byte)0xfd) && inData.length == 360*1024)
+		// Check for stoned virus
+		if (hasStonedVirus(inData) && (inData.length == 360*1024))
+		{
+			// Copy out the stashed boot block
+			for (int i = 0; i < 512; i++)
+			{
+				inData[i] = inData[i+0x1600];
+				inData[i+0x1600] = 0x00;
+			}	
+			System.err.println("Removed Stoned virus from 360K image.");
+			return true;
+		}
+		else if (((inData[512] == (byte)0xfd) && inData.length == 360*1024) || (force == 360))
 		{
 			for (int i = 0; i < bpb_360k.length; i++)
 				inData[i] = bpb_360k[i];
@@ -222,6 +262,27 @@ public class UpdateDOSImage
 			return true;
 		}
 		// System.err.println("is360k is false.");
+		return false;
+	}
+	
+	/**
+	 * is1200k - the only thing a 1.2MB disk can do is remove the Stoned virus.
+	 */
+	public static boolean is1200k(byte[] inData, int force)
+	{
+		// Check for stoned virus
+		if (hasStonedVirus(inData) && (inData.length == 1200*1024))
+		{
+			// Copy out the stashed boot block
+			for (int i = 0; i < 512; i++)
+			{
+				inData[i] = inData[i+0x2200];
+				inData[i+0x2200] = 0x00;
+			}	
+			System.err.println("Removed Stoned virus from 1.2MB image.");
+			return true;
+		}
+		// System.err.println("is1200k is false.");
 		return false;
 	}
 	
@@ -234,6 +295,11 @@ public class UpdateDOSImage
 		{
 			return true;
 		}
+		else if ((hasStonedVirus(inData) && (inData.length == 360*1024)) ||
+			(hasStonedVirus(inData) && (inData.length == 1200*1024)))
+		{
+			return true;
+		}
 		else return false;
 	}
 
@@ -243,7 +309,7 @@ public class UpdateDOSImage
 	public static boolean isFAT12(byte inData[])
 	{
 		boolean retval = false;
-		int firstByte, mediaDescriptor;
+		int firstByte;
 		/*
 		 * First check: is the first byte a jmp?
 		 */
@@ -256,23 +322,53 @@ public class UpdateDOSImage
 			/*
 			 * Second check: do we have a valid media descriptor?
 			 */
-			mediaDescriptor = UnsignedByte.loByte(inData[0x200]);
-			if (
-				mediaDescriptor == UnsignedByte.loByte(0xe5) ||
-				mediaDescriptor == UnsignedByte.loByte(0xed) ||
-				mediaDescriptor == UnsignedByte.loByte(0xf0) ||
-				mediaDescriptor == UnsignedByte.loByte(0xf8) ||
-				mediaDescriptor == UnsignedByte.loByte(0xf9) ||
-				mediaDescriptor == UnsignedByte.loByte(0xfa) ||
-				mediaDescriptor == UnsignedByte.loByte(0xfb) ||
-				mediaDescriptor == UnsignedByte.loByte(0xfc) ||
-				mediaDescriptor == UnsignedByte.loByte(0xfd) ||
-				mediaDescriptor == UnsignedByte.loByte(0xfe) ||
-				mediaDescriptor == UnsignedByte.loByte(0xff))
+			retval = isMediaDescriptor(UnsignedByte.loByte(inData[0x200]));
+		}
+		return retval;
+	}
+
+	public static boolean hasStonedVirus(byte inData[])
+	{
+		boolean retval = false;
+		if (UnsignedByte.loByte(inData[0]) == UnsignedByte.loByte(0xea)) // Stoned virus
+		{
+			if (((inData[0x199] == 'S') && 
+					(inData[0x19a] == 't') &&
+					(inData[0x19b] == 'o') &&
+					(inData[0x19c] == 'n') &&
+					(inData[0x19d] == 'e') &&
+					(inData[0x19e] == 'd') &&
+					(inData[0x19f] == '!')) &&
+					(isMediaDescriptor(UnsignedByte.loByte(inData[0x200]))))
 			{
-				// System.err.println("isFAT12(): second test passed: media descriptor is one we like.");
 				retval = true;
 			}
+			
+		}
+		return retval;
+	}
+
+	/**
+	 * isMediaDescriptor - is this a valid media descriptor byte?
+	 */
+	public static boolean isMediaDescriptor(byte mediaDescriptor)
+	{
+		boolean retval = false;
+		if (
+			mediaDescriptor == UnsignedByte.loByte(0xe5) ||
+			mediaDescriptor == UnsignedByte.loByte(0xed) ||
+			mediaDescriptor == UnsignedByte.loByte(0xf0) ||
+			mediaDescriptor == UnsignedByte.loByte(0xf8) ||
+			mediaDescriptor == UnsignedByte.loByte(0xf9) ||
+			mediaDescriptor == UnsignedByte.loByte(0xfa) ||
+			mediaDescriptor == UnsignedByte.loByte(0xfb) ||
+			mediaDescriptor == UnsignedByte.loByte(0xfc) ||
+			mediaDescriptor == UnsignedByte.loByte(0xfd) ||
+			mediaDescriptor == UnsignedByte.loByte(0xfe) ||
+			mediaDescriptor == UnsignedByte.loByte(0xff))
+		{
+			// System.err.println("isMediaDescriptor(): media descriptor is one we like.");
+			retval = true;
 		}
 		return retval;
 	}

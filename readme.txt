@@ -2,11 +2,13 @@ New for this version:
 =====================
 
  * New transform: Leading Edge Word Processor (LEWP), a descendant of Wang
- 
+
  * New transform: TRS-80 Scripsit
- 
+
  * New transformation keyword: trim_trailing - trims a static amount of data from the end of input before any work begins
- 
+
+ * New function: UpdateDOSImage can now remove the Stoned boot block virus from 360K and 1.2MB disk images
+
 Transformenator introduction:
 =============================
 
