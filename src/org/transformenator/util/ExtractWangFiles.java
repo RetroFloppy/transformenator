@@ -149,7 +149,24 @@ public class ExtractWangFiles
 						} while (shouldContinue == true);
 					}
 					else
-						System.err.println("Error: no catalog sectors found.");
+					{
+						/*
+						 * Ok, this isn't a 2200-style disk; check for WP-ness.
+						 */
+						for (int i = 256; i < inData.length; i+=256)
+						{
+							if ((inData[i+2] == -1) && (inData[i+3] == 65)) /* 0xff 0x41 */
+							{
+								byte fnb[] = new byte[10];
+								fnb = Arrays.copyOfRange(inData, i + 0x0d, i + 0x0d + 25);
+								String fileName = new String(fnb).trim().replace("\\", "-").replace("/", "-").replace("?", "-");
+								fileName = new String(args[1]) + File.separator + fileName;
+								// System.out.println("File found: "+fileName);
+								int fileID = UnsignedByte.intValue(inData[i+4]) * 256 + UnsignedByte.intValue(inData[i+5]);
+								decodeWPFile(inData, fileName, preambleOffset, UnsignedByte.intValue(inData[i]),UnsignedByte.intValue(inData[i+1]),fileID);
+							}
+						}
+					}
 				}
 				else
 				{
@@ -222,15 +239,62 @@ public class ExtractWangFiles
 		}
 	}
 
+	public static void decodeWPFile(byte[] inData, String fullName, int preambleOffset, int track, int sector, int fileID)
+	{
+		FileOutputStream out;
+		try
+		{
+			out = new FileOutputStream(fullName);
+			System.err.println("Creating file: " + fullName);
+			dumpWPFileChain(out, inData, track, sector, fileID, preambleOffset);
+			out.flush();
+			out.close();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public static void dumpWPFileChain(FileOutputStream out, byte[] inData, int track, int sector, int fileID, int preambleOffset) throws IOException
+	{
+		int nextTrack, nextSector, dataOffset;
+
+		dataOffset = realWPAddress(track, sector, preambleOffset);
+		nextTrack = UnsignedByte.intValue(inData[dataOffset]);
+		nextSector = UnsignedByte.intValue(inData[dataOffset+1]);
+		byte range[] = Arrays.copyOfRange(inData, dataOffset + 7, dataOffset + 256);
+		out.write(range);
+		nextTrack = UnsignedByte.intValue(inData[dataOffset]);
+		nextSector = UnsignedByte.intValue(inData[dataOffset+1]);
+		if ((nextTrack > 0) && (nextTrack*4096 <= inData.length))
+		{
+			if (nextTrack != 0)
+				dumpWPFileChain(out, inData, nextTrack, nextSector, fileID, preambleOffset);
+		}
+	}
+
+	public static int mapSector(int sectorIn)
+	{
+		int skewedSectorMap[] = {0,4,8,0x0c,1,5,9,0x0d,2,6,0x0a,0x0e,3,7,0x0b,0x0f};
+		return skewedSectorMap[sectorIn];
+	}
+	
 	public static int realAddress(int sector, int offset)
 	{
 		return sector * 256 + offset;
 	}
 
+	public static int realWPAddress(int track, int sector, int offset)
+	{
+		int newSector = mapSector(sector);
+		return track * 4096 + newSector * 256 + offset;
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractWangFiles v1.7 - Extract files from Wang word processor disk images.");
+		System.err.println("ExtractWangFiles v1.8 - Extract files from Wang word processor disk images.");
 		System.err.println();
 		System.err.println("Usage: ExtractWangFiles infile [out_directory]");
 	}
