@@ -102,6 +102,7 @@ public class ExtractWangFiles
 					}
 					else if (inData[0x100] == 0x02)
 					{
+						System.err.println("Caution: disk index type is 2.  May need new means of interpreting disk image.");
 						// TODO: Untested...
 						catalogSectors = UnsignedByte.intValue(inData[0x102], inData[0x101]);
 					}
@@ -147,6 +148,8 @@ public class ExtractWangFiles
 							fileIndexOffset += 12;
 						} while (shouldContinue == true);
 					}
+					else
+						System.err.println("Error: no catalog sectors found.");
 				}
 				else
 				{
