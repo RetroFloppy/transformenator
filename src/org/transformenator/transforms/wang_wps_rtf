@@ -1,0 +1,37 @@
+;
+; Transform for Wang WPS Word Processor
+;
+
+; Trim the leading 0x300 bytes
+trim_leading = 300
+
+; Header for RTF format
+head = "{\rtf1{\*\generator David Schmidt - Transformenator;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Tab
+02 = 09
+; Newline
+03 = "\\r\\n\par\pard "
+; space for a numbered list
+04 = 09
+
+; Start of file
+;c9575053 = {@@<FiLe_SoF>@@}
+
+; Italics - lower and upper case
+[a0..ff] = 20
+
+; Center a line
+01 = "\qc "
+
+; Bold Toggle
+0b % "\b1 ", "\b0 "
+
+; Emphasis toggle
+8e % "\i1 ","\i0 "
+
+; Page eject?  Control char plus 78 spaces and tabs
+86............................................................................................................................................................
+06............................................................................................................................................................
