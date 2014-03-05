@@ -27,7 +27,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.transformenator.UnsignedByte;
 
@@ -153,9 +158,10 @@ public class ExtractWangFiles
 						/*
 						 * Ok, this isn't a 2200-style disk; check for WP-ness.
 						 */
-						for (int i = 256; i < inData.length; i+=256)
+						boolean foundAny = false;
+						for (int i = preambleOffset; i < inData.length; i+=256)
 						{
-							if ((inData[i+2] == -1) && (inData[i+3] == 65)) /* 0xff 0x41 */
+							if ((inData[i+2] == -1) && (inData[i+3] == 65))  /* 0xff 0x41 */
 							{
 								byte fnb[] = new byte[10];
 								fnb = Arrays.copyOfRange(inData, i + 0x0d, i + 0x0d + 25);
@@ -164,6 +170,66 @@ public class ExtractWangFiles
 								// System.out.println("File found: "+fileName);
 								int fileID = UnsignedByte.intValue(inData[i+4]) * 256 + UnsignedByte.intValue(inData[i+5]);
 								decodeWPFile(inData, fileName, preambleOffset, UnsignedByte.intValue(inData[i]),UnsignedByte.intValue(inData[i+1]),fileID);
+								foundAny = true;
+							}
+						}
+						if (!foundAny)
+						{
+							/* Couldn't find anything at all... scrape the disk surface. */
+							List<Integer> fileChain;
+							Hashtable<Integer, List<Integer>> hash = new Hashtable<Integer, List<Integer>>();
+							FileOutputStream out = null;
+							for (int track = 0; track < inData.length/4096; track++)
+							{
+								for (int sector = 0; sector < 16; sector++)
+								{
+									int dataOffset = realWPAddress(track, sector, preambleOffset);
+									int fileID = UnsignedByte.intValue(inData[dataOffset + 4]) * 256 + UnsignedByte.intValue(inData[dataOffset+5]);
+									if (fileID != 0)
+									{
+										Integer fid = new Integer(fileID);
+										if (!hash.containsKey(fid))
+										{
+											hash.put(fid,new ArrayList<Integer>());
+										}
+										fileChain = hash.get(fid);
+										fileChain.add(dataOffset);
+									}
+								}
+							}
+							for (Map.Entry<Integer, List<Integer>> entry : hash.entrySet())
+							{
+								Integer key = entry.getKey();
+								fileChain = hash.get(key);
+								String fileName = new String("recovered_file_"+key);
+								fileName = new String(args[1]) + File.separator + fileName;
+								try
+								{
+									out = new FileOutputStream(fileName);
+									System.err.println("Creating file: " + fileName);
+								}
+								catch (IOException e)
+								{
+									e.printStackTrace();
+								}
+								for (Iterator<Integer> iter = fileChain.iterator(); iter.hasNext(); )
+								{
+									int myInt = iter.next();
+									// System.out.println("gathering offset: "+myInt);
+									try
+									{
+										if (out != null)
+										{
+											byte range2[] = Arrays.copyOfRange(inData, myInt + 7, myInt + 256);
+											out.write(range2);
+											out.flush();
+										}
+									}
+									catch (IOException e)
+									{
+										e.printStackTrace();
+									}									
+								}
 							}
 						}
 					}
