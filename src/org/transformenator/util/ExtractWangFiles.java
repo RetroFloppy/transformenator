@@ -39,8 +39,10 @@ import org.transformenator.UnsignedByte;
 /*
  * UnpackWangFiles
  * 
- * The intent of this helper app is to pull the files off of the virtual file system of
- * Wang word processor disks.    
+ * The intent of this helper app is to pull the files off of the virtual file system of WANG
+ * word processor disks.  I've seen a couple of different types: first, the 2200-derived disks
+ * that have a central catalog, and second, likely an earlier dedicated word processor (WPS?)
+ * that has no catalog, but files with header sectors that follow chains.
  *
  */
 public class ExtractWangFiles
@@ -175,7 +177,11 @@ public class ExtractWangFiles
 						}
 						if (!foundAny)
 						{
-							/* Couldn't find anything at all... scrape the disk surface. */
+							/*
+							 * Couldn't find anything at all... scrape the disk surface.
+							 */
+
+							// TODO: would be nice if this could be invokable, on demand.
 							List<Integer> fileChain;
 							Hashtable<Integer, List<Integer>> hash = new Hashtable<Integer, List<Integer>>();
 							FileOutputStream out = null;
