@@ -164,7 +164,7 @@ public class Transformation
 				}
 				else if (transformName.toUpperCase().contains("DISPLAYWRITE"))
 				{
-					// If they are using a pc3 transform, let's pick apart the file first.
+					// If they are using a DisplayWrite transform, let's pick apart the file first.
 					System.err.println("De-indexing DisplayWrite file " + file);
 					/*
 					 * Pick apart the file hunk indices.  Hunk indices start at 0x6b 

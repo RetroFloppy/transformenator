@@ -1,5 +1,5 @@
 ;
-; DisplayWrite (3?) format, output in RTF
+; DisplayWrite (3?) format, EBCDIC input, output in RTF
 ;
 ; Note - any transform with 'displaywrite' in the file name will trigger additional processing to
 ;        untangle the indices from the original file.
@@ -39,6 +39,36 @@ tail = "}"
 
 ; Space
 40 = 20
+
+; Punctuation
+; 4a = "Cent sign"
+4b = "."
+4c = "<"
+4d = "("
+4e = "+"
+4f = "!"
+50 = "&"
+5a = "|"
+5b = "$"
+5c = "*"
+5d = ")"
+5e = ";"
+5f = "^"
+60 = "-"
+61 = "/"
+6a = "|"
+6b = ","
+6c = "%"
+6d = "_"
+6e = ">"
+6f = "?"
+79 = "`"
+7a = ":"
+7b = "#"
+7c = "@"
+7d = "'"
+7e = "="
+7f = '"'
 
 ; Lower case letters
 81 = "a"
@@ -112,26 +142,6 @@ f7 = "7"
 f8 = "8"
 f9 = "9"
 
-; Punctuation
-4b = "."
-4d = "["
-4f = "!"
-50 = "&"
-5b = "$"
-; Not sure about 5c...
-5c = "="
-5e = ";"
-60 = "-"
-61 = "/"
-6b = ","
-6d = "_"
-6f = "?"
-7a = ":"
-; Not sure about 7b...
-7b = "#"
-7c = "@"
-7d = "'"
-
 ; Crazy crap
 00.. =
 
@@ -145,7 +155,6 @@ f9 = "9"
 15 =
 23 =
 ca =
-4d......5d =
 
 ; Bold on
 4a = "\b1 "
