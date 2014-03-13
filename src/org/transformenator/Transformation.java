@@ -408,7 +408,6 @@ public class Transformation
 
 	public void parseTransforms(Reader fr)
 	{
-		int id = 0;
 		String line;
 		try
 		{
