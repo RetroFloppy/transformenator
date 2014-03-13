@@ -171,7 +171,7 @@ public class ExtractWangFiles
 								fileName = new String(args[1]) + File.separator + fileName;
 								// System.out.println("File found: "+fileName);
 								int fileID = UnsignedByte.intValue(inData[i+4]) * 256 + UnsignedByte.intValue(inData[i+5]);
-								decodeWPFile(inData, fileName, preambleOffset, UnsignedByte.intValue(inData[i]),UnsignedByte.intValue(inData[i+1]),fileID);
+								decodeWPFile(inData, fileName, preambleOffset, UnsignedByte.intValue(inData[i]),UnsignedByte.intValue(inData[i+1]),fileID, 1);
 								foundAny = true;
 							}
 						}
@@ -189,7 +189,7 @@ public class ExtractWangFiles
 							{
 								for (int sector = 0; sector < 16; sector++)
 								{
-									int dataOffset = realWPAddress(track, sector, preambleOffset);
+									int dataOffset = realWPAddress(track, sector, preambleOffset, 1);
 									int fileID = UnsignedByte.intValue(inData[dataOffset + 4]) * 256 + UnsignedByte.intValue(inData[dataOffset+5]);
 									if (fileID != 0)
 									{
@@ -311,14 +311,14 @@ public class ExtractWangFiles
 		}
 	}
 
-	public static void decodeWPFile(byte[] inData, String fullName, int preambleOffset, int track, int sector, int fileID)
+	public static void decodeWPFile(byte[] inData, String fullName, int preambleOffset, int track, int sector, int fileID, int skew)
 	{
 		FileOutputStream out;
 		try
 		{
 			out = new FileOutputStream(fullName);
 			System.err.println("Creating file: " + fullName);
-			dumpWPFileChain(out, inData, track, sector, fileID, preambleOffset);
+			dumpWPFileChain(out, inData, track, sector, fileID, preambleOffset, skew);
 			out.flush();
 			out.close();
 		}
@@ -328,11 +328,11 @@ public class ExtractWangFiles
 		}
 	}
 
-	public static void dumpWPFileChain(FileOutputStream out, byte[] inData, int track, int sector, int fileID, int preambleOffset) throws IOException
+	public static void dumpWPFileChain(FileOutputStream out, byte[] inData, int track, int sector, int fileID, int preambleOffset, int skew) throws IOException
 	{
 		int nextTrack, nextSector, dataOffset;
 
-		dataOffset = realWPAddress(track, sector, preambleOffset);
+		dataOffset = realWPAddress(track, sector, preambleOffset, skew);
 		nextTrack = UnsignedByte.intValue(inData[dataOffset]);
 		nextSector = UnsignedByte.intValue(inData[dataOffset+1]);
 		byte range[] = Arrays.copyOfRange(inData, dataOffset + 7, dataOffset + 256);
@@ -342,14 +342,17 @@ public class ExtractWangFiles
 		if ((nextTrack > 0) && (nextTrack*4096 <= inData.length))
 		{
 			if (nextTrack != 0)
-				dumpWPFileChain(out, inData, nextTrack, nextSector, fileID, preambleOffset);
+				dumpWPFileChain(out, inData, nextTrack, nextSector, fileID, preambleOffset, skew);
 		}
 	}
 
-	public static int mapSector(int sectorIn)
+	public static int mapSector(int sectorIn, int skew)
 	{
 		int skewedSectorMap[] = {0,4,8,0x0c,1,5,9,0x0d,2,6,0x0a,0x0e,3,7,0x0b,0x0f};
-		return skewedSectorMap[sectorIn];
+		if (skew != 0)
+			return skewedSectorMap[sectorIn];
+		else
+			return sectorIn;
 	}
 	
 	public static int realAddress(int sector, int offset)
@@ -357,9 +360,9 @@ public class ExtractWangFiles
 		return sector * 256 + offset;
 	}
 
-	public static int realWPAddress(int track, int sector, int offset)
+	public static int realWPAddress(int track, int sector, int offset, int skew)
 	{
-		int newSector = mapSector(sector);
+		int newSector = mapSector(sector, skew);
 		return track * 4096 + newSector * 256 + offset;
 	}
 
