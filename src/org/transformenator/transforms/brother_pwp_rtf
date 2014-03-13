@@ -9,6 +9,11 @@ tail = "}"
 
 trim_leading = 0x40
 
+; One-half symbol
+ab = "\'bd "
+; One-quarter symbol
+ac = "\'bc " 
+
 ; Line break
 1b = "\\r\\n\par "
 1f = 20
