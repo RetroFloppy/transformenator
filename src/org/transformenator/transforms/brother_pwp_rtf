@@ -1,0 +1,25 @@
+;
+; Brother DOS-based Word Processors - typically with a PWP file suffix
+;
+
+; Header for RTF format
+head = "{\rtf1{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+trim_leading = 0x40
+
+; Line break
+1b = "\\r\\n\par "
+1f = 20
+
+; Newline
+10 = "\\r\\n\par "
+0e = "\\r\\n\par \par "
+
+; Underlining
+; Change 0x02 to a nonsensical token
+02 = "~_~"
+; When we find a token, remove it and surround the character that follows it with underline directives
+; (this will be super-inefficient in the case of huge chunks of underlined text)
+regex = @~_~(.)@\\ul1 $1\\ul0 @

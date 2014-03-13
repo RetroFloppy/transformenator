@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2013 by David Schmidt
+ * Copyright (C) 2013 - 2014 by David Schmidt
  * david__schmidt at users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -83,8 +83,9 @@ public class TransformDirectory
 						}
 						else if (!files[i].isHidden())
 						{
-							System.out.println("Transforming file: "+files[i]+" to file: "+out_directory + java.io.File.separator + files[i].getName()+"."+file_suffix);
-							transform.createOutput(files[i].toString(), out_directory + java.io.File.separator + files[i].getName()+"."+file_suffix, file_suffix);
+							String newFileName = conditionFileName(files[i].getName());
+							System.out.println("Transforming file: "+files[i]+" to file: "+out_directory + java.io.File.separator + newFileName+"."+file_suffix);
+							transform.createOutput(files[i].toString(), out_directory + java.io.File.separator + newFileName+"."+file_suffix, file_suffix);
 						}
 					}
 				}
@@ -100,10 +101,18 @@ public class TransformDirectory
 		}
 	}
 
+	public static String conditionFileName(String inName)
+	{
+		// Any sneaky characters getting in... replace them here.
+		String nameReplaced = inName.replace('½', '_');
+		nameReplaced = nameReplaced.replace('Â', '_');
+		return nameReplaced;	
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("TransformDirectory v1.7 - Recursively apply transform to all files in a filesystem");
+		System.err.println("TransformDirectory v1.8 - Recursively apply transform to all files in a filesystem");
 		System.err.println();
 		System.err.println("Usage: TransformDirectory transform in_directory out_directory [suffix]");
 	}
