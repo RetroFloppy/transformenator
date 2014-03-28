@@ -3,11 +3,13 @@ New for this version:
 
  * New transform: Leading Edge Word Processor (LEWP), a descendant of later WANG Word Processors
 
- * New transform: WANG WPS(?) word processor format
+ * New transform: WANG WPS(?) word processor
 
  * New transform: TRS-80 Scripsit
 
  * New transform: Symantec Greatworks (text-only)
+
+ * New transform: Kaypro Perfect Writer
 
  * New transformation keyword: trim_trailing - trims a static amount of data from the end of input before any work begins
 
