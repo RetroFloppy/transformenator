@@ -1,0 +1,34 @@
+;
+; Kaypro (files with .mss suffix)
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fnil\fcharset0 Courier New;}}{\*\generator David Schmidt - Transformenator;}\f0\fs20 "
+; Closing brace for RTF format
+tail = "}"
+
+; Need to remove line endings for a bit so we can take care of @x(...) productions that span "lines."
+0d0a0d0a = "zbobz"
+0d0a = "xbobx"
+
+; Underline: @U(...)
+regex = #@U\((.+?)\)#\\ul $1\\ul0 #
+
+; Some other kind of emphasis: @UX(...)
+regex = #@UX\((.+?)\)#\\ul $1\\ul0 #
+
+; Pagefooting: @PAGEFOOTING()
+regex = #@PAGEFOOTING\(()\)##
+
+; @STYLE(spacing 2 lines)
+regex = #@STYLE\((.*)\)##
+
+; Ignore page eject
+regex = #@NEWPAGE##
+
+; Re-add line endings
+regex = #zbobz#\\r\\n\\par \\r\\n\\par #
+regex = #xbobx#\\r\\n\\par #
+
+; End of file is EOF
+1a = "{@@<FiLe_EoF>@@}"
