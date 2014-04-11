@@ -1,0 +1,20 @@
+;
+; Speedscript on C64
+;
+
+; Start of text
+0028 =
+
+; Random directives
+9c =
+9331 =
+8803 =
+8883 =
+
+; Move lowercase letters up
+[01..1a] = 61
+
+; Return/newline
+1b = "["
+1d = "]"
+1f = 0a

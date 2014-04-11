@@ -10,6 +10,8 @@ New for this version:
  * New transform: Symantec Greatworks (text-only)
 
  * New transform: Kaypro Perfect Writer
+ 
+ * New transform: C-64 Speedscript
 
  * New transformation keyword: trim_trailing - trims a static amount of data from the end of input before any work begins
 
