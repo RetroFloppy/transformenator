@@ -1,0 +1,74 @@
+;
+; Mac WordPerfect 1.0 word processor, output in RTF
+; ...this is closely related to wordperfect_pc_rtf, and so may actually be a superset.
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Not sure what these are...
+f9 % "<unknowntag1>","<unknowntag1>"
+fa % "<unknowntag2>","<unknowntag2>"
+
+
+; Start of file
+c0........c0 =
+c0................c0 =
+c1....c1 =
+c1..............c1 =
+c2..c2 =
+c3......c3 = "\par "
+c4......c4 = "\par "
+c6....c6 = 
+c7........c7 =
+cb........cb =
+cc....cc =
+cf..cf =
+c9................................................................................c9 =
+d0....................d0 =
+da....da =
+dc..............dc =
+de....de =
+e1..e1 = 
+e4........e4 =
+e4..........e4 =
+
+; Line endings
+0d = " "
+0a09 = "\par\par "
+0a0a = "\par\par "
+0a = "\par "
+82 =
+83 =
+84 =
+86 =
+89 =
+8c =
+9a =
+
+; Emdash
+a9 = "\emdash "
+
+; Endash
+aa = "\endash "
+
+; Underline on/off
+94 = "\ul "
+95 = "\ul0 "
+
+; Bold on/off
+9d = "\b1 "
+9c = "\b0 "
+
+; Page breaks?
+dc..00000000..00dc.. = 20
+
+; Footnotes, probably
+e2 % "<footnote>","</footnote>"
+
+; Remove footnotes
+regex = @<footnote>.+?</footnote>@@
+regex = @<unknowntag1>.+?<unknowntag1>@@
+regex = @<unknowntag2>.+?<unknowntag2>@@
