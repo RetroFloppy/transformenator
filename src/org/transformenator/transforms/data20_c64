@@ -2,14 +2,11 @@
 ; Transform Data-20 word processor to text
 ;
 
-; Tag capitals with high bit
-[41..5a] # c1
+; Transform capitals to lowercase
+[41..5a] = 61
 
 ; Transform lowercase to capitals
 [61..7a] = 41
-
-; Transform capitals to lowercase
-[c1..da] = 61
 
 ; Emphasis capitals?
 [e1..fa] = 41
