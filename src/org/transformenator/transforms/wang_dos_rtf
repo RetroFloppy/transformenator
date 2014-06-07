@@ -1,0 +1,26 @@
+;
+; Transform for DOS-based Wang Word Processor
+;
+; Note - files will need to have gone through the Transformenator ExtractWangFiles 
+; process first to unwind their index structure.
+;
+
+; Header for RTF format
+head = "{\rtf1{\*\generator David Schmidt - Transformenator;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+00 =
+e3 =
+ff =
+
+81 =
+
+; Tab
+82 = "\tab "
+
+; Newline
+83 = "\\r\\n\line "
+
+; not sure what this is
+8631 =
