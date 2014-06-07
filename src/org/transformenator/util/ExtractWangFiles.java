@@ -92,9 +92,7 @@ public class ExtractWangFiles
 			if (inData != null)
 			{
 				// System.err.println("Read " + inData.length + " bytes.");
-				byte eyecatcher[] = { 0x57, 0x41, 0x4e, 0x47 }; // "WANG" - part
-																// of the WVD
-																// specification
+				byte eyecatcher[] = { 0x57, 0x41, 0x4e, 0x47 }; // "WANG" - part of the WVD specification
 				byte range[] = Arrays.copyOfRange(inData, 0x00, 0x04);
 
 				if (Arrays.equals(range, eyecatcher)) // Is the WANG eyecatcher in the disk image?
@@ -240,9 +238,17 @@ public class ExtractWangFiles
 						}
 					}
 				}
+				else if ((inData.length % 1024 == 0) && (UnsignedByte.intValue(inData[inData.length-1]) == 0xff) && ((UnsignedByte.intValue(inData[inData.length-2]) == 0xff)))
+				{
+					System.err.println("Unwinding a WANG WP file from a DOS file.");
+					if (args.length == 2)
+						unwindDOSFile(inData, args[1]);
+					else
+						unwindDOSFile(inData, args[0]+".bin");
+				}
 				else
 				{
-					System.err.println("Input file is not Wang WVD format.");
+					System.err.println("Input file is not a known Wang format.");
 				}
 			}
 		}
@@ -251,6 +257,59 @@ public class ExtractWangFiles
 			// wrong args
 			help();
 		}
+	}
+
+	public static void unwindDOSFile(byte[] inData, String fileName)
+	{
+		/*
+		 * This is probably a file from a DOS-ish WANG word processor
+		 */
+		FileOutputStream out;
+		try
+		{
+			out = new FileOutputStream(fileName);
+			System.err.println("Creating file: " + fileName);
+
+			/*
+			 * These word processors have a list of pointers to the starts of pages, in order.
+			 * Each pointer points to a 1k chunk of data that ends in another pointer (or xffff for the end). 
+			 */
+			for (int i = 258; i < 512; i+= 2)
+			{
+				int pageNumber = UnsignedByte.intValue(inData[i+1]) * 256 + UnsignedByte.intValue(inData[i]);
+				if ((pageNumber > 0) && (pageNumber < 65535))
+				{
+					//System.err.println("pageNumber: "+pageNumber);
+					dumpDOSPage(out, inData, pageNumber);
+				}
+			}
+			out.flush();
+			out.close();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}		
+	}
+
+	public static void dumpDOSPage(FileOutputStream out, byte[] inData, int pageNumber) throws IOException
+	{
+		int next = 0;
+		int endMarker = 1022;
+		int offset = pageNumber * 1024;
+		// Find the end of data in this block
+		for (int i = 0; i < 1022; i++)
+		{
+			if (inData[i+offset] == 0x1f)
+				endMarker = i;
+		}
+		//System.out.println("Start of page; block: "+UnsignedByte.toString(UnsignedByte.hiByte(pageNumber))+""+UnsignedByte.toString(UnsignedByte.loByte(pageNumber))+" offset: "+UnsignedByte.toString(UnsignedByte.loByte(offset))+""+UnsignedByte.toString(UnsignedByte.hiByte(offset)));
+		out.write(inData, offset, endMarker);
+		next = UnsignedByte.intValue(inData[offset+1023]) * 256 + UnsignedByte.intValue(inData[offset+1022]);
+		if (next < 65535)
+			dumpDOSPage(out, inData, next);
+		//else
+			//System.out.println("End.");
 	}
 
 	public static void decodeFile(byte[] inData, String shortName, int fileHeaderSector, int preambleOffset)
@@ -369,8 +428,8 @@ public class ExtractWangFiles
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractWangFiles v1.8 - Extract files from Wang word processor disk images.");
+		System.err.println("ExtractWangFiles v1.9 - Extract files from Wang word processor files or disk images.");
 		System.err.println();
-		System.err.println("Usage: ExtractWangFiles infile [out_directory]");
+		System.err.println("Usage: ExtractWangFiles infile [outfile|out_directory]");
 	}
 }
