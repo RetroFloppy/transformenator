@@ -10,7 +10,7 @@ But you can't.  Maybe that's why you're here.  Transformenator can help.
 It turns out that this is really, really useful when faced with files from ancient word processors, for example.
 They used all kinds of crazy binary annotations within a file (this is before the days of text markup, remember).
 With Transformenator, it's easy to swap out those binary annotations for HTML or RTF tags that all of a sudden make those
-ancient files readable again, maybe even with their original formatting highlighting intact.
+ancient files readable again, maybe even with their original formatting and highlighting intact.
 Many samples come built into the Transformenator package that can make such file conversions easy. 
 <p>
 The list of these samples is available in CVS at
@@ -30,21 +30,29 @@ Where:<br>
 
 <h2>Example</h2>
 Say you have the file below named <code>infile</code>, represented in a typical hex editor:
+<p>
 <xmp>(Offset) (Hex data)                               (ASCII representation)
+-------- ---------------------------------------  ----------------
 0000000: 6162 6364 0000 6566 6768 696a 1a67 6574  abcd..efghij.get
-0000010: 2072 6964 206f 6620 6d65 210a             rid of me!.
-</xmp>
-Say we want to change the hex zeroes in the middle to spaces, and eliminate anything after the EOF (0x1a).
+0000010: 2072 6964 206f 6620 6d65 210a             rid of me!.</xmp>
+<p>Say we want to change the hex zeroes in the middle to spaces, and eliminate anything after the EOF (0x1a).
 Create a transform file named <code>transform</code> to do that:
+<p>
 <xmp>; Make nulls into spaces
 00 = 20
 ; ASCII EOF character really means EOF
 1a = "{@@<FiLe_EoF>@@}"</xmp>
+<p>
 So, we run <code>infile</code> through the <code>transform</code> file and send the output to a file named <code>outfile</code>:
+<p>
 <xmp>%java -jar transformenator.jar transform infile outfile</xmp>
+<p>
 The resulting <code>outfile</code> looks like this in a hex editor:
+<p>
 <xmp>(Offset) (Hex data)                               (ASCII representation)
+-------- ---------------------------------------  ----------------
 0000000: 6162 6364 2020 6566 6768 696a            abcd  efghij</xmp>
+<p>
 Observe that nulls became spaces, and other trailing stuff after the EOF character has been removed.
 
 <h2>Transform Specification</h2>
@@ -55,7 +63,6 @@ A <code>transform</code> file might look like this, for example:
 <xmp>; Change 0x00 to 0x20
 00 = 20</xmp>
 <p>
-
 The left side of the equals sign, hash mark, or percent sign is the byte pattern to search for.
 To specify it, the following conventions are used:
 <ul>
@@ -214,12 +221,12 @@ The transformenator.jar includes several supporting utilities.  They are:
 <tr>
 <td align="left"><code>ExtractEasyWriterFiles</code></td>
 <td align="left"><code>infile [out_directory]</code></td>
-<td align="left">Extract EasyWriter word processing files from 13-sector Apple II disk image</td>
+<td align="left">Extract EasyWriter word processing files from a 13-sector Apple II disk image</td>
 </tr>
 <tr>
 <td align="left"><code>ExtractWangFiles</code></td>
 <td align="left"><code>infile [out_directory]</code></td>
-<td align="left">Extract Wang OIS word processing files from Wang <a target="_new" href="http://wang2200.org/disk_org.html">disk image</td>
+<td align="left">Extract Wang OIS word processing files from a Wang <a target="_new" href="http://wang2200.org/disk_org.html">disk image</td>
 </tr>
 <tr>
 <td align="left"><code>RevealValdocsEntries</code></td>
