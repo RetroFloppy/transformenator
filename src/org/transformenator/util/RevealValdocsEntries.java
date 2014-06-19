@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2013 by David Schmidt
+ * Copyright (C) 2013 - 2014 by David Schmidt
  * david__schmidt at users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -27,6 +27,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+
+import org.transformenator.Version;
 
 /*
  * RevealDirectoryEntries
@@ -158,7 +160,7 @@ public class RevealValdocsEntries
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("RevealValdocsEntries v1.7 - un-hide CP/M directory entries of Valdocs files in disk image files.");
+		System.err.println("RevealValdocsEntries "+Version.VersionString+" - un-hide CP/M directory entries of Valdocs files in disk image files.");
 		System.err.println();
 		System.err.println("Usage: RevealValdocsEntries infile outfile");
 	}

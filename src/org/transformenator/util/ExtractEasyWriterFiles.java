@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2013 by David Schmidt
+ * Copyright (C) 2013 - 2014 by David Schmidt
  * david__schmidt at users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import org.transformenator.UnsignedByte;
+import org.transformenator.Version;
 
 /*
  * UnpackEasyWriterFiles
@@ -277,7 +278,7 @@ public class ExtractEasyWriterFiles
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractEasyWriterFiles v1.7 - Extract files from EasyWriter word processor .D13 disk images.");
+		System.err.println("ExtractEasyWriterFiles "+Version.VersionString+" - Extract files from EasyWriter word processor .D13 disk images.");
 		System.err.println();
 		System.err.println("Usage: ExtractEasyWriterFiles infile [out_directory]");
 	}

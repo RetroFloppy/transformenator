@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2013 by David Schmidt
+ * Copyright (C) 2013 - 2014 by David Schmidt
  * david__schmidt at users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
+
+import org.transformenator.Version;
 
 /*
  * ExtractCTOSArchive
@@ -197,7 +199,7 @@ public class ExtractCTOSArchive
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractCTOSArchive v1.7 - Extract files from CTOS archives.");
+		System.err.println("ExtractCTOSArchive "+Version.VersionString+" - Extract files from CTOS archives.");
 		System.err.println();
 		System.err.println("Usage: ExtractCTOSArchive infile [out_directory]");
 	}

@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2013 by David Schmidt
+ * Copyright (C) 2013 - 2014 by David Schmidt
  * david__schmidt at users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.transformenator.UnsignedByte;
+import org.transformenator.Version;
 
 /*
  * UnpackWangFiles
@@ -428,7 +429,7 @@ public class ExtractWangFiles
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractWangFiles v1.9 - Extract files from Wang word processor files or disk images.");
+		System.err.println("ExtractWangFiles "+Version.VersionString+" - Extract files from Wang word processor files or disk images.");
 		System.err.println();
 		System.err.println("Usage: ExtractWangFiles infile [outfile|out_directory]");
 	}
