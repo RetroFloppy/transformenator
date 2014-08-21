@@ -225,7 +225,7 @@ public class ExtractWangFiles
 									{
 										if (out != null)
 										{
-											byte range2[] = Arrays.copyOfRange(inData, myInt + 7, myInt + 256);
+											byte range2[] = Arrays.copyOfRange(inData, myInt + 7, myInt + UnsignedByte.intValue(inData[myInt+2])+1);
 											out.write(range2);
 											out.flush();
 										}

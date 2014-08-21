@@ -3,7 +3,7 @@
 ;
 
 ; Trim the leading 0x300 bytes
-trim_leading = 300
+; trim_leading = 300
 
 ; Header for RTF format
 head = "{\rtf1{\*\generator David Schmidt - Transformenator;}\f0 "
@@ -32,9 +32,15 @@ tail = "}"
 ; Emphasis toggle
 8e % "\i1 ","\i0 "
 
+; Superscripting on
+0e = "\super "
+
+; Superscripting off
+0f = "\nosupersub "
+
 7b = 
 7d = 
 
-; Page eject?  Control char plus 78 spaces and tabs
-86............................................................................................................................................................
+; Page eject?  Control char plus 75 spaces and tabs
+86........................................................................................................................................................
 06............................................................................................................................................................
