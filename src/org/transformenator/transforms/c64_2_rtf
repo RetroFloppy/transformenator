@@ -1,5 +1,5 @@
 ;
-; Transform for an unknown C64 word processor to RTF
+; Transform for an unknown C64 word processor to RTF - may be PaperClip
 ;
 
 ; Commands:
@@ -12,6 +12,10 @@
 ; zfp - Force page?
 ; znx:<filename> - next file to chain
 
+; Centering off/on
+regex = @zcn off@\\leveljc0 @
+regex = @zcn on@\\leveljc1 @
+
 ; Header for RTF format
 head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator;}\f0 "
 ; Closing brace for RTF format
@@ -20,11 +24,15 @@ tail = "}"
 ; Regular expressions run _after_ all binary replacements.
 ; Remove left/right margin specs: zlmxx, :rmxx
 regex = @[z|:][l|r]m[0-9]*@@
+; Remove page spec: :ppxx :pgxx :p#xx
+regex = @[z|:]p[p|g|\#][0-9]*@@
+; Remove spacing spec: :spxx
+regex = @[z|:]sp[0-9]*@@
 ; Remove next file specification
 regex = @znx:.*@@
 
 ; Crazy gorp at the front
-c4c6ff28fe636363636363636363e4636363636363636363e4636363636363636363e4636363636363636363e4fd
+....ff28fe..6363636363636363..636363636363636363..636363636363636363..636363636363636363..fd =
 
 ; Whack the header
 7a08042c2c =
