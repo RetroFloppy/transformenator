@@ -105,12 +105,6 @@ public class UnsignedByte
 	public static String toString(int i)
 	{
 		char c;
-		String s1 = "";
-		if (i > 65535)
-		{
-			int j = i - 65536;
-			s1 = toString(j);
-		}
 		if (i / 16 < 10)
 			c = (char) (i / 16 + 48);
 		else
@@ -122,10 +116,7 @@ public class UnsignedByte
 		else
 			c1 = (char) (i % 16 + 55);
 
-		if (s1.length() > 0)
-			return (s1 + c + "" + c1);
-		else
-			return ("" + c + "" + c1);
+		return ("" + c + "" + c1);
 	}
 
 }

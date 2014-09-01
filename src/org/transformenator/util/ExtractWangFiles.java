@@ -37,7 +37,7 @@ import java.util.Map;
 import org.transformenator.Version;
 
 /*
- * UnpackWangFiles
+ * ExtractWangFiles
  * 
  * The intent of this helper app is to pull the files off of the virtual file system of WANG
  * word processor disks.  I've seen a couple of different types: first, the 2200-derived disks

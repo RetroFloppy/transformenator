@@ -27,7 +27,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
 
 import org.transformenator.Version;
 
@@ -97,6 +100,8 @@ public class ExtractAdministrativeSystemFiles
 					// Track 0, side 1: 26 sectors @ 256 bytes
 					// The rest: 15 sectors @ 512 bytes
 				}
+				Hashtable<Integer, TextRecord> textRecordCollection = new Hashtable<Integer, TextRecord>();
+				TextRecord tr;
 				int i = track0Offset;
 				while (i < inData.length)
 //				for (int i = track0Offset; i < inData.length; i+=1)
@@ -110,19 +115,15 @@ public class ExtractAdministrativeSystemFiles
 							(!((mid == 0x05) && recType == 0xe1)))
 						{
 							int intOffset = i-track0Offset;
-							int xsb = intOffset / 65536;
+//							int xsb = intOffset / 65536;
 							if (intOffset > 65535)
 								intOffset -= 65536;
-							String recordSignature = "0x00"+UnsignedByte.toString(mid)+UnsignedByte.toString(recType)+UnsignedByte.toString(inData[i+3]);
 							if (recType == 0xE1)
 							{
 								String marker = EbcdicUtil.toAscii(inData, i+5, 6);
 								int markerInt = Integer.parseInt(marker);
-								System.err.print("Found a 0x"+UnsignedByte.toString(recType)+" record ("+recordSignature+") at 0x"+UnsignedByte.toString(xsb)+UnsignedByte.toString(UnsignedByte.hiByte(intOffset))+UnsignedByte.toString(UnsignedByte.loByte(intOffset)));
-								System.err.print(" Marker: "+ markerInt);
-								// System.err.println(EbcdicUtil.toAscii(inData, i+textStart, recordSize-textStart));
 								int j;
-								i += 0x9e;
+								i += 0x9c;
 								int beginOffset = i;
 								int endOffset = beginOffset;
 								for (j = i; j < inData.length; j++)
@@ -134,13 +135,28 @@ public class ExtractAdministrativeSystemFiles
 									}
 								}
 								i = j;
-								System.err.println(" Offsets: "+ beginOffset + " - "+endOffset);
+								// System.err.println(" Offsets: "+ Integer.toHexString(beginOffset) + " - "+Integer.toHexString(endOffset));
+								tr = new TextRecord(beginOffset, endOffset);
+								textRecordCollection.put(markerInt,tr);
 							}
 							else i++;
 						}
 						else i++;
 					}
 					else i++;
+				}
+				System.err.println("Text records found: "+textRecordCollection.size());
+				TextRecord tr2;
+				Enumeration<Integer> recs = textRecordCollection.keys();
+				List<Integer> list = Collections.list(recs); // create list from enumeration 
+				Collections.sort(list);
+				recs = Collections.enumeration(list);
+				while(recs.hasMoreElements())
+				{
+					Integer marker = (Integer) recs.nextElement();
+					tr2 = textRecordCollection.get(marker);
+					System.err.println("Text record "+marker+": "+Integer.toHexString(tr2.beginOffset)+"-"+Integer.toHexString(tr2.endOffset)+":");
+					System.err.println(EbcdicUtil.toAscii(inData, tr2.beginOffset, tr2.endOffset));
 				}
 			}
 		}
@@ -158,4 +174,16 @@ public class ExtractAdministrativeSystemFiles
 		System.err.println();
 		System.err.println("Usage: ExtractAdministrativeSystemFiles infile [out_directory]");
 	}
+
+	public static class TextRecord 
+	{
+		public TextRecord(int begin, int end)
+		{
+			beginOffset = begin;
+			endOffset = end;
+		}
+		public int beginOffset;
+		public int endOffset;
+	}
+
 }
