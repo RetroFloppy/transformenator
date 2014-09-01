@@ -29,7 +29,6 @@ import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import org.transformenator.UnsignedByte;
 import org.transformenator.Version;
 
 /*

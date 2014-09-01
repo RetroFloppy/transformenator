@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 
-import org.transformenator.UnsignedByte;
 import org.transformenator.Version;
 
 /*

@@ -39,6 +39,8 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.transformenator.util.UnsignedByte;
+
 public class Transformation
 {
 	public Transformation(String transform_name)

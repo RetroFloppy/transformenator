@@ -20,7 +20,6 @@
 
 package org.transformenator.util;
 
-import org.transformenator.UnsignedByte;
 
 public class EbcdicUtil
 {
@@ -28,7 +27,11 @@ public class EbcdicUtil
 	{
 		String resultString = "";
 		for (int i = offset; i < offset+length; i++)
+		{
+			if (inData[i] == 0x0c)
+				break;
 			resultString += asciiChar(inData[i]);
+		}
 		return resultString;
 	};
 
@@ -37,6 +40,8 @@ public class EbcdicUtil
 		int myByte = UnsignedByte.intValue(inByte);
 		switch (myByte)
 		{
+			case 0x15: return ' ';
+
 			case 0x2d: return '-';
 
 			case 0x40: return ' ';
