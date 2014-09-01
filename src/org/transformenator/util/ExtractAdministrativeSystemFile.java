@@ -27,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -35,22 +36,23 @@ import java.util.List;
 import org.transformenator.Version;
 
 /*
- * ExtractAdministrativeSystemFiles
+ * ExtractAdministrativeSystemFile
  * 
- * The intent of this helper app is to pull the files off of the virtual file system of IBM 5520
+ * The intent of this helper app is to pull the file off of the virtual file system of IBM 5520
  * Administrative System disks.  Recall that text will need to be interpreted as EBCDIC.
  *
  */
-public class ExtractAdministrativeSystemFiles
+public class ExtractAdministrativeSystemFile
 {
 
 	public static void main(java.lang.String[] args)
 	{
-		if ((args.length == 1) || (args.length == 2))
+		if (args.length == 2)
 		{
 			byte[] inData = null;
 			System.err.println("Reading input file " + args[0]);
 			File file = new File(args[0]);
+			String fileName = args[1];
 			byte[] result = new byte[(int) file.length()];
 			try
 			{
@@ -121,23 +123,39 @@ public class ExtractAdministrativeSystemFiles
 							if (recType == 0xE1)
 							{
 								String marker = EbcdicUtil.toAscii(inData, i+5, 6);
+								int scratchIndicator = inData[i+0x0c];
 								int markerInt = Integer.parseInt(marker);
 								int j;
-								i += 0x9c;
+								if (markerInt == 100)
+									i += 0x146;
+								else
+									i += 0x9c;
 								int beginOffset = i;
 								int endOffset = beginOffset;
 								for (j = i; j < inData.length; j++)
 								{
-									if (inData[j] == 0x06)
+									if (inData[j] == 0x0c)
 									{
 										endOffset = j;
 										break;
 									}
+									if ((j % 256 == 0))
+									{
+										if (inData[j] == 0x00)
+										{
+											// System.err.println("Ok, we hit the end of a sector without a 0x0c - breaking.  j="+Integer.toHexString(j));
+											endOffset = j;
+											break;
+										}
+									}
 								}
 								i = j;
-								// System.err.println(" Offsets: "+ Integer.toHexString(beginOffset) + " - "+Integer.toHexString(endOffset));
-								tr = new TextRecord(beginOffset, endOffset);
-								textRecordCollection.put(markerInt,tr);
+								// System.err.println("Text Record: "+markerInt+" Scratch indicator: 0x"+Integer.toHexString(scratchIndicator)+" Offsets: "+ Integer.toHexString(beginOffset) + " - "+Integer.toHexString(endOffset));
+								if (scratchIndicator != 0x05)
+								{
+									tr = new TextRecord(beginOffset, endOffset);
+									textRecordCollection.put(markerInt,tr);
+								}
 							}
 							else i++;
 						}
@@ -151,12 +169,31 @@ public class ExtractAdministrativeSystemFiles
 				List<Integer> list = Collections.list(recs); // create list from enumeration 
 				Collections.sort(list);
 				recs = Collections.enumeration(list);
-				while(recs.hasMoreElements())
+				if (recs.hasMoreElements())
 				{
-					Integer marker = (Integer) recs.nextElement();
-					tr2 = textRecordCollection.get(marker);
-					System.err.println("Text record "+marker+": "+Integer.toHexString(tr2.beginOffset)+"-"+Integer.toHexString(tr2.endOffset)+":");
-					System.err.println(EbcdicUtil.toAscii(inData, tr2.beginOffset, tr2.endOffset));
+					try
+					{
+						FileOutputStream out = new FileOutputStream(fileName);
+						while(recs.hasMoreElements())
+						{
+							Integer marker = (Integer) recs.nextElement();
+							tr2 = textRecordCollection.get(marker);
+							// System.err.println("Text record "+marker+": "+Integer.toHexString(tr2.beginOffset)+"-"+Integer.toHexString(tr2.endOffset)+":");
+							// System.err.println(EbcdicUtil.toAscii(inData, tr2.beginOffset, tr2.endOffset));
+							byte range2[] = Arrays.copyOfRange(inData, tr2.beginOffset, tr2.endOffset);
+							out.write(range2);
+							out.flush();
+						}
+						out.close();
+					}
+					catch (FileNotFoundException e)
+					{
+						e.printStackTrace();
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -170,9 +207,9 @@ public class ExtractAdministrativeSystemFiles
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractAdministrativeSystemFiles "+Version.VersionString+" - Extract files from IBM 5520 Administrative System disk images.");
+		System.err.println("ExtractAdministrativeSystemFile "+Version.VersionString+" - Extract file from a IBM 5520 Administrative System disk image.");
 		System.err.println();
-		System.err.println("Usage: ExtractAdministrativeSystemFiles infile [out_directory]");
+		System.err.println("Usage: ExtractAdministrativeSystemFile infile outfile");
 	}
 
 	public static class TextRecord 
