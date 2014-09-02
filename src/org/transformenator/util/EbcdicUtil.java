@@ -28,8 +28,6 @@ public class EbcdicUtil
 		String resultString = "";
 		for (int i = offset; i < offset+length; i++)
 		{
-			if (inData[i] == 0x0c)
-				break;
 			resultString += asciiChar(inData[i]);
 		}
 		return resultString;
@@ -51,6 +49,8 @@ public class EbcdicUtil
 			case 0x4d: return '(';
 			case 0x4e: return '+';
 			case 0x4f: return '|';
+
+			case 0x50: return '&';
 
 			case 0x5a: return '!';
 			case 0x5b: return '$';
