@@ -1,0 +1,36 @@
+;
+; Transform Canon ETW1 word processor to RTF
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Trim the leading 0x160 bytes
+trim_leading = 160
+
+; Start of file is the first 0x1013
+1013 = "{@@<FiLe_SoF>@@}"
+
+; Control sequences
+1011....1110
+1310 = "{CB}"
+1311 = "{CB}"
+1013 = "{CE}"
+1113 = "{CE}"
+
+; Characters near EOF
+81 = 
+
+; Character translations
+a6 = "$"
+
+; End of file is 0x03
+03 = "{@@<FiLe_EoF>@@}"
+
+; Remove everything between control sequence signals
+regex = @\{CB\}.*?\{CE\}@\\par\\par @
+
+; Remove any remaining control sequences
+regex = @\{CB\}@@

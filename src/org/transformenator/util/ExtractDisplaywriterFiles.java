@@ -86,6 +86,8 @@ public class ExtractDisplaywriterFiles
 			{
 				int track0Offset = 3328;
 				String docName = "";
+				String marker = "";
+				String secondaryMarker = "";
 				System.err.println("Read " + inData.length + " bytes.");
 				if (inData.length > 1000000)
 				{
@@ -101,7 +103,6 @@ public class ExtractDisplaywriterFiles
 							(!((mid == 0x05) && recType == 0xe1)))
 						{
 							int intOffset = i-track0Offset;
-							int xsb = intOffset / 65536;
 							if (intOffset > 65535)
 								intOffset -= 65536;
 							String recordSignature = "0x00"+UnsignedByte.toString(mid)+UnsignedByte.toString(recType);
@@ -124,13 +125,19 @@ public class ExtractDisplaywriterFiles
 							else if (recType == 0xE1)
 							{
 								recordEyecatcher = "STUF";
-								String texty = EbcdicUtil.toAscii(inData, i+0x90, 256-0x90);
-								System.err.println("Text: "+texty);
+								marker = EbcdicUtil.toAscii(inData, i+5, 6);
+								secondaryMarker = EbcdicUtil.toAscii(inData, i+30, 6);
+								// String texty = EbcdicUtil.toAscii(inData, i+0x90, 256-0x90);
+								// System.err.println("Text: "+texty);
 							}
-							System.err.print("Found a 0x"+UnsignedByte.toString(recType)+" record ("+recordSignature+") "+recordEyecatcher+" at 0x"+UnsignedByte.toString(xsb)+UnsignedByte.toString(UnsignedByte.hiByte(intOffset))+UnsignedByte.toString(UnsignedByte.loByte(intOffset)));
+							System.err.print("Found a 0x"+UnsignedByte.toString(recType)+" record ("+recordSignature+") "+recordEyecatcher+" at 0x"+Integer.toHexString(i));
 							if (recType == 0x60)
 							{
 								System.err.println(" Filename: ["+docName.trim()+"]");
+							}
+							else if (recType == 0xe1)
+							{
+								System.err.println(" Marker: "+marker+" Secondary Marker: "+secondaryMarker);
 							}
 							else
 								System.err.println();
