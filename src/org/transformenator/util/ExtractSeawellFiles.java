@@ -37,7 +37,7 @@ import org.transformenator.Version;
  * Helper app to pull the files off of the virtual file system of a Seawell
  * 8" disk image.
  * 
- * Disk geometry: 2 sides, 256 bytes per sector, 26 sectors per track, 77 tracks
+ * Disk geometry: 2 sides, 256 bytes per sector, 26 sectors per track, 76 tracks
  *
  */
 public class ExtractSeawellFiles
@@ -125,7 +125,8 @@ public class ExtractSeawellFiles
 							else
 								break;
 						}
-						int indexEntry = (UnsignedByte.intValue(inData[i+33]))*13312 + (UnsignedByte.intValue(inData[i+34]))*256;
+						// System.out.println("Found file: "+filename);
+						int indexEntry = (UnsignedByte.intValue(inData[i+33]))*13312 + (UnsignedByte.intValue(inData[i+34])-1)*256;
 						/*
 						 * Now pull up the index entry for that file
 						 *  
@@ -159,9 +160,9 @@ public class ExtractSeawellFiles
 							int dataLen2 = inData[indexEntry+0x0f]*256;
 							/*
 							System.out.println();
-							System.out.println("Data add1: 0x"+Integer.toHexString(0x1000000 | dataAddr1).substring(1).toUpperCase()+" length: 0x"+ Integer.toHexString(0x10000 | dataLen1).substring(1).toUpperCase());
+							System.out.println("Data Add1: 0x"+Integer.toHexString(0x1000000 | dataAddr1).substring(1).toUpperCase()+" length: 0x"+ Integer.toHexString(0x10000 | dataLen1).substring(1).toUpperCase());
 							if (dataLen2 > 0)
-								System.out.println("Data add2: 0x"+Integer.toHexString(0x1000000 | dataAddr2).substring(1).toUpperCase()+" length: 0x"+ Integer.toHexString(0x10000 | dataLen2).substring(1).toUpperCase());
+								System.out.println("Data Add2: 0x"+Integer.toHexString(0x1000000 | dataAddr2).substring(1).toUpperCase()+" length: 0x"+ Integer.toHexString(0x10000 | dataLen2).substring(1).toUpperCase());
 							System.out.println();
 							*/
 							FileOutputStream out;
