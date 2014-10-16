@@ -89,16 +89,20 @@ public class ExtractSeawellFiles
 			{
 				// We have good data; get ready to deal with it.
 				System.err.println("Read " + inData.length + " bytes.");
-				// If they wanted an output directory, go ahead and make it.
-				File baseDirFile = new File(args[1]);
-				if (!baseDirFile.isAbsolute())
+				if (args.length > 1)
 				{
-					baseDirFile = new File("."+File.separator+args[1]);
+					// If they wanted an output directory, go ahead and make it.
+					File baseDirFile = new File(args[1]);
+					if (!baseDirFile.isAbsolute())
+					{
+						baseDirFile = new File("."+File.separator+args[1]);
+					}
+					// System.out.println("Making directory: ["+baseDirFile+"]");
+					baseDirFile.mkdir();
 				}
-				baseDirFile.mkdir();
-				// System.out.println("Making directory: ["+baseDirFile+"]");
 				/*
-				 * Catalog starts on the 19th track
+				 * Catalog starts on the 19th track - no idea how far it can stretch,
+				 * so be conservative about what we identify as a valid file entry
 				 * 
 				 * Catalog entries are 36 (0x24) bytes long:
 				 * bytes 0x00-0x0f: Data (unknown origin)
@@ -157,7 +161,7 @@ public class ExtractSeawellFiles
 							System.out.println();
 							System.out.println("Data add1: 0x"+Integer.toHexString(0x1000000 | dataAddr1).substring(1).toUpperCase()+" length: 0x"+ Integer.toHexString(0x10000 | dataLen1).substring(1).toUpperCase());
 							if (dataLen2 > 0)
-								System.out.println(Data add2: 0x"+Integer.toHexString(0x1000000 | dataAddr2).substring(1).toUpperCase()+" length: 0x"+ Integer.toHexString(0x10000 | dataLen2).substring(1).toUpperCase());
+								System.out.println("Data add2: 0x"+Integer.toHexString(0x1000000 | dataAddr2).substring(1).toUpperCase()+" length: 0x"+ Integer.toHexString(0x10000 | dataLen2).substring(1).toUpperCase());
 							System.out.println();
 							*/
 							FileOutputStream out;
