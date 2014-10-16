@@ -34,8 +34,10 @@ import org.transformenator.Version;
 /*
  * ExtractSeawellFiles
  * 
- * The intent of this helper app is to pull the files off of the virtual file system of a Seawell
+ * Helper app to pull the files off of the virtual file system of a Seawell
  * 8" disk image.
+ * 
+ * Disk geometry: 2 sides, 256 bytes per sector, 26 sectors per track, 77 tracks
  *
  */
 public class ExtractSeawellFiles
@@ -51,6 +53,7 @@ public class ExtractSeawellFiles
 			byte[] result = new byte[(int) file.length()];
 			try
 			{
+				// Read in the entire disk image
 				InputStream input = null;
 				try
 				{
@@ -84,10 +87,9 @@ public class ExtractSeawellFiles
 			}
 			if (inData != null)
 			{
+				// We have good data; get ready to deal with it.
 				System.err.println("Read " + inData.length + " bytes.");
-				/*
-				 * If they wanted an output directory, go ahead and make it.
-				 */
+				// If they wanted an output directory, go ahead and make it.
 				File baseDirFile = new File(args[1]);
 				if (!baseDirFile.isAbsolute())
 				{
@@ -95,6 +97,15 @@ public class ExtractSeawellFiles
 				}
 				baseDirFile.mkdir();
 				// System.out.println("Making directory: ["+baseDirFile+"]");
+				/*
+				 * Catalog starts on the 19th track
+				 * 
+				 * Catalog entries are 36 (0x24) bytes long:
+				 * bytes 0x00-0x0f: Data (unknown origin)
+				 * bytes 0x10-0x21: Filename (zero padded, generally)
+				 * bytes 0x22-0x23: Track, sector of the index entry
+				 *
+				 */
 				for (int i = 0x3de00; i < inData.length; i+=35)
 				{
 					String filename = "";
@@ -110,26 +121,38 @@ public class ExtractSeawellFiles
 							else
 								break;
 						}
-						int nodeAddr = (UnsignedByte.intValue(inData[i+33]))*13312 + (UnsignedByte.intValue(inData[i+34]))*256;
-						// Now pull up the info block for that file
-						if ((inData[nodeAddr+8] == 0x34) && (inData[nodeAddr+9] == 0x00))
+						int indexEntry = (UnsignedByte.intValue(inData[i+33]))*13312 + (UnsignedByte.intValue(inData[i+34]))*256;
+						/*
+						 * Now pull up the index entry for that file
+						 *  
+						 * Index entries start in 0x08 bytes.  It starts with a leading 0x34, 0x00 (likely a track/
+						 * sector multiplier?), followed by one ore more pointers to sector chains.  Sector chain
+						 * pointers look like this:
+						 * 0xnn - starting track
+						 * 0xnn - starting sector
+						 * 0xnn - sector count (runs from 0x01 to 0x34; if there are 0x34 sectors, there may be another chain)
+						 *
+						 * We currently only look for two chains, as no file was found that had more than that.
+						 *
+						 */
+						if ((inData[indexEntry+8] == 0x34) && (inData[indexEntry+9] == 0x00))
 						{
 							byte fnb[];
 							/*
 							System.out.println("Extracting file: "+filename);
-							System.out.print("Node Addr: 0x"+Integer.toHexString(0x1000000 |nodeAddr).substring(1).toUpperCase());
+							System.out.print("Node Addr: 0x"+Integer.toHexString(0x1000000 |indexEntry).substring(1).toUpperCase());
 							System.out.print(" Node Data: 0x");
 							for (int k = 8; k < 20; k++)
-								System.out.print(UnsignedByte.toString(inData[nodeAddr+k]));
+								System.out.print(UnsignedByte.toString(inData[indexEntry+k]));
 							*/
-							int dataAddr1 = (UnsignedByte.intValue(inData[nodeAddr+0x0a]))*13312 + (UnsignedByte.intValue(inData[nodeAddr+0x0b])-1)*256;
-							int dataLen1 = inData[nodeAddr+0x0c]*256;
+							int dataAddr1 = (UnsignedByte.intValue(inData[indexEntry+0x0a]))*13312 + (UnsignedByte.intValue(inData[indexEntry+0x0b])-1)*256;
+							int dataLen1 = inData[indexEntry+0x0c]*256;
 							int dataAddr2;
-							if (inData[nodeAddr+0x0e] == 0x00)
+							if (inData[indexEntry+0x0e] == 0x00)
 								dataAddr2 = 0;
 							else
-								dataAddr2 = (UnsignedByte.intValue(inData[nodeAddr+0x0d]))*13312 + (UnsignedByte.intValue(inData[nodeAddr+0x0e])-1)*256;
-							int dataLen2 = inData[nodeAddr+0x0f]*256;
+								dataAddr2 = (UnsignedByte.intValue(inData[indexEntry+0x0d]))*13312 + (UnsignedByte.intValue(inData[indexEntry+0x0e])-1)*256;
+							int dataLen2 = inData[indexEntry+0x0f]*256;
 							/*
 							System.out.println();
 							System.out.println("Data add1: 0x"+Integer.toHexString(0x1000000 | dataAddr1).substring(1).toUpperCase()+" length: 0x"+ Integer.toHexString(0x10000 | dataLen1).substring(1).toUpperCase());
@@ -138,6 +161,7 @@ public class ExtractSeawellFiles
 							System.out.println();
 							*/
 							FileOutputStream out;
+							// Copy data from first sector chain
 							fnb = Arrays.copyOfRange(inData, dataAddr1, dataAddr1+dataLen1);
 							for (j = fnb.length - 1; j > 0; j--)
 							{
@@ -158,9 +182,11 @@ public class ExtractSeawellFiles
 									fullname = filename;
 								out = new FileOutputStream(fullname);
 								System.err.println("Creating file: " + fullname);
+								// Dump out the first chain
 								out.write(fnb, 0, dataLen1);
 								if (dataLen2 > 0)
 								{
+									// Copy data from second sector chain, if one exists
 									fnb = Arrays.copyOfRange(inData, dataAddr2, dataAddr2+dataLen2);
 									for (j = fnb.length - 1; j > 0; j--)
 									{
@@ -170,8 +196,10 @@ public class ExtractSeawellFiles
 											break;
 										}
 									}
+									// Dump out the second chain
 									out.write(fnb, 0, dataLen2);
 								}
+								// All done with all files
 								out.flush();
 								out.close();
 							}
@@ -180,7 +208,7 @@ public class ExtractSeawellFiles
 								io.printStackTrace();
 							}
 						}
-						// else System.out.println(" tag byte at index block: 0x"+UnsignedByte.toString(inData[nodeAddr+8]));
+						// else System.out.println(" tag byte at index block: 0x"+UnsignedByte.toString(inData[indexEntry+8]));
 					}
 					else break;
 				}

@@ -1,21 +1,9 @@
 New for this version:
 =====================
 
- * New transform: Leading Edge Word Processor (LEWP), a descendant of later WANG Word Processors
+ * New transform: Canon ETW1 word processor
 
- * New transform: WANG WPS(?) word processor
-
- * New transform: TRS-80 Scripsit
-
- * New transform: Symantec Greatworks (text-only)
-
- * New transform: Kaypro Perfect Writer
- 
- * New transform: C-64 Speedscript
-
- * New transformation keyword: trim_trailing - trims a static amount of data from the end of input before any work begins
-
- * New function: UpdateDOSImage can now remove the Stoned boot block virus from 360K and 1.2MB disk images
+ * New function: ExtractSeawellFiles - extract files from Seawell DOS (early 6502-based DOS) 8" disk images 
 
 Transformenator introduction:
 =============================
