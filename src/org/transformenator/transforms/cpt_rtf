@@ -1,0 +1,30 @@
+;
+; CPT word processor to RTF
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+0d = "\par "
+
+; Remove control char before dash
+bd =
+bf = 
+
+; Not sure what this is - something extra for linefeeds
+800d =
+80 =
+
+; Seems to be SOF or so
+c0 =
+
+; Underline
+a0 = "_"
+89 = "_"
+
+; Emphasis - underline the next character
+c4 = "!UL1!"
+
+regex=@!UL1!(.)@\\ul1 $1\\ul0 @
