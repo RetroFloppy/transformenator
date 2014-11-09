@@ -125,7 +125,7 @@ public class ExtractWangFiles
 							File baseDirFile = new File(args[1]);
 							if (!baseDirFile.isAbsolute())
 							{
-								baseDirFile = new File("./"+args[1]);
+								baseDirFile = new File("."+File.pathSeparator+args[1]);
 							}
 							baseDirFile.mkdir();
 						}
