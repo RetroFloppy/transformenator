@@ -23,11 +23,9 @@ package org.transformenator.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
-import java.util.Arrays;
 
 import org.transformenator.Version;
 
@@ -82,66 +80,64 @@ public class ExtractDisplaywriterFiles
 			{
 				ex.printStackTrace();
 			}
+			/*
+			 * Two modes of operation:
+			 * 
+			 * 1) dump all sectors and records out one by one Increment by the
+			 * remainder if the remainder is not zero ... mention if the bytes
+			 * of the remainder are not zero
+			 * 
+			 * 2) start at the center record and follow all the links
+			 */
 			if (inData != null)
 			{
-				int track0Offset = 3328;
-				String docName = "";
-				String marker = "";
-				String secondaryMarker = "";
+				int track0Offset = 0; //3328;
 				System.err.println("Read " + inData.length + " bytes.");
 				if (inData.length > 1000000)
 				{
-					track0Offset = 3328 * 3;
+					// track0Offset = 3328 * 3;
 				}
-				for (int i = track0Offset; i < inData.length; i+=256)
+				// Loop over the entire disk looking for records
+				int i = 0, j = 0;
+				int delta = 0;
+				/*
+				while (i < inData.length)
 				{
-					if (inData[i] == 0x00)
+					delta = i;
+					i = dumpBareRecord(inData, i);
+					delta = i - delta; // How big was the delta?
+					j = i % 256;
+					if ((delta == 0) && (j == 0))
 					{
-						int recType = UnsignedByte.intValue(inData[i+2]);
-						int mid = UnsignedByte.intValue(inData[i+1]);
-						if (((recType != 0x00) && (recType != 0xe0)) &&
-							(!((mid == 0x05) && recType == 0xe1)))
+						i += 256;
+					}
+					else
+					{
+						if (delta == 0)
 						{
-							int intOffset = i-track0Offset;
-							if (intOffset > 65535)
-								intOffset -= 65536;
-							String recordSignature = "0x00"+UnsignedByte.toString(mid)+UnsignedByte.toString(recType);
-							String recordEyecatcher = "    ";
-							if (recType == 0x20)
-								recordEyecatcher = "EHL1";
-							else if (recType == 0x40)
-								recordEyecatcher = "ABM ";
-							else if (recType == 0x60)
-							{
-								recordEyecatcher = "DSL2";
-								docName = EbcdicUtil.toAscii(inData,i+46,44);
-							}
-							else if (recType == 0x80)
-								recordEyecatcher = "NAME";
-							else if (recType == 0xC0)
-								recordEyecatcher = "DOCS";
-							else if (recType == 0xE0)
-								recordEyecatcher = "DEXT";
-							else if (recType == 0xE1)
-							{
-								recordEyecatcher = "STUF";
-								marker = EbcdicUtil.toAscii(inData, i+5, 6);
-								secondaryMarker = EbcdicUtil.toAscii(inData, i+30, 6);
-								// String texty = EbcdicUtil.toAscii(inData, i+0x90, 256-0x90);
-								// System.err.println("Text: "+texty);
-							}
-							System.err.print("Found a 0x"+UnsignedByte.toString(recType)+" record ("+recordSignature+") "+recordEyecatcher+" at 0x"+Integer.toHexString(i));
-							if (recType == 0x60)
-							{
-								System.err.println(" Filename: ["+docName.trim()+"]");
-							}
-							else if (recType == 0xe1)
-							{
-								System.err.println(" Marker: "+marker+" Secondary Marker: "+secondaryMarker);
-							}
-							else
-								System.err.println();
+							i += 256 - j; // Move i past the current record within the current sector
 						}
+						else
+						{
+							//i += delta;
+							// delta is non-zero; that means i moved already
+						}
+					}
+				}
+				*/
+				int offset = 0x021c00;
+				int total = offset + emitRecord(inData, offset, true);
+				boolean done = false;
+				while (!done)
+				{
+					offset += 256;
+					if (getRecordEyecatcher(inData, offset).equals("DEXT (0xe0)"))
+					{
+						emitRecord(inData, offset, true);
+					}
+					if (offset > total)
+					{
+						done = true;
 					}
 				}
 			}
@@ -153,176 +149,244 @@ public class ExtractDisplaywriterFiles
 		}
 	}
 
-	public static void unwindDOSFile(byte[] inData, String fileName)
+	public static String getPointerType(byte inData[], int offset)
 	{
-		/*
-		 * This is probably a file from a DOS-ish WANG word processor
-		 */
-		FileOutputStream out;
-		try
-		{
-			out = new FileOutputStream(fileName);
-			System.err.println("Creating file: " + fileName);
+		String retString = "";
+		int newRecType = UnsignedByte.intValue(inData[offset + 2]) * 256 + UnsignedByte.intValue(inData[offset + 3]);
+		int newRecLen = UnsignedByte.intValue(inData[offset + 0]) * 256 + UnsignedByte.intValue(inData[offset + 1]);
+		retString = getRecordEyecatcher(inData, offset);
+		retString += "  Type: 0x" + Integer.toHexString(0x10000 | newRecType).substring(1);
+		retString += " Length: 0x" + Integer.toHexString(0x1000000 | newRecLen).substring(1);
+		return retString;
+	}
 
-			/*
-			 * These word processors have a list of pointers to the starts of pages, in order.
-			 * Each pointer points to a 1k chunk of data that ends in another pointer (or xffff for the end). 
-			 */
-			for (int i = 258; i < 512; i+= 2)
+	public static String getRecordEyecatcher(byte inData[], int offset)
+	{
+		int recTypeHi = UnsignedByte.intValue(inData[offset + 2]);
+		int recTypeLo = UnsignedByte.intValue(inData[offset + 3]);
+		String recordEyecatcher = "----";
+		if (recTypeHi == 0x20)
+			recordEyecatcher = "EHL1 (0x20)";
+		else if ((recTypeHi == 0x40) && (recTypeLo == 0x00))
+			recordEyecatcher = "ABM  (0x40)";
+		else if ((recTypeHi == 0x60) && (recTypeLo == 0x00))
+			recordEyecatcher = "DSL2 (0x60)";
+		else if (recTypeHi == 0x80)
+			recordEyecatcher = "NAME (0x80)";
+		else if (recTypeHi == 0xA0)
+			recordEyecatcher = "DATE (0xa0)";
+		else if (recTypeHi == 0xC0)
+			recordEyecatcher = "DOCS (0xc0)";
+		else if (recTypeHi == 0xE0)
+			recordEyecatcher = "DEXT (0xe0)";
+		else if (recTypeHi == 0xE1)
+			recordEyecatcher = "TXHD (0xe1)";
+		else if (recTypeHi == 0xE2)
+			recordEyecatcher = "FDAT (0xe2)";
+		else if (recTypeHi == 0xE8)
+			recordEyecatcher = "TEXT (0xe8)";
+		return recordEyecatcher;
+	}
+
+	public static boolean emitTextRecord(byte inData[], int offset)
+	{
+		boolean foundEnd = false;
+		int theEnd = 256;
+		for (int i = 0; i < 256; i++)
+		{
+			if (inData[offset + i] == 0x0c)
 			{
-				int pageNumber = UnsignedByte.intValue(inData[i+1]) * 256 + UnsignedByte.intValue(inData[i]);
-				if ((pageNumber > 0) && (pageNumber < 65535))
+				foundEnd = true;
+				theEnd = i;
+			}
+		}
+		System.err.println(EbcdicUtil.toAscii(inData, offset, theEnd));
+		return foundEnd;
+	}
+
+	public static int emitRecord(byte inData[], int offset, boolean dive)
+	{
+		String ec = getRecordEyecatcher(inData, offset);
+		int ret = 0;
+		int recLen = UnsignedByte.intValue(inData[offset + 0]) * 256 + UnsignedByte.intValue(inData[offset + 1]);
+		if (!ec.equals("----"))
+		{
+			System.err.print("0x" + Integer.toHexString(0x1000000 | offset).substring(1) + ": " + ec);
+			System.err.println(" with length: 0x" + Integer.toHexString(0x10000 | UnsignedByte.intValue(inData[offset + 0]) * 256 + UnsignedByte.intValue(inData[offset + 1])).substring(1));
+			if (ec.equals("DEXT (0xe0)"))
+			{
+				// Note - DEXT entries will not have others following it in the same sector 
+				for (int q = 4; q < recLen; q += 4)
 				{
-					//System.err.println("pageNumber: "+pageNumber);
-					dumpDOSPage(out, inData, pageNumber);
+					int newRec = UnsignedByte.intValue(inData[offset + q]) * 65536;
+					newRec += UnsignedByte.intValue(inData[offset + q + 1]) * 256;
+					newRec += UnsignedByte.intValue(inData[offset + q + 2]);
+					if ((newRec < inData.length) && (newRec > 0) && (newRec != 0x021c00))
+					{
+						System.err.println("0x" + Integer.toHexString(0x1000000 | offset).substring(1) +"  Pointer: 0x" + Integer.toHexString(0x1000000 | newRec).substring(1) + ": ");
+						if (dive)
+							emitRecord(inData, newRec, true);
+					}
+				}
+				// Note - DEXT entries will not have others following it in the same sector 
+			}
+			else if (ec.equals("DSL2 (0x60)"))
+			{
+				emitRecord(inData, offset + recLen, dive);
+			}
+			else if (ec.equals("TXHD (0xe1)"))
+			{
+				emitRecord(inData, offset + recLen, dive);
+			}
+			else if (ec.equals("EHL1 (0x20)"))
+			{
+				ret = UnsignedByte.intValue(inData[offset + 0x10]) * 65536+
+				UnsignedByte.intValue(inData[offset + 0x11]) * 256+
+				UnsignedByte.intValue(inData[offset + 0x12]);
+				emitRecord(inData, offset + recLen, dive);
+			}
+			else if (ec.equals("ABM  (0x40)"))
+			{
+				emitRecord(inData, offset + recLen, dive);
+			}
+			else if (ec.equals("TXHD (0xe1)"))
+			{
+				emitRecord(inData, offset + recLen, dive);
+			}
+			else if (ec.equals("FDAT (0xe2)"))
+			{
+				emitRecord(inData, offset + recLen, dive);
+			}
+			else if (ec.equals("NAME (0x80)"))
+			{
+				System.err.println("  Document name: [" + EbcdicUtil.toAscii(inData, offset + 4, 44).trim() + "]");
+				emitRecord(inData, offset + recLen, dive);
+			}
+			else if (ec.equals("DATE (0xa0)"))
+			{
+				System.err.println("  Date data: [" + EbcdicUtil.toAscii(inData, offset, recLen).trim() + "]");
+				emitRecord(inData, offset + recLen, dive);
+			}
+			else if (ec.equals("DOCS (0xc0)"))
+			{
+				System.err.println("  Docs data: [" + EbcdicUtil.toAscii(inData, offset, recLen).trim() + "]");
+				emitRecord(inData, offset + recLen, dive);
+			}
+			else if (ec.equals("TEXT (0xe8)"))
+			{
+				System.err.println("  Text data:");
+				System.err.println(EbcdicUtil.toAscii(inData, offset, recLen).trim());
+			}
+		}
+		return ret;
+	}
+
+	public static int dumpBareRecord(byte inData[], int offset)
+	{
+		String ec = getRecordEyecatcher(inData, offset);
+		int recLen = UnsignedByte.intValue(inData[offset + 0]) * 256 + UnsignedByte.intValue(inData[offset + 1]);
+		System.err.print("0x" + Integer.toHexString(0x1000000 | offset).substring(1) + ": " + ec);
+		if (!ec.equals("----"))
+		{
+			System.err.println(" with length: 0x" + Integer.toHexString(0x10000 | UnsignedByte.intValue(inData[offset + 0]) * 256 + UnsignedByte.intValue(inData[offset + 1])).substring(1));
+			if (ec.equals("DEXT (0xe0)"))
+			{
+				// Note - DEXT entries will not have others following it in the same sector 
+				for (int q = 4; q < recLen; q += 4)
+				{
+					int newRec = UnsignedByte.intValue(inData[offset + q]) * 65536;
+					newRec += UnsignedByte.intValue(inData[offset + q + 1]) * 256;
+					newRec += UnsignedByte.intValue(inData[offset + q + 2]);
+					if ((newRec < inData.length) && (newRec > 0) && (newRec != 0x021c00))
+					{
+						System.err.println("  Pointer: 0x" + Integer.toHexString(0x1000000 | newRec).substring(1) + ": ");
+					}
+				}
+				// Note - DEXT entries will not have others following it in the same sector 
+				offset += recLen;
+			}
+			else if (ec.equals("DSL2 (0x60)"))
+			{
+				offset = dumpBareRecord(inData, offset + recLen);
+			}
+			else if (ec.equals("TXHD (0xe1)"))
+			{
+				offset = dumpBareRecord(inData, offset + recLen);
+			}
+			else if (ec.equals("EHL1 (0x20)"))
+			{
+				offset = dumpBareRecord(inData, offset + recLen);
+			}
+			else if (ec.equals("ABM  (0x40)"))
+			{
+				offset = dumpBareRecord(inData, offset + recLen);
+			}
+			else if (ec.equals("TXHD (0xe1)"))
+			{
+				offset = dumpBareRecord(inData, offset + recLen);
+			}
+			else if (ec.equals("FDAT (0xe2)"))
+			{
+				offset = dumpBareRecord(inData, offset + recLen);
+			}
+			else if (ec.equals("NAME (0x80)"))
+			{
+				System.err.println("  Document name: [" + EbcdicUtil.toAscii(inData, offset + 4, 44).trim() + "]");
+				offset = dumpBareRecord(inData, offset + recLen);
+			}
+			else if (ec.equals("DATE (0xa0)"))
+			{
+				System.err.println("  Date data: [" + EbcdicUtil.toAscii(inData, offset, recLen).trim() + "]");
+				offset = dumpBareRecord(inData, offset + recLen);
+			}
+			else if (ec.equals("DOCS (0xc0)"))
+			{
+				System.err.println("  Docs data: [" + EbcdicUtil.toAscii(inData, offset, recLen).trim() + "]");
+				offset = dumpBareRecord(inData, offset + recLen);
+			}
+			else if (ec.equals("TEXT (0xe8)"))
+			{
+				System.err.println("  Text data:");
+				System.err.println(EbcdicUtil.toAscii(inData, offset, recLen).trim());
+				offset += recLen;
+			}
+		}
+		else
+		{
+			// No known type... check for zero-ness
+			int delta = offset % 256;
+			if ((delta > 0) && (delta <= 253))
+			{
+				if ((inData[offset + 0] == 0x00) && (inData[offset + 1] == 0x00) && (inData[offset + 2] == 0x00) && (inData[offset + 3] == 0x00))
+				{
+					// "next" length is zero... so skip to the end of this sector
+					offset += (256 - delta);
+					System.err.println(" (----)");
 				}
 			}
-			out.flush();
-			out.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}		
-	}
-
-	public static void dumpDOSPage(FileOutputStream out, byte[] inData, int pageNumber) throws IOException
-	{
-		int next = 0;
-		int endMarker = 1022;
-		int offset = pageNumber * 1024;
-		// Find the end of data in this block
-		for (int i = 0; i < 1022; i++)
-		{
-			if (inData[i+offset] == 0x1f)
-				endMarker = i;
-		}
-		//System.out.println("Start of page; block: "+UnsignedByte.toString(UnsignedByte.hiByte(pageNumber))+""+UnsignedByte.toString(UnsignedByte.loByte(pageNumber))+" offset: "+UnsignedByte.toString(UnsignedByte.loByte(offset))+""+UnsignedByte.toString(UnsignedByte.hiByte(offset)));
-		out.write(inData, offset, endMarker);
-		next = UnsignedByte.intValue(inData[offset+1023]) * 256 + UnsignedByte.intValue(inData[offset+1022]);
-		if (next < 65535)
-			dumpDOSPage(out, inData, next);
-		//else
-			//System.out.println("End.");
-	}
-
-	public static void decodeFile(byte[] inData, String shortName, int fileHeaderSector, int preambleOffset)
-	{
-		/*
-		 * Incoming, we have the sector address of the file header; use that to
-		 * find the rest of the file.
-		 */
-		int fileHeaderOffset = fileHeaderSector * 256 + preambleOffset;
-		// System.err.println("fileHeaderSector: "+fileHeaderSector+" fileHeaderOffset: "+fileHeaderOffset);
-		int firstFileChainSector = UnsignedByte.intValue((byte) inData[fileHeaderOffset + 193 /* 0xc1 */], (byte) inData[fileHeaderOffset + 192 /* 0xc0 */]);
-		byte fnb[] = new byte[64];
-		fnb = Arrays.copyOfRange(inData, fileHeaderOffset + 64, fileHeaderOffset + 128);
-		String longName = new String(fnb).trim().replace("\\", "-").replace("/", "-").replace("?", "-"), fullName;
-		// System.err.println("Long name: "+longName);
-		FileOutputStream out;
-		try
-		{
-			if (longName.equals(""))
-				fullName = shortName;
 			else
-				fullName = shortName + "-" + longName;
-			out = new FileOutputStream(fullName);
-			System.err.println("Creating file: " + fullName);
-			dumpFileChain(out, inData, firstFileChainSector, preambleOffset);
-			out.flush();
-			out.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	public static void dumpFileChain(FileOutputStream out, byte[] inData, int fileChainSector, int preambleOffset) throws IOException
-	{
-		// System.err.println("dumpFileChain: fileChainSector: " + fileChainSector);
-		int textSector = 0, i = 0, textRealOffset;
-		if ((fileChainSector > 0) && ((fileChainSector+1)*256 < inData.length))
-		{
-			do
 			{
-				textSector = UnsignedByte.intValue((byte) inData[realAddress(fileChainSector, preambleOffset) + 0x41 + i], (byte) inData[realAddress(fileChainSector, preambleOffset) + 0x40 + i]);
-				if ((textSector > 0) && ((textSector+1)*256 < inData.length))
+				boolean foundOne = false;
+				for (int i = offset; i < offset + delta; i++)
 				{
-					// System.err.println("dumpFileChain: textSector: " + textSector);
-					textRealOffset = realAddress(textSector, preambleOffset);
-					// System.err.println("dumpFileChain: textRealOffset: "+textRealOffset);
-					byte range[] = Arrays.copyOfRange(inData, textRealOffset, textRealOffset + 256);
-					out.write(range);
-					i += 2;
+					if (inData[i] != 0x00)
+					{
+						foundOne = true;
+						System.err.println("non-zero data.");
+					}
 				}
-			} while ((textSector > 0) && ((textSector+1)*256 < inData.length));
-			int nextFileChainSector = UnsignedByte.intValue((byte) inData[realAddress(fileChainSector, preambleOffset) + 9], (byte) inData[realAddress(fileChainSector, preambleOffset) + 8]);
-			// System.err.println("dumpFileChain: nextFileChainSector: "+nextFileChainSector);
-			if (nextFileChainSector != 0)
-				dumpFileChain(out, inData, nextFileChainSector, preambleOffset);
+				if (!foundOne)
+					System.err.print(" (----)");
+				System.err.println();
+			}
 		}
-	}
-
-	public static void decodeWPFile(byte[] inData, String fullName, int preambleOffset, int track, int sector, int fileID, int skew)
-	{
-		FileOutputStream out;
-		try
-		{
-			out = new FileOutputStream(fullName);
-			System.err.println("Creating file: " + fullName);
-			dumpWPFileChain(out, inData, track, sector, fileID, preambleOffset, skew);
-			out.flush();
-			out.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	public static void dumpWPFileChain(FileOutputStream out, byte[] inData, int track, int sector, int fileID, int preambleOffset, int skew) throws IOException
-	{
-		int nextTrack, nextSector, dataOffset;
-
-		dataOffset = realWPAddress(track, sector, preambleOffset, skew);
-		nextTrack = UnsignedByte.intValue(inData[dataOffset]);
-		nextSector = UnsignedByte.intValue(inData[dataOffset+1]);
-		byte range[] = Arrays.copyOfRange(inData, dataOffset + 7, dataOffset + 256);
-		out.write(range);
-		nextTrack = UnsignedByte.intValue(inData[dataOffset]);
-		nextSector = UnsignedByte.intValue(inData[dataOffset+1]);
-		if ((nextTrack > 0) && (nextTrack*4096 <= inData.length))
-		{
-			if (nextTrack != 0)
-				dumpWPFileChain(out, inData, nextTrack, nextSector, fileID, preambleOffset, skew);
-		}
-	}
-
-	public static int mapSector(int sectorIn, int skew)
-	{
-		int skewedSectorMap[] = {0,4,8,0x0c,1,5,9,0x0d,2,6,0x0a,0x0e,3,7,0x0b,0x0f};
-		if (skew != 0)
-			return skewedSectorMap[sectorIn];
-		else
-			return sectorIn;
-	}
-	
-	public static int realAddress(int sector, int offset)
-	{
-		return sector * 256 + offset;
-	}
-
-	public static int realWPAddress(int track, int sector, int offset, int skew)
-	{
-		int newSector = mapSector(sector, skew);
-		return track * 4096 + newSector * 256 + offset;
+		return offset;
 	}
 
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractDisplaywriterFiles "+Version.VersionString+" - Extract files from Displaywriter word processor disk images.");
+		System.err.println("ExtractDisplaywriterFiles " + Version.VersionString + " - Extract files from Displaywriter word processor disk images.");
 		System.err.println();
 		System.err.println("Usage: ExtractDisplaywriterFiles infile [out_directory]");
 	}

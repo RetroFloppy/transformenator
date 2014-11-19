@@ -38,6 +38,8 @@ public class EbcdicUtil
 		int myByte = UnsignedByte.intValue(inByte);
 		switch (myByte)
 		{
+			case 0x06: return '\n';
+
 			case 0x15: return ' ';
 
 			case 0x2d: return '-';
