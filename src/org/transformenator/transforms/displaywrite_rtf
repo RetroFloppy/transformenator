@@ -1,7 +1,7 @@
 ;
 ; DisplayWrite (3?) format, EBCDIC input, output in RTF
 ;
-; Note - any transform with 'displaywrite' in the file name will trigger additional processing to
+; Note - any transform with 'displaywrite_' in the file name will trigger additional processing to
 ;        untangle the indices from the original file.
 ;
 

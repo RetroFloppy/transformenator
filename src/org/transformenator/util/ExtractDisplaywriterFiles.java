@@ -91,17 +91,18 @@ public class ExtractDisplaywriterFiles
 							totalBytesRead = totalBytesRead + bytesRead;
 						}
 					}
+					int trkLen = 128 * 26;
 					if (result.length > 1000000)
 					{
 						locEHL1 = 0x75000; // Expected location of EHL1 record of an MFM 2-sided disk
 						// Clip off the first cylinder of image
-						inData = Arrays.copyOfRange(result, (3328 * 3), (3328 * 3) + result.length);
+						inData = Arrays.copyOfRange(result, (trkLen * 3), (trkLen * 3) + result.length);
 					}
 					else
 					{
 						locEHL1 = 0x021c00; // Expected location of EHL1 record of a FM 1-sided disk
 						// Clip off the first cylinder of image
-						inData = Arrays.copyOfRange(result, 3328, 3328 + result.length);
+						inData = Arrays.copyOfRange(result, trkLen, trkLen + result.length);
 					}
 				}
 				finally
@@ -332,13 +333,23 @@ public class ExtractDisplaywriterFiles
 				if (debugLevel > 0)
 				{
 					System.err.println("  Text data:");
-					System.err.println(EbcdicUtil.toAscii(inData, offset, recLen).trim());
+					System.err.println(EbcdicUtil.toAscii(inData, offset+5, recLen-5).trim());
 				}
 				else
 				{
 					try
 					{
-						currentOut.write(inData, offset, recLen);
+						// Write out this text record, skipping the header
+						for (int i = offset+5; i < offset+recLen; i++)
+						{
+							if (inData[i] == 0x2b) // Control Sequence Prefix (CSP)
+							{
+								// We're inside a Control Sequence Prefix... branch around the length
+								i += UnsignedByte.intValue(inData[i+2]) + 1;
+							}
+							else
+								currentOut.write(inData[i]);
+						}
 					}
 					catch (IOException e)
 					{
@@ -369,6 +380,8 @@ public class ExtractDisplaywriterFiles
 				// "next" length is zero... so skip to the end of this sector
 				offset += (256 - delta);
 				System.err.println(" (----)");
+				// Want to see the data in this sector?  Uncomment the following:
+				// System.err.println(EbcdicUtil.toAscii(inData, offset, 256 - delta));
 			}
 			else
 			{
@@ -384,6 +397,7 @@ public class ExtractDisplaywriterFiles
 				if (!foundOne)
 					System.err.print(" (----)");
 				System.err.println();
+				System.err.println(EbcdicUtil.toAscii(inData, offset, 256 - delta));
 			}
 		}
 		return offset;

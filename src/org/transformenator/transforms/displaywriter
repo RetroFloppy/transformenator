@@ -1,0 +1,142 @@
+;
+; IBM 6580 Displaywriter
+; 
+; Notes - EBCDIC encoding, many printer-specific codes; non-understood data represented by a tilde character (~)
+;
+
+; Horizontal tab
+05 = 09
+39 = 09
+
+; Newline
+06 = "\\n"
+15 = "\\n"
+
+; Form feed
+0c = 
+3a =
+
+; Superscript (These are probably a cumulative platen half-shift-up and down)
+09 =
+38 =
+
+; Word underscore
+23 =
+
+; Backspace
+;16 = 
+
+2d = "-"
+
+; Space
+40 = 20
+
+4b = "."
+4c = "<"
+4d = "("
+4e = "+"
+4f = "!"
+
+50 = "&"
+
+5a = "!"
+5b = "$"
+5c = "*"
+5d = ")"
+5e = ";"
+5f = "^"
+
+60 = "-"
+61 = "/"
+
+6b = ","
+6c = "%"
+6d = "_"
+6e = ">"
+6f = "?"
+70 = ";"
+
+7a = ":"
+7b = "#"
+7c = "@"
+7d = "\'"
+7e = "="
+7f = """
+
+81 = "a"
+82 = "b"
+83 = "c"
+84 = "d"
+85 = "e"
+86 = "f"
+87 = "g"
+88 = "h"
+89 = "i"
+
+91 = "j"
+92 = "k"
+93 = "l"
+94 = "m"
+95 = "n"
+96 = "o"
+97 = "p"
+98 = "q"
+99 = "r"
+
+a1 = "~"
+a2 = "s"
+a3 = "t"
+a4 = "u"
+a5 = "v"
+a6 = "w"
+a7 = "x"
+a8 = "y"
+a9 = "z"
+
+c0 = "{"
+c1 = "A"
+c2 = "B"
+c3 = "C"
+c4 = "D"
+c5 = "E"
+c6 = "F"
+c7 = "G"
+c8 = "H"
+c9 = "I"
+
+d0 = "}"
+d1 = "J"
+d2 = "K"
+d3 = "L"
+d4 = "M"
+d5 = "N"
+d6 = "O"
+d7 = "P"
+d8 = "Q"
+d9 = "R"
+
+e0 = "\\"
+e2 = "S"
+e3 = "T"
+e4 = "U"
+e5 = "V"
+e6 = "W"
+e7 = "X"
+e8 = "Y"
+e9 = "Z"
+
+f0 = "0"
+f1 = "1"
+f2 = "2"
+f3 = "3"
+f4 = "4"
+f5 = "5"
+f6 = "6"
+f7 = "7"
+f8 = "8"
+f9 = "9"
+
+.. = "~"
+
+; Apostrophes seem to be prefixed with backslashes
+regex=@\\'@'@
