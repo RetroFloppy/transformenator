@@ -23,6 +23,7 @@ package org.transformenator.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -40,9 +41,12 @@ import org.transformenator.Version;
 public class ExtractDisplaywriterFiles
 {
 	public static int locEHL1 = 0x021c00; // Expected location of EHL1 record of a FM 1-sided disk - we revisit this decision later
+	public static String baseName;
+	public static FileOutputStream currentOut = null;
 
 	public static void main(java.lang.String[] args)
 	{
+		baseName = "";
 		int debugLevel = 0; // Debug levels: 0 = none; 1 = follow EHL1 chain; 2 = dump all sectors of disk image
 		if ((args.length == 1) || (args.length == 2))
 		{
@@ -53,6 +57,19 @@ public class ExtractDisplaywriterFiles
 					debugLevel = 1;
 				else if (args[1].equalsIgnoreCase("-debug2"))
 					debugLevel = 2;
+				else
+				{
+					/*
+					 * If they wanted an output directory, go ahead and make it.
+					 */
+					File baseDirFile = new File(args[1]);
+					if (!baseDirFile.isAbsolute())
+					{
+						baseDirFile = new File("."+File.separator+args[1]);
+					}
+					baseDirFile.mkdir();
+					baseName = new String(args[1]) + File.separator;
+				}
 			}
 			System.err.println("Reading input file " + args[0]);
 			File file = new File(args[0]);
@@ -266,9 +283,33 @@ public class ExtractDisplaywriterFiles
 			}
 			else if (ec.equals("NAME (0x80)"))
 			{
-				String newName = EbcdicUtil.toAscii(inData, offset + 4, 44).trim();
+				String newName = EbcdicUtil.toAscii(inData, offset + 4, 44).trim().replace("\\", "-").replace("/", "-").replace("?", "-");
 				if (debugLevel > 0)
 					System.err.println("  Document name: [" + newName + "]");
+				else
+				{
+					if (currentOut != null)
+					{
+						try
+						{
+							currentOut.flush();
+							currentOut.close();
+						}
+						catch (IOException e)
+						{
+							e.printStackTrace();
+						}
+					}
+					try
+					{
+						System.err.println("Creating file: " + baseName+newName);
+						currentOut = new FileOutputStream(baseName+newName);
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
 				if (dive)
 					emitRecord(inData, offset + recLen, dive, debugLevel);
 			}
@@ -292,6 +333,17 @@ public class ExtractDisplaywriterFiles
 				{
 					System.err.println("  Text data:");
 					System.err.println(EbcdicUtil.toAscii(inData, offset, recLen).trim());
+				}
+				else
+				{
+					try
+					{
+						currentOut.write(inData, offset, recLen);
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
 				}
 			}
 		}
