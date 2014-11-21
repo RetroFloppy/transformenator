@@ -1,8 +1,10 @@
 New for this version:
 =====================
 
- * New transform: Canon ETW1 word processor
+ * New transforms: Canon ETW1 word processor, IBM Displaywriter
 
+ * New function: ExtractDisplaywriterFiles - extract EBCDIC files from Displaywriter 8" disk images
+ 
  * New function: ExtractSeawellFiles - extract files from Seawell DOS (early 6502-based DOS) 8" disk images 
 
 Transformenator introduction:
