@@ -40,7 +40,8 @@ import org.transformenator.Version;
  */
 public class ExtractDisplaywriterFiles
 {
-	public static int locEHL1 = 0x021c00; // Expected location of EHL1 record of a FM 1-sided disk - we revisit this decision later
+	public static int locEHL1 = -1;
+	public static int recoveredFileNumber = 1;
 	public static String baseName;
 	public static FileOutputStream currentOut = null;
 
@@ -65,7 +66,7 @@ public class ExtractDisplaywriterFiles
 					File baseDirFile = new File(args[1]);
 					if (!baseDirFile.isAbsolute())
 					{
-						baseDirFile = new File("."+File.separator+args[1]);
+						baseDirFile = new File("." + File.separator + args[1]);
 					}
 					baseDirFile.mkdir();
 					baseName = new String(args[1]) + File.separator;
@@ -91,19 +92,44 @@ public class ExtractDisplaywriterFiles
 							totalBytesRead = totalBytesRead + bytesRead;
 						}
 					}
-					int trkLen = 128 * 26;
-					if (result.length > 1000000)
+					System.err.println("Read " + result.length + " bytes.");
+					/*
+					 * We have the whole sheebang pulled into 'result' now. 
+					 * Now we need to find the EHL1 record, and decide how much to
+					 * clip off the beginning in order to remove the first cylinder.
+					 */
+					for (int i = 0; i < result.length; i += 128)
 					{
-						locEHL1 = 0x75000; // Expected location of EHL1 record of an MFM 2-sided disk
-						// Clip off the first cylinder of image
-						inData = Arrays.copyOfRange(result, (trkLen * 3), (trkLen * 3) + result.length);
+						if (getRecordEyecatcher(result, i).equals("EHL1 (0x20)"))
+						{
+							// System.err.println("Found EHL1 at raw 0x" + Integer.toHexString(i));
+							int total = UnsignedByte.intValue(result[i + 0x12],result[i+0x11]);
+							// System.err.println("  total EHL1 length = " + total);
+							if (total > 0)
+							{
+								locEHL1 = i;
+								break;
+							}
+						}
 					}
-					else
+					int delta = 0;
+					if (locEHL1 > -1)
 					{
-						locEHL1 = 0x021c00; // Expected location of EHL1 record of a FM 1-sided disk
-						// Clip off the first cylinder of image
-						inData = Arrays.copyOfRange(result, trkLen, trkLen + result.length);
+						// System.err.println("Found EHL1 at raw 0x" + Integer.toHexString(locEHL1));
+						if (result.length > (0x75000 * 2))
+						{
+							// Clip off the first cylinder of image
+							delta = locEHL1 - 0x75000;
+							locEHL1 = 0x75000;
+						}
+						else
+						{
+							// Clip off the first cylinder of image
+							delta = locEHL1 - 0x21c00;
+							locEHL1 = 0x21c00;
+						}
 					}
+					inData = Arrays.copyOfRange(result, delta, result.length - delta);
 				}
 				finally
 				{
@@ -128,9 +154,8 @@ public class ExtractDisplaywriterFiles
 			 * 
 			 * 2) Scrape the entire disk image and dump out all records found
 			 */
-			if (inData != null)
+			if ((inData != null) && ((locEHL1 > -1) || (debugLevel == 2)))
 			{
-				System.err.println("Read " + inData.length + " bytes.");
 				if (debugLevel == 2)
 				{
 					// Loop over the entire disk looking for records
@@ -162,22 +187,47 @@ public class ExtractDisplaywriterFiles
 				else
 				{
 					int offset = locEHL1;
-					// First, get the length of the EHL1 record; then go nuts
-					int total = offset + emitRecord(inData, offset, true, debugLevel);
-					boolean done = false;
-					while (!done)
+					// Check out the expected location of the EHL1 record.
+					if (!getRecordEyecatcher(inData, offset).equals("EHL1 (0x20)"))
 					{
-						offset += 256;
-						if (getRecordEyecatcher(inData, offset).equals("DEXT (0xe0)"))
+						// If we don't find it where we expect it, go looking.
+						System.err.println("Didn't find the EHL1 record at expected location 0x" + Integer.toHexString(offset) + ".");
+						offset = -1;
+						for (int i = 0; i < inData.length; i += 256)
 						{
-							emitRecord(inData, offset, true, debugLevel);
-						}
-						if (offset > total)
-						{
-							done = true;
+							if (getRecordEyecatcher(inData, i).equals("EHL1 (0x20)"))
+							{
+								offset = i;
+								break;
+							}
 						}
 					}
+					if (offset > -1)
+					{
+						// First, get the length of the EHL1 record; then go nuts
+						int total = offset + emitRecord(inData, offset, true, debugLevel);
+						boolean done = false;
+						while (!done)
+						{
+							offset += 256;
+							if (getRecordEyecatcher(inData, offset).equals("DEXT (0xe0)"))
+							{
+								emitRecord(inData, offset, true, debugLevel);
+							}
+							if (offset > total)
+							{
+								done = true;
+							}
+						}
+					}
+					else
+						System.err.println("Unable to find root of directory tree.");
 				}
+			}
+			else
+			{
+				// No textual data found
+				System.err.println("No document files found.");
 			}
 		}
 		else
@@ -189,10 +239,11 @@ public class ExtractDisplaywriterFiles
 
 	public static String getRecordEyecatcher(byte inData[], int offset)
 	{
+		int recLength = UnsignedByte.intValue(inData[offset + 0]) * 256 + UnsignedByte.intValue(inData[offset + 1]);
 		int recTypeHi = UnsignedByte.intValue(inData[offset + 2]);
 		int recTypeLo = UnsignedByte.intValue(inData[offset + 3]);
 		String recordEyecatcher = "----";
-		if (recTypeHi == 0x20)
+		if ((recTypeHi == 0x20) && (recTypeLo == 0x00) && (recLength == 0x19))
 			recordEyecatcher = "EHL1 (0x20)";
 		else if ((recTypeHi == 0x40) && (recTypeLo == 0x00))
 			recordEyecatcher = "ABM  (0x40)";
@@ -229,7 +280,7 @@ public class ExtractDisplaywriterFiles
 			}
 			if (ec.equals("DEXT (0xe0)"))
 			{
-				// Note - DEXT entries will not have others following it in the same sector 
+				// Note - DEXT entries will not have others following it in the same sector
 				for (int q = 4; q < recLen; q += 4)
 				{
 					int newRec = UnsignedByte.intValue(inData[offset + q]) * 65536;
@@ -248,7 +299,7 @@ public class ExtractDisplaywriterFiles
 							emitRecord(inData, newRec, true, debugLevel);
 					}
 				}
-				// Note - DEXT entries will not have others following it in the same sector 
+				// Note - DEXT entries will not have others following it in the same sector
 			}
 			else if (ec.equals("DSL2 (0x60)"))
 			{
@@ -289,27 +340,7 @@ public class ExtractDisplaywriterFiles
 					System.err.println("  Document name: [" + newName + "]");
 				else
 				{
-					if (currentOut != null)
-					{
-						try
-						{
-							currentOut.flush();
-							currentOut.close();
-						}
-						catch (IOException e)
-						{
-							e.printStackTrace();
-						}
-					}
-					try
-					{
-						System.err.println("Creating file: " + baseName+newName);
-						currentOut = new FileOutputStream(baseName+newName);
-					}
-					catch (IOException e)
-					{
-						e.printStackTrace();
-					}
+					startFile(baseName + newName);
 				}
 				if (dive)
 					emitRecord(inData, offset + recLen, dive, debugLevel);
@@ -333,22 +364,26 @@ public class ExtractDisplaywriterFiles
 				if (debugLevel > 0)
 				{
 					System.err.println("  Text data:");
-					System.err.println(EbcdicUtil.toAscii(inData, offset+5, recLen-5).trim());
+					System.err.println(EbcdicUtil.toAscii(inData, offset + 5, recLen - 5).trim());
 				}
 				else
 				{
 					try
 					{
 						// Write out this text record, skipping the header
-						for (int i = offset+5; i < offset+recLen; i++)
+						for (int i = offset + 5; i < offset + recLen; i++)
 						{
 							if (inData[i] == 0x2b) // Control Sequence Prefix (CSP)
 							{
 								// We're inside a Control Sequence Prefix... branch around the length
-								i += UnsignedByte.intValue(inData[i+2]) + 1;
+								i += UnsignedByte.intValue(inData[i + 2]) + 1;
 							}
 							else
+							{
+								if (currentOut == null)
+									startFile(baseName + "FileRecovery");
 								currentOut.write(inData[i]);
+							}
 						}
 					}
 					catch (IOException e)
@@ -380,7 +415,7 @@ public class ExtractDisplaywriterFiles
 				// "next" length is zero... so skip to the end of this sector
 				offset += (256 - delta);
 				System.err.println(" (----)");
-				// Want to see the data in this sector?  Uncomment the following:
+				// Want to see the data in this sector? Uncomment the following:
 				// System.err.println(EbcdicUtil.toAscii(inData, offset, 256 - delta));
 			}
 			else
@@ -401,6 +436,32 @@ public class ExtractDisplaywriterFiles
 			}
 		}
 		return offset;
+	}
+
+	public static void startFile(String name)
+	{
+		if (currentOut != null)
+		{
+			try
+			{
+				currentOut.flush();
+				currentOut.close();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		try
+		{
+			System.err.println("Creating file: " + name);
+			currentOut = new FileOutputStream(name);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
 	}
 
 	public static void help()
