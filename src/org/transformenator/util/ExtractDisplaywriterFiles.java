@@ -41,7 +41,6 @@ import org.transformenator.Version;
 public class ExtractDisplaywriterFiles
 {
 	public static int locEHL1 = -1;
-	public static int recoveredFileNumber = 1;
 	public static String baseName;
 	public static FileOutputStream currentOut = null;
 
@@ -102,9 +101,11 @@ public class ExtractDisplaywriterFiles
 					{
 						if (getRecordEyecatcher(result, i).equals("EHL1 (0x20)"))
 						{
-							// System.err.println("Found EHL1 at raw 0x" + Integer.toHexString(i));
+							if (debugLevel == 1)
+								System.err.println("Searching, found EHL1 at raw 0x" + Integer.toHexString(i));
 							int total = UnsignedByte.intValue(result[i + 0x12],result[i+0x11]);
-							// System.err.println("  total EHL1 length = " + total);
+							if (debugLevel == 1)
+								System.err.println("  total EHL1 length = 0x" + Integer.toHexString(total));
 							if (total > 0)
 							{
 								locEHL1 = i;
@@ -115,7 +116,6 @@ public class ExtractDisplaywriterFiles
 					int delta = 0;
 					if (locEHL1 > -1)
 					{
-						// System.err.println("Found EHL1 at raw 0x" + Integer.toHexString(locEHL1));
 						if (result.length > (0x75000 * 2))
 						{
 							// Clip off the first cylinder of image
@@ -128,6 +128,11 @@ public class ExtractDisplaywriterFiles
 							delta = locEHL1 - 0x21c00;
 							locEHL1 = 0x21c00;
 						}
+					}
+					else
+					{
+						if (debugLevel == 1)
+							System.err.println("No EHL1 record found after exhaustive search.");
 					}
 					inData = Arrays.copyOfRange(result, delta, result.length - delta);
 				}
@@ -190,13 +195,16 @@ public class ExtractDisplaywriterFiles
 					// Check out the expected location of the EHL1 record.
 					if (!getRecordEyecatcher(inData, offset).equals("EHL1 (0x20)"))
 					{
-						// If we don't find it where we expect it, go looking.
-						System.err.println("Didn't find the EHL1 record at expected location 0x" + Integer.toHexString(offset) + ".");
+						// If we don't find it where we expect it, go looking - but this is probably a fool's errand
+						if (debugLevel == 1)
+							System.err.println("Didn't find the EHL1 record at expected location 0x" + Integer.toHexString(offset) + ".");
 						offset = -1;
 						for (int i = 0; i < inData.length; i += 256)
 						{
 							if (getRecordEyecatcher(inData, i).equals("EHL1 (0x20)"))
 							{
+								if (debugLevel == 1)
+									System.err.println("Found an EHL1 record at offset 0x"+Integer.toHexString(i)+".  This is probably a bad thing.");
 								offset = i;
 								break;
 							}
@@ -221,13 +229,21 @@ public class ExtractDisplaywriterFiles
 						}
 					}
 					else
-						System.err.println("Unable to find root of directory tree.");
+					{
+						if (debugLevel == 1)
+							System.err.println("Unable to locate an EHL1 record anywhere on this image, and I shouldn't have been able to get here.");
+						else
+							System.err.println("Unable to find DisplayWriter file structure on this image.");
+					}
 				}
 			}
 			else
 			{
 				// No textual data found
-				System.err.println("No document files found.");
+				if (debugLevel == 1)
+					System.err.println("Unable to locate an EHL1 record anywhere on this image.");
+				else
+					System.err.println("Unable to find DisplayWriter file structure on this image.");
 			}
 		}
 		else
