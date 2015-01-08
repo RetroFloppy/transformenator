@@ -1,0 +1,34 @@
+;
+; Transform for early Multimate word processor to RTF - very skeletal so far
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; First 400 bytes is control, etc.
+trim_leading = 400
+
+; Header
+..00ff..................................................................................................................................
+
+; ae = newline
+ae = "\par "
+
+; af = tab
+af = 09
+
+; Emphasis on
+ff01 = "\b1 "
+; Emphasis off
+ff03 = "\b0 "
+
+; Split word
+0102 =
+0103=
+0104=
+0402=
+0806=
+
+00 =

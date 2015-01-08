@@ -1,7 +1,7 @@
 New for this version:
 =====================
 
- * New transforms: Canon ETW1 word processor, IBM Displaywriter
+ * New transforms: Canon ETW1 word processor, IBM Displaywriter, Multimate
 
  * New function: ExtractDisplaywriterFiles - extract EBCDIC files from Displaywriter 8" disk images
  
