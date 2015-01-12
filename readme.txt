@@ -7,6 +7,8 @@ New for this version:
  
  * New function: ExtractSeawellFiles - extract files from Seawell DOS (early 6502-based DOS) 8" disk images 
 
+ * New function: ExtractMemoryWriterFiles - extract files from a disk image from an unknown word processor, possibly Xerox MemoryWriter 
+
 Transformenator introduction:
 =============================
 
