@@ -155,23 +155,26 @@ public class ExtractMemoryWriterFiles
 		int nextOffset = ((UnsignedByte.intValue(inData[sectorOffset + 2]) - 1) * 0x10 + (UnsignedByte.intValue(inData[sectorOffset + 3]) - 1)) * 0x100;
 		int realOffset = ((UnsignedByte.intValue(inData[sectorOffset + 2])) * 0x10 + (UnsignedByte.intValue(inData[sectorOffset + 3]))) * 0x100;
 
+		/* Debug
 		if (realOffset > 0)
 		{
 			String message = "\n\nAt offset " + Integer.toHexString(sectorOffset) + ", the next offset is: " + Integer.toHexString(nextOffset) + "\n";
-			// out.write(message.getBytes());
+			out.write(message.getBytes());
 		}
 		else
 		{
 			String message = "\n\nAt offset " + Integer.toHexString(sectorOffset) + ", Found the end of the file.\n";
-			// out.write(message.getBytes());
+			out.write(message.getBytes());
 		}
-		int rangeEnd = UnsignedByte.intValue(inData[sectorOffset + 4])-1;
+		int rangeEnd = UnsignedByte.intValue(inData[sectorOffset + 4]) - 1;
 		// System.err.println("rangeEnd: " + rangeEnd);
 		if (rangeEnd > 0)
 		{
 			byte range[] = Arrays.copyOfRange(inData, sectorOffset + 8, sectorOffset + rangeEnd + 9);
 			out.write(range);
 		}
+		*/
+
 		if (realOffset > 0)
 			decodeFile(inData, out, nextOffset);
 	}
@@ -188,6 +191,6 @@ public class ExtractMemoryWriterFiles
 		System.err.println();
 		System.err.println("ExtractMemoryWriterFiles " + Version.VersionString + " - Extract files from some unknown word processor (possibly Xerox MemoryWriter) disk images.");
 		System.err.println();
-		System.err.println("Usage: ExtractMemoryWriterFiles infile [outfile|out_directory]");
+		System.err.println("Usage: ExtractMemoryWriterFiles infile [out_directory]");
 	}
 }
