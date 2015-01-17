@@ -8,6 +8,7 @@ head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transf
 tail = "}"
 
 ; Start of file
+f2 =
 a9......a9 =
 c0........c0 =
 c1....c1 =
@@ -25,10 +26,16 @@ c9..............................................................................
 d0........d0 =
 da....da =
 dc..............dc =
+dc......................dc =
+dd............................................dd =
 de....de =
 df....df =
+e0....e0 =
 e1..e1 = 
 e4........e4 =
+e5..........................................e5 =
+e6..................e6 =
+eb............................................................eb =
 ec....ec =
 
 ; Line endings
@@ -40,12 +47,26 @@ ec....ec =
 83 =
 84 =
 86 =
+87 =
 89 =
 8c =
+99 =
 9a =
+9e =
+9f =
+
+a0 =
+a1 =
+a2 =
+a3 =
+a6 =
+a7 =
+ac =
+af =
 
 ; Emdash
 a9 = "\emdash "
+af87 = "\emdash "
 
 ; Endash
 aa = "\endash "
@@ -65,8 +86,19 @@ b3 = "\i0 "
 ; Page breaks?
 dc..00000000..00dc.. = 20
 
-; Footnotes, probably
+; Variable toggles
+d1 % "<d1>","</d1>"
+d7 % "~d7~","~/d7~"
 e2 % "<footnote>","</footnote>"
-
-; Remove footnotes
+ee % "~ee~","~/ee~"
+ef % "~ef~","~/ef~"
+f1 % "~f1~","~/f1~"
+f3 % "~f3~","~/f3~"
+; Remove variable toggles
 regex = @<footnote>.+?</footnote>@@
+regex = @<d1>.+?</d1>@@
+regex = @~d7~.+?~/d7~@@
+regex = @~ee~.+?~/ee~@@
+regex = @~ef~.+?~/ef~@@
+regex = @~f1~.+?~/f1~@@
+regex = @~f3~.+?~/f3~@@

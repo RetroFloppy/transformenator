@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2013 by David Schmidt
+ * Copyright (C) 2013-2015 by David Schmidt
  * david__schmidt at users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -25,6 +25,13 @@ public class RegSpec
 	// Just struct-ifying this data type
 	public byte[] leftCompare;
 	public byte[] leftMask;
+	/*
+	 * Commands: 
+	 * 0 = Normal search
+	 * 1 = EOF
+	 * 2 = SOF
+	 * 3 = SOF (greedy)
+	 */
 	public int command = 0;
 	public boolean backtrack = true;
 	public boolean toggle = false;
