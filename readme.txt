@@ -1,15 +1,9 @@
 New for this version:
 =====================
 
- * New transforms: Canon ETW1 word processor, IBM Displaywriter, Multimate, Smith-Corona
+ * New transforms:
 
- * New function: ExtractDisplaywriterFiles - extract EBCDIC files from Displaywriter 8" disk images
- 
- * New function: ExtractSeawellFiles - extract files from Seawell DOS (early 6502-based DOS) 8" disk images 
-
- * New function: ExtractMemoryWriterFiles - extract files from a disk image from an unknown word processor, possibly Xerox MemoryWriter 
-
- * New function: ExtractSmithCoronaFiles - extract files from a disk image from Smith-Corona typewriters
+ * New function:
 
 Transformenator introduction:
 =============================
