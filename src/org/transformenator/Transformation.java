@@ -288,6 +288,12 @@ public class Transformation
 				}
 				// System.err.println("Trimming leading "+trimLeading+" and "+ trimTrailing +" trailing bytes.");
 				trimmedEnd = inData.length-trimTrailing;
+				// Clean out the toggle states
+				for (int i = 0; i < leftSide.size(); i++) // For each left specification
+				{
+					RegSpec currentSpec = leftSide.elementAt(i);
+					currentSpec.toggleState = false;
+				}
 				for (int i = trimLeading; i < trimmedEnd; i++)
 				{
 					backupBytes = 0;
@@ -815,6 +821,7 @@ public class Transformation
 			byte[] maskLeft = leftSide.elementAt(i).leftMask;
 			byte[] replRight = rightSide.elementAt(i);
 			byte[] replRightToggle = rightToggle.elementAt(i);
+			//rightToggle.
 			match = true;
 			for (int j = 0; j < compLeft.length; j++)
 			{
@@ -871,17 +878,6 @@ public class Transformation
 						{
 							if (currentSpec.toggle == true)
 							{
-								/*
-								String temp1 = "", temp2 = "";
-								for (int q = 0; q < replRight.length; q++)
-								{
-									temp1 += (char)replRight[q];
-								}
-								for (int q = 0; q < replRightToggle.length; q++)
-								{
-									temp2 += (char)replRightToggle[q];
-								}
-								*/
 								if (currentSpec.toggleState == false) // Toggle state was "false"
 									outBuf.write(replRight); // Write out "on" value
 								else // Toggle state was "true"
