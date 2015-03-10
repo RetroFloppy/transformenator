@@ -1,6 +1,8 @@
 New for this version:
 =====================
 
+Bug fix: "Toggles" are now reset at the start of each file when processing a directory full of files
+
 Transformenator introduction:
 =============================
 
