@@ -1,0 +1,13 @@
+;
+; Transform for C64 word processor Word Writer 4
+;
+
+; Remove first x101 bytes
+trim_leading = 0101
+
+; Translate a-z down in the control character range up to ASCII
+[01..1a] = 61
+
+; Newlines
+ff = 0d
+fe = 0d0a
