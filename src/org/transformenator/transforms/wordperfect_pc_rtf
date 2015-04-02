@@ -10,23 +10,25 @@ tail = "}"
 ; Start of file
 f2 =
 a9......a9 =
-c0........c0 =
 c1....c1 =
 c1..............c1 =
 c2..c2 =
 c3......c3 = "\par "
-c4......c4 = "\par "
+c5........c5 =
 c6....c6 = 
 c7........c7 =
+ca..ca =
 cb........cb =
+cb..........cb =
+cb............cb =
 cc....cc =
 ce....ce =
 cf..cf =
 c9................................................................................c9 =
 d0........d0 =
+d2 =
+d5....d5 =
 da....da =
-dc..............dc =
-dc......................dc =
 dd............................................dd =
 de....de =
 df....df =
@@ -37,6 +39,7 @@ e5..........................................e5 =
 e6..................e6 =
 eb............................................................eb =
 ec....ec =
+ff =
 
 ; Line endings
 0d = " "
@@ -49,6 +52,7 @@ ec....ec =
 86 =
 87 =
 89 =
+8a =
 8c =
 99 =
 9a =
@@ -76,6 +80,9 @@ aa = "\endash "
 94 = "\ul "
 95 = "\ul0 "
 
+; Overstrike
+99 =
+
 ; Bold on/off
 9d = "\b1 "
 9c = "\b0 "
@@ -84,12 +91,26 @@ aa = "\endash "
 b2 = "\i1 "
 b3 = "\i0 "
 
+; Superscript
+bc =
+; Subscript
+bd =
+
+; Half line up
+be =
+; Half line down
+bf =
+
 ; Page breaks?
 dc..00000000..00dc.. = 20
 
 ; Variable toggles
+c0 % "<c0>","</c0>"
+c4 % "<c4>","</c4>"
 d1 % "<d1>","</d1>"
-d7 % "~d7~","~/d7~"
+d7 % "<d7>","</d7>"
+dc % "<dc>","</dc>"
+df % "<df>","</df>"
 e2 % "<footnote>","</footnote>"
 ee % "~ee~","~/ee~"
 ef % "~ef~","~/ef~"
@@ -97,8 +118,12 @@ f1 % "~f1~","~/f1~"
 f3 % "~f3~","~/f3~"
 ; Remove variable toggles
 regex = @<footnote>.+?</footnote>@@
+regex = @<c0>.+?</c0>@@
+regex = @<c4>.+?</c4>@\\par @
 regex = @<d1>.+?</d1>@@
-regex = @~d7~.+?~/d7~@@
+regex = @<d7>.+?</d7>@@
+regex = @<dc>.+?</dc>@@
+regex = @<df>.+?</df>@@
 regex = @~ee~.+?~/ee~@@
 regex = @~ef~.+?~/ef~@@
 regex = @~f1~.+?~/f1~@@
