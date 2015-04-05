@@ -1,7 +1,9 @@
 New for this version:
 =====================
 
- * New transform: Word Writer 4 for Commodore 64
+New function: TransformDirectory utility now can 'normalize' out of control filename characters 
+
+New transform: Word Writer 4 for Commodore 64
 
 Bug fix: "Toggles" are now reset at the start of each file when processing a directory full of files
 
