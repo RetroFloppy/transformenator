@@ -3,7 +3,9 @@ New for this version:
 
 New function: TransformDirectory utility now can 'normalize' out of control filename characters 
 
-New transform: Word Writer 4 for Commodore 64
+New function: ExtractXerox860Files - extract files from Xerox 860 8" disk images
+
+New transforms: Word Writer 4 for Commodore 64, Xerox 860
 
 Bug fix: "Toggles" are now reset at the start of each file when processing a directory full of files
 
