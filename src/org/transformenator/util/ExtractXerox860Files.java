@@ -53,7 +53,7 @@ public class ExtractXerox860Files
 			File file = new File(args[0]);
 			byte[] result = new byte[(int) file.length()];
 			int directoryArray[] = new int[1024 * 1024];
-			int directoryAccumulator = 0;
+			int fileCount = 0, directoryAccumulator = 0;
 			String directory = "";
 			if (args.length == 2)
 			{
@@ -128,14 +128,17 @@ public class ExtractXerox860Files
 						switch (header[5])
 						{
 						case 0x01:
-							// System.out.println(sector + ": Index sector for file #" + UnsignedByte.intValue(inData[sector * 512 + track0Offset + 18]));
+							// System.out.println(sector + ": Index sector");
 							break;
 						case 0x24:
-							// System.out.println(sector + ": Directory sector with " + header[6] + " entries.");
-							// emitDirectorySector(sector, inData, track0Offset);
+							// System.out.println(sector + ": Directory sector with " + header[6] + " entries");
 							for (i = 8; i < 511; i++)
-								directoryArray[i + directoryAccumulator] = UnsignedByte.intValue(inData[sector * 512 + i + track0Offset]);
+								directoryArray[i + directoryAccumulator - 8] = UnsignedByte.intValue(inData[sector * 512 + i + track0Offset]);
+							fileCount += header[6];
 							directoryAccumulator += i;
+							break;
+						case 0x28:
+							// System.out.println(sector + ": Program (28) sector");
 							break;
 						case 0x40:
 							// System.out.println(sector + ": System sector");
@@ -143,7 +146,7 @@ public class ExtractXerox860Files
 						case 0x80:
 							if (header[3] == 0)
 							{
-								// System.out.println(sector + ": File sector end of file " + header[1]);
+								System.out.println(sector + ": File sector end of file " + header[1]);
 								writeSector(outFile, sector, inData, track0Offset);
 								try
 								{
@@ -160,7 +163,7 @@ public class ExtractXerox860Files
 							{
 								if (header[1] == 0x00)
 								{
-									// System.out.println(sector + ": File sector start");
+									System.out.println(sector + ": File sector start");
 									try
 									{
 										outFile = new FileOutputStream(directory + fileNumber);
@@ -175,7 +178,7 @@ public class ExtractXerox860Files
 								}
 								else
 								{
-									// System.out.println(sector + ": File sector from file " + header[3]);
+									System.out.println(sector + ": File sector from file " + header[3]);
 								}
 								writeSector(outFile, sector, inData, track0Offset);
 							}
@@ -187,11 +190,16 @@ public class ExtractXerox860Files
 						if (!blank)
 						{
 							/*
-							 * System.out.print("Header: "); for (i = 0; i < 8; i++) { header[i] = UnsignedByte.intValue(inData[sector * 512 + i]); System.out.print("0x" + UnsignedByte.toString(header[i]) + " "); } System.out.println();
+							 * System.out.print("Header: "); for (i = 0; i < 8;
+							 * i++) { header[i] =
+							 * UnsignedByte.intValue(inData[sector * 512 + i]);
+							 * System.out.print("0x" +
+							 * UnsignedByte.toString(header[i]) + " "); }
+							 * System.out.println();
 							 */
 						}
 					}
-					// System.out.println("We accumulated "+directoryAccumulator+" bytes of directory data.");
+					System.out.println(fileCount + " directory entries found:");
 					emitDirectory(directoryArray, directoryAccumulator);
 				}
 				else
@@ -208,21 +216,39 @@ public class ExtractXerox860Files
 	public static void emitDirectory(int directoryArray[], int length)
 	{
 		char ch;
-		int filenum = 1;
+		int field = 0, chCount = 0;
+		System.out.println("Name\t\tCreated\tMod\tType\tPages\tSectors");
 		for (int i = 0; i < length; i++)
 		{
 			ch = (char) directoryArray[i];
 			switch (ch)
 			{
 			case 0xfe:
-				System.out.println(" ; File #" + filenum);
-				filenum++;
+				field = 0;
+				chCount = 0;
+				System.out.println("");
+				break;
+			case 0xfd:
+				System.out.print("\t");
+				if ((chCount < 8) && (field == 0))
+					System.out.print("\t");
+				chCount = 0;
+				field++;
 				break;
 			default:
-				if ((ch >= 150) && (ch <= 151))
-					System.out.print(' ');
-				else if (((ch >= 63) && (ch < 123)) || ((ch >= 32) && (ch <= 58)))
-					System.out.print(ch);
+				if (field < 6)
+				{
+					chCount ++;
+					if ((ch >= 150) && (ch <= 151))
+						System.out.print(' ');
+					else if (((ch >= 63) && (ch < 123)) || ((ch >= 32) && (ch <= 58)))
+						System.out.print(ch);
+				}
+				else
+				{
+					// Dump out the four bytes in the final field
+					// System.out.print(" "+UnsignedByte.toString(ch));
+				}
 				break;
 			}
 		}
