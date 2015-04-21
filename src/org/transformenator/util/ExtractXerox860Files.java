@@ -128,25 +128,25 @@ public class ExtractXerox860Files
 						switch (header[5])
 						{
 						case 0x01:
-							// System.out.println(sector + ": Index sector");
+							// System.err.println(sector + ": Index sector");
 							break;
 						case 0x24:
-							// System.out.println(sector + ": Directory sector with " + header[6] + " entries");
+							// System.err.println(sector + ": Directory sector with " + header[6] + " entries");
 							for (i = 8; i < 511; i++)
 								directoryArray[i + directoryAccumulator - 8] = UnsignedByte.intValue(inData[sector * 512 + i + track0Offset]);
 							fileCount += header[6];
 							directoryAccumulator += i;
 							break;
 						case 0x28:
-							// System.out.println(sector + ": Program (28) sector");
+							// System.err.println(sector + ": Program (28) sector");
 							break;
 						case 0x40:
-							// System.out.println(sector + ": System sector");
+							// System.err.println(sector + ": System sector");
 							break;
 						case 0x80:
 							if (header[3] == 0)
 							{
-								System.out.println(sector + ": File sector end of file " + header[1]);
+								// System.err.println(sector + ": File sector end of file " + header[1]);
 								writeSector(outFile, sector, inData, track0Offset);
 								try
 								{
@@ -163,11 +163,11 @@ public class ExtractXerox860Files
 							{
 								if (header[1] == 0x00)
 								{
-									System.out.println(sector + ": File sector start");
+									// System.err.println(sector + ": File sector start");
 									try
 									{
 										outFile = new FileOutputStream(directory + fileNumber);
-										System.out.println("Writing file " + fileNumber);
+										System.err.println("Writing file " + fileNumber);
 										fileNumber++;
 									}
 									catch (FileNotFoundException e)
@@ -178,7 +178,7 @@ public class ExtractXerox860Files
 								}
 								else
 								{
-									System.out.println(sector + ": File sector from file " + header[3]);
+									// System.err.println(sector + ": File sector from file " + header[3]);
 								}
 								writeSector(outFile, sector, inData, track0Offset);
 							}
@@ -190,16 +190,16 @@ public class ExtractXerox860Files
 						if (!blank)
 						{
 							/*
-							 * System.out.print("Header: "); for (i = 0; i < 8;
+							 * System.err.print("Header: "); for (i = 0; i < 8;
 							 * i++) { header[i] =
 							 * UnsignedByte.intValue(inData[sector * 512 + i]);
-							 * System.out.print("0x" +
+							 * System.err.print("0x" +
 							 * UnsignedByte.toString(header[i]) + " "); }
-							 * System.out.println();
+							 * System.err.println();
 							 */
 						}
 					}
-					System.out.println(fileCount + " directory entries found:");
+					System.err.println(fileCount + " directory entries found:");
 					emitDirectory(directoryArray, directoryAccumulator);
 				}
 				else
@@ -217,7 +217,7 @@ public class ExtractXerox860Files
 	{
 		char ch;
 		int field = 0, chCount = 0;
-		System.out.println("Name\t\tCreated\tMod\tType\tPages\tSectors");
+		System.err.println("Name\t\t\tCreated\tUpdated\tType\tPages\tSectors");
 		for (int i = 0; i < length; i++)
 		{
 			ch = (char) directoryArray[i];
@@ -226,12 +226,14 @@ public class ExtractXerox860Files
 			case 0xfe:
 				field = 0;
 				chCount = 0;
-				System.out.println("");
+				System.err.println("");
 				break;
 			case 0xfd:
-				System.out.print("\t");
+				System.err.print("\t");
 				if ((chCount < 8) && (field == 0))
-					System.out.print("\t");
+					System.err.print("\t");
+				if ((chCount < 16) && (field == 0))
+					System.err.print("\t");
 				chCount = 0;
 				field++;
 				break;
@@ -240,14 +242,16 @@ public class ExtractXerox860Files
 				{
 					chCount ++;
 					if ((ch >= 150) && (ch <= 151))
-						System.out.print(' ');
+						System.err.print(' ');
 					else if (((ch >= 63) && (ch < 123)) || ((ch >= 32) && (ch <= 58)))
-						System.out.print(ch);
+						System.err.print(ch);
+					else
+						chCount--;
 				}
 				else
 				{
 					// Dump out the four bytes in the final field
-					// System.out.print(" "+UnsignedByte.toString(ch));
+					// System.err.print(" "+UnsignedByte.toString(ch));
 				}
 				break;
 			}
@@ -282,12 +286,12 @@ public class ExtractXerox860Files
 		{
 			ch = (char) inData[(sector * 512) + i + track0Offset];
 			if ((ch >= 150) && (ch <= 151))
-				System.out.print(' ');
+				System.err.print(' ');
 			else if (((ch >= 63) && (ch < 123)) || ((ch >= 32) && (ch <= 58)))
-				System.out.print(ch);
+				System.err.print(ch);
 		}
-		System.out.println();
-		System.out.println();
+		System.err.println();
+		System.err.println();
 	}
 
 	public static void help()
