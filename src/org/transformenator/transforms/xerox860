@@ -1,53 +1,10 @@
 ;
-; Xerox 860 Word Processor - quite preliminary, based on extant files
+; Xerox 860 Word Processor - quite rudimentary, based on extant files
 ;
 
 00 =
 
-; Page eject?
-;90306040fd31404c415afd3235 = "<PageEject_a>"
-;90306040fd31404c415afd3236503b = "<PageEject_b>"
-;90306040fd31404a415cfd3235 = "<PageEject_c>"
-;90306040fd3140514155fd3236 = "<PageEject_d>"
-;90306040fd31404c4070fd3236 = "<PageEject_e>"
-;90306040fd314076415afd323f34 = "<PageEject_f>"
-90306040fd31404c415afd3235 = 
-90306040fd31404c415afd3236503b = 
-90306040fd31404a415cfd3235 = 
-90306040fd3140514155fd3236 = 
-90306040fd31404c4070fd3236 = 
-90306040fd314076415afd323f34 = 
-
-; Page number?
-;44..503f3f3f3f3f = "<PageNumber_a>"
-;5038503f3f3f3f = "<PageNumber_b>"
-;443c5038503f3f3f3f = "<PageNumber_b+>"
-;443f3f3f3f3f3f = "<PageNumber_c>"
-;4430504139503f3f3f3f3f = "<PageNumber_d>"
-;5032413f3f3f3f3f = "<PageNumber_e>"
-;44334137 = "<PageNumber_f>"
-;443f3f3f3f3f = "<PageNumber_g>"
-44..503f3f3f3f3f =
-5038503f3f3f3f = 
-443c5038503f3f3f3f = 
-443f3f3f3f3f3f = 
-4430504139503f3f3f3f3f = 
-5032413f3f3f3f3f = 
-44334137 = 
-443f3f3f3f3f = 
-
-; Start of text
-;fd33..fd34596a404b404040fd90 = "<StartText_1a>"
-;fd33..fd34596a404b404040fd = "<StartText_1b>"
-;3840704070485040404040fd3940404040fbfcfbfcfd90 = "<StartText_2a>"
-;3840......485040404040fd3940404040fbfcfbfcfd90 = "<StartText_2b>"
-fd33..fd34596a404b404040fd90 = 
-fd33..fd34596a404b404040fd = 
-3840704070485040404040fd3940404040fbfcfbfcfd90 = 
-3840......485040404040fd3940404040fbfcfbfcfd90 = 
-
-; ?
-;3f =
+90 % "<header>","</header>"
 
 ; Emphasis on
 82 =
@@ -59,7 +16,7 @@ fd33..fd34596a404b404040fd =
 ; Emphasis off
 85 =
 
-;
+; ?
 91........91 =
 
 ; Word break
@@ -76,3 +33,5 @@ a196 =
 9c =
 ; Superscript
 9d =
+
+regex = @<header>.*</header>@@
