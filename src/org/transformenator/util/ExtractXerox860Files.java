@@ -1,5 +1,5 @@
 /*
- * Transformenator - perform transformation operations on binary files
+k * Transformenator - perform transformation operations on binary files
  * Copyright (C) 2015 by David Schmidt
  * david__schmidt at users.sourceforge.net
  *
@@ -49,7 +49,7 @@ import org.transformenator.internal.UnsignedByte;
  */
 public class ExtractXerox860Files
 {
-	public static boolean DEBUG = false;
+	public static boolean DEBUG = true;
 
 	public static void main(java.lang.String[] args)
 	{
@@ -388,7 +388,7 @@ public class ExtractXerox860Files
 	{
 		FileOutputStream outFile = null;
 		char ch;
-		String fileName = "";
+		String fileName = "", fileType = "";
 		int field = 0, chCount = 0, fileCount = 1;
 		int three = 0, two = 0, one = 0;
 		if (DEBUG)
@@ -405,6 +405,7 @@ public class ExtractXerox860Files
 				two = 0;
 				one = 0;
 				fileName = "";
+				fileType = "";
 				if (DEBUG)
 					System.err.println("");
 				fileCount++;
@@ -439,6 +440,11 @@ public class ExtractXerox860Files
 					if ((ch == '>') || (ch == '<') || (ch == '$') || (ch == '\\') || (ch == '/') || (ch == '`') || (ch == '*'))
 						ch = '_';
 					fileName += ch;
+				}
+				if (field == 3)
+				{
+					if (ch != ' ')
+						fileType += ch;
 				}
 				if (field < 6)
 				{
@@ -475,7 +481,11 @@ public class ExtractXerox860Files
 							System.err.println(" Offset: 0x" + Integer.toHexString(0x1000000 | (absOffsetFromDirectory(three, two, one, track0Offset))).substring(1).toUpperCase());
 						try
 						{
-							outFile = new FileOutputStream(directory + fileName);
+							if (fileType.equals("D80"))
+								fileType = " (Deleted)";
+							else
+								fileType = "";
+							outFile = new FileOutputStream(directory + fileName+fileType);
 							System.err.println("Writing file " + fileName);
 							emitIndex(outFile, inData, absOffsetFromDirectory(three, two, one, track0Offset), track0Offset);
 							try
