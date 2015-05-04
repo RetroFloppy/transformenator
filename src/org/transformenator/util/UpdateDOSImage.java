@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2013 - 2014 by David Schmidt
+ * Copyright (C) 2013 - 2015 by David Schmidt
  * david__schmidt at users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -29,6 +29,7 @@ import java.io.BufferedInputStream;
 import java.io.InputStream;
 
 import org.transformenator.Version;
+import org.transformenator.internal.UnsignedByte;
 
 /*
  * UpdateDOSImage
@@ -415,7 +416,7 @@ public class UpdateDOSImage
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("UpdateDOSImage "+Version.VersionString+" - Update the BIOS Parameter Block of a DOS disk image.");
+		System.err.println("UpdateDOSImage "+Version.VersionString+" - Update the BIOS Parameter Block of a PC DOS disk image.");
 		System.err.println();
 		System.err.println("Usage: UpdateDOSImage infile outfile");
 	}

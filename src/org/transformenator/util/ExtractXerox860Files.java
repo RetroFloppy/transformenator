@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.transformenator.Version;
+import org.transformenator.internal.UnsignedByte;
 
 /*
  * ExtractXerox860Files

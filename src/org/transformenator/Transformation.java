@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2013 - 2014 by David Schmidt
+ * Copyright (C) 2013 - 2015 by David Schmidt
  * david__schmidt at users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -39,7 +39,7 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.transformenator.util.UnsignedByte;
+import org.transformenator.internal.UnsignedByte;
 
 public class Transformation
 {
@@ -110,7 +110,7 @@ public class Transformation
 			if (inData != null)
 			{
 				// System.err.println("Incoming data length: "+inData.length);
-				if (transformName.toUpperCase().contains("VALDOCS"))
+				if (transformName.toUpperCase().equalsIgnoreCase("VALDOCS"))
 				{
 					// If they are using a Valdocs transform, let's pick apart the file first.
 					System.err.println("De-indexing valdocs file " + file);
@@ -164,7 +164,7 @@ public class Transformation
 						inData[i] = newBuf[i];
 					// System.err.println("Data length after de-indexing: "+inData.length);
 				}
-				else if (transformName.toUpperCase().contains("DISPLAYWRITE_"))
+				else if (transformName.toUpperCase().equalsIgnoreCase("DISPLAYWRITE_"))
 				{
 					// If they are using a DisplayWrite transform, let's pick apart the file first.
 					System.err.println("De-indexing DisplayWrite file " + file);
@@ -228,7 +228,7 @@ public class Transformation
 						inData[i] = newBuf[i];
 					// System.err.println("Data length after de-indexing: "+inData.length);
 				}
-				else if (transformName.toUpperCase().contains("LEADING_EDGE"))
+				else if (transformName.toUpperCase().equalsIgnoreCase("LEADING_EDGE"))
 				{
 					// If they are using a Leading Edge Word Processor transform, let's pick apart the file first.
 					System.err.println("De-indexing Leading Edge file " + file);
@@ -977,6 +977,61 @@ public class Transformation
 								printedHeaderYet = true;
 							}
 							System.err.println("  " + finalName);
+						}
+					}
+				}
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			if (!printedHeaderYet)
+			{
+				File path = new File(jar.getPath() + prefix);
+				File[] listOfFiles = path.listFiles();
+				if (listOfFiles != null)
+				{
+					int offset = path.toString().length() + 1;
+					System.err.println("Available internal transform files:");
+				        for (int i = 0; i < listOfFiles.length; i++)
+				        {
+						System.err.println("  " + listOfFiles[i].toString().substring(offset));
+				        }
+				}
+			}
+		}
+	}
+
+	public static void listUtilities()
+	{
+		boolean printedHeaderYet = false;
+		String prefix = "org/transformenator/util/";
+		CodeSource src = Transformation.class.getProtectionDomain().getCodeSource();
+
+		if (src != null)
+		{
+			URL jar = src.getLocation();
+			ZipInputStream zip;
+			try
+			{
+				zip = new ZipInputStream(jar.openStream());
+				ZipEntry ze = null;
+
+				while ((ze = zip.getNextEntry()) != null)
+				{
+					String entryName = ze.getName();
+					if (entryName.startsWith(prefix))
+					{
+						String finalName = entryName.substring(prefix.length());
+						if (finalName.length() > 0)
+						{
+							if (printedHeaderYet == false)
+							{
+								System.err.println("Transformenator utility functions available:");
+								printedHeaderYet = true;
+							}
+							if ((finalName.indexOf('$') == -1) && (!finalName.equals("TransformUtilities.class")))
+								System.err.println("  " + finalName.substring(0, finalName.length() - 6));
 						}
 					}
 				}

@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import org.transformenator.Version;
+import org.transformenator.internal.UnsignedByte;
 
 /*
  * ExtractMemoryWriterFiles

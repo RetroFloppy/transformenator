@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2014 by David Schmidt
+ * Copyright (C) 2014 - 2015 by David Schmidt
  * david__schmidt at users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -34,6 +34,8 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.transformenator.Version;
+import org.transformenator.internal.EbcdicUtil;
+import org.transformenator.internal.UnsignedByte;
 
 /*
  * ExtractAdministrativeSystemFile

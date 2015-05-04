@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2013 - 2014 by David Schmidt
+ * Copyright (C) 2013 - 2015 by David Schmidt
  * david__schmidt at users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import org.transformenator.Version;
+import org.transformenator.internal.UnsignedByte;
 
 /*
  * UnpackEasyWriterFiles
