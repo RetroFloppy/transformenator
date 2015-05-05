@@ -2,13 +2,14 @@
 #
 # Shell script invoker for TransformDirectory - call with no parameters for usage instructions 
 #
-# Set TRANSFORM_HOME to the location of the transformenator.jar file.  The default
+# Set TRANSFORM_HOME to the absolute location of the transformenator.jar file.  The default
 # location is the current working directory otherwise.
 #
 if [ "$TRANSFORM_HOME" == "" ]
 then
   export TRANSFORM_HOME="."
 fi
+
 if [ "$3" != "" ]
 then
   if [ "$4" != "" ]
