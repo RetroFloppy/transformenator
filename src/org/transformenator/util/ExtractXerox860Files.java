@@ -49,7 +49,7 @@ import org.transformenator.internal.UnsignedByte;
  */
 public class ExtractXerox860Files
 {
-	public static boolean DEBUG = true;
+	public static boolean DEBUG = false;
 
 	public static void main(java.lang.String[] args)
 	{
