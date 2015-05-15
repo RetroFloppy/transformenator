@@ -121,7 +121,7 @@ public class ExtractXerox860Files
 				if (inData.length > 600000)
 					track0Offset *= 2;
 				if (DEBUG)
-					System.err.println();
+					System.err.println("Track 0 offset: "+track0Offset+" calculation: "+(inData.length - track0Offset) % (512 * 8));
 				if ((inData.length - track0Offset) % (512 * 8) == 0)
 				{
 					int i;
@@ -485,7 +485,7 @@ public class ExtractXerox860Files
 								fileType = " (Deleted)";
 							else
 								fileType = "";
-							outFile = new FileOutputStream(directory + fileName+fileType);
+							outFile = new FileOutputStream(directory + fileName + fileType);
 							System.err.println("Writing file " + fileName);
 							emitIndex(outFile, inData, absOffsetFromDirectory(three, two, one, track0Offset), track0Offset);
 							try
@@ -601,16 +601,21 @@ public class ExtractXerox860Files
 	{
 		// Find this sector's previous pointer
 		int prevTrack, prevOrigSector, prevSector;
-		prevTrack = (UnsignedByte.intValue(inData[offset + 1]));
-		prevOrigSector = UnsignedByte.intValue(inData[offset + 2]);
-		if (prevOrigSector > 8)
-			prevSector = prevOrigSector - 0x80 + 8;
-		else
-			prevSector = prevOrigSector;
-		prevSector = (prevSector - 1) * 512;
-		prevTrack = (prevTrack - 1) * 8192;
+		if (offset + track0Offset < inData.length)
+		{
+			prevTrack = (UnsignedByte.intValue(inData[offset + 1]));
+			prevOrigSector = UnsignedByte.intValue(inData[offset + 2]);
+			if (prevOrigSector > 8)
+				prevSector = prevOrigSector - 0x80 + 8;
+			else
+				prevSector = prevOrigSector;
+			prevSector = (prevSector - 1) * 512;
+			prevTrack = (prevTrack - 1) * 8192;
 
-		return prevTrack + prevSector + track0Offset;
+			return prevTrack + prevSector + track0Offset;
+		}
+		else
+			return 0;
 	}
 
 	public static void emitTextSector(int sector, boolean isFirst, byte inData[], int track0Offset)
