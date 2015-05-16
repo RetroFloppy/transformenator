@@ -1,5 +1,5 @@
 /*
-k * Transformenator - perform transformation operations on binary files
+ * Transformenator - perform transformation operations on binary files
  * Copyright (C) 2015 by David Schmidt
  * david__schmidt at users.sourceforge.net
  *
@@ -115,11 +115,15 @@ public class ExtractXerox860Files
 			{
 				int header[] = new int[8];
 				int track0Offset = 3328;
+				int trackLen = 4096;
 				int indexSector = 1;
 				if (DEBUG)
 					System.err.println("Read " + inData.length + " bytes.");
 				if (inData.length > 600000)
+				{
 					track0Offset *= 2;
+					trackLen *= 2;
+				}
 				if (DEBUG)
 					System.err.println("Track 0 offset: "+track0Offset+" calculation: "+(inData.length - track0Offset) % (512 * 8));
 				if ((inData.length - track0Offset) % (512 * 8) == 0)
@@ -146,7 +150,7 @@ public class ExtractXerox860Files
 							// Directory sector
 							if (DEBUG)
 							{
-								System.err.println("0x" + Integer.toHexString(0x1000000 | (absSector * 512) + track0Offset).substring(1).toUpperCase() + ": Directory sector with " + header[6] + " entries.  Next dir sector: 0x" + Integer.toHexString(0x1000000 | absOffset(header[3], header[4], track0Offset)).substring(1).toUpperCase() + " Previous dir sector: 0x" + Integer.toHexString(0x1000000 | absOffset(header[1], header[2], track0Offset)).substring(1).toUpperCase());
+								System.err.println("0x" + Integer.toHexString(0x1000000 | (absSector * 512) + track0Offset).substring(1).toUpperCase() + ": Directory sector with " + header[6] + " entries.  Next dir sector: 0x" + Integer.toHexString(0x1000000 | absOffset(header[3], header[4], track0Offset, trackLen)).substring(1).toUpperCase() + " Previous dir sector: 0x" + Integer.toHexString(0x1000000 | absOffset(header[1], header[2], track0Offset, trackLen)).substring(1).toUpperCase());
 								emitHeader(header);
 								System.err.println();
 							}
@@ -208,7 +212,7 @@ public class ExtractXerox860Files
 					}
 					if (DEBUG)
 						System.err.println(fileCount + " directory entries found:");
-					emitDirectory(directoryArray, inData, directoryAccumulator, directory, track0Offset);
+					emitDirectory(directoryArray, inData, directoryAccumulator, directory, track0Offset, trackLen);
 				}
 				else
 					System.err.println("Image file size doesn't make sense.");
@@ -246,7 +250,7 @@ public class ExtractXerox860Files
 		System.err.println();
 	}
 
-	public static void emitIndex(FileOutputStream outFile, byte inData[], int absOffset, int track0Offset)
+	public static void emitIndex(FileOutputStream outFile, byte inData[], int absOffset, int track0Offset, int trackLen)
 	{
 		int track, sector, origSector;
 		int nextTrack, nextSector;
@@ -258,6 +262,10 @@ public class ExtractXerox860Files
 		ArrayList<Integer> visitedSectors = new ArrayList<Integer>();
 		for (int i = 18; i < 512; i += 6)
 		{
+			if (offset + i > inData.length)
+				break;
+			if (offset < 0)
+				break;
 			if (inData[offset + i] == 0)
 				break;
 			track = (UnsignedByte.intValue(inData[offset + i]));
@@ -269,7 +277,7 @@ public class ExtractXerox860Files
 			if (DEBUG)
 				System.err.print("Mapped track/sector: 0x" + UnsignedByte.toString(track) + "/0x" + UnsignedByte.toString(origSector));
 			sector = (sector - 1) * 512;
-			track = (track - 1) * 8192;
+			track = (track - 1) * trackLen;
 			if ((track + sector) > 0)
 			{
 				if (DEBUG)
@@ -285,8 +293,8 @@ public class ExtractXerox860Files
 				if (DEBUG)
 				{
 					System.err.print(" at offset 0x" + Integer.toHexString(0x1000000 | (track + sector + track0Offset)).substring(1).toUpperCase());
-					System.err.print(" Prev offset: 0x" + Integer.toHexString(0x1000000 | absOffset(prevTrack, prevSector, track0Offset)).substring(1).toUpperCase());
-					System.err.println(" Next offset: 0x" + Integer.toHexString(0x1000000 | absOffset(nextTrack, nextSector, track0Offset)).substring(1).toUpperCase());
+					System.err.print(" Prev offset: 0x" + Integer.toHexString(0x1000000 | absOffset(prevTrack, prevSector, track0Offset, trackLen)).substring(1).toUpperCase());
+					System.err.println(" Next offset: 0x" + Integer.toHexString(0x1000000 | absOffset(nextTrack, nextSector, track0Offset, trackLen)).substring(1).toUpperCase());
 					System.err.print("  That sector's ");
 					emitHeader(inData, track + sector + track0Offset);
 				}
@@ -316,7 +324,7 @@ public class ExtractXerox860Files
 					{
 						visitedSectors.add(nextOffset);
 						if (nextOffset + track0Offset < inData.length)
-							nextOffset = writeTextSector(outFile, nextOffset, inData, track0Offset, isFirst);
+							nextOffset = writeTextSector(outFile, nextOffset, inData, track0Offset, trackLen, isFirst);
 						else
 						{
 							// if (DEBUG)
@@ -344,7 +352,7 @@ public class ExtractXerox860Files
 					while (it.hasNext())
 					{
 						int tempSect = (Integer) it.next();
-						if (peekBack(inData, tempSect, track0Offset) == nextOffset)
+						if (peekBack(inData, tempSect, track0Offset, trackLen) == nextOffset)
 						{
 							nextOffset = tempSect;
 							recovered = true;
@@ -366,33 +374,33 @@ public class ExtractXerox860Files
 		}
 	}
 
-	public static int absOffset(int track, int nativeSector, int track0Offset)
+	public static int absOffset(int track, int nativeSector, int track0Offset, int trackLen)
 	{
 		if (nativeSector > 8)
 			nativeSector = nativeSector - 0x80 + 8;
 		if ((nativeSector == 0) && (track == 0))
 			return 0;
 		else
-			return ((nativeSector - 1) * 512) + ((track - 1) * 8192) + track0Offset;
+			return ((nativeSector - 1) * 512) + ((track - 1) * trackLen) + track0Offset;
 	}
 
-	public static int absOffsetFromDirectory(int big, int mid, int small, int track0Offset)
+	public static int absOffsetFromDirectory(int big, int mid, int small, int track0Offset, int trackLen)
 	{
-		int bigValue = (big - 0x40) * 131072; // 16 full tracks, 2 sides; so that's 16 * 512 * 8 * 2 (131072, or 128k)
-		int middleValue = ((mid - 0x40) / 2 * 4096);
-		int smallValue = (small - 0x41) * 512;
-		return bigValue + middleValue + smallValue + track0Offset - 8192;
+		int bigValue = (big - 0x40) * 16 * trackLen; // 16 full tracks; so that's 16 * trackLen
+		int middleValue = ((mid - 0x40) / 2 * (trackLen / 2));
+		int smallValue = (small - 0x41) * 512; // Sector within the track: 1-8 (need to thunk down to zero)
+		return bigValue + middleValue + smallValue + track0Offset - trackLen;
 	}
 
-	public static void emitDirectory(int directoryArray[], byte inData[], int length, String directory, int track0Offset)
+	public static void emitDirectory(int directoryArray[], byte inData[], int length, String directory, int track0Offset, int trackLen)
 	{
 		FileOutputStream outFile = null;
 		char ch;
 		String fileName = "", fileType = "";
-		int field = 0, chCount = 0, fileCount = 1;
+		int field = 0, chCount = 0;
 		int three = 0, two = 0, one = 0;
 		if (DEBUG)
-			System.err.println("Num: Name                 Created\tUpdated\tType\tPages\tSectors");
+			System.err.println("Name                 Created\tUpdated\tType\tPages\tSectors");
 		for (int i = 0; i < length; i++)
 		{
 			ch = (char) directoryArray[i];
@@ -408,7 +416,6 @@ public class ExtractXerox860Files
 				fileType = "";
 				if (DEBUG)
 					System.err.println("");
-				fileCount++;
 				break;
 			case 0xfd:
 				if (DEBUG)
@@ -425,15 +432,6 @@ public class ExtractXerox860Files
 				field++;
 				break;
 			default:
-				if (DEBUG && (field == 0) && (chCount == 0))
-				{
-					if (fileCount < 10)
-						System.err.print("00" + fileCount + ": ");
-					else if (fileCount < 100)
-						System.err.print("0" + fileCount + ": ");
-					else
-						System.err.print(fileCount + ": ");
-				}
 				if (field == 0)
 				{
 					// Fix up a few wild characters
@@ -478,7 +476,7 @@ public class ExtractXerox860Files
 					{
 						one = ch;
 						if (DEBUG)
-							System.err.println(" Offset: 0x" + Integer.toHexString(0x1000000 | (absOffsetFromDirectory(three, two, one, track0Offset))).substring(1).toUpperCase());
+							System.err.println(" Offset: 0x" + Integer.toHexString(0x1000000 | (absOffsetFromDirectory(three, two, one, track0Offset, trackLen))).substring(1).toUpperCase());
 						try
 						{
 							if (fileType.equals("D80"))
@@ -487,7 +485,7 @@ public class ExtractXerox860Files
 								fileType = "";
 							outFile = new FileOutputStream(directory + fileName + fileType);
 							System.err.println("Writing file " + fileName);
-							emitIndex(outFile, inData, absOffsetFromDirectory(three, two, one, track0Offset), track0Offset);
+							emitIndex(outFile, inData, absOffsetFromDirectory(three, two, one, track0Offset, trackLen), track0Offset, trackLen);
 							try
 							{
 								outFile.flush();
@@ -510,7 +508,7 @@ public class ExtractXerox860Files
 		}
 	}
 
-	public static int writeTextSector(FileOutputStream outFile, int offset, byte inData[], int track0Offset, boolean first)
+	public static int writeTextSector(FileOutputStream outFile, int offset, byte inData[], int track0Offset, int trackLen, boolean first)
 	{
 		char ch;
 		int track = 0, sector = 0, origSector;
@@ -548,11 +546,11 @@ public class ExtractXerox860Files
 					prevSector = prevOrigSector;
 				if (DEBUG)
 				{
-					System.err.println("Next track    : 0x" + UnsignedByte.toString(track) + " Sector: 0x" + UnsignedByte.toString(sector) + " Native sector: 0x" + UnsignedByte.toString(origSector) + " Next offset: 0x" + Integer.toHexString(0x1000000 | absOffset(track, origSector, track0Offset)).substring(1).toUpperCase());
-					System.err.println("Previous track: 0x" + UnsignedByte.toString(prevTrack) + " Sector: 0x" + UnsignedByte.toString(prevSector) + " Native sector: 0x" + UnsignedByte.toString(prevOrigSector) + " Prev offset: 0x" + Integer.toHexString(0x1000000 | absOffset(prevTrack, prevOrigSector, track0Offset)).substring(1).toUpperCase());
+					System.err.println("Next track    : 0x" + UnsignedByte.toString(track) + " Sector: 0x" + UnsignedByte.toString(sector) + " Native sector: 0x" + UnsignedByte.toString(origSector) + " Next offset: 0x" + Integer.toHexString(0x1000000 | absOffset(track, origSector, track0Offset, trackLen)).substring(1).toUpperCase());
+					System.err.println("Previous track: 0x" + UnsignedByte.toString(prevTrack) + " Sector: 0x" + UnsignedByte.toString(prevSector) + " Native sector: 0x" + UnsignedByte.toString(prevOrigSector) + " Prev offset: 0x" + Integer.toHexString(0x1000000 | absOffset(prevTrack, prevOrigSector, track0Offset, trackLen)).substring(1).toUpperCase());
 				}
 				sector = (sector - 1) * 512;
-				track = (track - 1) * 8192;
+				track = (track - 1) * trackLen;
 				if (first == false)
 				{
 					if (prevSector + prevTrack == 0)
@@ -564,7 +562,7 @@ public class ExtractXerox860Files
 					{
 						if (track + sector > 0)
 						{
-							int backPtr = peekBack(inData, track + sector + track0Offset, track0Offset);
+							int backPtr = peekBack(inData, track + sector + track0Offset, track0Offset, trackLen);
 							if (backPtr != offset)
 							{
 								if (DEBUG)
@@ -597,7 +595,7 @@ public class ExtractXerox860Files
 			return track + sector + track0Offset;
 	}
 
-	public static int peekBack(byte inData[], int offset, int track0Offset)
+	public static int peekBack(byte inData[], int offset, int track0Offset, int trackLen)
 	{
 		// Find this sector's previous pointer
 		int prevTrack, prevOrigSector, prevSector;
@@ -610,7 +608,7 @@ public class ExtractXerox860Files
 			else
 				prevSector = prevOrigSector;
 			prevSector = (prevSector - 1) * 512;
-			prevTrack = (prevTrack - 1) * 8192;
+			prevTrack = (prevTrack - 1) * trackLen;
 
 			return prevTrack + prevSector + track0Offset;
 		}
