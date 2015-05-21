@@ -1,13 +1,13 @@
 New for this version:
 =====================
 
-New function: TransformDirectory utility now can 'normalize' out of control filename characters 
+New function: TransformDirectory utility now can 'normalize' out-of-control filename characters 
 
 New function: ExtractXerox860Files - extract files from Xerox 860 8" disk images
 
 New transforms: Word Writer 4 for Commodore 64, Xerox 860
 
-Bug fix: "Toggles" are now reset at the start of each file when processing a directory full of files
+Bug fix: "Toggles" (%) are now reset at the start of each file when processing a directory full of files
 
 Transformenator introduction:
 =============================
@@ -23,6 +23,6 @@ You're stuck.
 Maybe that's why you're here. Transformenator can help.
 
 Invocation:
-java -jar transformenator.jar transform infile outfile
+java -jar transformenator.jar transform_name infile outfile
 
 See http://transformenator.sourceforge.net for details.
