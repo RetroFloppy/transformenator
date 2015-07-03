@@ -247,6 +247,15 @@ public class ExtractWangFiles
 					else
 						unwindDOSFile(inData, args[0]+".bin");
 				}
+				else if (inData.length >= 322560)
+				{
+					byte eyecatcherc[] = { 0x0b, 0x43, 0x61, 0x74 , 0x61 , 0x6c , 0x6f , 0x67 }; // ".Catalog" - part of the WVD specification
+					byte rangec[] = Arrays.copyOfRange(inData, 0x23000, 0x23008);
+					if (Arrays.equals(rangec, eyecatcherc))
+					{
+						seek514Files(inData);
+					}
+				}
 				else
 				{
 					System.err.println("Input file is not a known Wang format.");
@@ -291,6 +300,43 @@ public class ExtractWangFiles
 		{
 			e.printStackTrace();
 		}		
+	}
+
+	public static void seek514Files(byte[] inData)
+	{
+		/*
+		 * This is probably a WANG-ish WANG word processor
+		 */
+		int fileNo = 1;
+		String fileName = "File";
+		FileOutputStream out;
+		for (int i = 0; i < inData.length; i+= 512)
+		{
+			if ((UnsignedByte.intValue(inData[i]) == 0x86) && (UnsignedByte.intValue(inData[i+1]) == 0x32))
+			{
+				try
+				{
+					out = new FileOutputStream(fileName+fileNo);
+					System.err.println("Creating file: " + fileName+fileNo);
+					int x;
+					for (x = i; x < inData.length; x++)
+					{
+						if (inData[x] == 0x1f)
+							break;
+					}
+					byte range[] = Arrays.copyOfRange(inData, i, x);
+					out.write(range);
+					out.flush();
+					out.close();
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+				
+				fileNo++;
+			}
+		}
 	}
 
 	public static void dumpDOSPage(FileOutputStream out, byte[] inData, int pageNumber) throws IOException
