@@ -59,6 +59,8 @@ public class ExtractDisplaywriterFiles
 					debugLevel = 1;
 				else if (args[1].equalsIgnoreCase("-debug2"))
 					debugLevel = 2;
+				else if (args[1].equalsIgnoreCase("-debug3"))
+					debugLevel = 3;
 				else
 				{
 					/*
@@ -95,9 +97,7 @@ public class ExtractDisplaywriterFiles
 					}
 					System.err.println("Read " + result.length + " bytes.");
 					/*
-					 * We have the whole sheebang pulled into 'result' now. 
-					 * Now we need to find the EHL1 record, and decide how much to
-					 * clip off the beginning in order to remove the first cylinder.
+					 * We have the whole sheebang pulled into 'result' now. Now we need to find the d record, and decide how much to clip off the beginning in order to remove the first cylinder.
 					 */
 					for (int i = 0; i < result.length; i += 128)
 					{
@@ -105,7 +105,7 @@ public class ExtractDisplaywriterFiles
 						{
 							if (debugLevel == 1)
 								System.err.println("Searching, found EHL1 at raw 0x" + Integer.toHexString(i));
-							int total = UnsignedByte.intValue(result[i + 0x12],result[i+0x11]);
+							int total = UnsignedByte.intValue(result[i + 0x12], result[i + 0x11]);
 							if (debugLevel == 1)
 								System.err.println("  total EHL1 length = 0x" + Integer.toHexString(total));
 							if (total > 0)
@@ -136,6 +136,8 @@ public class ExtractDisplaywriterFiles
 						if (debugLevel == 1)
 							System.err.println("No EHL1 record found after exhaustive search.");
 					}
+					if (debugLevel == 3)
+						delta = 0;
 					inData = Arrays.copyOfRange(result, delta, result.length - delta);
 				}
 				finally
@@ -160,10 +162,12 @@ public class ExtractDisplaywriterFiles
 			 * 1) Starting with the EHL1 record, follow all records and pointers, dumping contents
 			 * 
 			 * 2) Scrape the entire disk image and dump out all records found
+			 * 
+			 * 3) Full emergency recovery: scrape the entire disk image and dump out just text records found
 			 */
-			if ((inData != null) && ((locEHL1 > -1) || (debugLevel == 2)))
+			if ((inData != null) && ((locEHL1 > -1) || (debugLevel == 2) || (debugLevel == 3)))
 			{
-				if (debugLevel == 2)
+				if ((debugLevel == 2) || (debugLevel == 3))
 				{
 					// Loop over the entire disk looking for records
 					int i = 0, j = 0;
@@ -171,7 +175,7 @@ public class ExtractDisplaywriterFiles
 					while (i < inData.length)
 					{
 						delta = i;
-						i = dumpBareRecord(inData, i);
+						i = dumpBareRecord(inData, i, debugLevel);
 						delta = i - delta; // How big was the delta?
 						j = i % 256;
 						if ((delta == 0) && (j == 0))
@@ -206,7 +210,7 @@ public class ExtractDisplaywriterFiles
 							if (getRecordEyecatcher(inData, i).equals("EHL1 (0x20)"))
 							{
 								if (debugLevel == 1)
-									System.err.println("Found an EHL1 record at offset 0x"+Integer.toHexString(i)+".  This is probably a bad thing.");
+									System.err.println("Found an EHL1 record at offset 0x" + Integer.toHexString(i) + ".  This is probably a bad thing.");
 								offset = i;
 								break;
 							}
@@ -291,7 +295,7 @@ public class ExtractDisplaywriterFiles
 		int recLen = UnsignedByte.intValue(inData[offset + 0]) * 256 + UnsignedByte.intValue(inData[offset + 1]);
 		if (!ec.equals("----"))
 		{
-			if (debugLevel > 0)
+			if ((debugLevel == 1) || (debugLevel == 2))
 			{
 				System.err.print("0x" + Integer.toHexString(0x1000000 | offset).substring(1) + ": " + ec);
 				System.err.println(" with length: 0x" + Integer.toHexString(0x10000 | UnsignedByte.intValue(inData[offset + 0]) * 256 + UnsignedByte.intValue(inData[offset + 1])).substring(1));
@@ -381,7 +385,10 @@ public class ExtractDisplaywriterFiles
 			{
 				if (debugLevel > 0)
 				{
-					System.err.println("  Text data:");
+					if ((debugLevel == 1) || (debugLevel == 2))
+					{
+						System.err.println("  Text data:");
+					}
 					System.err.println(EbcdicUtil.toAscii(inData, offset + 5, recLen - 5).trim());
 				}
 				else
@@ -414,27 +421,34 @@ public class ExtractDisplaywriterFiles
 		return ret;
 	}
 
-	public static int dumpBareRecord(byte inData[], int offset)
+	public static int dumpBareRecord(byte inData[], int offset, int debugLevel)
 	{
 		String ec = getRecordEyecatcher(inData, offset);
 		int recLen = UnsignedByte.intValue(inData[offset + 0]) * 256 + UnsignedByte.intValue(inData[offset + 1]);
 		if (!ec.equals("----"))
 		{
-			emitRecord(inData, offset, false, 2);
+			if ((debugLevel == 2) || ((debugLevel == 3) && (ec.equals("TEXT (0xe8)"))))
+				emitRecord(inData, offset, false, debugLevel);
 			offset += recLen;
 		}
 		else
 		{
-			System.err.print("0x" + Integer.toHexString(0x1000000 | offset).substring(1) + ": " + ec);
+			if (debugLevel == 2)
+			{
+				System.err.print("0x" + Integer.toHexString(0x1000000 | offset).substring(1) + ": " + ec);
+			}
 			// No known type... check for zero-ness
 			int delta = offset % 256;
 			if (delta > 0)
 			{
 				// "next" length is zero... so skip to the end of this sector
 				offset += (256 - delta);
-				System.err.println(" (----)");
-				// Want to see the data in this sector? Uncomment the following:
-				// System.err.println(EbcdicUtil.toAscii(inData, offset, 256 - delta));
+				if (debugLevel == 2)
+				{
+					System.err.println(" (----)");
+					// Want to see the data in this sector? Uncomment the following:
+					// System.err.println(EbcdicUtil.toAscii(inData, offset, 256 - delta));
+				}
 			}
 			else
 			{
@@ -447,10 +461,13 @@ public class ExtractDisplaywriterFiles
 						System.err.println(" Found non-zero data.  This is probably bad.");
 					}
 				}
-				if (!foundOne)
-					System.err.print(" (----)");
-				System.err.println();
-				System.err.println(EbcdicUtil.toAscii(inData, offset, 256 - delta));
+				if (debugLevel == 2)
+				{
+					if (!foundOne)
+						System.err.print(" (----)");
+					System.err.println();
+					System.err.println(EbcdicUtil.toAscii(inData, offset, 256 - delta));
+				}
 			}
 		}
 		return offset;
@@ -479,7 +496,7 @@ public class ExtractDisplaywriterFiles
 		{
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	public static void help()
