@@ -98,17 +98,17 @@ public class ExtractHPFiles
 						baseDirFile = new File("." + File.separator + args[1]);
 					}
 					// System.out.println("Making directory: ["+baseDirFile+"]");
-					baseDirFile.mkdir();
+					baseDirFile.mkdirs();
 					outputDirectory = args[1];
 				}
 				else
 				{
 					if (file.getName().endsWith(".img"))
 					{
-						// System.out.println("Making directory: ["+baseDirFile+"]");
+						// System.out.println("Making image directory: ["+"." + File.separator + file.getName().substring(0, file.getName().length() - 4)+"]");
 						outputDirectory = "." + File.separator + file.getName().substring(0, file.getName().length() - 4);
 						File baseDirFile = new File(outputDirectory);
-						baseDirFile.mkdir();
+						baseDirFile.mkdirs();
 					}
 				}
 				/*
@@ -134,6 +134,28 @@ public class ExtractHPFiles
 							else
 								break;
 						}
+						// Find the end-of-file marker, trim down to that length
+						boolean foundEOF = false;
+						for (j = fileStart+fileLength-1; j > fileStart; j--)
+						{
+							// System.err.println(Integer.toHexString(UnsignedByte.intValue(inData[j])));
+							if (UnsignedByte.intValue(inData[j]) == 0xff)
+							{
+								continue;
+							}
+							if (UnsignedByte.intValue(inData[j]) == 0xef)
+							{
+								// System.err.println("Found a trailing 0xef at "+(j-fileStart));
+								foundEOF = true;
+								break;
+							}
+							else
+							{
+								break;
+							}
+						}
+						if (foundEOF)
+							fileLength = j-fileStart;
 						// System.out.println("Found file: "+filename+" Start: 0x"+Integer.toHexString(fileStart)+" End: 0x"+Integer.toHexString(fileStart+fileLength-1)+" Length: 0x"+Integer.toHexString(fileLength));
 						filename = filename.trim();
 						FileOutputStream out;
