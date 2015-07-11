@@ -3,7 +3,11 @@ New for this version:
 
 New function: TransformDirectory utility now can 'normalize' out-of-control filename characters 
 
-New function: ExtractXerox860Files - extract files from Xerox 860 8" disk images
+New extraction utility functions:
+  ExtractCPTFiles - extract files from CPT word processor disk image
+  ExtractHPFiles - extract files from HP instrument (not LIF) disk image
+  ExtractXerox860Files - extract files from Xerox 860 8" disk image
+  transformutil.bat/.sh -simplifies the invocation of all utilities 
 
 New transforms: Word Writer 4 for Commodore 64, Xerox 860
 

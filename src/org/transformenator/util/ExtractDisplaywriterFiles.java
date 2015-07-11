@@ -49,7 +49,7 @@ public class ExtractDisplaywriterFiles
 	public static void main(java.lang.String[] args)
 	{
 		baseName = "";
-		int debugLevel = 0; // Debug levels: 0 = none; 1 = follow EHL1 chain; 2 = dump all sectors of disk image
+		int debugLevel = 0; // Debug levels: 0 = none; 1 = follow EHL1 chain; 2 = dump all sectors of disk image; 3 = scan entire disk for text records
 		if ((args.length == 1) || (args.length == 2))
 		{
 			byte[] inData = null;
@@ -504,6 +504,6 @@ public class ExtractDisplaywriterFiles
 		System.err.println();
 		System.err.println("ExtractDisplaywriterFiles " + Version.VersionString + " - Extract files from Displaywriter word processor disk images.");
 		System.err.println();
-		System.err.println("Usage: ExtractDisplaywriterFiles infile [out_directory]|[-debug1]|[-debug2]");
+		System.err.println("Usage: ExtractDisplaywriterFiles infile [out_directory]|[-debug1]|[-debug2]|[-debug3]");
 	}
 }
