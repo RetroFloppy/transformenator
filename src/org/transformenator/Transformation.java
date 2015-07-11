@@ -1037,10 +1037,12 @@ public class Transformation
 				if (listOfFiles != null)
 				{
 					int offset = path.toString().length() + 1;
-					System.err.println("Available internal transform files:");
+					System.err.println("Transformenator utility functions available:");
 					for (int i = 0; i < listOfFiles.length; i++)
 					{
-						System.err.println("  " + listOfFiles[i].toString().substring(offset));
+						String finalName = listOfFiles[i].toString().substring(offset);
+						if ((finalName.indexOf('$') == -1) && (!finalName.equals("TransformUtilities.class")))
+							System.err.println("  " + finalName.substring(0, finalName.length() - 6));
 					}
 				}
 			}
