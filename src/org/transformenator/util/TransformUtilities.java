@@ -29,7 +29,7 @@ public class TransformUtilities
 	public static void main(String[] args)
 	{
 		System.err.println();
-		System.err.println("TransformUtilities "+Version.VersionString+" - perform transformation utility functions.");
+		System.err.println("TransformUtilities " + Version.VersionString + " - perform transformation utility functions.");
 		System.err.println();
 		System.err.println("Usage: TransformUtilities function parameter [parameter...]");
 		System.err.println();

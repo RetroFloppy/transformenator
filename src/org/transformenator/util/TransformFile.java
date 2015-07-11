@@ -29,7 +29,7 @@ public class TransformFile
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("TransformFile "+Version.VersionString+" - perform transformation operations on binary files.");
+		System.err.println("TransformFile " + Version.VersionString + " - perform transformation operations on binary files.");
 		System.err.println();
 		System.err.println("Usage: TransformFile transform infile outfile");
 		System.err.println();

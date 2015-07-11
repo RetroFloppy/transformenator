@@ -141,14 +141,14 @@ public class Transformation
 					 */
 					for (int i = 0x80a; i < 0xa00; i += 2)
 					{
-						int idx = UnsignedByte.intValue(inData[i],inData[i + 1]);
+						int idx = UnsignedByte.intValue(inData[i], inData[i + 1]);
 						if (idx < 32768)
 						{
 							// System.err.println("idx: "+idx);
-							if (((idx*512) + 1) < inData.length)
+							if (((idx * 512) + 1) < inData.length)
 							{
 								// Chunks may start with a pointer to skip over blank space
-								int offset = UnsignedByte.intValue(inData[(idx * 512)],inData[(idx * 512) + 1]);
+								int offset = UnsignedByte.intValue(inData[(idx * 512)], inData[(idx * 512) + 1]);
 								// Pull out the data in the chunk
 								for (int j = offset + 4; j < 0x200; j++)
 								{
@@ -156,7 +156,7 @@ public class Transformation
 								}
 							}
 							// else
-								// System.err.println("Found an index out of bounds: "+idx);
+							// System.err.println("Found an index out of bounds: "+idx);
 						}
 					}
 					inData = new byte[newBufCursor];
@@ -178,38 +178,31 @@ public class Transformation
 					int newBufCursor = 0;
 					for (int i = 0x6b; i < 0x200; i += 7)
 					{
-						if (	((UnsignedByte.intValue(inData[i]) == 0xaa) &&
-								(UnsignedByte.intValue(inData[i+1]) == 0xaa) &&
-								(UnsignedByte.intValue(inData[i+2]) == 0xaa)) ||
-								((UnsignedByte.intValue(inData[i]) == 0x00) &&
-								(UnsignedByte.intValue(inData[i+1]) > 0x00) &&
-								(UnsignedByte.intValue(inData[i+2]) == 0x00)))
+						if (((UnsignedByte.intValue(inData[i]) == 0xaa) && (UnsignedByte.intValue(inData[i + 1]) == 0xaa) && (UnsignedByte.intValue(inData[i + 2]) == 0xaa)) || ((UnsignedByte.intValue(inData[i]) == 0x00) && (UnsignedByte.intValue(inData[i + 1]) > 0x00) && (UnsignedByte.intValue(inData[i + 2]) == 0x00)))
 						{
-							int idx = UnsignedByte.intValue(inData[i+4],inData[i+3]);
-							int len = UnsignedByte.intValue(inData[i+6],inData[i+5]) + 6;
+							int idx = UnsignedByte.intValue(inData[i + 4], inData[i + 3]);
+							int len = UnsignedByte.intValue(inData[i + 6], inData[i + 5]) + 6;
 							// System.err.println("idx: 0x"+UnsignedByte.toString(idx)+" length: "+len);
 							if (idx < 32768)
 							{
-								if (((idx*512) + 1) < inData.length)
+								if (((idx * 512) + 1) < inData.length)
 								{
 									// System.err.println("Pulling data from "+idx*512+" to "+((idx*512)+len)+".");
 									/*
 									 * Need to hunt for the SOT.  It will be 3 bytes: 0xe80700. 
 									 */
 									int offset = 0;
-									for (int j = 0; j<0xff;j++)
+									for (int j = 0; j < 0xff; j++)
 									{
-										if (	(UnsignedByte.intValue(inData[(idx * 512) + j + 0]) == 0xe8) &&
-												(UnsignedByte.intValue(inData[(idx * 512) + j + 1]) == 0x07) &&
-												(UnsignedByte.intValue(inData[(idx * 512) + j + 2]) == 0x00))
+										if ((UnsignedByte.intValue(inData[(idx * 512) + j + 0]) == 0xe8) && (UnsignedByte.intValue(inData[(idx * 512) + j + 1]) == 0x07) && (UnsignedByte.intValue(inData[(idx * 512) + j + 2]) == 0x00))
 										{
-											offset = j+3;
+											offset = j + 3;
 											// System.err.println("Found start of text at offset 0x"+UnsignedByte.toString(offset));
 										}
 									}
 									if (offset == 0)
 									{
-										System.err.println("No SOT found for index 0x"+UnsignedByte.toString(idx)+".");
+										System.err.println("No SOT found for index 0x" + UnsignedByte.toString(idx) + ".");
 										continue;
 									}
 									// Pull out the data in the chunk
@@ -219,7 +212,7 @@ public class Transformation
 									}
 								}
 								else
-									System.err.println("Found an index out of bounds: "+idx);
+									System.err.println("Found an index out of bounds: " + idx);
 							}
 						}
 					}
@@ -240,9 +233,9 @@ public class Transformation
 					byte[] newBuf = new byte[inData.length];
 					int newBufCursor = 0;
 					boolean found9Yet = false;
-					for (int indexIndex = 0x400;indexIndex<0x500;indexIndex+=2)
+					for (int indexIndex = 0x400; indexIndex < 0x500; indexIndex += 2)
 					{
-						int indexStart = UnsignedByte.intValue(inData[indexIndex],inData[indexIndex+1]);
+						int indexStart = UnsignedByte.intValue(inData[indexIndex], inData[indexIndex + 1]);
 						// System.out.println("Index start value: "+indexStart);
 						if ((indexStart >= 65520) || (indexStart < 9))
 							continue;
@@ -252,9 +245,9 @@ public class Transformation
 							continue;
 						indexStart *= 512;
 						// System.err.println("Found index table 0x"+UnsignedByte.toString(inData[indexIndex+1])+UnsignedByte.toString(inData[indexIndex])+" at "+indexStart);
-						for (int i = indexStart; i < indexStart+256; i += 2)
+						for (int i = indexStart; i < indexStart + 256; i += 2)
 						{
-							int block = UnsignedByte.intValue(inData[i],inData[i+1]);
+							int block = UnsignedByte.intValue(inData[i], inData[i + 1]);
 							int index = block * 512;
 							// System.err.println("block: 0x"+UnsignedByte.toString(inData[i+1])+UnsignedByte.toString(inData[i])
 							//	+" at file offset: 0x"+UnsignedByte.toString(UnsignedByte.hiByte(index))+UnsignedByte.toString(UnsignedByte.loByte(index)));
@@ -266,18 +259,18 @@ public class Transformation
 								{
 									int j;
 									// Find out where the block really ends - remove trailing zeroes
-									for (j = index+511; j >= index; j--)
+									for (j = index + 511; j >= index; j--)
 										if (inData[j] != 0x00)
 											break;
 									// System.err.println("Found end of chunk at "+j+", or length "+(j-index)+".");
 									// Pull out the data in the chunk
-									for (int k = 0; k < (j-index+1); k++)
+									for (int k = 0; k < (j - index + 1); k++)
 									{
 										newBuf[newBufCursor++] = inData[index + k];
 									}
 								}
 								else
-									System.err.println("Found an index out of bounds: "+block);
+									System.err.println("Found an index out of bounds: " + block);
 							}
 						}
 					}
@@ -287,7 +280,7 @@ public class Transformation
 					// System.err.println("Data length after de-indexing: "+inData.length);
 				}
 				// System.err.println("Trimming leading "+trimLeading+" and "+ trimTrailing +" trailing bytes.");
-				trimmedEnd = inData.length-trimTrailing;
+				trimmedEnd = inData.length - trimTrailing;
 				// Clean out the toggle states
 				for (int i = 0; i < leftSide.size(); i++) // For each left specification
 				{
@@ -333,10 +326,9 @@ public class Transformation
 							 * Get the directory parent of the specified file and use that 
 							 * to re-generate a new file path with the newly discovered filename.
 							 */
-							outFile = tmpOutFile.getAbsoluteFile().getParentFile().toString() +
-									File.separator + valdocsName + "." + fileSuffix;
+							outFile = tmpOutFile.getAbsoluteFile().getParentFile().toString() + File.separator + valdocsName + "." + fileSuffix;
 						}
-						System.err.println("Creating file: \"" + outFile+"\"");
+						System.err.println("Creating file: \"" + outFile + "\"");
 					}
 					FileOutputStream out = new FileOutputStream(outFile);
 					if (prefix != null)
@@ -436,33 +428,30 @@ public class Transformation
 				String rightTemp2 = "";
 				byte[] rightBytes = null;
 				// System.err.println("Splits on '=': "+equalsSplits.length+" splits on '#': "+hashSplits.length+" splits on '%': "+toggleSplits.length+"\n line.indexOf('='): "+line.indexOf("=")+ " line.indexOf('#'): "+line.indexOf("#")+ " line.indexOf('%'): "+line.indexOf("%"));
-				if ((line.indexOf("%") > 0 && line.indexOf("=") < 0 && line.indexOf("#") < 0) || 
-					(line.indexOf("%") > 0 && (line.indexOf("%") < line.indexOf("=")) && (line.indexOf("%") < line.indexOf("#"))))
+				if ((line.indexOf("%") > 0 && line.indexOf("=") < 0 && line.indexOf("#") < 0) || (line.indexOf("%") > 0 && (line.indexOf("%") < line.indexOf("=")) && (line.indexOf("%") < line.indexOf("#"))))
 				{
 					// System.err.println("DEBUG This is a toggle production.");
 					st = new StringTokenizer(toggleSplits[0]);
 					result = toggleSplits;
-					newRegSpec.backtrack = false;					
-					newRegSpec.toggle = true;					
+					newRegSpec.backtrack = false;
+					newRegSpec.toggle = true;
 				}
-				else if ((line.indexOf("=") > 0 && line.indexOf("%") < 0 && line.indexOf("#") < 0) || 
-					(line.indexOf("=") > 0 && (line.indexOf("=") < line.indexOf("%")) && (line.indexOf("=") < line.indexOf("#"))))
+				else if ((line.indexOf("=") > 0 && line.indexOf("%") < 0 && line.indexOf("#") < 0) || (line.indexOf("=") > 0 && (line.indexOf("=") < line.indexOf("%")) && (line.indexOf("=") < line.indexOf("#"))))
 				{
 					// System.err.println("DEBUG This is an equals production.");
 					st = new StringTokenizer(equalsSplits[0]);
 					result = equalsSplits;
 					newRegSpec.backtrack = false;
-					newRegSpec.toggle = false;					
+					newRegSpec.toggle = false;
 				}
-				else if ((line.indexOf("#") > 0 && line.indexOf("=") < 0 && line.indexOf("%") < 0) || 
-					(line.indexOf("#") > 0 && (line.indexOf("#") < line.indexOf("=")) && (line.indexOf("#") < line.indexOf("%"))))
-						
+				else if ((line.indexOf("#") > 0 && line.indexOf("=") < 0 && line.indexOf("%") < 0) || (line.indexOf("#") > 0 && (line.indexOf("#") < line.indexOf("=")) && (line.indexOf("#") < line.indexOf("%"))))
+
 				{
 					// System.err.println("DEBUG This is a hash production.");
 					st = new StringTokenizer(hashSplits[0]);
 					result = hashSplits;
 					newRegSpec.backtrack = true;
-					newRegSpec.toggle = false;					
+					newRegSpec.toggle = false;
 				}
 				else
 				{
@@ -470,7 +459,7 @@ public class Transformation
 					st = new StringTokenizer(equalsSplits[0]);
 					result = equalsSplits;
 					newRegSpec.backtrack = false;
-					newRegSpec.toggle = false;					
+					newRegSpec.toggle = false;
 				}
 				if (st != null && st.hasMoreTokens())
 				{
@@ -565,18 +554,19 @@ public class Transformation
 				{
 					if (result == equalsSplits) // We are using '=' as separator
 					{
-						rightTemp1 = line.substring(line.indexOf("=")+1);
+						rightTemp1 = line.substring(line.indexOf("=") + 1);
 					}
 					else if (result == hashSplits) // We are using '#' as separator
 					{
-						rightTemp1 = line.substring(line.indexOf("#")+1);
+						rightTemp1 = line.substring(line.indexOf("#") + 1);
 					}
-					else // We are using '%' as separator
+					else
+					// We are using '%' as separator
 					{
-						String rightTemp = line.substring(line.indexOf("%")+1);
+						String rightTemp = line.substring(line.indexOf("%") + 1);
 						// System.err.println("DEBUG toggling... right side is: "+rightTemp);
-						rightTemp1 = rightTemp.substring(1,rightTemp.indexOf(","));
-						rightTemp2 = rightTemp.substring(rightTemp.indexOf(",")+1);
+						rightTemp1 = rightTemp.substring(1, rightTemp.indexOf(","));
+						rightTemp2 = rightTemp.substring(rightTemp.indexOf(",") + 1);
 						// System.err.println("DEBUG Toggle on : ["+rightTemp1+"]");
 						// System.err.println("DEBUG Toggle off: ["+rightTemp2+"]");
 					}
@@ -638,7 +628,7 @@ public class Transformation
 						if (leftTemp.equals("head"))
 						{
 							rightTemp1 = result[1];
-							for (int j = 2; j < result.length;j++)
+							for (int j = 2; j < result.length; j++)
 							{
 								// System.err.println("DEBUG Token: ["+result[j]+"]");
 								rightTemp1 = rightTemp1 + "=" + result[j];
@@ -717,6 +707,7 @@ public class Transformation
 			ex.printStackTrace();
 		}
 	}
+
 	public byte[] asBytes(String str)
 	{
 		if ((str.length() % 2) == 1)
@@ -857,7 +848,7 @@ public class Transformation
 								byte newInData[] = new byte[trimmedEnd - calc];
 								for (int q = 0; q < trimmedEnd; q++)
 								{
-									newInData[q+bump] = inData[q];
+									newInData[q + bump] = inData[q];
 								}
 								inData = newInData;
 								offset += replRight.length - compLeft.length;
@@ -880,7 +871,8 @@ public class Transformation
 							{
 								if (currentSpec.toggleState == false) // Toggle state was "false"
 									outBuf.write(replRight); // Write out "on" value
-								else // Toggle state was "true"
+								else
+									// Toggle state was "true"
 									outBuf.write(replRightToggle); // Write out "off" value
 								currentSpec.toggleState = !currentSpec.toggleState; // Toggle the state
 								// System.err.println("DEBUG currentSpec id: "+currentSpec.id+" ("+temp1+"),("+temp2+") toggleState: "+currentSpec.toggleState);
@@ -942,9 +934,7 @@ public class Transformation
 			bytes[j] = digits[i];
 			j++;
 		}
-		result = (bytes[0] & 0xFF) | (bytes[1] & 0xFF) * 256
-				| (bytes[2] & 0xFF) * 512 | (bytes[3] & 0xFF) * 1024
-				| (bytes[4] & 0xFF) * 2048 | (bytes[5] & 0xFF) * 4096;
+		result = (bytes[0] & 0xFF) | (bytes[1] & 0xFF) * 256 | (bytes[2] & 0xFF) * 512 | (bytes[3] & 0xFF) * 1024 | (bytes[4] & 0xFF) * 2048 | (bytes[5] & 0xFF) * 4096;
 		return result;
 	}
 
@@ -993,10 +983,10 @@ public class Transformation
 				{
 					int offset = path.toString().length() + 1;
 					System.err.println("Available internal transform files:");
-				        for (int i = 0; i < listOfFiles.length; i++)
-				        {
+					for (int i = 0; i < listOfFiles.length; i++)
+					{
 						System.err.println("  " + listOfFiles[i].toString().substring(offset));
-				        }
+					}
 				}
 			}
 		}
@@ -1048,10 +1038,10 @@ public class Transformation
 				{
 					int offset = path.toString().length() + 1;
 					System.err.println("Available internal transform files:");
-				        for (int i = 0; i < listOfFiles.length; i++)
-				        {
+					for (int i = 0; i < listOfFiles.length; i++)
+					{
 						System.err.println("  " + listOfFiles[i].toString().substring(offset));
-				        }
+					}
 				}
 			}
 		}

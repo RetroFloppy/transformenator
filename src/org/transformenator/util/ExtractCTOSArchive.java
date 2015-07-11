@@ -104,20 +104,18 @@ public class ExtractCTOSArchive
 					File baseDirFile = new File(args[1]);
 					if (!baseDirFile.isAbsolute())
 					{
-						baseDirFile = new File("./"+args[1]);
+						baseDirFile = new File("./" + args[1]);
 					}
 					baseDirFile.mkdir();
 				}
 				/*
-				 * We have a disk's worth of data.  Start hunting for start-of-file
-				 * indices at the beginning of the disk.
+				 * We have a disk's worth of data. Start hunting for
+				 * start-of-file indices at the beginning of the disk.
 				 */
 				for (indexSearch = 5; indexSearch < inData.length - 7; indexSearch++)
 				{
-					if (/*(inData[indexSearch + 0] == 0x00) &&*/ 
-							(inData[indexSearch + 1] == 0x0c) &&
-							(inData[indexSearch + 2] == 0x01) &&
-							(inData[indexSearch + 3] == 0x10))
+					if (/* (inData[indexSearch + 0] == 0x00) && */
+					(inData[indexSearch + 1] == 0x0c) && (inData[indexSearch + 2] == 0x01) && (inData[indexSearch + 3] == 0x10))
 					{
 						// System.out.println("Found a file index at "+indexSearch+" ...");
 						// byte 12 is the length of the filename
@@ -147,10 +145,12 @@ public class ExtractCTOSArchive
 							do
 							{
 								/*
-								 * Search the entire disk for file segments from the beginning
-								 * for each one, since they aren't necessarily on disk in order.
-								 * This of course could be sped/smartened up by finding them all
-								 * in order with one pass and keeping a table.
+								 * Search the entire disk for file segments from
+								 * the beginning for each one, since they aren't
+								 * necessarily on disk in order. This of course
+								 * could be sped/smartened up by finding them
+								 * all in order with one pass and keeping a
+								 * table.
 								 */
 								stillFinding = false;
 								fileIndex[2]++;
@@ -158,14 +158,11 @@ public class ExtractCTOSArchive
 									fileIndex[3]++;
 								for (int segmentSearch = 5; segmentSearch < inData.length - 7; segmentSearch++)
 								{
-									if (/*(inData[segmentSearch + 0] == 0x00) &&*/
-											(inData[segmentSearch + 1] == 0x0c) &&
-											(inData[segmentSearch + 2] == 0x02) &&
-											(inData[segmentSearch + 3] == 0x10) &&
-											(inData[segmentSearch + 4] == fileIndex[0]) &&
-											(inData[segmentSearch + 5] == fileIndex[1]) &&
-											(inData[segmentSearch + 6] == fileIndex[2]) &&
-											(inData[segmentSearch + 7] == fileIndex[3]))
+									if (/*
+										 * (inData[segmentSearch + 0] == 0x00)
+										 * &&
+										 */
+									(inData[segmentSearch + 1] == 0x0c) && (inData[segmentSearch + 2] == 0x02) && (inData[segmentSearch + 3] == 0x10) && (inData[segmentSearch + 4] == fileIndex[0]) && (inData[segmentSearch + 5] == fileIndex[1]) && (inData[segmentSearch + 6] == fileIndex[2]) && (inData[segmentSearch + 7] == fileIndex[3]))
 									{
 										// System.out.println("Found a segment at "+segmentSearch);
 										byte range[] = Arrays.copyOfRange(inData, segmentSearch + 8, segmentSearch + 8 + 512);
@@ -176,7 +173,7 @@ public class ExtractCTOSArchive
 								//if (stillFinding == false)
 								//	System.out.println("Stopped finding indexes at "+(fileIndex[2]+(fileIndex[3]*256)));
 							} while (stillFinding);
-							System.out.println("Extracted file "+fn);
+							System.out.println("Extracted file " + fn);
 							out.flush();
 							out.close();
 						}
@@ -199,7 +196,7 @@ public class ExtractCTOSArchive
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractCTOSArchive "+Version.VersionString+" - Extract files from CTOS archives.");
+		System.err.println("ExtractCTOSArchive " + Version.VersionString + " - Extract files from CTOS archives.");
 		System.err.println();
 		System.err.println("Usage: ExtractCTOSArchive infile [out_directory]");
 	}

@@ -113,7 +113,8 @@ public class RevealValdocsEntries
 	}
 
 	/**
-	 * isValdocsFile - determine if a directory entry is likely to be a Valdocs file
+	 * isValdocsFile - determine if a directory entry is likely to be a Valdocs
+	 * file
 	 */
 	public static boolean isValdocsFile(byte inData[], int offset)
 	{
@@ -160,7 +161,7 @@ public class RevealValdocsEntries
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("RevealValdocsEntries "+Version.VersionString+" - un-hide CP/M directory entries of Valdocs files in disk image files.");
+		System.err.println("RevealValdocsEntries " + Version.VersionString + " - un-hide CP/M directory entries of Valdocs files in disk image files.");
 		System.err.println();
 		System.err.println("Usage: RevealValdocsEntries infile outfile");
 	}

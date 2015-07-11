@@ -96,7 +96,7 @@ public class ExtractSeawellFiles
 					File baseDirFile = new File(args[1]);
 					if (!baseDirFile.isAbsolute())
 					{
-						baseDirFile = new File("."+File.separator+args[1]);
+						baseDirFile = new File("." + File.separator + args[1]);
 					}
 					// System.out.println("Making directory: ["+baseDirFile+"]");
 					baseDirFile.mkdir();
@@ -111,23 +111,23 @@ public class ExtractSeawellFiles
 				 * bytes 0x22-0x23: Track, sector of the index entry
 				 *
 				 */
-				for (int i = 0x3de00; i < inData.length; i+=35)
+				for (int i = 0x3de00; i < inData.length; i += 35)
 				{
 					String filename = "";
-					if (inData[i+16] != 0x00)
+					if (inData[i + 16] != 0x00)
 					{
 						int j;
 						for (j = 0; j < 18; j++)
 						{
-							if (inData[j+i+16] != 0x00)
+							if (inData[j + i + 16] != 0x00)
 							{
-								filename += (char) inData[j+i+16];
+								filename += (char) inData[j + i + 16];
 							}
 							else
 								break;
 						}
 						// System.out.println("Found file: "+filename);
-						int indexEntry = (UnsignedByte.intValue(inData[i+33]))*13312 + (UnsignedByte.intValue(inData[i+34])-1)*256;
+						int indexEntry = (UnsignedByte.intValue(inData[i + 33])) * 13312 + (UnsignedByte.intValue(inData[i + 34]) - 1) * 256;
 						/*
 						 * Now pull up the index entry for that file
 						 *  
@@ -141,7 +141,7 @@ public class ExtractSeawellFiles
 						 * We currently only look for two chains, as no file was found that had more than that.
 						 *
 						 */
-						if ((inData[indexEntry+8] == 0x34) && (inData[indexEntry+9] == 0x00))
+						if ((inData[indexEntry + 8] == 0x34) && (inData[indexEntry + 9] == 0x00))
 						{
 							byte fnb[];
 							/*
@@ -151,14 +151,14 @@ public class ExtractSeawellFiles
 							for (int k = 8; k < 20; k++)
 								System.out.print(UnsignedByte.toString(inData[indexEntry+k]));
 							*/
-							int dataAddr1 = (UnsignedByte.intValue(inData[indexEntry+0x0a]))*13312 + (UnsignedByte.intValue(inData[indexEntry+0x0b])-1)*256;
-							int dataLen1 = inData[indexEntry+0x0c]*256;
+							int dataAddr1 = (UnsignedByte.intValue(inData[indexEntry + 0x0a])) * 13312 + (UnsignedByte.intValue(inData[indexEntry + 0x0b]) - 1) * 256;
+							int dataLen1 = inData[indexEntry + 0x0c] * 256;
 							int dataAddr2;
-							if (inData[indexEntry+0x0e] == 0x00)
+							if (inData[indexEntry + 0x0e] == 0x00)
 								dataAddr2 = 0;
 							else
-								dataAddr2 = (UnsignedByte.intValue(inData[indexEntry+0x0d]))*13312 + (UnsignedByte.intValue(inData[indexEntry+0x0e])-1)*256;
-							int dataLen2 = inData[indexEntry+0x0f]*256;
+								dataAddr2 = (UnsignedByte.intValue(inData[indexEntry + 0x0d])) * 13312 + (UnsignedByte.intValue(inData[indexEntry + 0x0e]) - 1) * 256;
+							int dataLen2 = inData[indexEntry + 0x0f] * 256;
 							/*
 							System.out.println();
 							System.out.println("Data Add1: 0x"+Integer.toHexString(0x1000000 | dataAddr1).substring(1).toUpperCase()+" length: 0x"+ Integer.toHexString(0x10000 | dataLen1).substring(1).toUpperCase());
@@ -168,7 +168,7 @@ public class ExtractSeawellFiles
 							*/
 							FileOutputStream out;
 							// Copy data from first sector chain
-							fnb = Arrays.copyOfRange(inData, dataAddr1, dataAddr1+dataLen1);
+							fnb = Arrays.copyOfRange(inData, dataAddr1, dataAddr1 + dataLen1);
 							for (j = fnb.length - 1; j > 0; j--)
 							{
 								if (fnb[j] != 0x00)
@@ -193,7 +193,7 @@ public class ExtractSeawellFiles
 								if (dataLen2 > 0)
 								{
 									// Copy data from second sector chain, if one exists
-									fnb = Arrays.copyOfRange(inData, dataAddr2, dataAddr2+dataLen2);
+									fnb = Arrays.copyOfRange(inData, dataAddr2, dataAddr2 + dataLen2);
 									for (j = fnb.length - 1; j > 0; j--)
 									{
 										if (fnb[j] != 0x00)
@@ -216,7 +216,8 @@ public class ExtractSeawellFiles
 						}
 						// else System.out.println(" tag byte at index block: 0x"+UnsignedByte.toString(inData[indexEntry+8]));
 					}
-					else break;
+					else
+						break;
 				}
 			}
 		}
@@ -230,7 +231,7 @@ public class ExtractSeawellFiles
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractSeawellFiles "+Version.VersionString+" - Extract files from Seawell disk images.");
+		System.err.println("ExtractSeawellFiles " + Version.VersionString + " - Extract files from Seawell disk images.");
 		System.err.println();
 		System.err.println("Usage: ExtractSeawellFiles infile [out_directory]");
 	}

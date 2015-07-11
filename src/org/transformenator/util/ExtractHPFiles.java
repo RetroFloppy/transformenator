@@ -112,9 +112,13 @@ public class ExtractHPFiles
 					}
 				}
 				/*
-				 * Catalog starts on track 0, second sector and stretches to the end of the track.
+				 * Catalog starts on track 0, second sector and stretches to the
+				 * end of the track.
 				 * 
-				 * Catalog entries are 32 (0x20) bytes long; stuff we know/care about: bytes 0x00-0x0a: Filename (space padded) bytes 0x0e-0x0f: File start (in sectors) bytes 0x12-0x13: File length (in sectors)
+				 * Catalog entries are 32 (0x20) bytes long; stuff we know/care
+				 * about: bytes 0x00-0x0a: Filename (space padded) bytes
+				 * 0x0e-0x0f: File start (in sectors) bytes 0x12-0x13: File
+				 * length (in sectors)
 				 */
 				int fileStart = 0, fileLength = 0;
 				for (int i = 0x0200; i < 0x1000; i += 0x20)
@@ -136,7 +140,7 @@ public class ExtractHPFiles
 						}
 						// Find the end-of-file marker, trim down to that length
 						boolean foundEOF = false;
-						for (j = fileStart+fileLength-1; j > fileStart; j--)
+						for (j = fileStart + fileLength - 1; j > fileStart; j--)
 						{
 							// System.err.println(Integer.toHexString(UnsignedByte.intValue(inData[j])));
 							if (UnsignedByte.intValue(inData[j]) == 0xff)
@@ -155,7 +159,7 @@ public class ExtractHPFiles
 							}
 						}
 						if (foundEOF)
-							fileLength = j-fileStart;
+							fileLength = j - fileStart;
 						// System.out.println("Found file: "+filename+" Start: 0x"+Integer.toHexString(fileStart)+" End: 0x"+Integer.toHexString(fileStart+fileLength-1)+" Length: 0x"+Integer.toHexString(fileLength));
 						filename = filename.trim();
 						FileOutputStream out;
@@ -171,7 +175,7 @@ public class ExtractHPFiles
 								out.close();
 							}
 							else
-								System.err.println("Error: file "+fullname+" would exceed the capacity of the disk image.");
+								System.err.println("Error: file " + fullname + " would exceed the capacity of the disk image.");
 						}
 						catch (IOException io)
 						{

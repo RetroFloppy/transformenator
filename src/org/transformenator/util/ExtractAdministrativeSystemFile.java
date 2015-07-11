@@ -108,24 +108,21 @@ public class ExtractAdministrativeSystemFile
 				TextRecord tr;
 				int i = track0Offset;
 				while (i < inData.length)
-//				for (int i = track0Offset; i < inData.length; i+=1)
 				{
 					if (inData[i] == 0x00)
 					{
-						int mid = UnsignedByte.intValue(inData[i+1]);
-						int recType = UnsignedByte.intValue(inData[i+2]);
-						int end = UnsignedByte.intValue(inData[i+3]);
-						if (((end == 0x04) && (recType != 0xe0)) &&
-							(!((mid == 0x05) && recType == 0xe1)))
+						int mid = UnsignedByte.intValue(inData[i + 1]);
+						int recType = UnsignedByte.intValue(inData[i + 2]);
+						int end = UnsignedByte.intValue(inData[i + 3]);
+						if (((end == 0x04) && (recType != 0xe0)) && (!((mid == 0x05) && recType == 0xe1)))
 						{
-							int intOffset = i-track0Offset;
-//							int xsb = intOffset / 65536;
+							int intOffset = i - track0Offset;
 							if (intOffset > 65535)
 								intOffset -= 65536;
 							if (recType == 0xE1)
 							{
-								String marker = EbcdicUtil.toAscii(inData, i+5, 6);
-								int scratchIndicator = inData[i+0x0c];
+								String marker = EbcdicUtil.toAscii(inData, i + 5, 6);
+								int scratchIndicator = inData[i + 0x0c];
 								int markerInt = Integer.parseInt(marker);
 								int j;
 								if (markerInt == 100)
@@ -156,16 +153,19 @@ public class ExtractAdministrativeSystemFile
 								if (scratchIndicator != 0x05)
 								{
 									tr = new TextRecord(beginOffset, endOffset);
-									textRecordCollection.put(markerInt,tr);
+									textRecordCollection.put(markerInt, tr);
 								}
 							}
-							else i++;
+							else
+								i++;
 						}
-						else i++;
+						else
+							i++;
 					}
-					else i++;
+					else
+						i++;
 				}
-				System.err.println("Text records found: "+textRecordCollection.size());
+				System.err.println("Text records found: " + textRecordCollection.size());
 				TextRecord tr2;
 				Enumeration<Integer> recs = textRecordCollection.keys();
 				List<Integer> list = Collections.list(recs); // create list from enumeration 
@@ -176,7 +176,7 @@ public class ExtractAdministrativeSystemFile
 					try
 					{
 						FileOutputStream out = new FileOutputStream(fileName);
-						while(recs.hasMoreElements())
+						while (recs.hasMoreElements())
 						{
 							Integer marker = (Integer) recs.nextElement();
 							tr2 = textRecordCollection.get(marker);
@@ -209,18 +209,19 @@ public class ExtractAdministrativeSystemFile
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractAdministrativeSystemFile "+Version.VersionString+" - Extract file from a IBM 5520 Administrative System disk image.");
+		System.err.println("ExtractAdministrativeSystemFile " + Version.VersionString + " - Extract file from a IBM 5520 Administrative System disk image.");
 		System.err.println();
 		System.err.println("Usage: ExtractAdministrativeSystemFile infile outfile");
 	}
 
-	public static class TextRecord 
+	public static class TextRecord
 	{
 		public TextRecord(int begin, int end)
 		{
 			beginOffset = begin;
 			endOffset = end;
 		}
+
 		public int beginOffset;
 		public int endOffset;
 	}

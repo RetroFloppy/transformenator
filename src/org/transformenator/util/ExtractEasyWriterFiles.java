@@ -94,7 +94,7 @@ public class ExtractEasyWriterFiles
 					File baseDirFile = new File(args[1]);
 					if (!baseDirFile.isAbsolute())
 					{
-						baseDirFile = new File("./"+args[1]);
+						baseDirFile = new File("./" + args[1]);
 					}
 					baseDirFile.mkdir();
 				}
@@ -137,7 +137,7 @@ public class ExtractEasyWriterFiles
 								byte range[];
 								out = new FileOutputStream(fileName);
 								System.err.println("Creating file: " + fileName);
-								int fileSize = (UnsignedByte.intValue(inData[fat + 32 + (32*num)+17]) * 256) + UnsignedByte.intValue(inData[fat + 32 + (32*num)+16]);
+								int fileSize = (UnsignedByte.intValue(inData[fat + 32 + (32 * num) + 17]) * 256) + UnsignedByte.intValue(inData[fat + 32 + (32 * num) + 16]);
 								// System.err.println("File size: "+fileSize);
 								int fatOffset = fat + 32 + (32 * num) + 18;
 								int bytesWritten = 0;
@@ -278,7 +278,7 @@ public class ExtractEasyWriterFiles
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractEasyWriterFiles "+Version.VersionString+" - Extract files from EasyWriter word processor .D13 disk images.");
+		System.err.println("ExtractEasyWriterFiles " + Version.VersionString + " - Extract files from EasyWriter word processor .D13 disk images.");
 		System.err.println();
 		System.err.println("Usage: ExtractEasyWriterFiles infile [out_directory]");
 	}

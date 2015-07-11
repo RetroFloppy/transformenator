@@ -125,7 +125,7 @@ public class ExtractXerox860Files
 					trackLen *= 2;
 				}
 				if (DEBUG)
-					System.err.println("Track 0 offset: "+track0Offset+" calculation: "+(inData.length - track0Offset) % (512 * 8));
+					System.err.println("Track 0 offset: " + track0Offset + " calculation: " + (inData.length - track0Offset) % (512 * 8));
 				if ((inData.length - track0Offset) % (512 * 8) == 0)
 				{
 					int i;

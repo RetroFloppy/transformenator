@@ -126,7 +126,7 @@ public class ExtractWangFiles
 							File baseDirFile = new File(args[1]);
 							if (!baseDirFile.isAbsolute())
 							{
-								baseDirFile = new File("."+File.separator+args[1]);
+								baseDirFile = new File("." + File.separator + args[1]);
 							}
 							baseDirFile.mkdir();
 						}
@@ -160,17 +160,17 @@ public class ExtractWangFiles
 						 * Ok, this isn't a 2200-style disk; check for WP-ness.
 						 */
 						boolean foundAny = false;
-						for (int i = preambleOffset; i < inData.length; i+=256)
+						for (int i = preambleOffset; i < inData.length; i += 256)
 						{
-							if ((inData[i+2] == -1) && (inData[i+3] == 65))  /* 0xff 0x41 */
+							if ((inData[i + 2] == -1) && (inData[i + 3] == 65)) /* 0xff 0x41 */
 							{
 								byte fnb[] = new byte[10];
 								fnb = Arrays.copyOfRange(inData, i + 0x0d, i + 0x0d + 25);
 								String fileName = new String(fnb).trim().replace("\\", "-").replace("/", "-").replace("?", "-");
 								fileName = new String(args[1]) + File.separator + fileName;
 								// System.out.println("File found: "+fileName);
-								int fileID = UnsignedByte.intValue(inData[i+4]) * 256 + UnsignedByte.intValue(inData[i+5]);
-								decodeWPFile(inData, fileName, preambleOffset, UnsignedByte.intValue(inData[i]),UnsignedByte.intValue(inData[i+1]),fileID, 1);
+								int fileID = UnsignedByte.intValue(inData[i + 4]) * 256 + UnsignedByte.intValue(inData[i + 5]);
+								decodeWPFile(inData, fileName, preambleOffset, UnsignedByte.intValue(inData[i]), UnsignedByte.intValue(inData[i + 1]), fileID, 1);
 								foundAny = true;
 							}
 						}
@@ -184,18 +184,18 @@ public class ExtractWangFiles
 							List<Integer> fileChain;
 							Hashtable<Integer, List<Integer>> hash = new Hashtable<Integer, List<Integer>>();
 							FileOutputStream out = null;
-							for (int track = 0; track < inData.length/4096; track++)
+							for (int track = 0; track < inData.length / 4096; track++)
 							{
 								for (int sector = 0; sector < 16; sector++)
 								{
 									int dataOffset = realWPAddress(track, sector, preambleOffset, 1);
-									int fileID = UnsignedByte.intValue(inData[dataOffset + 4]) * 256 + UnsignedByte.intValue(inData[dataOffset+5]);
+									int fileID = UnsignedByte.intValue(inData[dataOffset + 4]) * 256 + UnsignedByte.intValue(inData[dataOffset + 5]);
 									if (fileID != 0)
 									{
 										Integer fid = new Integer(fileID);
 										if (!hash.containsKey(fid))
 										{
-											hash.put(fid,new ArrayList<Integer>());
+											hash.put(fid, new ArrayList<Integer>());
 										}
 										fileChain = hash.get(fid);
 										fileChain.add(dataOffset);
@@ -206,7 +206,7 @@ public class ExtractWangFiles
 							{
 								Integer key = entry.getKey();
 								fileChain = hash.get(key);
-								String fileName = new String("recovered_file_"+key);
+								String fileName = new String("recovered_file_" + key);
 								fileName = new String(args[1]) + File.separator + fileName;
 								try
 								{
@@ -217,7 +217,7 @@ public class ExtractWangFiles
 								{
 									e.printStackTrace();
 								}
-								for (Iterator<Integer> iter = fileChain.iterator(); iter.hasNext(); )
+								for (Iterator<Integer> iter = fileChain.iterator(); iter.hasNext();)
 								{
 									int myInt = iter.next();
 									// System.out.println("gathering offset: "+myInt);
@@ -225,7 +225,7 @@ public class ExtractWangFiles
 									{
 										if (out != null)
 										{
-											byte range2[] = Arrays.copyOfRange(inData, myInt + 7, myInt + UnsignedByte.intValue(inData[myInt+2])+1);
+											byte range2[] = Arrays.copyOfRange(inData, myInt + 7, myInt + UnsignedByte.intValue(inData[myInt + 2]) + 1);
 											out.write(range2);
 											out.flush();
 										}
@@ -233,23 +233,23 @@ public class ExtractWangFiles
 									catch (IOException e)
 									{
 										e.printStackTrace();
-									}									
+									}
 								}
 							}
 						}
 					}
 				}
-				else if ((inData.length % 1024 == 0) && (UnsignedByte.intValue(inData[inData.length-1]) == 0xff) && ((UnsignedByte.intValue(inData[inData.length-2]) == 0xff)))
+				else if ((inData.length % 1024 == 0) && (UnsignedByte.intValue(inData[inData.length - 1]) == 0xff) && ((UnsignedByte.intValue(inData[inData.length - 2]) == 0xff)))
 				{
 					System.err.println("Unwinding a WANG WP file from a DOS file.");
 					if (args.length == 2)
 						unwindDOSFile(inData, args[1]);
 					else
-						unwindDOSFile(inData, args[0]+".bin");
+						unwindDOSFile(inData, args[0] + ".bin");
 				}
 				else if (inData.length >= 322560)
 				{
-					byte eyecatcherc[] = { 0x0b, 0x43, 0x61, 0x74 , 0x61 , 0x6c , 0x6f , 0x67 }; // ".Catalog" - part of the WVD specification
+					byte eyecatcherc[] = { 0x0b, 0x43, 0x61, 0x74, 0x61, 0x6c, 0x6f, 0x67 }; // ".Catalog" - part of the WVD specification
 					byte rangec[] = Arrays.copyOfRange(inData, 0x23000, 0x23008);
 					if (Arrays.equals(rangec, eyecatcherc))
 					{
@@ -284,9 +284,9 @@ public class ExtractWangFiles
 			 * These word processors have a list of pointers to the starts of pages, in order.
 			 * Each pointer points to a 1k chunk of data that ends in another pointer (or xffff for the end). 
 			 */
-			for (int i = 258; i < 512; i+= 2)
+			for (int i = 258; i < 512; i += 2)
 			{
-				int pageNumber = UnsignedByte.intValue(inData[i+1]) * 256 + UnsignedByte.intValue(inData[i]);
+				int pageNumber = UnsignedByte.intValue(inData[i + 1]) * 256 + UnsignedByte.intValue(inData[i]);
 				if ((pageNumber > 0) && (pageNumber < 65535))
 				{
 					//System.err.println("pageNumber: "+pageNumber);
@@ -299,7 +299,7 @@ public class ExtractWangFiles
 		catch (IOException e)
 		{
 			e.printStackTrace();
-		}		
+		}
 	}
 
 	public static void seek514Files(byte[] inData)
@@ -310,14 +310,14 @@ public class ExtractWangFiles
 		int fileNo = 1;
 		String fileName = "File";
 		FileOutputStream out;
-		for (int i = 0; i < inData.length; i+= 512)
+		for (int i = 0; i < inData.length; i += 512)
 		{
-			if ((UnsignedByte.intValue(inData[i]) == 0x86) && (UnsignedByte.intValue(inData[i+1]) == 0x32))
+			if ((UnsignedByte.intValue(inData[i]) == 0x86) && (UnsignedByte.intValue(inData[i + 1]) == 0x32))
 			{
 				try
 				{
-					out = new FileOutputStream(fileName+fileNo);
-					System.err.println("Creating file: " + fileName+fileNo);
+					out = new FileOutputStream(fileName + fileNo);
+					System.err.println("Creating file: " + fileName + fileNo);
 					int x;
 					for (x = i; x < inData.length; x++)
 					{
@@ -333,7 +333,7 @@ public class ExtractWangFiles
 				{
 					e.printStackTrace();
 				}
-				
+
 				fileNo++;
 			}
 		}
@@ -347,16 +347,16 @@ public class ExtractWangFiles
 		// Find the end of data in this block
 		for (int i = 0; i < 1022; i++)
 		{
-			if (inData[i+offset] == 0x1f)
+			if (inData[i + offset] == 0x1f)
 				endMarker = i;
 		}
 		//System.out.println("Start of page; block: "+UnsignedByte.toString(UnsignedByte.hiByte(pageNumber))+""+UnsignedByte.toString(UnsignedByte.loByte(pageNumber))+" offset: "+UnsignedByte.toString(UnsignedByte.loByte(offset))+""+UnsignedByte.toString(UnsignedByte.hiByte(offset)));
 		out.write(inData, offset, endMarker);
-		next = UnsignedByte.intValue(inData[offset+1023]) * 256 + UnsignedByte.intValue(inData[offset+1022]);
+		next = UnsignedByte.intValue(inData[offset + 1023]) * 256 + UnsignedByte.intValue(inData[offset + 1022]);
 		if (next < 65535)
 			dumpDOSPage(out, inData, next);
 		//else
-			//System.out.println("End.");
+		//System.out.println("End.");
 	}
 
 	public static void decodeFile(byte[] inData, String shortName, int fileHeaderSector, int preambleOffset)
@@ -395,12 +395,12 @@ public class ExtractWangFiles
 	{
 		// System.err.println("dumpFileChain: fileChainSector: " + fileChainSector);
 		int textSector = 0, i = 0, textRealOffset;
-		if ((fileChainSector > 0) && ((fileChainSector+1)*256 < inData.length))
+		if ((fileChainSector > 0) && ((fileChainSector + 1) * 256 < inData.length))
 		{
 			do
 			{
 				textSector = UnsignedByte.intValue((byte) inData[realAddress(fileChainSector, preambleOffset) + 0x41 + i], (byte) inData[realAddress(fileChainSector, preambleOffset) + 0x40 + i]);
-				if ((textSector > 0) && ((textSector+1)*256 < inData.length))
+				if ((textSector > 0) && ((textSector + 1) * 256 < inData.length))
 				{
 					// System.err.println("dumpFileChain: textSector: " + textSector);
 					textRealOffset = realAddress(textSector, preambleOffset);
@@ -409,7 +409,7 @@ public class ExtractWangFiles
 					out.write(range);
 					i += 2;
 				}
-			} while ((textSector > 0) && ((textSector+1)*256 < inData.length));
+			} while ((textSector > 0) && ((textSector + 1) * 256 < inData.length));
 			int nextFileChainSector = UnsignedByte.intValue((byte) inData[realAddress(fileChainSector, preambleOffset) + 9], (byte) inData[realAddress(fileChainSector, preambleOffset) + 8]);
 			// System.err.println("dumpFileChain: nextFileChainSector: "+nextFileChainSector);
 			if (nextFileChainSector != 0)
@@ -440,12 +440,12 @@ public class ExtractWangFiles
 
 		dataOffset = realWPAddress(track, sector, preambleOffset, skew);
 		nextTrack = UnsignedByte.intValue(inData[dataOffset]);
-		nextSector = UnsignedByte.intValue(inData[dataOffset+1]);
+		nextSector = UnsignedByte.intValue(inData[dataOffset + 1]);
 		byte range[] = Arrays.copyOfRange(inData, dataOffset + 7, dataOffset + 256);
 		out.write(range);
 		nextTrack = UnsignedByte.intValue(inData[dataOffset]);
-		nextSector = UnsignedByte.intValue(inData[dataOffset+1]);
-		if ((nextTrack > 0) && (nextTrack*4096 <= inData.length))
+		nextSector = UnsignedByte.intValue(inData[dataOffset + 1]);
+		if ((nextTrack > 0) && (nextTrack * 4096 <= inData.length))
 		{
 			if (nextTrack != 0)
 				dumpWPFileChain(out, inData, nextTrack, nextSector, fileID, preambleOffset, skew);
@@ -454,13 +454,13 @@ public class ExtractWangFiles
 
 	public static int mapSector(int sectorIn, int skew)
 	{
-		int skewedSectorMap[] = {0,4,8,0x0c,1,5,9,0x0d,2,6,0x0a,0x0e,3,7,0x0b,0x0f};
+		int skewedSectorMap[] = { 0, 4, 8, 0x0c, 1, 5, 9, 0x0d, 2, 6, 0x0a, 0x0e, 3, 7, 0x0b, 0x0f };
 		if (skew != 0)
 			return skewedSectorMap[sectorIn];
 		else
 			return sectorIn;
 	}
-	
+
 	public static int realAddress(int sector, int offset)
 	{
 		return sector * 256 + offset;
@@ -475,7 +475,7 @@ public class ExtractWangFiles
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractWangFiles "+Version.VersionString+" - Extract files from Wang word processor files or disk images.");
+		System.err.println("ExtractWangFiles " + Version.VersionString + " - Extract files from Wang word processor files or disk images.");
 		System.err.println();
 		System.err.println("Usage: ExtractWangFiles infile [outfile|out_directory]");
 	}

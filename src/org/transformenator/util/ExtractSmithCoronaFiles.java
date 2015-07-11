@@ -218,7 +218,7 @@ public class ExtractSmithCoronaFiles
 	{
 		if (inData != null)
 		{
-			return toAscii(inData,0,inData.length);
+			return toAscii(inData, 0, inData.length);
 		}
 		else
 			return null;
