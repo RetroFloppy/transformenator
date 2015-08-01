@@ -1,6 +1,7 @@
 New for this version:
 =====================
 
+New transforms: Smith-Corona word processor (as opposed to Spinwriter), OmniWriter for C64
 
 
 Transformenator introduction:
