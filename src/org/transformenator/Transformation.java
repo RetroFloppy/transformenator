@@ -57,12 +57,7 @@ public class Transformation
 	public boolean createOutput(String inFile, String outFile, String fileSuffix)
 	{
 		/*
-		 * We specify the literal outFile in the general case.  For Valdocs, though,
-		 * we discover the real filename once we start looking inside the file 
-		 * itself.  So in those cases where we need to re-create the outFile filename,
-		 * we look up the directory where outFile should be placed and generate a
-		 * new filename using the supplied fileSuffix along with the newly
-		 * discovered filename.  
+		 * We specify the literal outFile in the general case. For Valdocs, though, we discover the real filename once we start looking inside the file itself. So in those cases where we need to re-create the outFile filename, we look up the directory where outFile should be placed and generate a new filename using the supplied fileSuffix along with the newly discovered filename.
 		 */
 		String valdocsName = null;
 		foundSOF = false;
@@ -130,47 +125,46 @@ public class Transformation
 						name[i] = newChar;
 					}
 					valdocsName = new String(name).trim();
-					// System.err.println("Found file: \"" + valdocsName+"\"");
-					/*
-					 * Pick apart the file hunk indices.  The first few indices seem to be non-useful... 
-					 * so start in at 0x80a.  It's unclear how deep the indices can go.  
-					 * It's possible it should look deeper than it does, but the field of 
-					 * 0xFFs has some noise near the end.
-					 * 
-					 * Each index is a pointer to the next 512 bytes (a sector) of data in the file.
-					 */
-					for (int i = 0x80a; i < 0xa00; i += 2)
+					System.err.println("Found file: \"" + valdocsName + "\"");
+					if (valdocsName.length() > 0)
 					{
-						int idx = UnsignedByte.intValue(inData[i], inData[i + 1]);
-						if (idx < 32768)
+						/*
+						 * Pick apart the file hunk indices. The first few indices seem to be non-useful... so start in at 0x80a. It's unclear how deep the indices can go. It's possible it should look deeper than it does, but the field of 0xFFs has some noise near the end.
+						 * 
+						 * Each index is a pointer to the next 512 bytes (a sector) of data in the file.
+						 */
+						for (int i = 0x80a; i < 0xa00; i += 2)
 						{
-							// System.err.println("idx: "+idx);
-							if (((idx * 512) + 1) < inData.length)
+							int idx = UnsignedByte.intValue(inData[i], inData[i + 1]);
+							if (idx < 32768)
 							{
-								// Chunks may start with a pointer to skip over blank space
-								int offset = UnsignedByte.intValue(inData[(idx * 512)], inData[(idx * 512) + 1]);
-								// Pull out the data in the chunk
-								for (int j = offset + 4; j < 0x200; j++)
+								// System.err.println("idx: "+idx);
+								if (((idx * 512) + 1) < inData.length)
 								{
-									newBuf[newBufCursor++] = inData[(idx * 512) + j];
+									// Chunks may start with a pointer to skip over blank space
+									int offset = UnsignedByte.intValue(inData[(idx * 512)], inData[(idx * 512) + 1]);
+									// Pull out the data in the chunk
+									for (int j = offset + 4; j < 0x200; j++)
+									{
+										newBuf[newBufCursor++] = inData[(idx * 512) + j];
+									}
 								}
+								// else
+								// System.err.println("Found an index out of bounds: "+idx);
 							}
-							// else
-							// System.err.println("Found an index out of bounds: "+idx);
 						}
+						inData = new byte[newBufCursor];
+						for (int i = 0; i < newBufCursor; i++)
+							inData[i] = newBuf[i];
+						// System.err.println("Data length after de-indexing: "+inData.length);
 					}
-					inData = new byte[newBufCursor];
-					for (int i = 0; i < newBufCursor; i++)
-						inData[i] = newBuf[i];
-					// System.err.println("Data length after de-indexing: "+inData.length);
 				}
 				else if ((transformName.length() > 13) && (transformName.toUpperCase().substring(0,13).equalsIgnoreCase("DISPLAYWRITE_")))
 				{
 					// If they are using a DisplayWrite transform, let's pick apart the file first.
 					System.err.println("De-indexing DisplayWrite file " + file);
 					/*
-					 * Pick apart the file hunk indices.  Hunk indices start at 0x6b 
-					 * and follow 3 bytes of 0xaa.  There are a maximum of 59 indices.
+					 * Pick apart the file hunk indices. Hunk indices start at 0x6b and follow 3 bytes of 0xaa. There are a maximum of 59 indices.
 					 * 
 					 * Each index is a pointer to a hunk at 512 bytes * the index number in the file.
 					 */
@@ -189,7 +183,7 @@ public class Transformation
 								{
 									// System.err.println("Pulling data from "+idx*512+" to "+((idx*512)+len)+".");
 									/*
-									 * Need to hunt for the SOT.  It will be 3 bytes: 0xe80700. 
+									 * Need to hunt for the SOT. It will be 3 bytes: 0xe80700.
 									 */
 									int offset = 0;
 									for (int j = 0; j < 0xff; j++)
@@ -226,7 +220,7 @@ public class Transformation
 					// If they are using a Leading Edge Word Processor transform, let's pick apart the file first.
 					System.err.println("De-indexing Leading Edge file " + file);
 					/*
-					 * Pick apart the file hunk indices.  Hunk indices start at 0x1200. 
+					 * Pick apart the file hunk indices. Hunk indices start at 0x1200.
 					 * 
 					 * Each index is a pointer to a hunk at 512 bytes * the index number in the file.
 					 */
@@ -250,7 +244,7 @@ public class Transformation
 							int block = UnsignedByte.intValue(inData[i], inData[i + 1]);
 							int index = block * 512;
 							// System.err.println("block: 0x"+UnsignedByte.toString(inData[i+1])+UnsignedByte.toString(inData[i])
-							//	+" at file offset: 0x"+UnsignedByte.toString(UnsignedByte.hiByte(index))+UnsignedByte.toString(UnsignedByte.loByte(index)));
+							// +" at file offset: 0x"+UnsignedByte.toString(UnsignedByte.hiByte(index))+UnsignedByte.toString(UnsignedByte.loByte(index)));
 							if (block == 0)
 								break;
 							if (block < 32768)
@@ -302,15 +296,10 @@ public class Transformation
 				}
 				try
 				{
-					if (valdocsName != null)
+					if ((valdocsName != null) && (valdocsName.length() > 0))
 					{
 						/*
-						 * Valdocs files contain their own names internally.
-						 * If the outFile was passed in to us as a literal filename,
-						 * then get the parent directory's name and use that instead
-						 * along with the newly discovered file name.  If outFile was passed
-						 * in as a directory, then use it as the place to write the
-						 * newly discovered file name.
+						 * Valdocs files contain their own names internally. If the outFile was passed in to us as a literal filename, then get the parent directory's name and use that instead along with the newly discovered file name. If outFile was passed in as a directory, then use it as the place to write the newly discovered file name.
 						 */
 						File tmpOutFile = new File(outFile);
 						if (tmpOutFile.isDirectory())
@@ -323,8 +312,7 @@ public class Transformation
 						else
 						{
 							/*
-							 * Get the directory parent of the specified file and use that 
-							 * to re-generate a new file path with the newly discovered filename.
+							 * Get the directory parent of the specified file and use that to re-generate a new file path with the newly discovered filename.
 							 */
 							outFile = tmpOutFile.getAbsoluteFile().getParentFile().toString() + File.separator + valdocsName + "." + fileSuffix;
 						}
@@ -482,7 +470,7 @@ public class Transformation
 						// We have a translation (i.e. [41..5a] = 61)
 						addLeft = false;
 						skip = true;
-						// Ok, we have opening and closing braces.  Check for two digits.
+						// Ok, we have opening and closing braces. Check for two digits.
 						// String firstByte, endByte;
 						byte firstByte, endByte;
 						int firstInt, endInt;
@@ -671,7 +659,7 @@ public class Transformation
 								if (rightTemp2.trim().charAt(0) == '"')
 								{
 									// This production is surrounded by quotes
-									//System.err.println("DEBUG Adding toggle ["+rightTemp2+"]");
+									// System.err.println("DEBUG Adding toggle ["+rightTemp2+"]");
 									String newString = "";
 									rightTemp2 = rightTemp2.substring(1, rightTemp2.length() - 1);
 									newString = rightTemp2.replace("\\\\r", "\r").replace("\\\\n", "\n");
@@ -812,7 +800,7 @@ public class Transformation
 			byte[] maskLeft = leftSide.elementAt(i).leftMask;
 			byte[] replRight = rightSide.elementAt(i);
 			byte[] replRightToggle = rightToggle.elementAt(i);
-			//rightToggle.
+			// rightToggle.
 			match = true;
 			for (int j = 0; j < compLeft.length; j++)
 			{
@@ -824,7 +812,7 @@ public class Transformation
 				}
 				else if ((inData[offset + j] == 0) && (maskLeft[j] == 2))
 				{
-					// System.err.println("DEBUG Found a non-zero byte at "+j);								
+					// System.err.println("DEBUG Found a non-zero byte at "+j);
 					match = false;
 				}
 			}
@@ -840,10 +828,10 @@ public class Transformation
 						{
 							// Push the replacement back onto incoming
 							int calc = offset + compLeft.length - replRight.length;
-							// System.err.println("DEBUG calc: "+calc+" offset: "+offset);								
+							// System.err.println("DEBUG calc: "+calc+" offset: "+offset);
 							if (calc < 0)
 							{
-								// System.err.println("DEBUG calc: "+calc+" offset: "+offset);								
+								// System.err.println("DEBUG calc: "+calc+" offset: "+offset);
 								int bump = Math.abs(calc);
 								byte newInData[] = new byte[trimmedEnd - calc];
 								for (int q = 0; q < trimmedEnd; q++)
@@ -855,7 +843,7 @@ public class Transformation
 							}
 							for (k = 0; k < replRight.length; k++)
 							{
-								// System.err.println("DEBUG Pushing byte: "+k);								
+								// System.err.println("DEBUG Pushing byte: "+k);
 								inData[offset + compLeft.length - replRight.length + k] = replRight[k];
 							}
 							backupBytes = replRight.length;
@@ -1053,7 +1041,7 @@ public class Transformation
 	{
 		for (int i = 0; i < regReplace.size(); i++)
 		{
-			// System.err.println("DEBUG Replacing ["+regPattern.elementAt(i)+"] with ["+regReplace.elementAt(i)+"].");		
+			// System.err.println("DEBUG Replacing ["+regPattern.elementAt(i)+"] with ["+regReplace.elementAt(i)+"].");
 			tempStr = tempStr.replaceAll(regPattern.elementAt(i), regReplace.elementAt(i));
 		}
 		return tempStr;
