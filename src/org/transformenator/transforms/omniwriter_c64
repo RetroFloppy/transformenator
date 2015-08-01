@@ -1,0 +1,28 @@
+;
+; OmniWriter for C-64 conversion to plain text
+;
+
+trim_leading = c7
+
+dc = 0d0a
+
+; Main body text transform to ASCII
+[01..1a] = 61
+
+; Header text transforms to ASCII
+;[41..5a] = 61
+;[c1..da] = 41
+
+; Underline toggle
+ee =
+
+; Bold toggle
+ed =
+
+
+
+; Unknown controls
+db =
+e6 =
+f1 =
+ff =
