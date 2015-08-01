@@ -164,7 +164,7 @@ public class Transformation
 						inData[i] = newBuf[i];
 					// System.err.println("Data length after de-indexing: "+inData.length);
 				}
-				else if (transformName.toUpperCase().equalsIgnoreCase("DISPLAYWRITE_"))
+				else if ((transformName.length() > 13) && (transformName.toUpperCase().substring(0,13).equalsIgnoreCase("DISPLAYWRITE_")))
 				{
 					// If they are using a DisplayWrite transform, let's pick apart the file first.
 					System.err.println("De-indexing DisplayWrite file " + file);
