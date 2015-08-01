@@ -83,18 +83,44 @@ public class RevealValdocsEntries
 			}
 			if (inData != null)
 			{
+				boolean foundSome = false, isIMGDISK = false;
 				// System.err.println("Read " + inData.length + " bytes.");
+				// Disks captured with FC5025 will have entries starting at offset 0x5000
 				for (int i = 0x5000; i < 0x5400; i += 0x20)
 				{
 					if (isValdocsFile(inData, i))
+					{
 						// Make the directory entry visible
 						inData[i] = 0x00;
+						foundSome = true;
+					}
 				}
+				if (foundSome == false)
+				{
+					// Disks captured with IMGDISK will have entries starting at offset 0x4c00
+					for (int i = 0x4c00; i < 0x5000; i += 0x20)
+					{
+						if (isValdocsFile(inData, i))
+						{
+							// Make the directory entry visible
+							inData[i] = 0x00;
+							isIMGDISK = true;
+							foundSome = true;
+						}
+					}
+				}
+				if (foundSome)
+					System.err.println("Found some Valdocs entries.");
 				// Cleaned up the directory - now write the resulting image
 				FileOutputStream out;
 				try
 				{
 					out = new FileOutputStream(args[1]);
+					if (isIMGDISK)
+					{
+						// Since these were (short) IMGDISK-produced images, fatten them out for cpmtools
+						out.write(inData, 0, 0x400);
+					}
 					out.write(inData);
 					out.flush();
 					out.close();
@@ -113,8 +139,7 @@ public class RevealValdocsEntries
 	}
 
 	/**
-	 * isValdocsFile - determine if a directory entry is likely to be a Valdocs
-	 * file
+	 * isValdocsFile - determine if a directory entry is likely to be a Valdocs file
 	 */
 	public static boolean isValdocsFile(byte inData[], int offset)
 	{
@@ -126,11 +151,7 @@ public class RevealValdocsEntries
 		if (inData[offset] == 0x60)
 		{
 			/*
-			 * Second check: are the first two bytes numeric?  All Valdocs files
-			 * have the form NNxxxnnnVAL, where NN are numeric.  Generally all 
-			 * the rest of the x elements are numeric as well, but not always.
-			 * The n elements are probably always numeric, as they are counters
-			 * (001, 002, 003, etc.)  
+			 * Second check: are the first two bytes numeric? All Valdocs files have the form NNxxxnnnVAL, where NN are numeric. Generally all the rest of the x elements are numeric as well, but not always. The n elements are probably always numeric, as they are counters (001, 002, 003, etc.)
 			 */
 			for (i = 1; i < 3; i++)
 			{
@@ -147,7 +168,7 @@ public class RevealValdocsEntries
 			if (retval == true)
 			{
 				/*
-				 * Are the final three bytes "VAL?" 
+				 * Are the final three bytes "VAL?"
 				 */
 				if ((inData[offset + 9] == 0x56) && (inData[offset + 10] == 0x41) && (inData[offset + 11] == 0x4c))
 					retval = true; // Yes, this assignment is redundant... but I didn't want to tangle the logic more
