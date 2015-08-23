@@ -1,0 +1,19 @@
+;
+; Q&A Write - very preliminary
+;
+
+202d2d20422e20456d6572616c64 = "{@@<FiLe_SoF>@@}"
+
+ff01 = 0d0a
+ff21 =
+ff41 =
+ff80 =
+ff81 =
+ff85 =
+ff90 =
+ff91 = 
+
+; Page number
+ff95 =
+
+0103000078 = "{@@<FiLe_EoF>@@}"
