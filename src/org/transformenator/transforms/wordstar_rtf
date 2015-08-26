@@ -16,6 +16,10 @@ tail = "}"
 ; Ruler line removal
 2e72720d =
 
+; Bold
+02 = "\b1 "
+82 = "\b0 "
+
 ; Strip high bits
 [80..ff] # 00
 
