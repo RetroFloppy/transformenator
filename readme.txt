@@ -1,7 +1,7 @@
 New for this version:
 =====================
 
-New transforms: Smith-Corona word processor (as opposed to Spinwriter), OmniWriter for C64, Symantec Q&A Write
+New transforms: Smith-Corona word processor (as opposed to Spinwriter), OmniWriter for C64, Symantec Q&A Write, AppleWriter IIe
 
 
 Transformenator introduction:

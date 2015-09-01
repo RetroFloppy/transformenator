@@ -1,0 +1,29 @@
+;
+; AppleWriter IIe to RTF format
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Indented
+regex = @\.LI0@\\par\\li721\\par @
+
+; Outdent
+regex = @\.LI1@\\par\\li0\\par @
+
+; Italic toggle
+5c % " \i1 "," \i0 "
+
+0d0a = "\\r\\n\par\par "
+
+; Consume other productions
+regex = @\.[F|f][J|j]@@
+regex = @\.[R|r|L|l][M|m][\-|\+][0-9]{1,3}@@
+regex = @\.[R|r|L|l][M|m][0-9]{1,3}@@
+regex = @\.[B|b][M|m][0-9]{1,2}@@
+regex = @\.[T|t][M|m][0-9]{1,2}@@
+regex = @\.[E|e][P|p][0-9]@@
+regex = @\.[F|f][F|f][0-9]{1,2}@@
+regex = @\.[P|p][M|m][\+|\-][0-9]@@
