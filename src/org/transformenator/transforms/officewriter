@@ -1,0 +1,18 @@
+;
+; PC OfficeWriter - just a few example files available
+;
+
+trim_leading = 600
+
+; Gorp at the start of a file
+b3..fa..fa10fafafafa10fafafafa10 =
+b3..fa..fafa10fafafafa10fafafafa10 =
+fa =
+de =
+
+; Probably emphasis on
+fe =
+
+04 = 0d0a
+
+11 = 0d0a
