@@ -26,9 +26,14 @@ ba = "-"
 90c0 = "* "
 c0 =
 
+; Underline on/off
+a8 =
+a9 =
+
 ; Backspace/bold
 81 = 
 82 =
+83 =
 ad = 20
 [e1..fa] = 61
 [c1..da] = 41
