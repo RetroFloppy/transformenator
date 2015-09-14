@@ -240,14 +240,14 @@ public class UpdateDOSImage
 	
 	public static boolean is360k(byte[] inData, int force)
 	{
-		byte bpb_360k[]={
+		byte bpb_360k[]={ /* 5.25", double sided, 40 track, 360k */
 				(byte)0xeb, 0x34, (byte)0x90, 0x4d, 0x53, 0x44, 0x4f, 0x53,
 				0x33, 0x2e, 0x32, 0x00, 0x02, 0x02, 0x01, 0x00,
 				0x02, 0x70, 0x00, (byte)0xd0, 0x02, (byte)0xfd, 0x02, 0x00,
 				0x09, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,
 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 			};
-		byte bpb_360k_atari[]={ /* 3.5", single sided, 360k */
+		byte bpb_360k_atari[]={ /* 3.5", single sided, 80 track, 360k */
 				(byte)0xeb, 0x34, (byte)0x90, 0x4d, 0x53, 0x44, 0x4f, 0x53,
 				0x33, 0x2e, 0x32, 0x00, 0x02, 0x02, 0x01, 0x00,
 				/* (Offset 0x05) */
@@ -279,7 +279,7 @@ public class UpdateDOSImage
 		{
 			for (int i = 0; i < bpb_360k_atari.length; i++)
 				inData[i] = bpb_360k_atari[i];
-			System.err.println("is360k Atari is true!");
+			// System.err.println("is360k Atari is true!");
 			return true;
 		}
 		// System.err.println("is360k is false.");
@@ -438,6 +438,6 @@ public class UpdateDOSImage
 		System.err.println();
 		System.err.println("UpdateDOSImage "+Version.VersionString+" - Update the BIOS Parameter Block of a PC DOS disk image.");
 		System.err.println();
-		System.err.println("Usage: UpdateDOSImage infile outfile");
+		System.err.println("Usage: UpdateDOSImage infile outfile [force{160|180|320|360|360a}]");
 	}
 }
