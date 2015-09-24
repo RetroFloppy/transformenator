@@ -1,0 +1,59 @@
+;
+; NBI word processor to RTF
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+82 = 2e
+8e = 2d
+
+; There's a 9c009c production in there somewhere
+9c..9c = "\par "
+9d =
+9e = 
+b0..b1 =
+;b0....b0 =
+c0........c0 =
+c2........c2 =
+c3........c3 =
+c4........c4 =
+c5........c5 =
+c9........c9 =
+ca........ca =
+cd........cd =
+d2........d2 =
+d4........d4 =
+d6........d6 =
+
+0b =
+0f =
+b1 =
+b0 =
+
+; Bold toggle
+95 % "\b1 ","\b0 "
+
+; Space
+7f = 20
+
+; Return
+a0 = "\par\par "
+
+; Tab
+a1 = "\par\tab "
+
+; Newline
+a3 = "\par "
+
+; Page eject
+a4 = "\par\par "
+
+; Not sure what a9 was for
+a9 = "\par "
+
+; Dash
+8f = 2d
+ 

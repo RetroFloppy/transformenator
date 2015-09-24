@@ -1,8 +1,9 @@
 New for this version:
 =====================
 
-New transforms: Smith-Corona word processor (as opposed to Spinwriter), OmniWriter for C64, Symantec Q&A Write, AppleWriter IIe, OfficeWriter
+New transforms: Smith-Corona word processor (as opposed to Spinwriter), OmniWriter for C64, Symantec Q&A Write, AppleWriter IIe, OfficeWriter, NBI Word Processor
 
+New function: ExtractNBIFiles - extract files from NBI word processor 8" disk images
 
 Transformenator introduction:
 =============================
