@@ -134,6 +134,15 @@ The table below lists the special processing capabilities of Transformenator.
 [f0..ff] = </xmp></td>
 </tr>
 <tr>
+<td align="center"><xmp>eof_lo</xmp><br><xmp>eof_mid</xmp><br><xmp>eof_hi</xmp><br><xmp>eof_offset</xmp></td>
+<td align="left">Used together when a file contains a binary length of file vector.  <xmp>eof_lo</xmp> is the least significant byte, <xmp>eof_mid</xmp> is the next most signficant byte, and <xmp>eof_high</xmp> is the most significant byte of the vector.  Those values are offsets into the file.  <xmp>eof_offset</xmp> is a static offset to tune the exact end point.</td>
+<td align="left"><xmp>; Calculate the EOF based on file contents
+eof_hi = 00
+eof_mid = 7d
+eof_lo = 7c
+eof_offset = 7f</xmp></td>
+</tr>
+<tr>
 <td align="center"><xmp>head</xmp></td>
 <td align="left">Specifies a prefix to add to the beginning of the resultant file</td>
 <td align="left"><xmp>; Header for HTML format
@@ -152,7 +161,7 @@ tail = "</html>"</xmp></td>
 trim_leading = 0400</xmp></td>
 </tr>
 <td align="center"><xmp>trim_trailing</xmp></td>
-<td align="left">Specifies a number of bytes to trim off the end of the input file (in hex bytes) before any binary transforms are applied</td>
+<td align="left">Specifies a number of bytes to trim off the end of the input file (in hex bytes) before any binary transforms are applied.  Results are undefined if used in conjunciton with <xmp>eof_*</xmp> vectors above.</td>
 <td align="left"><xmp>; Trim the trailing 0xDF bytes
 trim_trailing = df</xmp></td>
 </tr>

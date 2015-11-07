@@ -273,6 +273,19 @@ public class Transformation
 						inData[i] = newBuf[i];
 					// System.err.println("Data length after de-indexing: "+inData.length);
 				}
+				// Did they ask for a EOF to be calculated from inside the file?  Get it!
+				if (eofLo + eofMid + eofHi + eofOffset > 0)
+				{
+					int calculatedEOF = eofOffset;
+					if (eofLo > 0)
+						calculatedEOF = calculatedEOF + UnsignedByte.intValue(inData[eofLo]);
+					if (eofMid > 0)
+						calculatedEOF = calculatedEOF + (256 * UnsignedByte.intValue(inData[eofMid]));
+					if (eofHi > 0)
+						calculatedEOF = calculatedEOF + (65536 * UnsignedByte.intValue(inData[eofHi]));
+					// System.err.println("After dereference, calculated EOF: "+calculatedEOF);
+					trimTrailing = inData.length - calculatedEOF;
+				}
 				// System.err.println("Trimming leading "+trimLeading+" and "+ trimTrailing +" trailing bytes.");
 				trimmedEnd = inData.length - trimTrailing;
 				// Clean out the toggle states
@@ -454,7 +467,15 @@ public class Transformation
 					leftTemp = st.nextToken();
 					skip = false;
 					// System.err.println("DEBUG Left side token: ["+leftTemp+"]");
-					if (leftTemp.equals("head") || leftTemp.equals("tail") || leftTemp.equals("trim_leading") || leftTemp.equals("trim_trailing") || leftTemp.trim().charAt(0) == (';'))
+					// If you add a left side keyword that will get consumed, be sure to add it here, otherwise the fall through processing will try to eat it:
+					if (leftTemp.equals("head") ||
+							leftTemp.equals("tail") ||
+							leftTemp.equals("trim_leading") ||
+							leftTemp.equals("trim_trailing") ||
+							leftTemp.equals("eof_lo") ||
+							leftTemp.equals("eof_mid") ||
+							leftTemp.equals("eof_hi") ||
+							leftTemp.trim().charAt(0) == (';'))
 					{
 						if (leftTemp.trim().charAt(0) == (';'))
 						{
@@ -647,6 +668,26 @@ public class Transformation
 						else if (leftTemp.equals("trim_trailing"))
 						{
 							trimTrailing = fromByteArray(rightBytes);
+						}
+						else if (leftTemp.equals("eof_hi"))
+						{
+							eofHi = fromByteArray(rightBytes);
+							// System.err.println("DEBUG eof_hi found: "+eofHi);
+						}
+						else if (leftTemp.equals("eof_mid"))
+						{
+							eofMid = fromByteArray(rightBytes);
+							// System.err.println("DEBUG eof_mid found: "+eofMid);
+						}
+						else if (leftTemp.equals("eof_lo"))
+						{
+							eofLo = fromByteArray(rightBytes);
+							// System.err.println("DEBUG eof_lo found: "+eofLo);
+						}
+						else if (leftTemp.equals("eof_offset"))
+						{
+							eofOffset = fromByteArray(rightBytes);
+							// System.err.println("DEBUG eof_offset found: "+eofOffset);
 						}
 						else
 						{
@@ -1065,7 +1106,8 @@ public class Transformation
 	Vector<byte[]> rightToggle = new Vector<byte[]>();
 	String prefix, suffix;
 	String inFile, outFile, transformName;
-	int trimLeading, trimTrailing, trimmedEnd;
+	int trimLeading = 0, trimTrailing = 0, trimmedEnd;
+	int eofHi = 0, eofMid = 0, eofLo = 0, eofOffset = 0;
 	boolean isOK, foundSOF;
 	int backupBytes;
 }
