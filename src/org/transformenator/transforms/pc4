@@ -1,0 +1,21 @@
+;
+; Kricka/Keller - unknown PC word processor
+;
+
+trim_leading = 400
+
+; Newline
+ae = 0d
+
+; File header
+;       0       0       0       1       1       1       1       2       2       2       2       3       3       3       3       4       4       4
+;       4       8       c       0       4       8       c       0       4       8       c       0       4       8       c       0       4       8
+........b3..2e2e2e..............................................................................................2e2e2e2e2e =
+
+2e =
+af =
+
+; Bold on
+ff01 =
+; Bold off
+ff03 =
