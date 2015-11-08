@@ -40,14 +40,33 @@ trim_leading = 162
 1213 = "[CE]"
 
 ; Characters near EOF
-80 =
+;80 =
 81 =
 
 ; Newline in data makes our regex not work
 0a =
 
 ; Character translations
+; Inverted question mark
+a4 = bf
 a6 = "$"
+; Small a acute
+80 = e1 
+; Small i acute
+84 = ed
+; Small e acute
+8c = e9
+; Small u acute
+88 = fa
+; Capital U acute
+89 = da
+; Small o acute
+90 = f3
+; Capital E acute
+98 = c9
+; Small n tilde
+9a = f1
+
 
 ; Remove everything between control sequence signals
 regex = @\[CB\].*?\[CE\]@\\par\\par @
