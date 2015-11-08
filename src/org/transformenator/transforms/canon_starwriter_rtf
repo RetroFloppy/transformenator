@@ -1,0 +1,82 @@
+;
+; Transform Canon StarWriter ETW1 word processor to RTF
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Trim the leading 0x164 bytes
+trim_leading = 162
+
+1311811113 = "\par "
+131181811113 = "\par\par "
+
+; Control sequences
+1011..1110 =
+1011....1110 =
+1310........1013 =
+131181841113 =
+131181..1113 = "\par\par "
+1311..811113 = "\par\par "
+1311....1113 =
+131181....1113 = "\par\par "
+1311..81..1113 = "\par\par "
+1311....811113 = "\par\par "
+1311......1113 =
+131181......1113 = "\par\par "
+1311..81....1113 = "\par\par "
+1311....81..1113 = "\par\par "
+1311......811113 = "\par\par "
+1311........1113 =
+1311..........1113 =
+
+1310 = "[CB]"
+1311 = "[CB]"
+1312 = "[CB]"
+1013 = "[CE]"
+1113 = "[CE]"
+1213 = "[CE]"
+
+; Characters near EOF
+;80 =
+81 =
+
+; Newline in data makes our regex not work
+0a =
+
+; Character translations
+; Inverted question mark
+a4 = bf
+a6 = "$"
+; Small a acute
+80 = e1 
+; Small i acute
+84 = ed
+; Small e acute
+8c = e9
+; Small u acute
+88 = fa
+; Capital U acute
+89 = da
+; Small o acute
+90 = f3
+; Capital E acute
+98 = c9
+; Small n tilde
+9a = f1
+
+
+; Remove everything between control sequence signals
+regex = @\[CB\].*?\[CE\]@\\par\\par @
+
+; Remove any remaining control sequences
+regex = @\[CB\]@@
+regex = @\[CE\]@@
+
+; Calculate the EOF based on file contents
+eof_hi = 00
+eof_mid = 7d
+eof_lo = 7c
+eof_offset = 7f
