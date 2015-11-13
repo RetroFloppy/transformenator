@@ -5,6 +5,8 @@ New transforms: Smith-Corona word processor (as opposed to Spinwriter), OmniWrit
 
 New function: ExtractNBIFiles - extract files from NBI word processor 8" disk images
 
+New function: transforms can now specify a vector within a file that holds a distance/length to end of file.
+
 Transformenator introduction:
 =============================
 
