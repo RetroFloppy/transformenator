@@ -1,0 +1,38 @@
+;
+; Transform for files with embedded Epson printer codes
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Return/newline
+0D0D0A = "\\r\\n\par "
+0D0A = "\\r\\n\par "
+
+; Control characters
+0c =
+0e =
+14 =
+
+; ESC-E: Emphasis on
+1b45 =
+9b45 =
+; Esc-F: Emphasis off
+1b46 =
+9b46 =
+
+; ESC-G: Bold on
+1b47 = "\b1 "
+9b47 = "\b1 "
+; Esc-H: Bold off
+1b48 = "\b0 "
+9b48 = "\b0 "
+
+; Esc-4: Italics on
+1b34 = "\i1 "
+9b34 = "\i1 "
+; Esc-5: Italics off
+1b35 = "\i0 "
+9b35 = "\i0 "
