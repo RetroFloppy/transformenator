@@ -11,7 +11,6 @@ head = "{\rtf1{\*\generator David Schmidt - Transformenator;}\f0 "
 tail = "}"
 
 ; Toggle Underline mode
-7f % "\ul ","\ul0 "
 2bd4040a0100 % "\ul ","\ul0 "
 
 ; Bold on/off 
@@ -51,6 +50,10 @@ tail = "}"
 2bd40202 =
 2bd41805 =
 00500078010067010007802a3000f0040100066401042bd20901000000080300282bd402 =
+
+; Suberscript
+09 = "\super "
+38 = "\nosupersub "
 
 ; Space
 40 = 20
