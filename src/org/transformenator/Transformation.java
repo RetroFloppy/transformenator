@@ -169,46 +169,28 @@ public class Transformation
 					 * Each index is a pointer to a hunk at 512 bytes * the index number in the file.
 					 */
 					byte[] newBuf = new byte[inData.length];
-					int newBufCursor = 0;
+					int newBufCursor = 0, bytesFound;
 					for (int i = 0x6b; i < 0x200; i += 7)
 					{
-						if (((UnsignedByte.intValue(inData[i]) == 0xaa) && (UnsignedByte.intValue(inData[i + 1]) == 0xaa) && (UnsignedByte.intValue(inData[i + 2]) == 0xaa)) || ((UnsignedByte.intValue(inData[i]) == 0x00) && (UnsignedByte.intValue(inData[i + 1]) > 0x00) && (UnsignedByte.intValue(inData[i + 2]) == 0x00)))
+						bytesFound = grabDisplayWriteChunk(inData, newBuf, i, newBufCursor);
+						// System.err.println("Back, pulled "+bytesFound+" bytes.");
+						newBufCursor += bytesFound;
+					}
+					if (inData.length > 0x11200)
+					{
+						for (int i = 0x11010; i < 0x11200; i += 7)
 						{
-							int idx = UnsignedByte.intValue(inData[i + 4], inData[i + 3]);
-							int len = UnsignedByte.intValue(inData[i + 6], inData[i + 5]) + 6;
-							// System.err.println("idx: 0x"+UnsignedByte.toString(idx)+" length: "+len);
-							if (idx < 32768)
-							{
-								if (((idx * 512) + 1) < inData.length)
-								{
-									// System.err.println("Pulling data from "+idx*512+" to "+((idx*512)+len)+".");
-									/*
-									 * Need to hunt for the SOT. It will be 3 bytes: 0xe80700.
-									 */
-									int offset = 0;
-									for (int j = 0; j < 0xff; j++)
-									{
-										if ((UnsignedByte.intValue(inData[(idx * 512) + j + 0]) == 0xe8) && (UnsignedByte.intValue(inData[(idx * 512) + j + 1]) == 0x07) && (UnsignedByte.intValue(inData[(idx * 512) + j + 2]) == 0x00))
-										{
-											offset = j + 3;
-											// System.err.println("Found start of text at offset 0x"+UnsignedByte.toString(offset));
-										}
-									}
-									if (offset == 0)
-									{
-										System.err.println("No SOT found for index 0x" + UnsignedByte.toString(idx) + ".");
-										continue;
-									}
-									// Pull out the data in the chunk
-									for (int k = offset; k < len; k++)
-									{
-										newBuf[newBufCursor++] = inData[(idx * 512) + k];
-									}
-								}
-								else
-									System.err.println("Found an index out of bounds: " + idx);
-							}
+							bytesFound = grabDisplayWriteChunk(inData, newBuf, i, newBufCursor);
+							// System.err.println("Back, pulled "+bytesFound+" bytes.");
+							newBufCursor += bytesFound;
 						}
+						if (inData.length > 0x25100)
+							for (int i = 0x25010; i < 0x25100; i += 7)
+							{
+								bytesFound = grabDisplayWriteChunk(inData, newBuf, i, newBufCursor);
+								// System.err.println("Back, pulled "+bytesFound+" bytes.");
+								newBufCursor += bytesFound;
+							}
 					}
 					inData = new byte[newBufCursor];
 					for (int i = 0; i < newBufCursor; i++)
@@ -358,6 +340,48 @@ public class Transformation
 			}
 		}
 		return isOK;
+	}
+
+	public int grabDisplayWriteChunk(byte[] inData, byte[] newBuf, int i, int newBufCursor)
+	{
+		int len = 0;
+		if (((UnsignedByte.intValue(inData[i]) == 0xaa) && (UnsignedByte.intValue(inData[i + 1]) == 0xaa) && (UnsignedByte.intValue(inData[i + 2]) == 0xaa)) || ((UnsignedByte.intValue(inData[i]) == 0x00) && (UnsignedByte.intValue(inData[i + 1]) > 0x00) && (UnsignedByte.intValue(inData[i + 2]) == 0x00)))
+		{
+			int idx = UnsignedByte.intValue(inData[i + 4], inData[i + 3]);
+			len = UnsignedByte.intValue(inData[i + 6], inData[i + 5]) + 6;
+			// System.err.println("idx: 0x"+UnsignedByte.toString(idx)+" length: "+len);
+			if (idx < 32768)
+			{
+				if (((idx * 512) + 1) < inData.length)
+				{
+					// System.err.println("Pulling data from "+idx*512+" to "+((idx*512)+len)+".");
+					/*
+					 * Need to hunt for the SOT. It will be 3 bytes: 0xe80700.
+					 */
+					int offset = 0;
+					for (int j = 0; j < 0xff; j++)
+					{
+						if ((UnsignedByte.intValue(inData[(idx * 512) + j + 0]) == 0xe8) && (UnsignedByte.intValue(inData[(idx * 512) + j + 1]) == 0x07) && (UnsignedByte.intValue(inData[(idx * 512) + j + 2]) == 0x00))
+						{
+							offset = j + 3;
+							// System.err.println("Found start of text at offset 0x"+UnsignedByte.toString(offset));
+						}
+					}
+					if (offset == 0)
+					{
+						System.err.println("No SOT found for index 0x" + UnsignedByte.toString(idx) + ".");
+					}
+					// Pull out the data in the chunk
+					else for (int k = offset; k < len; k++)
+					{
+						newBuf[newBufCursor++] = inData[(idx * 512) + k];
+					}
+				}
+				else
+					System.err.println("Found an index out of bounds: " + idx);
+			}
+		}
+		return len;
 	}
 
 	public boolean readTransform(String filename)
