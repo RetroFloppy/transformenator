@@ -102,7 +102,7 @@ public class Transformation
 				ex.printStackTrace();
 			}
 			int bytesForward = 0;
-			if (inData != null)
+			if ((inData != null) && (inData.length > 0))
 			{
 				// System.err.println("Incoming data length: "+inData.length);
 				if (transformName.toUpperCase().equalsIgnoreCase("VALDOCS"))
@@ -138,7 +138,7 @@ public class Transformation
 							int idx = UnsignedByte.intValue(inData[i], inData[i + 1]);
 							if (idx < 32768)
 							{
-								// System.err.println("idx: "+idx);
+								// System.err.println("DEBUG: idx: "+idx);
 								if (((idx * 512) + 1) < inData.length)
 								{
 									// Chunks may start with a pointer to skip over blank space
@@ -150,52 +150,58 @@ public class Transformation
 									}
 								}
 								// else
-								// System.err.println("Found an index out of bounds: "+idx);
+								// System.err.println("DEBUG: Found an index out of bounds: "+idx);
 							}
 						}
 						inData = new byte[newBufCursor];
 						for (int i = 0; i < newBufCursor; i++)
 							inData[i] = newBuf[i];
-						// System.err.println("Data length after de-indexing: "+inData.length);
+						// System.err.println("DEBUG: Data length after de-indexing: "+inData.length);
 					}
 				}
-				else if ((transformName.length() > 13) && (transformName.toUpperCase().substring(0,13).equalsIgnoreCase("DISPLAYWRITE_")))
+				else if ((transformName.length() > 13) && (transformName.toUpperCase().substring(0, 13).equalsIgnoreCase("DISPLAYWRITE_")))
 				{
-					// If they are using a DisplayWrite transform, let's pick apart the file first.
-					System.err.println("De-indexing DisplayWrite file " + file);
-					/*
-					 * Pick apart the file hunk indices. Hunk indices start at 0x6b and follow 3 bytes of 0xaa. There are a maximum of 59 indices.
-					 * 
-					 * Each index is a pointer to a hunk at 512 bytes * the index number in the file.
-					 */
-					byte[] newBuf = new byte[inData.length];
-					int newBufCursor = 0, bytesFound;
-					for (int i = 0x6b; i < 0x200; i += 7)
+					if ((inData.length > 0x66) && ((UnsignedByte.intValue(inData[0x64]) == 0xaa) && (UnsignedByte.intValue(inData[0x65]) == 0xaa) && (UnsignedByte.intValue(inData[0x66]) == 0xaa)))
 					{
-						bytesFound = grabDisplayWriteChunk(inData, newBuf, i, newBufCursor);
-						// System.err.println("Back, pulled "+bytesFound+" bytes.");
-						newBufCursor += bytesFound;
-					}
-					if (inData.length > 0x11200)
-					{
-						for (int i = 0x11010; i < 0x11200; i += 7)
+						// If they are using a DisplayWrite transform, let's pick apart the file first.
+						System.err.println("De-indexing DisplayWrite file " + file);
+						/*
+						 * Pick apart the file chunk indices. Chunk indices start at 0x6b and follow 3 bytes of 0xaa. There are a maximum of 59 indices.
+						 * 
+						 * Each index is a pointer to a hunk at 512 bytes * the index number in the file.
+						 */
+						byte[] newBuf = new byte[inData.length];
+						int newBufCursor = 0, bytesFound;
+						for (int i = 0x6b; i < 0x200; i += 7)
 						{
+							// System.err.println("DEBUG: Asking for chunk #"+(1+(i-0x6b)/7));
 							bytesFound = grabDisplayWriteChunk(inData, newBuf, i, newBufCursor);
-							// System.err.println("Back, pulled "+bytesFound+" bytes.");
+							// System.err.println("DEBUG: Got chunk, pulled "+bytesFound+" bytes.");
 							newBufCursor += bytesFound;
 						}
-						if (inData.length > 0x25100)
-							for (int i = 0x25010; i < 0x25100; i += 7)
+						if (inData.length > 0x11200)
+						{
+							for (int i = 0x11010; i < 0x11200; i += 7)
 							{
 								bytesFound = grabDisplayWriteChunk(inData, newBuf, i, newBufCursor);
-								// System.err.println("Back, pulled "+bytesFound+" bytes.");
+								// System.err.println("DEBUG: Got chunk, pulled "+bytesFound+" bytes.");
 								newBufCursor += bytesFound;
 							}
+							if (inData.length > 0x25100)
+								for (int i = 0x25010; i < 0x25100; i += 7)
+								{
+									bytesFound = grabDisplayWriteChunk(inData, newBuf, i, newBufCursor);
+									// System.err.println("DEBUG: Got chunk, pulled "+bytesFound+" bytes.");
+									newBufCursor += bytesFound;
+								}
+						}
+						inData = new byte[newBufCursor];
+						for (int i = 0; i < newBufCursor; i++)
+							inData[i] = newBuf[i];
+						// System.err.println("DEBUG: Data length after de-indexing: "+inData.length);
 					}
-					inData = new byte[newBufCursor];
-					for (int i = 0; i < newBufCursor; i++)
-						inData[i] = newBuf[i];
-					// System.err.println("Data length after de-indexing: "+inData.length);
+					else 
+						System.err.println("Probably not a Displaywrite file.");
 				}
 				else if (transformName.toUpperCase().equalsIgnoreCase("LEADING_EDGE"))
 				{
@@ -212,7 +218,7 @@ public class Transformation
 					for (int indexIndex = 0x400; indexIndex < 0x500; indexIndex += 2)
 					{
 						int indexStart = UnsignedByte.intValue(inData[indexIndex], inData[indexIndex + 1]);
-						// System.out.println("Index start value: "+indexStart);
+						// System.out.println("DEBUG: Index start value: "+indexStart);
 						if ((indexStart >= 65520) || (indexStart < 9))
 							continue;
 						if (indexStart == 9)
@@ -220,12 +226,12 @@ public class Transformation
 						if (!found9Yet)
 							continue;
 						indexStart *= 512;
-						// System.err.println("Found index table 0x"+UnsignedByte.toString(inData[indexIndex+1])+UnsignedByte.toString(inData[indexIndex])+" at "+indexStart);
+						// System.err.println("DEBUG: Found index table 0x"+UnsignedByte.toString(inData[indexIndex+1])+UnsignedByte.toString(inData[indexIndex])+" at "+indexStart);
 						for (int i = indexStart; i < indexStart + 256; i += 2)
 						{
 							int block = UnsignedByte.intValue(inData[i], inData[i + 1]);
 							int index = block * 512;
-							// System.err.println("block: 0x"+UnsignedByte.toString(inData[i+1])+UnsignedByte.toString(inData[i])
+							// System.err.println("DEBUG: block: 0x"+UnsignedByte.toString(inData[i+1])+UnsignedByte.toString(inData[i])
 							// +" at file offset: 0x"+UnsignedByte.toString(UnsignedByte.hiByte(index))+UnsignedByte.toString(UnsignedByte.loByte(index)));
 							if (block == 0)
 								break;
@@ -238,7 +244,7 @@ public class Transformation
 									for (j = index + 511; j >= index; j--)
 										if (inData[j] != 0x00)
 											break;
-									// System.err.println("Found end of chunk at "+j+", or length "+(j-index)+".");
+									// System.err.println("DEBUG: Found end of chunk at "+j+", or length "+(j-index)+".");
 									// Pull out the data in the chunk
 									for (int k = 0; k < (j - index + 1); k++)
 									{
@@ -253,9 +259,9 @@ public class Transformation
 					inData = new byte[newBufCursor];
 					for (int i = 0; i < newBufCursor; i++)
 						inData[i] = newBuf[i];
-					// System.err.println("Data length after de-indexing: "+inData.length);
+					// System.err.println("DEBUG: Data length after de-indexing: "+inData.length);
 				}
-				// Did they ask for a EOF to be calculated from inside the file?  Get it!
+				// Did they ask for a EOF to be calculated from inside the file? Get it!
 				if (eofLo + eofMid + eofHi + eofOffset > 0)
 				{
 					int calculatedEOF = eofOffset;
@@ -265,10 +271,10 @@ public class Transformation
 						calculatedEOF = calculatedEOF + (256 * UnsignedByte.intValue(inData[eofMid]));
 					if (eofHi > 0)
 						calculatedEOF = calculatedEOF + (65536 * UnsignedByte.intValue(inData[eofHi]));
-					// System.err.println("After dereference, calculated EOF: "+calculatedEOF);
+					// System.err.println("DEBUG: After dereference, calculated EOF: "+calculatedEOF);
 					trimTrailing = inData.length - calculatedEOF;
 				}
-				// System.err.println("Trimming leading "+trimLeading+" and "+ trimTrailing +" trailing bytes.");
+				// System.err.println("DEBUG: Trimming leading "+trimLeading+" and "+ trimTrailing +" trailing bytes.");
 				trimmedEnd = inData.length - trimTrailing;
 				// Clean out the toggle states
 				for (int i = 0; i < leftSide.size(); i++) // For each left specification
@@ -280,7 +286,7 @@ public class Transformation
 				{
 					backupBytes = 0;
 					bytesForward = evaluateTransforms(outBuf, i, trimmedEnd);
-					// System.err.println("i=" + i + "; bytesForward=" + bytesForward+"; backupBytes="+backupBytes);
+					// System.err.println("DEBUG: i=" + i + "; bytesForward=" + bytesForward+"; backupBytes="+backupBytes);
 					if (bytesForward > 0)
 						i = i + bytesForward - 1;
 					if (backupBytes > 0)
@@ -349,12 +355,12 @@ public class Transformation
 		{
 			int idx = UnsignedByte.intValue(inData[i + 4], inData[i + 3]);
 			len = UnsignedByte.intValue(inData[i + 6], inData[i + 5]) + 6;
-			// System.err.println("idx: 0x"+UnsignedByte.toString(idx)+" length: "+len);
+			// System.err.println("DEBUG: idx: 0x"+UnsignedByte.toString(idx)+" length: "+len);
 			if (idx < 32768)
 			{
 				if (((idx * 512) + 1) < inData.length)
 				{
-					// System.err.println("Pulling data from "+idx*512+" to "+((idx*512)+len)+".");
+					// System.err.println("DEBUG: Pulling data from "+idx*512+" to "+((idx*512)+len)+".");
 					/*
 					 * Need to hunt for the SOT. It will be 3 bytes: 0xe80700.
 					 */
@@ -364,7 +370,7 @@ public class Transformation
 						if ((UnsignedByte.intValue(inData[(idx * 512) + j + 0]) == 0xe8) && (UnsignedByte.intValue(inData[(idx * 512) + j + 1]) == 0x07) && (UnsignedByte.intValue(inData[(idx * 512) + j + 2]) == 0x00))
 						{
 							offset = j + 3;
-							// System.err.println("Found start of text at offset 0x"+UnsignedByte.toString(offset));
+							// System.err.println("DEBUG: Found start of text at offset 0x"+UnsignedByte.toString(offset));
 						}
 					}
 					if (offset == 0)
@@ -372,9 +378,14 @@ public class Transformation
 						System.err.println("No SOT found for index 0x" + UnsignedByte.toString(idx) + ".");
 					}
 					// Pull out the data in the chunk
-					else for (int k = offset; k < len; k++)
+					else
 					{
-						newBuf[newBufCursor++] = inData[(idx * 512) + k];
+						if (idx*512 + len > inData.length)
+							len = inData.length - (idx * 512);
+						for (int k = offset; k < len; k++)
+						{
+							newBuf[newBufCursor++] = inData[(idx * 512) + k];
+						}
 					}
 				}
 				else
@@ -492,14 +503,7 @@ public class Transformation
 					skip = false;
 					// System.err.println("DEBUG Left side token: ["+leftTemp+"]");
 					// If you add a left side keyword that will get consumed, be sure to add it here, otherwise the fall through processing will try to eat it:
-					if (leftTemp.equals("head") ||
-							leftTemp.equals("tail") ||
-							leftTemp.equals("trim_leading") ||
-							leftTemp.equals("trim_trailing") ||
-							leftTemp.equals("eof_lo") ||
-							leftTemp.equals("eof_mid") ||
-							leftTemp.equals("eof_hi") ||
-							leftTemp.trim().charAt(0) == (';'))
+					if (leftTemp.equals("head") || leftTemp.equals("tail") || leftTemp.equals("trim_leading") || leftTemp.equals("trim_trailing") || leftTemp.equals("eof_lo") || leftTemp.equals("eof_mid") || leftTemp.equals("eof_hi") || leftTemp.trim().charAt(0) == (';'))
 					{
 						if (leftTemp.trim().charAt(0) == (';'))
 						{
