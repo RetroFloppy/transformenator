@@ -17,6 +17,9 @@ tail = "}"
 ; Page breaks
 dc..............dc = "\\r\\n\par\pard "
 
+; Some leading crap
+d1..................................d1 =
+
 ; Line breaks
 0d = 20
 0b = 20
