@@ -11,10 +11,11 @@ tail = "}"
 
 ; Newlines
 0a = "\\r\\n\par\pard "
+86 = "\\r\\n\par\pard "
 8c = "\\r\\n\par "
 
 ; Page breaks
-dc..............dc = 
+dc..............dc = "\\r\\n\par\pard "
 
 ; Line breaks
 0d = 20
