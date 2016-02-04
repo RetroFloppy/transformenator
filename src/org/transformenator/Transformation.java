@@ -200,8 +200,11 @@ public class Transformation
 							inData[i] = newBuf[i];
 						// System.err.println("DEBUG: Data length after de-indexing: "+inData.length);
 					}
-					else 
+					else
+					{
 						System.err.println("Probably not a Displaywrite file.");
+						isOK = false;
+					}
 				}
 				else if (transformName.toUpperCase().equalsIgnoreCase("LEADING_EDGE"))
 				{
@@ -295,7 +298,7 @@ public class Transformation
 						// EOF reached
 						break;
 				}
-				try
+				if (isOK) try
 				{
 					if ((valdocsName != null) && (valdocsName.length() > 0))
 					{
