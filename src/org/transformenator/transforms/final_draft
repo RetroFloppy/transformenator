@@ -1,9 +1,19 @@
 ;
-; Final Draft
+; Final Draft - horribly incomplete
 ;
+
+; Based on some examples... not a sound way of finding the SOF
+trim_leading = 11c
 
 ; Apostrophe
 92 = "'"
+d5 = "'"
+
+0006000d0000001e = "{@@<FiLe_EoF>@@}"
+
+; Inter-paragraph (maybe inter-page) cruft
+....000d0000 =
+....0009.... =
 
 ; EOF
 033030303430303030........3030303030 = "{@@<FiLe_EoF>@@}"
