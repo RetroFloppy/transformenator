@@ -1,0 +1,37 @@
+;
+; Brown Bag PC word processor
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fhelvetica\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Italics (or other emphasis)
+15 % "\i1 ","\i0 "
+17 % "\i1 ","\i0 "
+1b2d01 = "\i1 "
+1b2d00 = "\i0 "
+1b34 = "\i1 "
+1b35 = "\i0 "
+
+; Superscript
+18 % "\super ","\nosupersub "
+
+; Newline
+0d0a = "\par "
+
+; New page
+0c0f =  "\par\par "
+
+1b50 =
+1b3324 =
+; Some kind of page number specification?
+0b2e463a2e2e2e28242424292e2e2e =
+
+;N:1
+0b2e4e3a31 =
+;N:32
+0b2e4e3a3332 =
+;N:35
+0b2e4e3a3335 =
