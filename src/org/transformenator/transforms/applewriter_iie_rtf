@@ -16,14 +16,32 @@ regex = @\.LI1@\\par\\li0\\par @
 ; Italic toggle
 5c % " \i1 "," \i0 "
 
-0d0a = "\\r\\n\par\par "
+; Left paragraph alignment
+
+; Unsure - maybe printer codes?
+1b.. =
+
+; Sometimes follows an italic closure
+08 =
+
+0d0a = "\\r\\n\par "
 
 ; Consume other productions
 regex = @\.[F|f][J|j]@@
+regex = @\.[L|l][J|j]@\\ql @
+regex = @\.[R|r][J|j]@\\qr @
 regex = @\.[R|r|L|l][M|m][\-|\+][0-9]{1,3}@@
 regex = @\.[R|r|L|l][M|m][0-9]{1,3}@@
 regex = @\.[B|b][M|m][0-9]{1,2}@@
+regex = @\.[B|b][L|l]@@
+regex = @\.[T|t][L|l]@@
 regex = @\.[T|t][M|m][0-9]{1,2}@@
 regex = @\.[E|e][P|p][0-9]@@
 regex = @\.[F|f][F|f][0-9]{1,2}@@
-regex = @\.[P|p][M|m][\+|\-][0-9]@@
+regex = @\.[F|f][F|f]@@
+regex = @\.[P|p][M|m][\+|\-][0-9]{1,2}@@
+regex = @\.[P|p][L|l][0-9]{1,2}@@
+regex = @\.[P|p][I|i][0-9]{1,2}@@
+regex = @\.[P|p][N|n][0-9]{1,2}@@
+regex = @\.[P|p][M|m]@@
+regex = @\.[C|c][J|j]@@
