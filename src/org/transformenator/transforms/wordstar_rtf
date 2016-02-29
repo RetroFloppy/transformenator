@@ -9,9 +9,11 @@ head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transf
 ; Closing brace for RTF format
 tail = "}"
 
-; Newlines - remove line breaks
+; Newlines
 0d0a = "\\r\\n\par "
-8d0a =
+0d8a = "\\r\\n\par "
+8d0a = "\\r\\n\par "
+8d8a = "\\r\\n\par "
 
 ; Ruler line removal
 2e72720d =
@@ -40,6 +42,10 @@ regex = @\\par \.pa@\\page @
 
 ; Page offset removal
 regex = @\\par \.po.*@@
+
+; Omit Page numbers directive removal
+regex = @\\par \.op.*@@
+regex = @^.op.*@@
 
 ; Footer removal
 regex = @\\par \.fo.*@@
