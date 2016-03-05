@@ -10,6 +10,7 @@
 ; zju0 - Justify off?
 ; zju1 - Justify on?
 ; zfp - Force page?
+; zhdx - ?
 ; znx:<filename> - next file to chain
 
 ; Centering off/on
@@ -21,15 +22,24 @@ head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transf
 ; Closing brace for RTF format
 tail = "}"
 
-; Regular expressions run _after_ all binary replacements.
+; Remember, regular expressions run _after_ all binary replacements.
 ; Remove left/right margin specs: zlmxx, :rmxx
 regex = @[z|:][l|r]m[0-9]*@@
+regex = @[z|:]ls[0-9]*@@
 ; Remove page spec: :ppxx :pgxx :p#xx
 regex = @[z|:]p[p|g|\#][0-9]*@@
+; Remove page spec: :ppxx :pgxx :p#xx
+regex = @[z|:]p[p|g|\#][0-9]*@@
+; Remove point spec: :ptxx
+regex = @[z|:]pt[0-9]*@@
+; Remove unknown spec: :vpxx
+regex = @[z|:]vp[0-9]*@@
 ; Remove spacing spec: :spxx
 regex = @[z|:]sp[0-9]*@@
 ; Remove next file specification
 regex = @znx:.*@@
+; Remove unknown specification
+regex = @zhd[0-9]*@@
 
 ; Crazy gorp at the front
 ....ff28fe..6363636363636363..636363636363636363..636363636363636363..636363636363636363..fd =
