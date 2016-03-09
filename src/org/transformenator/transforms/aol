@@ -1,0 +1,9 @@
+;
+; AOL Macintosh message format - just clip off the beginning and end cruft
+;
+
+; SOF
+0330303032303030.................................... = "{@@<FiLe_SoF>@@}"
+
+; EOF
+0330303034303030 = "{@@<FiLe_EoF>@@}"
