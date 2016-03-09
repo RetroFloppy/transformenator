@@ -71,3 +71,6 @@ regex = @\\par \.[m|M][t|T].*@@
 
 ; Character width
 regex = @\\par \.cw.*@@
+
+; Filler to end of sector
+1a =
