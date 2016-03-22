@@ -18,15 +18,18 @@ tail = "}"
 ; Ruler line removal
 2e72720d =
 
-; Bold
-02 = "\b1 "
-82 = "\b0 "
+; Bold (Note - not always a toggle)
+02 % "\b1 ","\b0 "
+82 % "\b1 ","\b0 "
 
 ; Strip high bits
 [80..ff] # 00
 
 ; Remove overstrike/backspace
 08 =
+
+; Unknown emphasis
+04 =
 
 ; Toggle Underline mode
 13 % "\ul ","\ul0 "
@@ -38,14 +41,14 @@ tail = "}"
 16 % "\sub ","\nosupersub "
 
 ; Page break
-regex = @\\par \.pa@\\page @
+regex = @\\par \.[p|P][a|A]@\\page @
 
 ; Page offset removal
-regex = @\\par \.po.*@@
+regex = @\\par \.[p|P][o|O].*@@
 
 ; Omit Page numbers directive removal
-regex = @\\par \.op.*@@
-regex = @^.op.*@@
+regex = @\\par \.[o|O][p|P].*@@
+regex = @^.[o|O][p|P].*@@
 
 ; Footer removal
 regex = @\\par \.fo.*@@
@@ -54,8 +57,15 @@ regex = @\\par \.f3.*@@
 regex = @\\par \.f4.*@@
 regex = @\\par \.f5.*@@
 
-; Page numbering removal
-regex = @\\par \.pn.*@@
+; Various directive removals
+regex = @\\par \.[p|P][n|N].*@@
+regex = @^\.[c|C][w|W].*@@
+regex = @\\par \.[c|C][w|W].*@@
+regex = @\\par \.[p|P][a|A]@@
+regex = @\\par \.[i|I][a|A]@@
+regex = @\\par \.[i|I][b|B]@@
+regex = @\\par \.[i|I][e|E]@@
+regex = @\\par \.[i|I][t|T]@@
 
 ; Embedded ruler removal: .rr n
 regex = @^\.[r|R][r|R].*@@
@@ -70,7 +80,7 @@ regex = @\\par \.[h|H][1-5](\.*)@\\r\\n\\par @
 regex = @\\par \.[m|M][t|T].*@@
 
 ; Character width
-regex = @\\par \.cw.*@@
+regex = @\\par \.[c|C][w|W].*@@
 
 ; Filler to end of sector
 1a =
