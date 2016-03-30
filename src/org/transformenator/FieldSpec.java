@@ -34,4 +34,5 @@ public class FieldSpec
 	 * 3 = Hex dump
 	 */
 	public int interp = 0;
+	public boolean csvLiteral = false;
 }

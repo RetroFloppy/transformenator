@@ -153,23 +153,37 @@ public class CSVInterpreter
 										temp = new String(fieldBytes);
 										if (isFirstField)
 										{
-											fieldString += "\"" + temp + "\"";
+											if (field.csvLiteral)
+												fieldString += "\"=\"\"" + temp + "\"\"\"";
+											else
+												fieldString += "\"" + temp + "\"";
 											isFirstField = false;
 										}
 										else
-											fieldString += ",\"" + temp + "\"";
+										{
+											if (field.csvLiteral)
+												fieldString += ",\"=\"\"" + temp + "\"\"\"";
+											else
+												fieldString += ",\"" + temp + "\"";
+										}
 									}
 									else if (field.interp == 2) // EBCDIC text
 									{
 										fieldString = new String("");
 										if (isFirstField)
 										{
-											fieldString += "\"" + EbcdicUtil.toAscii(fieldBytes, 0, fieldBytes.length) + "\"";
+											if (field.csvLiteral)
+												fieldString += "\"=\"\"" + EbcdicUtil.toAscii(fieldBytes, 0, fieldBytes.length) + "\"\"\"";
+											else
+												fieldString += "\"" + EbcdicUtil.toAscii(fieldBytes, 0, fieldBytes.length) + "\"";
 											isFirstField = false;
 										}
 										else
 										{
-											fieldString += ",\"" + EbcdicUtil.toAscii(fieldBytes, 0, fieldBytes.length) + "\"";
+											if (field.csvLiteral)
+												fieldString += ",\"=\"\"" + EbcdicUtil.toAscii(fieldBytes, 0, fieldBytes.length) + "\"\"\"";
+											else
+												fieldString += ",\"" + EbcdicUtil.toAscii(fieldBytes, 0, fieldBytes.length) + "\"";
 										}
 									}
 									else if (field.interp == 3) // Hex data
@@ -177,18 +191,27 @@ public class CSVInterpreter
 										fieldString = new String("");
 										if (isFirstField)
 										{
-											fieldString += "\"";
+											if (field.csvLiteral)
+												fieldString += "\"=\"\"";
+											else
+												fieldString += "\"0x";
 											isFirstField = false;
 										}
 										else
 										{
-											fieldString += ",\"";
+											if (field.csvLiteral)
+												fieldString += ",\"=\"\"";
+											else
+												fieldString += ",\"0x";
 										}
 										for (int k = 0; k < fieldBytes.length; k++)
 										{
 											fieldString += UnsignedByte.toString(fieldBytes[k]);
 										}
-										fieldString += "\"";
+										if (field.csvLiteral)
+											fieldString += "\"\"\"";
+										else
+											fieldString += "\"";
 									}
 									out.write(fieldString.getBytes());
 								}
@@ -252,22 +275,23 @@ public class CSVInterpreter
 			BufferedReader br = new BufferedReader(fr);
 			StringTokenizer st;
 			FieldSpec currentFieldSpec = null;
+			boolean skip = false;
 			while ((line = br.readLine()) != null)
 			{
-				String[] equalsSplits = line.split("=");
-
-				// System.err.println("Line before: ["+line+"]");
+				skip = false;
+				// System.err.println("DEBUG Line before: ["+line+"]");
 				if (line.indexOf(";") > 0)
 				{
 					line = line.substring(0, line.indexOf(";"));
-					// System.err.println("Line after : ["+line+"]");
+					// System.err.println("DEBUG 1 Line after : ["+line+"]");
 				}
 				else if (line.indexOf(";") == 0)
 				{
 					line = "";
-					// System.err.println("Line after : ["+line+"]");
+					skip = true;
+					// System.err.println("DEBUG 2 Line after : ["+line+"]");
 				}
-				boolean skip = false;
+				String[] equalsSplits = line.split("=");
 				String[] result;
 				String leftTemp = "";
 				String rightTemp1 = "";
@@ -275,7 +299,7 @@ public class CSVInterpreter
 				int fieldOrigin = 0, fieldLength = 0;
 				st = new StringTokenizer(equalsSplits[0]);
 				result = equalsSplits;
-				// System.err.println("Splits on '=': "+equalsSplits.length+" splits on '#': "+hashSplits.length+" splits on '%': "+toggleSplits.length+"\n line.indexOf('='): "+line.indexOf("=")+ " line.indexOf('#'): "+line.indexOf("#")+ " line.indexOf('%'): "+line.indexOf("%"));
+				// System.err.println("Splits on '=': "+equalsSplits.length);
 				if (st != null && st.hasMoreTokens())
 				{
 					leftTemp = st.nextToken();
@@ -357,19 +381,26 @@ public class CSVInterpreter
 							if (currentFieldSpec != null)
 							{
 								fieldLength = fromByteArray(rightBytes);
-								currentFieldSpec.fieldLength = fieldLength;
 								// System.err.println("DEBUG Length of field is: " + fieldLength);
+								currentFieldSpec.fieldLength = fieldLength;
+								if (fieldLength < 1)
+								{
+									System.err.println("ERROR: field named \"" + currentFieldSpec.fieldName + "\" must have a length greater than zero.  Abandoning it.");
+									currentFieldSpec = null;
+								}
 							}
 							else
 							{
-								System.err.println("ERROR: field length found with no prior name to associate it with.");
+								System.err.println("ERROR: field length found with no prior field name to associate it with.");
 							}
 						}
-						else if (leftTemp.equalsIgnoreCase("INTERP"))
+						else if (leftTemp.equalsIgnoreCase("INTERP") || leftTemp.equalsIgnoreCase("INTERPLITERAL"))
 						{
 							String typeString = new String(rightBytes);
 							if (currentFieldSpec != null)
 							{
+								if (leftTemp.equalsIgnoreCase("INTERPLITERAL"))
+									currentFieldSpec.csvLiteral = true;
 								if (typeString.equalsIgnoreCase("ASCII"))
 									currentFieldSpec.interp = 1;
 								else if (typeString.equalsIgnoreCase("EBCDIC"))
@@ -392,9 +423,13 @@ public class CSVInterpreter
 						}
 						else
 						{
-							System.err.println("DEBUG arrived at else clause when parsing.  leftTemp: " + leftTemp);
+							System.err.println("ERROR: unknown specification encountered in transform file: " + leftTemp);
 						}
 					}
+				}
+				else
+				{
+					
 				}
 			}
 		}

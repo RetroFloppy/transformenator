@@ -2,7 +2,8 @@
 <title>Transformenator - CSV Transform</title>
 <a href="http://sourceforge.net/projects/transformenator/files/"><img src="xfmn.png"></a>
 <h1>Transformenator CSV Transform</h1>
-The ExtractCSV utility function takes a file and divides it up into fixed-length records with fixed-length fields that you specify and creates a comma-separated values (CSV) file in the process.
+The ExtractCSV utility function takes a file and divides it up into fixed-length records with fixed-length fields that you specify and creates a comma-separated values (CSV) file of them.
+Data from the original file can be interpreted as ASCII text, as EBCDIC text, or as hexadecimal values.
 <p>
 The table below defines the keywords and values used to define an interpretation of a file as records.
 All numerical values are given in hexadecimal.
@@ -20,7 +21,7 @@ All numerical values are given in hexadecimal.
 </tr>
 <tr>
 <td align="center"><xmp>FirstRec</xmp></td>
-<td align="left">Offset (in hex bytes) to the first record to be considered</td>
+<td align="left">(Optional) Offset (in hex bytes) to the first record to be considered</td>
 <td align="left"><xmp>FIRSTREC=0E00</xmp></td>
 </tr>
 <tr>
@@ -30,14 +31,16 @@ All numerical values are given in hexadecimal.
 </tr>
 <tr>
 <td align="center"><xmp>SelectIf</xmp></td>
-<td align="left">(Optional) criteria that must be met to consider a record for output; specification first lists the offset within the record, followed by a comma, followed by one or more hex bytes that must match.  Multiple <xmp>SelectIf</xmp> clauses may be used to produce logical OR conditions.</td>
-<td align="left"><xmp>SELECTIF=00,40 ; First byte must be 0x40 to be valid</xmp></td>
+<td align="left">(Optional) criteria that must be met to consider a record for output; specification first lists the offset within the record, followed by a comma, followed by one or more hex bytes that must match.  Multiple <code>SelectIf</code> clauses may be used to produce logical OR conditions.</td>
+<td align="left"><xmp>SELECTIF=00,40 ; First byte must be 0x40 to be valid</xmp>
+<xmp>SELECTIF=01,20 ; Or, second byte can be 0x20</xmp></td>
 </tr>
 </tbody>
 </table>
 <p>
-The table below defines export instructions for a single field.  
-Multiples of these specifications make up a full record to export.  One each of <code>Name, Origin, Length,</code> and <code>Interp</code> must be present.
+The table below defines export instructions for a single field.
+Each field must contain one each of the keywords.
+Multiple sets of these specifications typically make up a full record to export.  
 All numerical values are given in hexadecimal.
 <table border="1">
 <tbody>
@@ -47,13 +50,8 @@ All numerical values are given in hexadecimal.
 <th align="left"><b>Example</b></th>
 </tr>
 <tr>
-<td align="center"><xmp>;</xmp></td>
-<td align="left">Comment, will be ignored</td>
-<td align="left"><xmp>; This text will not be considered</xmp></td>
-</tr>
-<tr>
 <td align="center"><xmp>Name</xmp></td>
-<td align="left">Field name; will be exported on header row of output CSV file</td>
+<td align="left">Field name to be exported on header row of output CSV file</td>
 <td align="left"><xmp>NAME="Field 1"</xmp></td>
 </tr>
 <tr>
@@ -67,9 +65,45 @@ All numerical values are given in hexadecimal.
 <td align="left"><xmp>LENGTH=0a</xmp></td>
 </tr>
 <tr>
-<td align="center"><xmp>Interp</xmp></td>
-<td align="left">Interpretation of field data on export - one of:<br><xmp>"ASCII"</xmp> - ASCII text<br><xmp>"EBCDIC"</xmp> - EBCDIC text<br><xmp>"HEX"</xmp> - Hexadecimal notation</td>
-<td align="left"><xmp>INTERP="EBCDIC"</xmp></td>
+<td align="center"><xmp>Interp
+InterpLiteral</xmp></td>
+<td align="left">Interpretation of field data on export - one of:<br><code>"ASCII"</code> - ASCII text<br><code>"EBCDIC"</code> - EBCDIC text<br><code>"HEX"</code> - Hexadecimal notation<br>Text will be encoded in the output CSV file with surrounding quotes.  With <code>InterpLiteral</code>, additional syntax and quoting will be added to the output CSV file that convinces spreadsheets not to re-interpret numerics.</td>
+<td align="left"><xmp>INTERPLITERAL="EBCDIC"</xmp></td>
 </tr>
 </tbody>
 </table>
+<h2>Example</h2>
+Below is an example csv-transform file that interprets a disk image taken from an IBM System/36 floppy disk that was used for record storage:
+<xmp>
+;
+; Custom IBM System/36 to CSV transform
+;
+FIRSTREC=0E00     ; First record starts at 0xE00
+NEXTREC=100       ; Records continue every 0x100 bytes
+SELECTIF=00,40    ; The zeroeth byte needs to be an EBCDIC space
+;
+NAME="Field 1"    ; First field definition
+ORIGIN=01         ; Starts at byte 0x01 (zero-indexed)
+LENGTH=09         ; Runs for a length of 0x09 bytes
+INTERP="EBCDIC"   ; Interpret data as EBCDIC
+;
+NAME="Field 2"    ; Second field definition
+ORIGIN=0A         ; Starts at byte 0x0a (zero-indexed)
+LENGTH=1E         ; Runs for a length of 0x1e bytes
+INTERP="EBCDIC"   ; Interpret data as EBCDIC
+;
+NAME="Field 3"    ; Third field definition
+ORIGIN=28         ; Starts at byte 0x28 (zero-indexed)
+LENGTH=05         ; Runs for a length of 0x05 bytes
+INTERP="EBCDIC"   ; Interpret data as EBCDIC
+;
+NAME="Field 4"    ; Fourth field definition
+ORIGIN=2d         ; Starts at byte 0x2d (zero-indexed)
+LENGTH=02         ; Runs for a length of 0x02 bytes
+INTERP="EBCDIC"   ; Interpret data as EBCDIC
+;
+NAME="Field 5"    ; Fifth field definition
+ORIGIN=2f         ; Starts at byte 0x2f (zero-indexed)
+LENGTH=3d         ; Runs for a length of 0x3d bytes
+INTERP="HEX"      ; Interpret data as hexadecimal bytes
+</xmp>
