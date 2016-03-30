@@ -1,22 +1,10 @@
 ;
 ; Transform for basic readability of EBCDIC data
 ; 
-; Notes - EBCDIC encoding; non-understood data represented by a tilde character (~)
-;
-
-; Newline
-06 = "\par\par "
-
-15 = " "
-
-; Backspace
-16 = 
 
 2d = "-"
-2f = 
 
 40 = " "
-41 = " "
 
 4b = "."
 4c = "<"
@@ -46,7 +34,7 @@
 7a = ":"
 7b = "#"
 7c = "@"
-7d = "\'"
+7d = "'"
 7e = "="
 7f = """
 
@@ -122,5 +110,3 @@ f6 = "6"
 f7 = "7"
 f8 = "8"
 f9 = "9"
-
-.. = "~"
