@@ -99,7 +99,7 @@ public class CSVInterpreter
 						/*
 						 * Iterate over the entire file, so far only doing fixed-size/fixed-location records.
 						 * If there comes a time where records must be searched for, the outer loop construct
-						 * will have to change to accomodate that.
+						 * will have to change to accommodate that.
 						 */
 						for (int i = firstRec; i < (result.length - nextRec); i += nextRec)
 						{
@@ -120,15 +120,18 @@ public class CSVInterpreter
 								while (it.hasNext())
 								{
 									selection = it.next();
-									for (int j = 0; j < selection.rightCompare.length; j++)
+									for (int j = 0; j <  selection.rightCompare.length; j++)
 									{
-										if (result[i + j] == selection.rightCompare[j])
+										if (UnsignedByte.intValue(result[i + j + selection.offset]) == UnsignedByte.intValue(selection.rightCompare[j]))
 										{
-											// System.err.println("DEBUG Found one! "+UnsignedByte.toString(result[i+j]) + "=" + UnsignedByte.toString(selection.rightCompare[j]));
+											// System.err.println("DEBUG Found one! "+UnsignedByte.toString(result[i+j+selection.offset]) + "=" + UnsignedByte.toString(selection.rightCompare[j]));
 											continue;
 										}
 										else
+										{
 											shouldPrint = false;
+											// System.err.println("DEBUG mismatch: "+UnsignedByte.toString(result[i+j+selection.offset]) + "!=" + UnsignedByte.toString(selection.rightCompare[j]));
+										}
 									}
 								}
 							}
@@ -342,10 +345,10 @@ public class CSVInterpreter
 							if (commaSplits.length == 2)
 							{
 								SelectSpec newSelectionSpec = new SelectSpec();
-								newSelectionSpec.offset = Integer.parseInt(commaSplits[0]);
+								newSelectionSpec.offset = fromByteArray(asBytes(commaSplits[0]));
 								newSelectionSpec.rightCompare = asBytes(commaSplits[1]);
 								selection.addElement(newSelectionSpec);
-								// System.err.println("DEBUG Added selection Spec: " + commaSplits[0] + ", " + commaSplits[1]);
+								// System.err.println("DEBUG Added selection Spec: " + newSelectionSpec.offset + ", " + commaSplits[1]);
 							}
 							else
 							{
