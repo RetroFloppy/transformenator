@@ -1,14 +1,3 @@
-New for this version:
-=====================
-
-New transforms: Smith-Corona word processor (as opposed to Spinwriter), OmniWriter for C64, Symantec Q&A Write, AppleWriter IIe, Multiscribe, OfficeWriter, NBI Word Processor, Epson Control Codes, Brown Bag Word Processor
-
-New extraction utility functions:
-  ExtractNBIFiles - extract files from NBI word processor 8" disk images
-  ExtractCSV - extract fixed-length records from a file as comma separated values
-
-New function: transforms can now specify a vector within a file that holds a distance/length to end of file with keywords eof_lo, eof_mid, eof_hi, and eof_offset.
-
 Transformenator introduction:
 =============================
 
