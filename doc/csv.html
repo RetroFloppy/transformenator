@@ -6,6 +6,7 @@ The ExtractCSV utility function takes a file and divides it up into fixed-length
 Data from the original file can be interpreted as ASCII text, as EBCDIC text, or as hexadecimal values.
 <p>
 The table below defines the keywords and values used to define an interpretation of a file as records.
+The case of the keywords is not significant.
 All numerical values are given in hexadecimal.
 <table border="1">
 <tbody>
@@ -39,8 +40,9 @@ All numerical values are given in hexadecimal.
 </table>
 <p>
 The table below defines export instructions for a single field.
-Each field must contain one each of the keywords.
-Multiple sets of these specifications typically make up a full record to export.  
+Each field definition must contain one each of the following four keywords.
+Multiple sets of these specifications typically make up a full record to export.
+The case of the keywords is not significant.
 All numerical values are given in hexadecimal.
 <table border="1">
 <tbody>
@@ -65,10 +67,9 @@ All numerical values are given in hexadecimal.
 <td align="left"><xmp>LENGTH=0a</xmp></td>
 </tr>
 <tr>
-<td align="center"><xmp>Interp
-InterpLiteral</xmp></td>
-<td align="left">Interpretation of field data on export - one of:<br><code>"ASCII"</code> - ASCII text<br><code>"EBCDIC"</code> - EBCDIC text<br><code>"HEX"</code> - Hexadecimal notation<br>Text will be encoded in the output CSV file with surrounding quotes.  With <code>InterpLiteral</code>, additional syntax and quoting will be added to the output CSV file that convinces spreadsheets not to re-interpret numerics.</td>
-<td align="left"><xmp>INTERPLITERAL="EBCDIC"</xmp></td>
+<td align="center"><xmp>Interp</xmp> or <xmp>InterpLiteral</xmp></td>
+<td align="left">Interpretation of field data to export - one of:<br><code>ASCII</code> - ASCII text<br><code>EBCDIC</code> - EBCDIC text<br><code>HEX</code> - Hexadecimal notation<br>Text will be encoded in the output CSV file as specified with surrounding quotes.  With <code>InterpLiteral</code>, additional syntax and quoting will be added to the output CSV file that convinces spreadsheets not to re-interpret numerical values.</td>
+<td align="left"><xmp>INTERPLITERAL=EBCDIC</xmp></td>
 </tr>
 </tbody>
 </table>
@@ -85,25 +86,25 @@ SELECTIF=00,40    ; The zeroeth byte needs to be an EBCDIC space
 NAME="Field 1"    ; First field definition
 ORIGIN=01         ; Starts at byte 0x01 (zero-indexed)
 LENGTH=09         ; Runs for a length of 0x09 bytes
-INTERP="EBCDIC"   ; Interpret data as EBCDIC
+INTERP=EBCDIC     ; Interpret data as EBCDIC
 ;
 NAME="Field 2"    ; Second field definition
 ORIGIN=0A         ; Starts at byte 0x0a (zero-indexed)
 LENGTH=1E         ; Runs for a length of 0x1e bytes
-INTERP="EBCDIC"   ; Interpret data as EBCDIC
+INTERP=EBCDIC     ; Interpret data as EBCDIC
 ;
 NAME="Field 3"    ; Third field definition
 ORIGIN=28         ; Starts at byte 0x28 (zero-indexed)
 LENGTH=05         ; Runs for a length of 0x05 bytes
-INTERP="EBCDIC"   ; Interpret data as EBCDIC
+INTERP=EBCDIC     ; Interpret data as EBCDIC
 ;
 NAME="Field 4"    ; Fourth field definition
 ORIGIN=2d         ; Starts at byte 0x2d (zero-indexed)
 LENGTH=02         ; Runs for a length of 0x02 bytes
-INTERP="EBCDIC"   ; Interpret data as EBCDIC
+INTERP=EBCDIC     ; Interpret data as EBCDIC
 ;
 NAME="Field 5"    ; Fifth field definition
 ORIGIN=2f         ; Starts at byte 0x2f (zero-indexed)
 LENGTH=3d         ; Runs for a length of 0x3d bytes
-INTERP="HEX"      ; Interpret data as hexadecimal bytes
+INTERP=HEX        ; Interpret data as hexadecimal bytes
 </xmp>
