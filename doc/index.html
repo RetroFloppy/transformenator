@@ -135,7 +135,7 @@ The table below lists the special processing capabilities of Transformenator.
 </tr>
 <tr>
 <td align="center"><xmp>eof_lo</xmp><br><xmp>eof_mid</xmp><br><xmp>eof_hi</xmp><br><xmp>eof_offset</xmp></td>
-<td align="left">Used together when a file contains a binary length of file vector.  <xmp>eof_lo</xmp> is the least significant byte, <xmp>eof_mid</xmp> is the next most signficant byte, and <xmp>eof_high</xmp> is the most significant byte of the vector.  Those values are offsets into the file.  <xmp>eof_offset</xmp> is a static offset to tune the exact end point.</td>
+<td align="left">Used together when a file contains a binary length of file vector.  <xmp>eof_lo</xmp> is the least significant byte, <xmp>eof_mid</xmp> is the next most signficant byte, and <xmp>eof_high</xmp> is the most significant byte of the vector.  These values together comprise the offset into the file.  <xmp>eof_offset</xmp> is a static offset to tune the exact end point in case the vector is offset by some amount.</td>
 <td align="left"><xmp>; Calculate the EOF based on file contents
 eof_hi = 00
 eof_mid = 7d
@@ -161,7 +161,7 @@ tail = "</html>"</xmp></td>
 trim_leading = 0400</xmp></td>
 </tr>
 <td align="center"><xmp>trim_trailing</xmp></td>
-<td align="left">Specifies a number of bytes to trim off the end of the input file (in hex bytes) before any binary transforms are applied.  Results are undefined if used in conjunciton with <xmp>eof_*</xmp> vectors above.</td>
+<td align="left">Specifies a number of bytes to trim off the end of the input file (in hex bytes) before any binary transforms are applied.  Results are undefined if used in conjunciton with <code>eof_*</code> vectors above</td>
 <td align="left"><xmp>; Trim the trailing 0xDF bytes
 trim_trailing = df</xmp></td>
 </tr>
@@ -239,7 +239,7 @@ The transformenator.jar includes several supporting utilities.  They are:
 </tr>
 <tr>
 <td align="left"><code>ExtractCSV</code></td>
-<td align="left"><code>csv-transform infile outfile.csv</code></td>
+<td align="left"><code><a href="csv.html">csv-transform</a> infile outfile.csv</code></td>
 <td align="left">Extract fixed-length records from a file as comma separated values (see csv-transform specification <a href="csv.html">here</a>)</td>
 </tr>
 <tr>
