@@ -1,7 +1,7 @@
 New for this version:
 =====================
 
-New transforms: Smith-Corona word processor (as opposed to Spinwriter), OmniWriter for C64, Symantec Q&A Write, AppleWriter IIe, Multiscribe, OfficeWriter, NBI Word Processor, Epson Control Codes
+New transforms: Smith-Corona word processor (as opposed to Spinwriter), OmniWriter for C64, Symantec Q&A Write, AppleWriter IIe, Multiscribe, OfficeWriter, NBI Word Processor, Epson Control Codes, Brown Bag Word Processor
 
 New extraction utility functions:
   ExtractNBIFiles - extract files from NBI word processor 8" disk images
