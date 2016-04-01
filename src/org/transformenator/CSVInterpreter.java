@@ -71,164 +71,161 @@ public class CSVInterpreter
 				inData = result;
 				if (isOK)
 				{
+					System.err.println("Writing output file \"" + outFile + "\".");
 					FileOutputStream out = new FileOutputStream(outFile);
-					try
+					Iterator<FieldSpec> header = fields.iterator();
+					FieldSpec fs;
+					String hf;
+					boolean isFirst = true;
+					while (header.hasNext())
 					{
-						System.err.println("Writing output file \"" + outFile + "\".");
-						Iterator<FieldSpec> header = fields.iterator();
-						FieldSpec fs;
-						String hf;
-						boolean isFirst = true;
-						while (header.hasNext())
+						fs = header.next();
+						hf = new String("\"" + fs.fieldName + "\"");
+						if (isFirst)
 						{
-							fs = header.next();
-							hf = new String("\"" + fs.fieldName + "\"");
-							if (isFirst)
-							{
-								out.write(hf.getBytes());
-								isFirst = false;
-							}
-							else
-							{
-								hf = "," + hf;
-								out.write(hf.getBytes());
-							}
+							out.write(hf.getBytes());
+							isFirst = false;
 						}
-						hf = "\n";
-						out.write(hf.getBytes());
+						else
+						{
+							hf = "," + hf;
+							out.write(hf.getBytes());
+						}
+					}
+					hf = "\n";
+					out.write(hf.getBytes());
+					/*
+					 * Iterate over the entire file, so far only doing fixed-size/fixed-location records.
+					 * If there comes a time where records must be searched for, the outer loop construct
+					 * will have to change to accommodate that.
+					 */
+					for (int i = firstRec; i < (result.length - nextRec); i += nextRec)
+					{
 						/*
-						 * Iterate over the entire file, so far only doing fixed-size/fixed-location records.
-						 * If there comes a time where records must be searched for, the outer loop construct
-						 * will have to change to accommodate that.
+						 * First, check if the data qualifies as a record.
 						 */
-						for (int i = firstRec; i < (result.length - nextRec); i += nextRec)
+						Iterator<SelectSpec> it = selection.iterator();
+						SelectSpec selection;
+						boolean shouldPrint = false;
+						if (it.hasNext() == false)
 						{
-							/*
-							 * First, check if the data qualifies as a record.
-							 */
-							Iterator<SelectSpec> it = selection.iterator();
-							SelectSpec selection;
-							boolean shouldPrint = false;
-							if (it.hasNext() == false)
+							// System.err.println("DEBUG no hasNext on selection iterator.");
+							shouldPrint = true;
+						}
+						else
+						{
+							shouldPrint = true;
+							while (it.hasNext())
 							{
-								// System.err.println("DEBUG no hasNext on selection iterator.");
-								shouldPrint = true;
-							}
-							else
-							{
-								shouldPrint = true;
-								while (it.hasNext())
+								selection = it.next();
+								for (int j = 0; j < selection.rightCompare.length; j++)
 								{
-									selection = it.next();
-									for (int j = 0; j <  selection.rightCompare.length; j++)
+									if (UnsignedByte.intValue(result[i + j + selection.offset]) == UnsignedByte.intValue(selection.rightCompare[j]))
 									{
-										if (UnsignedByte.intValue(result[i + j + selection.offset]) == UnsignedByte.intValue(selection.rightCompare[j]))
-										{
-											// System.err.println("DEBUG Found one! "+UnsignedByte.toString(result[i+j+selection.offset]) + "=" + UnsignedByte.toString(selection.rightCompare[j]));
-											continue;
-										}
-										else
-										{
-											shouldPrint = false;
-											// System.err.println("DEBUG mismatch: "+UnsignedByte.toString(result[i+j+selection.offset]) + "!=" + UnsignedByte.toString(selection.rightCompare[j]));
-										}
+										// System.err.println("DEBUG Found one! "+UnsignedByte.toString(result[i+j+selection.offset]) + "=" + UnsignedByte.toString(selection.rightCompare[j]));
+										continue;
+									}
+									else
+									{
+										shouldPrint = false;
+										// System.err.println("DEBUG mismatch: "+UnsignedByte.toString(result[i+j+selection.offset]) + "!=" + UnsignedByte.toString(selection.rightCompare[j]));
 									}
 								}
-							}
-							if (shouldPrint)
-							{
-								// System.err.println("DEBUG Found one!");
-								Iterator<FieldSpec> it2 = fields.iterator();
-								FieldSpec field;
-								boolean isFirstField = true;
-								while (it2.hasNext())
-								{
-									String fieldString = new String("");
-									field = it2.next();
-									// System.out.println("Field name:   " + field.fieldName);
-									// System.out.println("Field origin: " + field.fieldOrigin);
-									// System.out.println("Field length: " + field.fieldLength);
-									byte[] fieldBytes = new byte[field.fieldLength];
-									System.arraycopy(result, i + field.fieldOrigin, fieldBytes, 0, field.fieldLength);
-									String temp;
-									if (field.interp == 1) // ASCII text
-									{
-										temp = new String(fieldBytes);
-										if (isFirstField)
-										{
-											if (field.csvLiteral)
-												fieldString += "\"=\"\"" + temp + "\"\"\"";
-											else
-												fieldString += "\"" + temp + "\"";
-											isFirstField = false;
-										}
-										else
-										{
-											if (field.csvLiteral)
-												fieldString += ",\"=\"\"" + temp + "\"\"\"";
-											else
-												fieldString += ",\"" + temp + "\"";
-										}
-									}
-									else if (field.interp == 2) // EBCDIC text
-									{
-										fieldString = new String("");
-										if (isFirstField)
-										{
-											if (field.csvLiteral)
-												fieldString += "\"=\"\"" + EbcdicUtil.toAscii(fieldBytes, 0, fieldBytes.length) + "\"\"\"";
-											else
-												fieldString += "\"" + EbcdicUtil.toAscii(fieldBytes, 0, fieldBytes.length) + "\"";
-											isFirstField = false;
-										}
-										else
-										{
-											if (field.csvLiteral)
-												fieldString += ",\"=\"\"" + EbcdicUtil.toAscii(fieldBytes, 0, fieldBytes.length) + "\"\"\"";
-											else
-												fieldString += ",\"" + EbcdicUtil.toAscii(fieldBytes, 0, fieldBytes.length) + "\"";
-										}
-									}
-									else if (field.interp == 3) // Hex data
-									{
-										fieldString = new String("");
-										if (isFirstField)
-										{
-											if (field.csvLiteral)
-												fieldString += "\"=\"\"";
-											else
-												fieldString += "\"0x";
-											isFirstField = false;
-										}
-										else
-										{
-											if (field.csvLiteral)
-												fieldString += ",\"=\"\"";
-											else
-												fieldString += ",\"0x";
-										}
-										for (int k = 0; k < fieldBytes.length; k++)
-										{
-											fieldString += UnsignedByte.toString(fieldBytes[k]);
-										}
-										if (field.csvLiteral)
-											fieldString += "\"\"\"";
-										else
-											fieldString += "\"";
-									}
-									out.write(fieldString.getBytes());
-								}
-								out.write('\n');
 							}
 						}
-						out.flush();
-						out.close();
+						if (shouldPrint)
+						{
+							// System.err.println("DEBUG Found one!");
+							Iterator<FieldSpec> it2 = fields.iterator();
+							FieldSpec field;
+							boolean isFirstField = true;
+							while (it2.hasNext())
+							{
+								String fieldString = new String("");
+								field = it2.next();
+								// System.out.println("Field name:   " + field.fieldName);
+								// System.out.println("Field origin: " + field.fieldOrigin);
+								// System.out.println("Field length: " + field.fieldLength);
+								byte[] fieldBytes = new byte[field.fieldLength];
+								System.arraycopy(result, i + field.fieldOrigin, fieldBytes, 0, field.fieldLength);
+								String temp;
+								if (field.interp == 1) // ASCII text
+								{
+									temp = new String(fieldBytes);
+									if (isFirstField)
+									{
+										if (field.csvLiteral)
+											fieldString += "\"=\"\"" + temp + "\"\"\"";
+										else
+											fieldString += "\"" + temp + "\"";
+										isFirstField = false;
+									}
+									else
+									{
+										if (field.csvLiteral)
+											fieldString += ",\"=\"\"" + temp + "\"\"\"";
+										else
+											fieldString += ",\"" + temp + "\"";
+									}
+								}
+								else if (field.interp == 2) // EBCDIC text
+								{
+									fieldString = new String("");
+									if (isFirstField)
+									{
+										if (field.csvLiteral)
+											fieldString += "\"=\"\"" + EbcdicUtil.toAscii(fieldBytes, 0, fieldBytes.length) + "\"\"\"";
+										else
+											fieldString += "\"" + EbcdicUtil.toAscii(fieldBytes, 0, fieldBytes.length) + "\"";
+										isFirstField = false;
+									}
+									else
+									{
+										if (field.csvLiteral)
+											fieldString += ",\"=\"\"" + EbcdicUtil.toAscii(fieldBytes, 0, fieldBytes.length) + "\"\"\"";
+										else
+											fieldString += ",\"" + EbcdicUtil.toAscii(fieldBytes, 0, fieldBytes.length) + "\"";
+									}
+								}
+								else if (field.interp == 3) // Hex data
+								{
+									fieldString = new String("");
+									if (isFirstField)
+									{
+										if (field.csvLiteral)
+											fieldString += "\"=\"\"";
+										else
+											fieldString += "\"0x";
+										isFirstField = false;
+									}
+									else
+									{
+										if (field.csvLiteral)
+											fieldString += ",\"=\"\"";
+										else
+											fieldString += ",\"0x";
+									}
+									for (int k = 0; k < fieldBytes.length; k++)
+									{
+										fieldString += UnsignedByte.toString(fieldBytes[k]);
+									}
+									if (field.csvLiteral)
+										fieldString += "\"\"\"";
+									else
+										fieldString += "\"";
+								}
+								out.write(fieldString.getBytes());
+							}
+							out.write('\n');
+						}
 					}
-					catch (Exception ex)
-					{
-						ex.printStackTrace();
-					}
+					out.flush();
+					out.close();
 				}
+			}
+			catch (Exception ex)
+			{
+				System.err.println(ex.getMessage());
 			}
 			finally
 			{
@@ -399,20 +396,20 @@ public class CSVInterpreter
 						}
 						else if (leftTemp.equalsIgnoreCase("INTERP") || leftTemp.equalsIgnoreCase("INTERPLITERAL"))
 						{
-							String typeString = new String(rightBytes);
+							String typeString = new String(rightBytes).trim();
 							if (currentFieldSpec != null)
 							{
 								if (leftTemp.equalsIgnoreCase("INTERPLITERAL"))
 									currentFieldSpec.csvLiteral = true;
-								if (typeString.equalsIgnoreCase("ASCII"))
+								if ((typeString.equalsIgnoreCase("ASCII") || rightTemp1.trim().equalsIgnoreCase("ASCII")))
 									currentFieldSpec.interp = 1;
-								else if (typeString.equalsIgnoreCase("EBCDIC"))
+								else if ((typeString.equalsIgnoreCase("EBCDIC") || rightTemp1.trim().equalsIgnoreCase("EBCDIC")))
 									currentFieldSpec.interp = 2;
-								else if (typeString.equalsIgnoreCase("HEX"))
+								else if ((typeString.equalsIgnoreCase("HEX") || rightTemp1.trim().equalsIgnoreCase("HEX")))
 									currentFieldSpec.interp = 3;
 								else
 								{
-									System.err.println("ERROR: unexpected value for file interpretation: " + rightBytes);
+									System.err.println("ERROR: unexpected value for field \""+currentFieldSpec.fieldName+"\" interpretation: " + rightTemp1.trim());
 									currentFieldSpec.interp = 0;
 								}
 								fields.addElement(currentFieldSpec);
@@ -432,7 +429,7 @@ public class CSVInterpreter
 				}
 				else
 				{
-					
+
 				}
 			}
 		}
