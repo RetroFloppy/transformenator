@@ -16,6 +16,9 @@ ae4d444e4daf = "\ul0 "
 ae555342af = "\b1 "
 ae555341af = "\b0 "
 
+; Metadata follows
+ae4d445256af = "\\r\\n\par "
+
 ; Newlines
 0d0a = "\\r\\n\par "
 
