@@ -957,10 +957,12 @@ public class Transformation
 				else if (currentSpec.command == 2)
 				{
 					// SOF reached
-					bytesMatched = currLeftLength;
 					if (foundSOF == false)
+					{
 						outBuf.reset();
-					foundSOF = true;
+						bytesMatched = currLeftLength;
+						foundSOF = true;
+					}
 					break;
 				}
 				else if (currentSpec.command == 3)
