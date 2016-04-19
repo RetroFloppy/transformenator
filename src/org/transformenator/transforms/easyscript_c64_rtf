@@ -5,10 +5,9 @@
 ;
 
 ; Header for RTF format
-head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator;}\f0 "
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator;}\f0 \pard\f0\fs20\par "
 
 8e = 20
-80 =
 00 =
 03 =
 
@@ -54,9 +53,9 @@ regex = @€\*(.*)@<~$1~>@
 ; Now that the elements are broken apart, deal with each type.
 
 ; Center on
-regex = @<~cn1~>@\\qc @
+regex = @<~cn1~>@\\pard\\qc @
 ; Center off
-regex = @<~cn0~>@\\pard\\slmulti\\par @
+regex = @<~cn0~>@\\par\\pard @
 
 ; Remove: left margin, right margin, page length, "ps(?), fp0"
 regex = @<~lm.*?~>@@
@@ -70,6 +69,12 @@ regex = @\<~ln1~>@\\par @
 regex = @\<~ln2~>@\\par\\par @
 regex = @\<~ln.*?~>@\\par\\par @
 regex = @\n@\\par @
+
+; Descender for one character
+regex = @€D(.)@\\sub $1 \\nosupersub @
+
+; Ascender for one character
+regex = @€U(.)@\\super $1 \\nosupersub @
 
 ; Remove all remaining control structures until we figure out what they are supposed to do
 ; ...comment this regex out to see what got missed 
