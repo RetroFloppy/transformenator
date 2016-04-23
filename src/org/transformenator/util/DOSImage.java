@@ -32,14 +32,14 @@ import org.transformenator.Version;
 import org.transformenator.internal.UnsignedByte;
 
 /*
- * UpdateDOSImage
+ * DOSImage
  * 
- * The intent of this helper app is to add a BIOS Parameter Block (BPB) to a FAT12
+ * The intent of this helper app is to view or add a BIOS Parameter Block (BPB) to a FAT12
  * disk image that lacks one (i.e. DOS 2.0 and earlier).  This makes a disk image
  * mountable on systems that don't pay attention to the media descriptor byte, but 
  * instead require the BPB to tell them what the disk geometry is.
  *
- * It also checks for and removes the Stoned virus:
+ * With 'update' parameter, also checks for and removes the Stoned virus:
  *   http://en.wikipedia.org/wiki/Stoned_%28computer_virus%29
  *
  */
@@ -142,8 +142,18 @@ public class DOSImage
 						if (args[0].equalsIgnoreCase("display"))
 						{
 							System.out.println("Signature - typically 0x000055AA: 0x"+UnsignedByte.toString(result[0x1fc])+UnsignedByte.toString(result[0x1fd])+UnsignedByte.toString(result[0x1fe])+UnsignedByte.toString(result[0x1ff]));
-							System.out.println("Jump byte [0]: "+UnsignedByte.toString(result[0]));
-							System.out.println("OEM name [3]: "+(char)result[3]+(char)result[4]+(char)result[5]+(char)result[6]+(char)result[7]+(char)result[8]+(char)result[9]+(char)result[10]);
+							System.out.println("Jump byte [0x00]: "+UnsignedByte.toString(result[0]));
+							System.out.println("OEM name [0x03-0x0a]: "+(char)result[3]+(char)result[4]+(char)result[5]+(char)result[6]+(char)result[7]+(char)result[8]+(char)result[9]+(char)result[10]);
+							System.out.println("Bytes per logical sector: "+(UnsignedByte.intValue(result[0x0b])+UnsignedByte.intValue(result[0x0c])*256));
+							System.out.println("Logical sectors per cluster [0x0d]: "+UnsignedByte.intValue(result[0x0d]));
+							System.out.println("Count of reserved logical sectors [0x0e-0x0f]: "+(UnsignedByte.intValue(result[0x0e])+UnsignedByte.intValue(result[0x0f])*256));
+							System.out.println("Number of File Allocation Tables [0x10]: "+UnsignedByte.intValue(result[0x10]));
+							System.out.println("Maximum number of FAT12 or FAT16 root directory entries [0x11-0x12]: "+(UnsignedByte.intValue(result[0x11])+UnsignedByte.intValue(result[0x12])*256));
+							System.out.println("Total logical sectors [0x13-0x14]: "+(UnsignedByte.intValue(result[0x13])+UnsignedByte.intValue(result[0x14])*256));
+							System.out.println("Media descriptor [0x15]: 0x"+UnsignedByte.toString(result[0x15]));
+							System.out.println("Description(s):");
+							System.out.println(mediaDescriptor(result[0x15]));
+							System.out.println("Logical sectors per File Allocation Table [0x16-0x17]: "+(UnsignedByte.intValue(result[0x16])+UnsignedByte.intValue(result[0x17])*256));			
 						}
 						else
 						{
@@ -457,6 +467,64 @@ public class DOSImage
 			}
 		}
 		return retval;
+	}
+
+	public static String mediaDescriptor(byte md)
+	{
+		String ret = null;
+		switch (UnsignedByte.intValue(md))
+		{
+			case 0xe5:
+				ret = "8-inch SS, 77 tracks/side, 26 sectors/track, 128 bytes/sector (250.25 KiB) (DR-DOS only)";
+				break;
+			case 0xed:
+				ret = "5.25-inch DS, 80 tracks/side, 9 sectors/track, 720 KiB";
+				break;
+			case 0xf0:
+				ret = "3.5-inch DS, 80 tracks/side, 18 or 36 sectors/track (1440 KiB/\"1.44 MB\" or 2880 KiB/\"2.88 MB\")\n"+
+						"Designated for use with custom floppy and superfloppy formats where the geometry is defined in the BPB";
+				break;
+			case 0xf8:
+				ret = "Fixed disk (i.e., typically a partition on a hard disk)\n"+
+						"Designated to be used for any partitioned fixed or removable media, where the geometry is defined in the BPB\n"+
+						"3.5-inch SS, 80 tracks/side, 9 sectors/track (360 KiB)\n"+
+						"5.25-inch DS, 80 tracks/side, 9 sectors/track (720 KiB)\n";
+				break;
+			case 0xf9:
+				ret="3.5-inch DS, 80 tracks/side, 9 sectors/track (720 KiB)\n"+
+						"3.5-inch DS, 80 tracks/side, 18 sectors/track (1440 KiB)\n"+
+						"5.25-inch DS, 80 tracks/side, 15 sectors/track (1200 KiB/\"1.2 MB\")";
+				break;
+			case 0xfa:
+				ret="3.5-inch and 5.25-inch SS, 80 tracks/side, 8 sectors/track (320 KiB)\n"+
+					    "Used also for RAM disks and ROM disks\n"+
+					    "Hard disk (Tandy MS-DOS only)";
+				break;
+			case 0xfb:
+				ret = "3.5-inch and 5.25-inch DS, 80 tracks/side, 8 sectors/track (640 KiB)";
+				break;
+			case 0xfc:
+				ret = "5.25-inch SS, 40 tracks/side, 9 sectors/track (180 KiB)";
+				break;
+			case 0xfd:
+				ret = "5.25-inch DS, 40 tracks/side, 9 sectors/track (360 KiB)\n"+
+						"8-inch DS, 77 tracks/side, 26 sectors/track, 128 bytes/sector (500.5 KiB)\n"+
+						"8-inch DS, SD/DD";
+				break;
+			case 0xfe:
+				ret = "5.25-inch SS, 40 tracks/side, 8 sectors/track (160 KiB)\n"+
+						"8-inch SS, 77 tracks/side, 26 sectors/track, 128 bytes/sector (250.25 KiB)\n"+
+						"8-inch DS, 77 tracks/side, 8 sectors/track, 1024 bytes/sector (1232 KiB)\n"+
+						"8-inch SS, SD/DD";
+				break;
+			case 0xff:
+				ret = "5.25-inch Double sided, 40 tracks per side, 8 sectors per track (320 KiB)\n"+
+						"Hard disk (Sanyo 55x DS-DOS 2.11 only)";
+				break;
+			default:
+				ret = "(unknown/invalid media descriptor)";
+		}
+		return ret;
 	}
 
 	public static void help()

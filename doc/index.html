@@ -213,6 +213,11 @@ The transformenator.jar includes several supporting utilities.  They are:
 <th align="left"><b>Summary</b></th>
 </tr>
 <tr>
+<td align="left"><code>DOSImage</code></td>
+<td align="left"><code>display infile</code><br>(or)<br><code>update infile outfile [force{160|180|320|360|360a|1200}]</code></td>
+<td align="left">View or add the BIOS Parameter Block (BPB) to older DOS disk images to make them mountable - fixes those pesky "no mountable filesystems" errors, also removes the <a href="http://en.wikipedia.org/wiki/Stoned_%28computer_virus%29" class="externalLink" target="_new">Stoned</a> virus</td>
+</tr>
+<tr>
 <td align="left"><code>TransformFile</code></td>
 <td align="left"><code><i>transform</i> infile outfile</code></td>
 <td align="left">Apply <i>transform</i> to a single file - the default operation of transformenator.jar</td>
@@ -291,11 +296,6 @@ The transformenator.jar includes several supporting utilities.  They are:
 <td align="left"><code>RevealValdocsEntries</code></td>
 <td align="left"><code>infile outfile</code></td>
 <td align="left">"Un-hide" the CP/M directory entries of files that have a leading byte of 0x60 in a disk image - typical of Valdocs files on Epson QX-10 TPM-II disk images</td>
-</tr>
-<tr>
-<td align="left"><code>UpdateDOSImage</code></td>
-<td align="left"><code>infile outfile</code></td>
-<td align="left">Add the BIOS Parameter Block (BPB) to older DOS disk images to make them mountable - fixes those pesky "no mountable filesystems" errors, also removes the <a href="http://en.wikipedia.org/wiki/Stoned_%28computer_virus%29" class="externalLink" target="_new">Stoned</a> virus</td>
 </tr>
 </tbody>
 </table>

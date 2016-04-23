@@ -1,3 +1,8 @@
+New for this version:
+=====================
+
+ * Updated utility: DOSImage (renamed from UpdateDOSImage) now displays as well as updates a disk image's BIOS Parameter Block (BPB)
+
 Transformenator introduction:
 =============================
 
