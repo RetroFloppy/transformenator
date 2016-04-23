@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2013 - 2015 by David Schmidt
+ * Copyright (C) 2013 - 2016 by David Schmidt
  * david__schmidt at users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -43,42 +43,47 @@ import org.transformenator.internal.UnsignedByte;
  *   http://en.wikipedia.org/wiki/Stoned_%28computer_virus%29
  *
  */
-public class UpdateDOSImage
+public class DOSImage
 {
 
 	public static void main(java.lang.String[] args)
 	{
-		if ((args.length == 2) || (args.length == 3))
+		if ((args.length == 2) || (args.length == 3) || (args.length == 4))
 		{
 			byte[] inData = null;
-			System.err.println("Reading input file " + args[0]);
-			File file = new File(args[0]);
+			System.err.println("Reading input file " + args[1]);
+			File file = new File(args[1]);
 			int force = 0;
-			if (args.length == 3)
+			if (args.length == 4)
 			{
-				if (args[2].equalsIgnoreCase("force160"))
+				if (args[3].equalsIgnoreCase("force160"))
 				{
 					force = 160;
 				}
-				else if (args[2].equalsIgnoreCase("force180"))
+				else if (args[3].equalsIgnoreCase("force180"))
 				{
 					force = 180;
 				}
-				else if (args[2].equalsIgnoreCase("force320"))
+				else if (args[3].equalsIgnoreCase("force320"))
 				{
 					force = 320;
 				}
-				else if (args[2].equalsIgnoreCase("force360"))
+				else if (args[3].equalsIgnoreCase("force360"))
 				{
 					force = 360;
 				}
-				else if (args[2].equalsIgnoreCase("force360a")) // For Atari 3.5" single sided disks
+				else if (args[3].equalsIgnoreCase("force360a")) // For Atari 3.5" single sided disks
 				{
 					force = 361;
+				}
+				else if (args[3].equalsIgnoreCase("force1200"))
+				{
+					force = 1200;
 				}
 			}
 
 			byte[] result = new byte[(int) file.length()];
+			// Load up the input file
 			try
 			{
 				InputStream input = null;
@@ -97,32 +102,53 @@ public class UpdateDOSImage
 						}
 					}
 					inData = result;
-					if (isFixable(inData) || (force > 0))
+					if (args.length > 2)
 					{
-						if (modifyImage(inData, force))
+						if (args[0].equalsIgnoreCase("update"))
 						{
-							FileOutputStream out;
-							try
+							if (isFixable(inData) || (force > 0))
 							{
-								out = new FileOutputStream(args[1]);
-								out.write(inData);
-								out.flush();
-								out.close();
-								System.err.println("Image "+args[1]+" saved.");
+								if (modifyImage(inData, force))
+								{
+									FileOutputStream out;
+									try
+									{
+										out = new FileOutputStream(args[1]);
+										out.write(inData);
+										out.flush();
+										out.close();
+										System.err.println("Image "+args[1]+" saved.");
+									}
+									catch (IOException e)
+									{
+										e.printStackTrace();
+									}
+								}
+								else
+								{
+									System.err.println("Image is not of the expected format or size; unable to modify.");
+								}
 							}
-							catch (IOException e)
-        						{
-								e.printStackTrace();
-        						}
+							else
+							{
+								System.err.println("Image failed validty checks; unable to modify.");
+							}
 						}
 						else
-						{
-							System.err.println("Image is not of the expected format or size; unable to modify.");
-						}
+							help();
 					}
 					else
 					{
-						System.err.println("Image failed validty checks; unable to modify.");
+						if (args[0].equalsIgnoreCase("display"))
+						{
+							System.out.println("Signature - typically 0x000055AA: 0x"+UnsignedByte.toString(result[0x1fc])+UnsignedByte.toString(result[0x1fd])+UnsignedByte.toString(result[0x1fe])+UnsignedByte.toString(result[0x1ff]));
+							System.out.println("Jump byte [0]: "+UnsignedByte.toString(result[0]));
+							System.out.println("OEM name [3]: "+(char)result[3]+(char)result[4]+(char)result[5]+(char)result[6]+(char)result[7]+(char)result[8]+(char)result[9]+(char)result[10]);
+						}
+						else
+						{
+							help();
+						}
 					}
 				}
 				finally
@@ -133,7 +159,7 @@ public class UpdateDOSImage
 			}
 			catch (FileNotFoundException ex)
 			{
-				System.err.println("Input file \"" + file + "\" not found.");
+				System.err.println("Input file \"" + file + "\" not accessible.");
 			}
 			catch (IOException ex)
 			{
@@ -436,8 +462,9 @@ public class UpdateDOSImage
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("UpdateDOSImage "+Version.VersionString+" - Update the BIOS Parameter Block of a PC DOS disk image.");
+		System.err.println("DOSImage "+Version.VersionString+" - View or update the BIOS Parameter Block of a PC DOS disk image.");
 		System.err.println();
-		System.err.println("Usage: UpdateDOSImage infile outfile [force{160|180|320|360|360a}]");
+		System.err.println("Usage: DOSImage display infile");
+		System.err.println("       DOSImage update infile outfile [force{160|180|320|360|360a|1200}]");
 	}
 }
