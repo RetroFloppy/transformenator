@@ -113,11 +113,11 @@ public class DOSImage
 									FileOutputStream out;
 									try
 									{
-										out = new FileOutputStream(args[1]);
+										out = new FileOutputStream(args[2]);
 										out.write(inData);
 										out.flush();
 										out.close();
-										System.err.println("Image "+args[1]+" saved.");
+										System.err.println("Image "+args[2]+" saved.");
 									}
 									catch (IOException e)
 									{
@@ -304,6 +304,17 @@ public class DOSImage
 			System.err.println("Removed Stoned virus from 360K image.");
 			return true;
 		}
+		if (hasMichelangeloVirus(inData) && (inData.length == 360*1024))
+		{
+			// Copy out the stashed boot block
+			for (int i = 0; i < 512; i++)
+			{
+				inData[i] = inData[i+0x0c00];
+				inData[i+0x0c00] = 0x00;
+			}	
+			System.err.println("Removed Michelangelo virus from 360K image.");
+			return true;
+		}
 		else if (((inData[512] == (byte)0xfd) && inData.length == 360*1024) || (force == 360))
 		{
 			for (int i = 0; i < bpb_360k.length; i++)
@@ -323,7 +334,7 @@ public class DOSImage
 	}
 	
 	/**
-	 * is1200k - the only thing a 1.2MB disk can do is remove the Stoned virus.
+	 * is1200k - the only thing a 1.2MB disk can do is remove boot block viruses.
 	 */
 	public static boolean is1200k(byte[] inData, int force)
 	{
@@ -339,7 +350,18 @@ public class DOSImage
 			System.err.println("Removed Stoned virus from 1.2MB image.");
 			return true;
 		}
-		// System.err.println("is1200k is false.");
+		else if (hasMichelangeloVirus(inData) && (inData.length == 1200*1024))
+		{
+			// Copy out the stashed boot block
+			for (int i = 0; i < 512; i++)
+			{
+				inData[i] = inData[i+0x3800];
+				inData[i+0x3800] = 0x00;
+			}	
+			System.err.println("Removed Michelangelo virus from 1.2MB image.");
+			return true;
+		}
+		// System.err.println("DEBUG: is1200k is false.");
 		return false;
 	}
 	
@@ -353,10 +375,14 @@ public class DOSImage
 			return true;
 		}
 		else if ((hasStonedVirus(inData) && (inData.length == 360*1024)) ||
-			(hasStonedVirus(inData) && (inData.length == 1200*1024)))
-		{
-			return true;
-		}
+				(hasStonedVirus(inData) && (inData.length == 1200*1024)))
+			{
+				return true;
+			}
+		else if (hasMichelangeloVirus(inData) && (inData.length == 1200*1024))
+			{
+				return true;
+			}
 		else return false;
 	}
 
@@ -401,6 +427,31 @@ public class DOSImage
 				retval = true;
 			}
 			
+		}
+		return retval;
+	}
+
+	public static boolean hasMichelangeloVirus(byte inData[])
+	{
+		boolean retval = false;
+		if (UnsignedByte.loByte(inData[0x15]) != UnsignedByte.loByte(0xf9)) // Illogical media descriptor - might be Michelangelo
+		{
+			// Look for a good BPB at 0x3800 - 1.2MB infection
+			if ((UnsignedByte.intValue(inData[0x3800]) == 0xeb) && 
+					(UnsignedByte.intValue(inData[0x3815]) == 0xf9) && // 1.2MB media descriptor... at the stash location
+					(UnsignedByte.intValue(inData[0x39fe]) == 0x55) &&
+					(UnsignedByte.intValue(inData[0x39ff]) == 0xaa))
+			{
+				retval = true;
+			}
+			// Look for a good BPB at 0xc00 - 360KB infection
+			else if ((UnsignedByte.intValue(inData[0x0c00]) == 0xeb) && 
+					(UnsignedByte.intValue(inData[0x0c15]) == 0xfd) && // 350KB media descriptor... at the stash location
+					(UnsignedByte.intValue(inData[0x0dfe]) == 0x55) &&
+					(UnsignedByte.intValue(inData[0x0dff]) == 0xaa))
+			{
+				retval = true;
+			}
 		}
 		return retval;
 	}
