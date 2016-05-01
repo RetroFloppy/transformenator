@@ -55,7 +55,7 @@ The resulting <code>outfile</code> looks like this in a hex editor:
 <p>
 Observe that nulls became spaces, and other trailing stuff after the EOF character has been removed.
 
-<h2>Transform Specification</h2>
+<h2><a name="transform">Transform</a> Specification</h2>
 
 <p>
 The instructions for making the various transformations you want are simply listed in a plain text file.
@@ -214,17 +214,17 @@ The transformenator.jar includes several supporting utilities.  They are:
 </tr>
 <tr>
 <td align="left"><code>DOSImage</code></td>
-<td align="left"><code>display infile</code><br>(or)<br><code>update infile outfile [force{160|180|320|360|360a|1200}]</code></td>
+<td align="left"><code>display infile</code><br>(or)<br><code>update infile outfile [force160|180|320|360|360a|1200]</code></td>
 <td align="left">View or add the BIOS Parameter Block (BPB) to older DOS disk images to make them mountable - fixes those pesky "no mountable filesystems" errors, also removes the <a href="http://en.wikipedia.org/wiki/Stoned_%28computer_virus%29" class="externalLink" target="_new">Stoned</a> virus</td>
 </tr>
 <tr>
 <td align="left"><code>TransformFile</code></td>
-<td align="left"><code><i>transform</i> infile outfile</code></td>
+<td align="left"><code><a href="#transform"><i>transform</i></a> infile outfile</code></td>
 <td align="left">Apply <i>transform</i> to a single file - the default operation of transformenator.jar</td>
 </tr>
 <tr>
 <td align="left"><code>TransformDirectory</code></td>
-<td align="left"><code><i>transform</i> in_directory out_directory</code></td>
+<td align="left"><code><a href="#transform"><i>transform</i></a> in_directory out_directory</code></td>
 <td align="left">Apply <i>transform</i> to all files in a filesystem tree recursively</td>
 </tr>
 <tr>
@@ -244,8 +244,8 @@ The transformenator.jar includes several supporting utilities.  They are:
 </tr>
 <tr>
 <td align="left"><code>ExtractCSV</code></td>
-<td align="left"><code><a href="csv.html">csv-transform</a> infile outfile.csv</code></td>
-<td align="left">Extract fixed-length records from a file as comma separated values (see csv-transform specification <a href="csv.html">here</a>)</td>
+<td align="left"><code><i><a href="csv.html">csv-transform</a></i> infile outfile.csv</code></td>
+<td align="left">Extract fixed-length records from a file as comma separated values (see <i>csv-transform</i> specification <a href="csv.html">here</a>)</td>
 </tr>
 <tr>
 <td align="left"><code>ExtractCTOSArchive</code></td>
