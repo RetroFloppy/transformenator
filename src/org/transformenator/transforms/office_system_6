@@ -1,0 +1,116 @@
+;
+; IBM Office System 6 - spin-code based
+;
+
+00=
+02="-"
+0c=","
+12=
+15="'"
+16="."
+2a=09
+; 2b is more of a carriage return
+2b=0d
+6b=0d
+38=" "
+; 3a is an underlined space
+3a=" "
+49="?"
+; Control of some kind
+4a=
+4d=":"
+55=22
+; 56 is some kind of "enhanced" period
+56="."
+; Emphasis on
+70=
+42=
+d9=
+
+; Emphasis off
+71=
+d8=
+
+75="%"
+79="$"
+7d="-"
+7f="!"
+
+c1= 
+
+; Null
+e2=
+; Blank space on disk
+e5=
+
+; 19/59 ("o") coupled with 4a, likely did umlauts
+194a09="o"
+594a09="O"
+
+; Numbers
+30="9"
+31="0"
+34="6"
+;35="5" (correct as-is)
+36="2"
+39="4"
+3c="8"
+3d="7"
+3e="3"
+3f="1"
+
+; Capital letters
+41="Y"
+44="Q"
+45="P"
+47="J"
+4e="F"
+4f="G"
+50="W"
+51="S"
+54="I"
+59="O"
+5c="A"
+5d="R"
+5e="V"
+5f="M"
+60="B"
+61="H"
+64="K"
+65="E"
+66="N"
+67="T"
+69="L"
+6c="C"
+6d="D"
+6e="U"
+6f="X"
+77="Z"
+
+; Lowercase letters
+01="y"
+04="q"
+05="p"
+07="j"
+0e="f"
+0f="g"
+10="w"
+11="s"
+14="i"
+19="o"
+1c="a"
+1d="r"
+1e="v"
+1f="m"
+20="b"
+21="h"
+24="k"
+25="e"
+26="n"
+27="t"
+29="l"
+2c="c"
+2d="d"
+2e="u"
+2f="x"
+37="z"
