@@ -1,0 +1,14 @@
+;
+; JustWrite word processor - maybe?  Bears some resemblance to the earlier 
+; version of JustWrite, but this one has a much more complex index/chain structure.
+; Additional processing is present in the Transformenation class to untangle that.
+;
+; Newline
+83 = 0d0a
+
+; Page break of some kind
+86..................................................................................................................................................83 = 0d0a
+
+; Tab - maybe?  Whitespace of some sort
+81 = 09
+82 = 09

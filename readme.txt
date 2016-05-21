@@ -1,9 +1,11 @@
 New for this version:
 =====================
 
+ * Updated transform: Another JustWrite variant that untangles an index to a chain of sectors; earlier JW is a doubly-linked list
+
  * New utility: ExtractOfficeSystem6Files (and associated transform) for extracting and transforming files from IBM Office System 6 disk images
  
- * Updated utility: DOSImage (renamed from UpdateDOSImage) now displays as well as updates a disk image's BIOS Parameter Block (BPB); also now removes Michelangelo virus. 
+ * Updated utility: DOSImage (renamed from UpdateDOSImage) now displays as well as updates a disk image's BIOS Parameter Block (BPB); also now removes Michelangelo virus.
 
 Transformenator introduction:
 =============================
