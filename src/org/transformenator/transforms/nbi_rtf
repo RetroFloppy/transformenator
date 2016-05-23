@@ -14,9 +14,14 @@ tail = "}"
 9c..9c = "\par "
 9d =
 9e = 
+92 =
 b0..b1 =
+b0..b3 = 
+b0..b5 =
+b1..b0 =
 ;b0....b0 =
 c0........c0 =
+c1........c1 =
 c2........c2 =
 c3........c3 =
 c4........c4 =
@@ -38,18 +43,19 @@ b0 =
 
 ; Space
 7f = 20
+80 = 20
 
 ; Return
-a0 = "\par\par "
+a0 = "\par "
 
 ; Tab
-a1 = "\par\tab "
+a1 = " \tab "
 
 ; Newline
 a3 = "\par "
 
 ; Page eject
-a4 = "\par\par "
+a4 = "\par "
 
 ; Not sure what a9 was for
 a9 = "\par "
