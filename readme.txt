@@ -5,6 +5,8 @@ New for this version:
 
  * New utility: ExtractOfficeSystem6Files (and associated transform) for extracting and transforming files from IBM Office System 6 disk images
  
+ * New utility: ExtractPFSFiles for extracting files from PFS:write from Apple II disk images
+ 
  * Updated utility: ExtractNBIFiles now handles both low and high density NBI word processor disk images
 
  * Updated utility: DOSImage (renamed from UpdateDOSImage) now displays as well as updates a disk image's BIOS Parameter Block (BPB); also now removes Michelangelo virus.

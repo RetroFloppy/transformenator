@@ -102,7 +102,7 @@ public class ExtractWangFiles
 					int preambleOffset = 0x100; // Space for WVD preamble
 					int catalogOffset = 0x100;
 					boolean shouldContinue = false;
-					if (inData[0x100] == 0x00)
+					if ((inData[0x100] == 0x00) && (inData[0x2fe] == 0x01))
 					{
 						catalogSectors = UnsignedByte.intValue(inData[0x101]);
 					}
@@ -114,7 +114,7 @@ public class ExtractWangFiles
 					}
 					else
 					{
-						System.err.println("Error: disk index type is " + inData[0x100] + ", expected 0.  Will need new means of interpreting disk image.");
+						System.err.println("Error: disk index type is unknown.  Will need new means of interpreting disk image.");
 					}
 					if (catalogSectors > 0) // Ok, we have a reasonable catalog number
 					{
@@ -130,7 +130,7 @@ public class ExtractWangFiles
 							}
 							baseDirFile.mkdir();
 						}
-						// System.err.println("Number of catalog sectors: "+catalogSectors);
+						System.err.println("Number of catalog sectors: "+catalogSectors);
 						preambleOffset += catalogSectors * 256;
 						catalogOffset += (catalogSectors + 2) * 256;
 						// System.err.println("preambleOffset: "+preambleOffset+" catalogOffset: "+catalogOffset);
@@ -157,23 +157,40 @@ public class ExtractWangFiles
 					else
 					{
 						/*
-						 * Ok, this isn't a 2200-style disk; check for WP-ness.
+						 * Ok, this isn't a 2200-style disk; check for WP files.
 						 */
 						boolean foundAny = false;
 						for (int i = preambleOffset; i < inData.length; i += 256)
 						{
 							if ((inData[i + 2] == -1) && (inData[i + 3] == 65)) /* 0xff 0x41 */
 							{
-								byte fnb[] = new byte[10];
+								// Filename is 0x0d bytes in, for a length of 25
+								// Description 1 is 0x27 bytes in, for a length of 20
+								// Description 2 is 0x3c bytes in, for a length of 20
+								// Description 3 is 0x50 bytes in, for a length of 20
+								byte fnb[] = new byte[25];
+								byte dsc1b[] = new byte[20];
+								byte dsc2b[] = new byte[20];
+								byte dsc3b[] = new byte[20];
 								fnb = Arrays.copyOfRange(inData, i + 0x0d, i + 0x0d + 25);
+								dsc1b = Arrays.copyOfRange(inData, i + 0x27, i + 0x27 + 20);
+								dsc2b = Arrays.copyOfRange(inData, i + 0x3c, i + 0x3c + 20);
+								dsc3b = Arrays.copyOfRange(inData, i + 0x50, i + 0x50 + 20);
 								String fileName = new String(fnb).trim().replace("\\", "-").replace("/", "-").replace("?", "-");
-								fileName = new String(args[1]) + File.separator + fileName;
-								// System.out.println("File found: "+fileName);
+								String dsc1 = new String(dsc1b).trim();
+								String dsc2 = new String(dsc2b).trim();
+								String dsc3 = new String(dsc3b).trim();
 								int fileID = UnsignedByte.intValue(inData[i + 4]) * 256 + UnsignedByte.intValue(inData[i + 5]);
+								fileName = new String(args[1]) + File.separator + fileName + " " +i;
+								System.out.println("File found: ["+fileName+"] at location 0x" + Integer.toHexString(i));
+								System.out.println("   Description 1: ["+dsc1+"]");
+								System.out.println("   Description 2: ["+dsc2+"]");
+								System.out.println("   Description 3: ["+dsc3+"]");
 								decodeWPFile(inData, fileName, preambleOffset, UnsignedByte.intValue(inData[i]), UnsignedByte.intValue(inData[i + 1]), fileID, 1);
 								foundAny = true;
 							}
 						}
+						// foundAny = false;
 						if (!foundAny)
 						{
 							/*
@@ -439,16 +456,30 @@ public class ExtractWangFiles
 		int nextTrack, nextSector, dataOffset;
 
 		dataOffset = realWPAddress(track, sector, preambleOffset, skew);
+		int sectorDataLength = UnsignedByte.intValue(inData[dataOffset + 2])+1;
+		// System.err.print("Dumping track "+Integer.toHexString(track)+" sector "+Integer.toHexString(sector) + " At 0x"+Integer.toHexString(dataOffset)+" for "+sectorDataLength+" bytes.");
+		
 		nextTrack = UnsignedByte.intValue(inData[dataOffset]);
 		nextSector = UnsignedByte.intValue(inData[dataOffset + 1]);
-		byte range[] = Arrays.copyOfRange(inData, dataOffset + 7, dataOffset + 256);
-		out.write(range);
+		// System.err.println("  Next track: "+Integer.toHexString(nextTrack)+" sector "+Integer.toHexString(nextSector)+" at 0x"+Integer.toHexString(realWPAddress(nextTrack, nextSector, preambleOffset, skew)));
+		if (sectorDataLength > 7)
+		{
+			byte range[] = Arrays.copyOfRange(inData, dataOffset + 7, dataOffset + sectorDataLength);
+			out.write(range);
+		}
 		nextTrack = UnsignedByte.intValue(inData[dataOffset]);
 		nextSector = UnsignedByte.intValue(inData[dataOffset + 1]);
-		if ((nextTrack > 0) && (nextTrack * 4096 <= inData.length))
+		if (((nextTrack > 0) && (nextTrack * 4096 <= inData.length)) || (nextTrack == 0 && nextSector > 0))
+		{
+			if ((nextTrack == track) && (nextSector == sector))
+				System.err.println("Error: Loop in file structure; stopping.");
+			else
+				dumpWPFileChain(out, inData, nextTrack, nextSector, fileID, preambleOffset, skew);
+		}
+		else
 		{
 			if (nextTrack != 0)
-				dumpWPFileChain(out, inData, nextTrack, nextSector, fileID, preambleOffset, skew);
+				System.err.println("Next track would be beyond disk image capacity.");
 		}
 	}
 

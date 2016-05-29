@@ -42,6 +42,7 @@ import org.transformenator.internal.UnsignedByte;
  * Sector headers:
  * 0x<len>00: empty
  * 0x<len>44: directory entry
+ * 0x<len>48: file informational data
  * 0x<len>58: system
  * 0x<len>4c: text
  * 
@@ -366,6 +367,48 @@ public class ExtractNBIFiles
 					}
 					System.err.println();
 				}
+				System.err.println();
+				break;
+			case 0x48:
+				// File information sector
+				offset = sector * 256;
+				offsetStr = "0x" + Integer.toHexString(offset).toUpperCase();
+				System.err.print(offsetStr + " File information sector:");
+				System.err.println();
+				offset = sector * 256;
+				offsetStr = "0x" + Integer.toHexString(offset).toUpperCase();
+				x = 0;
+				for (int y = 0; y < 8; y++)
+				{
+					for (int z = 0; z < 32; z++)
+					{
+						System.err.print(UnsignedByte.toString(inData[sector * 256 + x]));
+						x++;
+					}
+					System.err.println();
+				}
+				System.err.println();
+				for (x = 3; x < 255; x++)
+				{
+					int chi = UnsignedByte.intValue(inData[sector * 256 + x]);
+					if (chi == 0x7f)
+						chi = 32;
+					if (chi == 0x82)
+						chi = 0x2e;
+					if (chi == 0x8e)
+						chi = 0x2d;
+					if (chi == 0x9c)
+						chi = 32;
+					if (chi == 0x00)
+						chi = 32;
+					if (chi == 0xa0) // newline
+						chi = 0x0a;
+					if (chi == 0xa1) // tab
+						chi = 32;
+					char ch = (char) chi;
+					System.err.print(ch);
+				}
+				System.err.println();
 				System.err.println();
 				break;
 			default:
