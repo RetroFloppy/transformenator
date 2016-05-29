@@ -76,6 +76,27 @@ public class ExtractPFSFiles
 							System.arraycopy( result, (j*256)+i*4096, inData, (skew[j]*256)+i*4096, 256 );
 						}
 					}
+					// Write an un-screwed image
+					if (false)
+					{
+						try
+						{
+							System.err.println("Creating unwound file");
+							FileOutputStream out = new FileOutputStream("unwound.img", false);
+							for (int j = 0; j < inData.length; j++)
+							{
+								if (inData[j] == 0x0e)
+									break;
+							}
+							out.write(inData, 0, inData.length);
+							out.flush();
+							out.close();
+						}
+						catch (IOException e)
+						{
+							e.printStackTrace();
+						}
+					}
 				}
 				finally
 				{
@@ -123,8 +144,8 @@ public class ExtractPFSFiles
 							filename += (char) inData[i + j];
 						}
 						// Find file's starting "block"
-						int fileStart = (UnsignedByte.intValue(inData[i + 16])+1) * 512;
-						//System.err.println("DEBUG: found file: " + filename + " Starting at offset: "+fileStart);
+						int fileStart = (UnsignedByte.intValue(inData[i + 16])) * 512;
+						// System.err.println("DEBUG: found file: " + filename + " Starting at offset: 0x"+Integer.toHexString(fileStart));
 						FileOutputStream out;
 						try
 						{
@@ -132,14 +153,16 @@ public class ExtractPFSFiles
 								filename = baseName + filename;
 							System.err.println("Creating file " + filename);
 							out = new FileOutputStream(filename, false);
-							int j;
-							// Figure out if this sector holds the EOF marker or not
-							for (j = fileStart; j < inData.length; j++)
+							int j, block;
+							// Run through the sector map, skipping the first couple of blocks
+							for (j = fileStart+4; j < fileStart+512; j += 2 )
 							{
-								if (inData[j] == 0x0e)
+								block = (UnsignedByte.intValue(inData[j+1])*256)+UnsignedByte.intValue(inData[j]);
+								if (block <= 0)
 									break;
+								// System.err.println("Exporting block: 0x"+Integer.toHexString(block));
+								out.write(inData, block*512, 512);
 							}
-							out.write(inData, fileStart, j-fileStart);
 							out.flush();
 							out.close();
 						}
