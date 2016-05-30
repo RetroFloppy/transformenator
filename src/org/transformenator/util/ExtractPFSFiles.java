@@ -69,6 +69,7 @@ public class ExtractPFSFiles
 						}
 					}
 					int skew[] = {0,14,13,12,11,10,9,8,7,6,5,4,3,2,1,15};
+					// De-skew the disk image in memory
 					for (int i = 0; i < result.length / 4096; i++)
 					{
 						for (int j = 0; j < 16; j++)
@@ -77,7 +78,7 @@ public class ExtractPFSFiles
 						}
 					}
 					// Write an un-screwed image
-					if (false)
+					if (args.length == 0) // i.e. never
 					{
 						try
 						{
@@ -144,7 +145,7 @@ public class ExtractPFSFiles
 							filename += (char) inData[i + j];
 						}
 						// Find file's starting "block"
-						int fileStart = (UnsignedByte.intValue(inData[i + 16])) * 512;
+						int fileStart = ((UnsignedByte.intValue(inData[i + 17]) * 256) + UnsignedByte.intValue(inData[i + 16])) * 512;
 						// System.err.println("DEBUG: found file: " + filename + " Starting at offset: 0x"+Integer.toHexString(fileStart));
 						FileOutputStream out;
 						try
