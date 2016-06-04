@@ -8,18 +8,17 @@ head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transf
 tail = "}"
 
 ; Indented
-regex = @\.LI0@\\par\\li721\\par @
+regex = @\.[L|l][I|i]0@\\par\\li721\\par @
 
 ; Outdent
-regex = @\.LI1@\\par\\li0\\par @
+regex = @\.[L|l][I|i]1@\\par\\li0\\par @
 
 ; Italic toggle
 5c % " \i1 "," \i0 "
 
-; Left paragraph alignment
-
-; Unsure - maybe printer codes?
-1b.. =
+; Superscript
+1b3b = "\super "
+1b3a = "\nosupersub "
 
 ; Sometimes follows an italic closure
 08 =
@@ -27,21 +26,33 @@ regex = @\.LI1@\\par\\li0\\par @
 0d0a = "\\r\\n\par "
 
 ; Consume other productions
-regex = @\.[F|f][J|j]@@
-regex = @\.[L|l][J|j]@\\ql @
-regex = @\.[R|r][J|j]@\\qr @
-regex = @\.[R|r|L|l][M|m][\-|\+][0-9]{1,3}@@
-regex = @\.[R|r|L|l][M|m][0-9]{1,3}@@
-regex = @\.[B|b][M|m][0-9]{1,2}@@
-regex = @\.[B|b][L|l]@@
-regex = @\.[T|t][L|l]@@
-regex = @\.[T|t][M|m][0-9]{1,2}@@
-regex = @\.[E|e][P|p][0-9]@@
-regex = @\.[F|f][F|f][0-9]{1,2}@@
-regex = @\.[F|f][F|f]@@
-regex = @\.[P|p][M|m][\+|\-][0-9]{1,2}@@
-regex = @\.[P|p][L|l][0-9]{1,2}@@
-regex = @\.[P|p][I|i][0-9]{1,2}@@
-regex = @\.[P|p][N|n][0-9]{1,2}@@
-regex = @\.[P|p][M|m]@@
-regex = @\.[C|c][J|j]@@
+regex = @\\par \.[B|b][L|l]@@
+regex = @\\par \.[B|b][M|m].*@@
+regex = @\\par \.[C|c][J|j].*@@
+regex = @\\par \.[E|e][P|p].*@@
+regex = @\\par \.[F|f][F|f].*@@
+regex = @\\par \.[F|f][J|j].*@@
+regex = @\\par \.[L|l][I|i].*@@
+regex = @\\par \.[L|l][J|j]@\\gl @
+regex = @\\par \.[L|l][M|m].*@@
+regex = @\\par \.[P|p][I|i].*@@
+regex = @\\par \.[P|p][L|l].*@@
+regex = @\\par \.[P|p][M|m].*@@
+regex = @\\par \.[P|p][N|n].*@@
+regex = @\\par \.[R|r][J|j]@\\gr @
+regex = @\\par \.[R|r][M|m].*@@
+regex = @\\par \.[T|t][L|l].*@@
+regex = @\\par \.[T|t][M|m].*@@
+
+regex = @^\.[C|c][J|j].*@@
+regex = @^\.[E|e][P|p].*@@
+regex = @^\.[L|l][I|i].*@@
+regex = @^\.[L|l][J|j]@\\gl @
+regex = @^\.[L|l][M|m].*@@
+regex = @^\.[P|p][L|l].*@@
+regex = @^\.[P|p][M|m].*@@
+regex = @^\.[P|p][N|n].*@@
+regex = @^\.[R|r][J|j]@\\gl @
+regex = @^\.[R|r][M|m].*@@
+regex = @^\.[T|t][L|l].*@@
+regex = @^\.[T|t][M|m].*@@
