@@ -181,7 +181,10 @@ public class ExtractWangFiles
 								String dsc2 = new String(dsc2b).trim();
 								String dsc3 = new String(dsc3b).trim();
 								int fileID = UnsignedByte.intValue(inData[i + 4]) * 256 + UnsignedByte.intValue(inData[i + 5]);
-								fileName = new String(args[1]) + File.separator + fileName + " " +i;
+								if (i == 2048) // Don't append file number to the first file
+									fileName = new String(args[1]) + File.separator + fileName;
+								else
+									fileName = new String(args[1]) + File.separator + fileName + " " +i;
 								System.out.println("File found: ["+fileName+"] at location 0x" + Integer.toHexString(i));
 								System.out.println("   Description 1: ["+dsc1+"]");
 								System.out.println("   Description 2: ["+dsc2+"]");
@@ -264,6 +267,44 @@ public class ExtractWangFiles
 					else
 						unwindDOSFile(inData, args[0] + ".bin");
 				}
+				else if (inData.length == 368640)
+				{
+					/*
+					 * Check for WP files on 360k disks (5-1/4").
+					 */
+					for (int i = 0; i < inData.length; i += 256)
+					{
+						if ((inData[i + 2] == -1) && (inData[i + 3] == 65)) /* 0xff 0x41 */
+						{
+							// Filename is 0x0d bytes in, for a length of 25
+							// Description 1 is 0x27 bytes in, for a length of 20
+							// Description 2 is 0x3c bytes in, for a length of 20
+							// Description 3 is 0x50 bytes in, for a length of 20
+							byte fnb[] = new byte[25];
+							byte dsc1b[] = new byte[20];
+							byte dsc2b[] = new byte[20];
+							byte dsc3b[] = new byte[20];
+							fnb = Arrays.copyOfRange(inData, i + 0x0d, i + 0x0d + 25);
+							dsc1b = Arrays.copyOfRange(inData, i + 0x27, i + 0x27 + 20);
+							dsc2b = Arrays.copyOfRange(inData, i + 0x3c, i + 0x3c + 20);
+							dsc3b = Arrays.copyOfRange(inData, i + 0x50, i + 0x50 + 20);
+							String fileName = new String(fnb).trim().replace("\\", "-").replace("/", "-").replace("?", "-").replace("\"", "_");
+							String dsc1 = new String(dsc1b).trim();
+							String dsc2 = new String(dsc2b).trim();
+							String dsc3 = new String(dsc3b).trim();
+							int fileID = UnsignedByte.intValue(inData[i + 4]) * 256 + UnsignedByte.intValue(inData[i + 5]);
+							if (i == 2048)
+								fileName = new String(args[1]) + File.separator + fileName;
+							else
+								fileName = new String(args[1]) + File.separator + fileName + " " +i;
+							System.out.println("File found: ["+fileName+"] at location 0x" + Integer.toHexString(i));
+							System.out.println("   Description 1: ["+dsc1+"]");
+							System.out.println("   Description 2: ["+dsc2+"]");
+							System.out.println("   Description 3: ["+dsc3+"]");
+							decodeWPFile(inData, fileName, 0, UnsignedByte.intValue(inData[i]), UnsignedByte.intValue(inData[i + 1]), fileID, 0);
+						}
+					}
+				}
 				else if (inData.length >= 322560)
 				{
 					byte eyecatcherc[] = { 0x0b, 0x43, 0x61, 0x74, 0x61, 0x6c, 0x6f, 0x67 }; // ".Catalog" - part of the WVD specification
@@ -272,6 +313,8 @@ public class ExtractWangFiles
 					{
 						seek514Files(inData);
 					}
+					else // at about the end of the line here
+						System.err.println("Input file is not a known Wang format.");
 				}
 				else
 				{
@@ -441,7 +484,7 @@ public class ExtractWangFiles
 		{
 			out = new FileOutputStream(fullName);
 			System.err.println("Creating file: " + fullName);
-			dumpWPFileChain(out, inData, track, sector, fileID, preambleOffset, skew);
+			dumpWPFileChain(out, inData, track, sector, fileID, preambleOffset, skew, true);
 			out.flush();
 			out.close();
 		}
@@ -451,7 +494,7 @@ public class ExtractWangFiles
 		}
 	}
 
-	public static void dumpWPFileChain(FileOutputStream out, byte[] inData, int track, int sector, int fileID, int preambleOffset, int skew) throws IOException
+	public static void dumpWPFileChain(FileOutputStream out, byte[] inData, int track, int sector, int fileID, int preambleOffset, int skew, boolean firstSector) throws IOException
 	{
 		int nextTrack, nextSector, dataOffset;
 
@@ -462,7 +505,7 @@ public class ExtractWangFiles
 		nextTrack = UnsignedByte.intValue(inData[dataOffset]);
 		nextSector = UnsignedByte.intValue(inData[dataOffset + 1]);
 		// System.err.println("  Next track: "+Integer.toHexString(nextTrack)+" sector "+Integer.toHexString(nextSector)+" at 0x"+Integer.toHexString(realWPAddress(nextTrack, nextSector, preambleOffset, skew)));
-		if (sectorDataLength > 7)
+		if ((sectorDataLength > 7) && !firstSector)
 		{
 			byte range[] = Arrays.copyOfRange(inData, dataOffset + 7, dataOffset + sectorDataLength);
 			out.write(range);
@@ -474,7 +517,7 @@ public class ExtractWangFiles
 			if ((nextTrack == track) && (nextSector == sector))
 				System.err.println("Error: Loop in file structure; stopping.");
 			else
-				dumpWPFileChain(out, inData, nextTrack, nextSector, fileID, preambleOffset, skew);
+				dumpWPFileChain(out, inData, nextTrack, nextSector, fileID, preambleOffset, skew, false);
 		}
 		else
 		{

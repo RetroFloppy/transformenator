@@ -2,9 +2,6 @@
 ; Transform for Wang WPS Word Processor
 ;
 
-; Trim the leading 0x300 bytes
-; trim_leading = 300
-
 ; Header for RTF format
 head = "{\rtf1{\*\generator David Schmidt - Transformenator;}\f0 "
 ; Closing brace for RTF format
@@ -18,10 +15,97 @@ tail = "}"
 04 = 09
 05 = 09
 
-; Start of file
-;c9575053 = {@@<FiLe_SoF>@@}
-
-; Italics - lower and upper case
+; Italics
+a0="\i1  \i0 "
+a1="\i1 !\i0 "
+a2="\i1 \"\i0 "
+a3="\i1 #\i0 "
+a4="\i1 $\i0 "
+a5="\i1 %\i0 "
+a6="\i1 &\i0 "
+a7="\i1 '\i0 "
+a8="\i1 (\i0 "
+a9="\i1 )\i0 "
+aa="\i1 *\i0 "
+ab="\i1 +\i0 "
+ac="\i1 ,\i0 "
+ad="\i1 -\i0 "
+ae="\i1 .\i0 "
+af="\i1 /\i0 "
+b0="\i1 0\i0 "
+b1="\i1 1\i0 "
+b2="\i1 2\i0 "
+b3="\i1 3\i0 "
+b4="\i1 4\i0 "
+b5="\i1 5\i0 "
+b6="\i1 6\i0 "
+b7="\i1 7\i0 "
+b8="\i1 8\i0 "
+b9="\i1 9\i0 "
+ba="\i1 :\i0 "
+bb="\i1 ;\i0 "
+bc="\i1 <\i0 "
+bd="\i1 =\i0 "
+be="\i1 >\i0 "
+bf="\i1 ?\i0 "
+c1="\i1 A\i0 "
+c2="\i1 B\i0 "
+c3="\i1 C\i0 "
+c4="\i1 D\i0 "
+c5="\i1 E\i0 "
+c6="\i1 F\i0 "
+c7="\i1 G\i0 "
+c8="\i1 H\i0 "
+c9="\i1 I\i0 "
+ca="\i1 J\i0 "
+cb="\i1 K\i0 "
+cc="\i1 L\i0 "
+cd="\i1 M\i0 "
+ce="\i1 N\i0 "
+cf="\i1 O\i0 "
+d0="\i1 P\i0 "
+d1="\i1 Q\i0 "
+d2="\i1 R\i0 "
+d3="\i1 S\i0 "
+d4="\i1 T\i0 "
+d5="\i1 U\i0 "
+d6="\i1 V\i0 "
+d7="\i1 W\i0 "
+d8="\i1 X\i0 "
+d9="\i1 Y\i0 "
+da="\i1 Z\i0 "
+db="\i1 [\i0 "
+dc="\i1 \\\i0 "
+dd="\i1 ]\i0 "
+de="\i1 ^\i0 "
+df="\i1 _\i0 "
+e0="\i1 `\i0 "
+e1="\i1 a\i0 "
+e2="\i1 b\i0 "
+e3="\i1 c\i0 "
+e4="\i1 d\i0 "
+e5="\i1 e\i0 "
+e6="\i1 f\i0 "
+e7="\i1 g\i0 "
+e8="\i1 h\i0 "
+e9="\i1 i\i0 "
+ea="\i1 j\i0 "
+eb="\i1 k\i0 "
+ec="\i1 l\i0 "
+ed="\i1 m\i0 "
+ee="\i1 n\i0 "
+ef="\i1 o\i0 "
+f0="\i1 p\i0 "
+f1="\i1 q\i0 "
+f2="\i1 r\i0 "
+f3="\i1 s\i0 "
+f4="\i1 t\i0 "
+f5="\i1 u\i0 "
+f6="\i1 v\i0 "
+f7="\i1 w\i0 "
+f8="\i1 x\i0 "
+f9="\i1 y\i0 "
+fa="\i1 z\i0 "
 [a0..ff] = 20
 
 ; Center a line
@@ -45,5 +129,3 @@ tail = "}"
 ; Page eject?  Control char plus spaces and tabs
 86..
 06..
-;86........................................................................................................................................................
-;06............................................................................................................................................................
