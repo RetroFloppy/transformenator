@@ -1,0 +1,73 @@
+;
+; Transform for C64 Easyscript from PETSCII to RTF
+;
+; Expects text-exported files from tools like DirMaster in batch mode; these would typically have a .txt suffix
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator;}\f0 \pard\f0\fs20\par "
+
+8e = 20
+00 =
+03 =
+
+; Closing brace for RTF format
+tail = "}"
+
+; Shifted spaces
+a0 = 20
+e0 = 20
+80a3 = 20
+
+; Remove c0 
+c0 = 
+
+; To deal with the Easyscript control structures, we first break them up into individual elements.
+
+; Four control elements, terminated
+regex = @€\*(.*?):(.*?):(.*?):(.*?);@<~$1~><~$2~><~$3~><~$4~>@
+; Three control elements, terminated
+regex = @€\*(.*?):(.*?):(.*?);@<~$1~><~$2~><~$3~>@
+; Two control elements, terminated
+regex = @€\*(.*?):(.*?);@<~$1~><~$2~>@
+; One control element, terminated
+regex = @€\*(.*?);@<~$1~>@
+
+; Four control elements, non-terminated
+regex = @€\*(.*?):(.*?):(.*?):(.*)@<~$1~><~$2~><~$3~><~$4~>@
+; Three control elements, non-terminated
+regex = @€\*(.*?):(.*?):(.*)@<~$1~><~$2~><~$3~>@
+; Two control elements, non-terminated
+regex = @€\*(.*?):(.*)@<~$1~><~$2~>@
+; One control element, non-terminated
+regex = @€\*(.*)@<~$1~>@
+
+; Now that the elements are broken apart, deal with each type.
+
+; Center on
+regex = @<~cn1~>@\\pard\\qc @
+; Center off
+regex = @<~cn0~>@\\par\\pard @
+
+; Remove: left margin, right margin, page length, "ps(?), fp0"
+regex = @<~lm.*?~>@@
+regex = @<~rm.*?~>@@
+regex = @<~pl.*?~>@@
+regex = @<~ps~>@@
+regex = @<~fp0~>@@
+
+; Newline
+regex = @\<~ln1~>@\\par @
+regex = @\<~ln2~>@\\par\\par @
+regex = @\<~ln.*?~>@\\par\\par @
+regex = @\n@\\par @
+
+; Descender for one character
+regex = @€D(.)@\\sub $1 \\nosupersub @
+
+; Ascender for one character
+regex = @€U(.)@\\super $1 \\nosupersub @
+
+; Remove all remaining control structures until we figure out what they are supposed to do
+; ...comment this regex out to see what got missed 
+regex = @<~.*?~>@@
