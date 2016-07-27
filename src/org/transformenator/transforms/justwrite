@@ -7,6 +7,7 @@ trim_leading = 400
 
 ; Newlines
 0d = 0d0a
+03 = 0d0a
 
 ; Start of a new section/page
 ff9b = 0d0a
@@ -17,8 +18,14 @@ ff.. =
 ; Mid-sentence breaks: byte, zero, non-zero, zero 
 ..00!!00 =
 
+; Space, maybe a tab
+83 = 20
+
 ; Lop off nulls
 00 =
+
+; Page break of some kind
+86..................................................................................................................................................83 = 0d0a
 
 ; Not sure what these are... seem to be page breaks of some sort
 2e2e2e092e2e2e2e092e2e2e2e092e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e =
