@@ -1,0 +1,31 @@
+;
+; Brother DOS-based Word Processor - typically with a WPT file suffix
+;
+
+; Header for RTF format
+head = "{\rtf1{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Common chunk
+980d78008403000006....0d98 =
+
+; Leading/intro
+8f810101000042521e1110023000000000003000ff0513111e =
+
+; Space
+00 = 20
+
+; Line break
+1b =
+db = 20
+95 = 20
+da =
+
+; Newline
+02 = "\\r\\n\par "
+
+; Unknown
+bd..bc =
+8c =
+8d =
