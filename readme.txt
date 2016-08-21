@@ -2,6 +2,8 @@ New for this version:
 =====================
 
  * Updated transform: Another JustWrite variant that untangles an index to a chain of sectors; earlier JW is a doubly-linked list
+ 
+ * New transform: Amiga Prowrite, including a bit of untangling processing
 
  * New utility: ExtractOfficeSystem6Files (and associated transform) for extracting and transforming files from IBM Office System 6 disk images
  

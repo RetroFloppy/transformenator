@@ -1,0 +1,11 @@
+;
+; Amiga ProWrite - has associated interpretation/detangler in Transformenation.java
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fhelvetica\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+0d0a = "\\r\\n\par "
+0a = "\\r\\n\par "

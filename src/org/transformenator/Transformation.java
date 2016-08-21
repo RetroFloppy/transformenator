@@ -34,6 +34,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.security.CodeSource;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
@@ -361,6 +362,55 @@ public class Transformation
 					for (int i = 0; i < newBufCursor; i++)
 						inData[i] = newBuf[i];
 					// System.err.println("DEBUG: Data length after de-indexing: "+inData.length);
+				}
+				else if ((transformName.length() > 9) && (transformName.toUpperCase().substring(0, 9).equalsIgnoreCase("PROWRITE_")))
+				{
+					byte[] newBuf = new byte[inData.length];
+					byte textEyecatcher[] = { 0x54, 0x45, 0x58, 0x54 }; // "TEXT"
+					byte paraEyecatcher[] = { 0x50, 0x41, 0x52, 0x41 }; // "PARA"
+					byte formEyecatcher[] = { 0x46, 0x4f, 0x52, 0x4d }; // "FORM"
+					int length, newBufCursor = 0;
+					// byte[] byteSegment;
+					// String segment;
+					if (Arrays.equals(Arrays.copyOfRange(inData, 0, 4), formEyecatcher))
+					{
+						System.err.println("Interpreting ProWrite file " + file);
+						for (int i = 0; i < inData.length; i ++)
+						{
+							if (inData.length - i > 8)
+							{
+								byte range[] = Arrays.copyOfRange(inData, i, i+0x04);
+								length = UnsignedByte.intValue(inData[i+7]) + 256*(UnsignedByte.intValue(inData[i+6]));
+								if (Arrays.equals(range, textEyecatcher))
+								{
+									// System.out.println("Found text segment @ $"+Integer.toHexString(i)+" for length "+length);
+									if (length > 0)
+									{
+										// byteSegment = Arrays.copyOfRange(inData, i+8, i+8+length);
+										// segment = new String(byteSegment);
+										// System.out.println("["+segment+"]");
+										// System.out.println(segment);
+										for (int k = 0; k < length; k++)
+										{
+											newBuf[newBufCursor++] = inData[i + 8 + k];
+										}
+										i += length; // Move past this text segment
+									}
+									newBuf[newBufCursor++] = 0x0d;
+									newBuf[newBufCursor++] = 0x0a;
+								}
+								else if (Arrays.equals(range, paraEyecatcher))
+								{
+									// System.out.println("Found para segment @ $"+Integer.toHexString(i)+" for length "+length);
+								}
+							}
+						}
+						inData = new byte[newBufCursor];
+						for (int i = 0; i < newBufCursor; i++)
+							inData[i] = newBuf[i];
+					}
+					else
+						System.err.println("Not a ProWrite file: " + file);
 				}
 				// Did they ask for a EOF to be calculated from inside the file? Get it!
 				if (eofLo + eofMid + eofHi + eofOffset > 0)
