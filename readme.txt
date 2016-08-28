@@ -1,19 +1,6 @@
 New for this version:
 =====================
 
- * New transform: Amiga Prowrite, including a bit of untangling processing
-
- * Updated transform: Another JustWrite variant that untangles an index to a chain of sectors; earlier JW is a doubly-linked list
- 
- * New utility functions:
-     ExtractOfficeSystem6Files (and associated transform) for extracting and transforming files from IBM Office System 6 disk images
-     ExtractPFSFiles for extracting files from PFS:write from Apple II disk images
-     CreateLwpMacro for creating a Lotus Word Pro macro that, when executed by LWP, will transform all text files in a specified directory tree
- 
- * Updated utility functions:
-     ExtractNBIFiles now handles both low and high density NBI word processor disk images
-     DOSImage (renamed from UpdateDOSImage) now displays as well as updates a disk image's BIOS Parameter Block (BPB); also now removes Michelangelo virus.
-
 Transformenator introduction:
 =============================
 
