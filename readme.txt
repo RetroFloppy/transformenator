@@ -9,6 +9,8 @@ New for this version:
  
  * New utility: ExtractPFSFiles for extracting files from PFS:write from Apple II disk images
  
+ * New utility: CreateLwpMacro for creating a Lotus Word Pro macro that, when executed by LWP, will transform all text files in a specified directory tree
+ 
  * Updated utility: ExtractNBIFiles now handles both low and high density NBI word processor disk images
 
  * Updated utility: DOSImage (renamed from UpdateDOSImage) now displays as well as updates a disk image's BIOS Parameter Block (BPB); also now removes Michelangelo virus.
