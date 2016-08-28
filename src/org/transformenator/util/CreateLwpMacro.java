@@ -52,30 +52,37 @@ public class CreateLwpMacro
 			out_directory = args[1];
 			File in_root_dir = new File(in_directory);
 			File out_dir_root = new File(out_directory);
-			try
+			// Remember... path can't be the same (though it probably could, since we append the .doc suffix)
+			if (!in_root_dir.getAbsolutePath().equals(out_dir_root.getAbsolutePath()))
 			{
-				FileOutputStream dirs = new FileOutputStream("CreateDirectories.bat");
-				FileOutputStream lss = new FileOutputStream("lotus2word.lss");
-				lss.write("Sub Main\r\n".getBytes());
-				if (!out_dir_root.isAbsolute())
+				try
 				{
-					out_dir_root = new File(out_dir_root.getAbsolutePath());
+					FileOutputStream dirs = new FileOutputStream("CreateDirectories.bat");
+					FileOutputStream lss = new FileOutputStream("lotus2word.lss");
+					lss.write("Sub Main\r\n".getBytes());
+					if (!out_dir_root.isAbsolute())
+					{
+						out_dir_root = new File(out_dir_root.getAbsolutePath());
+					}
+					if (!in_directory.equals(out_directory))
+						descendDirectory(dirs, lss, in_root_dir.getAbsolutePath().length(), in_root_dir, out_dir_root);
+					else
+						help();
+					lss.write("End Sub\r\n".getBytes());
 				}
-				if (!in_directory.equals(out_directory))
-					descendDirectory(dirs, lss, in_root_dir.getAbsolutePath().length(), in_root_dir, out_dir_root);
-				else
-					help();
-				lss.write("End Sub\r\n".getBytes());
+				catch (FileNotFoundException e)
+				{
+					e.printStackTrace();
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
 			}
-			catch (FileNotFoundException e)
+			else
 			{
-				e.printStackTrace();
+				help();
 			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-			
 		}
 		else
 		{
@@ -98,8 +105,7 @@ public class CreateLwpMacro
 				if (files != null)
 				{
 					// Need to make a directory for this destination
-					String test = "mkdir \""+out_directory.getPath()+
-							in_directory.getAbsolutePath().substring(offset, in_directory.getAbsolutePath().length())+"\"\r\n";
+					String test = "mkdir \"" + out_directory.getPath() + in_directory.getAbsolutePath().substring(offset, in_directory.getAbsolutePath().length()) + "\"\r\n";
 					dirs.write(test.getBytes());
 					for (int i = 0; i < files.length; i++)
 					{
@@ -109,11 +115,9 @@ public class CreateLwpMacro
 						}
 						else if (!files[i].isHidden())
 						{
-							lss.write((".OpenDocument \""+files[i].getAbsoluteFile()+"\", \"\", \"\"\r\n").getBytes());
+							lss.write((".OpenDocument \"" + files[i].getAbsoluteFile() + "\", \"\", \"\"\r\n").getBytes());
 							// Work this file
-							lss.write((".SaveAs \""+out_directory.getPath()+
-									in_directory.getAbsolutePath().substring(offset, in_directory.getAbsolutePath().length())+
-									File.separator+files[i].getName()+".doc\", \"\", \"MS Word 2000\", False, True, False\r\n").getBytes());
+							lss.write((".SaveAs \"" + out_directory.getPath() + in_directory.getAbsolutePath().substring(offset, in_directory.getAbsolutePath().length()) + File.separator + files[i].getName() + ".doc\", \"\", \"MS Word 2000\", False, True, False\r\n").getBytes());
 							lss.write((".Close\r\n").getBytes());
 						}
 					}
@@ -133,7 +137,7 @@ public class CreateLwpMacro
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("CreateLwpMacro " + Version.VersionString + " - Build a Lotus Word Pro macro to transform all files in a filesystem");
+		System.err.println("CreateLwpMacro " + Version.VersionString + " - Create a Lotus Word Pro macro to transform all files in a filesystem to Word .doc format");
 		System.err.println();
 		System.err.println("Usage: CreateLwpMacro <in_directory> <out_directory>");
 		System.err.println("Note: the specified <in_directory> and <out_directory> cannot be the same.");
