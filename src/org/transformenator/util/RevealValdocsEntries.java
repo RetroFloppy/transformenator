@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2013 - 2014 by David Schmidt
+ * Copyright (C) 2013 - 2016 by David Schmidt
  * david__schmidt at users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -97,7 +97,7 @@ public class RevealValdocsEntries
 				}
 				if (foundSome == false)
 				{
-					// Disks captured with IMGDISK will have entries starting at offset 0x4c00
+					// Disks captured with IMGDISK may have entries starting at offset 0x4c00
 					for (int i = 0x4c00; i < 0x5000; i += 0x20)
 					{
 						if (isValdocsFile(inData, i))
@@ -109,8 +109,25 @@ public class RevealValdocsEntries
 						}
 					}
 				}
+				if (foundSome == false)
+				{
+					// Disks captured with IMGDISK may have entries starting at offset 0x4000
+					for (int i = 0x4000; i < 0x4400; i += 0x20)
+					{
+						// System.err.println("Checking at offset "+Integer.toHexString(i)+"...");
+						if (isValdocsFile(inData, i))
+						{
+							// Make the directory entry visible
+							inData[i] = 0x00;
+							isIMGDISK = true;
+							foundSome = true;
+						}
+					}
+				}
 				if (foundSome)
 					System.err.println("Found some Valdocs entries.");
+				else
+					System.err.println("Did not find any Valdocs entries.");
 				// Cleaned up the directory - now write the resulting image
 				FileOutputStream out;
 				try
@@ -119,7 +136,7 @@ public class RevealValdocsEntries
 					if (isIMGDISK)
 					{
 						// Since these were (short) IMGDISK-produced images, fatten them out for cpmtools
-						out.write(inData, 0, 0x400);
+						out.write(inData, 0, 409600 - inData.length);
 					}
 					out.write(inData);
 					out.flush();
@@ -148,7 +165,7 @@ public class RevealValdocsEntries
 		/*
 		 * First check: is the first byte a 0x60?
 		 */
-		if (inData[offset] == 0x60)
+		if ((inData[offset] == 0x60) || (inData[offset] == 0x00)) 
 		{
 			/*
 			 * Second check: are the first two bytes numeric? All Valdocs files have the form NNxxxnnnVAL, where NN are numeric. Generally all the rest of the x elements are numeric as well, but not always. The n elements are probably always numeric, as they are counters (001, 002, 003, etc.)
