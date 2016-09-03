@@ -1,0 +1,37 @@
+;
+; Transform for PFS:Write on the PC to text
+;
+
+; Trim the leading 0x200 bytes
+trim_leading = 200
+
+; End of text
+0e = "{@@<FiLe_EoF>@@}"
+
+; Here and below are primarily PC DOS-based changes
+032002 = "\\r\\n"
+032003 = "\\r\\n"
+00 = "\\r"
+01 = "\\r"
+03 = "\\r"
+0d = "\\r\\n"
+0c = "\\r\\n"
+
+; 0xae is some sort of emphasis; couldn't find the mating pair
+ae =
+af = "/"
+ba = "-"
+90c0 = "* "
+c0 =
+
+; Underline on/off
+a8 =
+a9 =
+
+; Backspace/bold
+81 = 
+82 =
+83 =
+ad = 20
+[e1..fa] = 61
+[a0..da] = 20
