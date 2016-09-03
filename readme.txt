@@ -1,6 +1,8 @@
 New for this version:
 =====================
 
+Upated transform: PFS:Write is now split into PC and Apple II variants, as they differ a little bit.
+
 Transformenator introduction:
 =============================
 
