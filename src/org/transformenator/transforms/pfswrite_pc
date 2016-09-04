@@ -18,8 +18,6 @@ trim_leading = 200
 0c = "\\r\\n"
 
 ; 0xae is some sort of emphasis; couldn't find the mating pair
-ae =
-af = "/"
 ba = "-"
 90c0 = "* "
 c0 =
