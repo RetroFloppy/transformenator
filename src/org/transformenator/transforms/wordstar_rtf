@@ -68,6 +68,7 @@ regex = @\\par \.[i|I][a|A]@@
 regex = @\\par \.[i|I][b|B]@@
 regex = @\\par \.[i|I][e|E]@@
 regex = @\\par \.[i|I][t|T]@@
+regex = @^\.[l|L][h|H].*@@
 regex = @\\par \.[m|M][b|B].*@@
 
 ; Header directive removal
