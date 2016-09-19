@@ -11,6 +11,19 @@ import java.io.InputStream;
 import org.transformenator.Version;
 import org.transformenator.internal.UnsignedByte;
 
+/*
+ * ExtractHardSectors
+ * 
+ * This helper app pulls the files off of the virtual file system of a
+ * hard-sectored word processor disk of some unknown origin.  The expected
+ * data comes from the FC5025, with two copies of each track: one as extracted
+ * and FM-decoded, and one that has been bit-shifted one bit and then FM-decoded.
+ * This app will first find good copies of each sector (or subsitute zeroes) and
+ * then retrieve the files from the expected filesystem.
+ * 
+ * The disk geometry is 128 bytes per sector, 26 sectors per track, 77 tracks per side, one sided.
+ *
+ */
 public class ExtractHardSectors
 {
 	public static void main(java.lang.String[] args)

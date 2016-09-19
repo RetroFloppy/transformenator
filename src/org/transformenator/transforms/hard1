@@ -1,0 +1,28 @@
+;
+; Transform matching the ExtractHardSectors-based files; unknown 8' word processor format
+;
+
+; Special substitutions
+02 = 20
+08 = "-"
+14 = "|"
+15 =
+82 = "."
+94 = "+"
+
+; Italics on and off
+03 = 
+04 = 
+
+0bff = "{@@<FiLe_EoF>@@}"
+;0b7f = "{@@<FiLe_EoF>@@}"
+
+; Newlines
+0a = 0d0a
+0b = 0d0a
+
+; Space out remaining ff
+ff = 20
+
+; Slice off high bits
+[a0..ff] = 20
