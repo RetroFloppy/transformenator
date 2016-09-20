@@ -1,6 +1,8 @@
 ;
 ; Transform for PFS:Write on the PC to text
 ;
+; Start of file contains "GERBILDOC3"
+;
 
 ; Trim the leading 0x200 bytes
 trim_leading = 200
@@ -25,6 +27,10 @@ c0 =
 ; Underline on/off
 a8 =
 a9 =
+
+; Line beginnings
+80 =
+e0 =
 
 ; Backspace/bold
 81 = 
