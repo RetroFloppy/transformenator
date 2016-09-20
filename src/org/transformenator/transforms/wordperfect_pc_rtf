@@ -1,5 +1,6 @@
 ;
 ; DOS WordPerfect 4.2 word processor, output in RTF
+; Also covers Apple IIgs version of WP
 ;
 
 ; Header for RTF format
@@ -10,10 +11,13 @@ tail = "}"
 ; Start of file
 f2 =
 a9......a9 =
+c0........c0 =
+c0..........c0 =
 c1....c1 =
 c1..............c1 =
 c2..c2 =
 c3......c3 = "\par "
+c4........c4 =
 c5........c5 =
 c6....c6 = 
 c7........c7 =
@@ -51,6 +55,7 @@ ff =
 0d09 = "\par\par "
 0a0a = "\par\par "
 0a = "\par "
+81 =
 82 =
 83 =
 84 =
