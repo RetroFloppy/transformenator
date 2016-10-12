@@ -12,15 +12,91 @@ tail = "}"
 
 ; Underline: @U(...)
 regex = #@U\((.+?)\)#\\ul $1\\ul0 #
+regex = #@U\[(.+?)\]#\\ul $1\\ul0 #
+regex = #@U\{(.+?)\}#\\ul $1\\ul0 #
 
 ; Some other kind of emphasis: @UX(...)
 regex = #@UX\((.+?)\)#\\ul $1\\ul0 #
+regex = #@UX\[(.+?)\]#\\ul $1\\ul0 #
+regex = #@UX\{(.+?)\}#\\ul $1\\ul0 #
+
+; Some other kind of emphasis: @UN(...)
+regex = #@UN\((.+?)\)#\\ul $1\\ul0 #
+regex = #@UN\[(.+?)\]#\\ul $1\\ul0 #
+
+; Centering: @CENTER(...)
+regex = #@CENTER\((.+?)\)#\\qc $1\\ql #
+regex = #@CENTER\{(.+?)\}#\\qc $1\\ql #
+
+; Centering: @CENTER[...]
+regex = #@CENTER\[(.+?)\]#\\qc $1\\ql #
+
+; Flush left: @FLUSHLEFT(...)
+regex = #@FLUSHLEFT\((.+?)\)#$1 #
+regex = #@FLUSHLEFT\[(.+?)\]#$1 #
+
+; Flush right: @FLUSHRIGHT(...)
+regex = #@FLUSHRIGHT\((.+?)\)#\\qr $1 \\par\\slmulti #
+regex = #@FLUSHRIGHT\[(.+?)\]#\\qr $1 \\par\\slmulti #
+regex = #@FLUSHRIGHT\{(.+?)\}#\\qr $1 \\par\\slmulti #
 
 ; Pagefooting: @PAGEFOOTING()
 regex = #@PAGEFOOTING\(()\)##
+regex = #@PAGEFOOTING##
+
+; I.e. @SET(page=132)
+regex = #@SET\((.+?)\)##
+
+; I.e. @BEGIN(VERBATIM)/@END(VERBATIM)
+regex = #@BEGIN\((.+?)\)##
+regex = #@BEGIN\[(.+?)\]##
+regex = #@END\((.+?)\)##
+regex = #@END\[(.+?)\]##
 
 ; I.e. @STYLE(spacing 2 lines)
 regex = #@STYLE\((.+?)\)##
+regex = #@STYLE\[(.+?)\]##
+
+; I.e. @COMMENT[...]
+regex = #@COMMENT\((.+?)\)#\\par [COMMENT: $1] #
+regex = #@COMMENT\[(.+?)\]#\\par [COMMENT: $1] #
+regex = #@COMMENT\{(.+?)\}#\\par [COMMENT: $1] #
+
+; I.e. @NOTE[...]
+regex = #@NOTE\((.+?)\)#\\par [NOTE: $1] #
+regex = #@NOTE\[(.+?)\]#\\par [NOTE: $1] #
+regex = #@NOTE\{(.+?)\}#\\par [NOTE: $1] #
+
+; I.e. @QUOTATION[...]
+regex = #@QUOTATION\[(.+?)\]#\\li725 $1 \\par \\li0 #
+regex = #@QUOTATION\{(.+?)\}#\\li725 $1 \\par \\li0 #
+
+; I.e. @INDENT[...]
+regex = #@INDENT\((.+?)\)#\\li725 $1 \\par \\li0 #
+regex = #@INDENT\[(.+?)\]#\\li725 $1 \\par \\li0 #
+regex = #@INDENT\{(.+?)\}#\\li725 $1 \\par \\li0 #
+
+; I.e. @W( )/@w( )
+regex = #@[W|w]\((.+?)\)##
+
+; I.e. @BLANKSPACE(2 lines)
+regex = #@BLANKSPACE\((.+?)\)##
+regex = #@BLANKSPACE\[(.+?)\]##
+regex = #@BLANKSPACE\{(.+?)\}##
+
+; I.e. @ADDRESS(...)
+regex = #@ADDRESS\((.+?)\)#$1 #
+regex = #@ADDRESS\[(.+?)\]#$1 #
+
+; I.e. @CLOSING(...)
+regex = #@CLOSING\((.+?)\)#$1 #
+regex = #@CLOSING\[(.+?)\]#$1 #
+
+; I.e. @PAGEHEADING(center="Some Profile")
+; or @PAGEHEADING()
+regex = #@PAGEHEADING\(.+?\"(.+?)\"\)#{\\header $1 }#
+regex = #@PAGEHEADING\[.+?\"(.+?)\"\]#{\\header $1 }#
+regex = #@PAGEHEADING\(.*\)##
 
 ; Ignore page eject
 regex = #@NEWPAGE##
