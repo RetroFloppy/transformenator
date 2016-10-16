@@ -1,6 +1,6 @@
 New for this version:
 =====================
-
+New utility: ExtractEnsoniqFiles to extract sequencer files from 10-sector Ensoniq floppy disk images
 Upated transform: PFS:Write is now split into PC and Apple II variants, as they differ a little bit.
 
 Transformenator introduction:
