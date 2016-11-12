@@ -1,0 +1,10 @@
+;
+; IBM PC Writer's Choice word processor
+;
+
+; Leading gorp until 0x400
+skip_leading = 400
+
+01 = 0d0a
+
+eof = 0e
