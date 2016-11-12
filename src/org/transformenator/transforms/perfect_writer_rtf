@@ -31,6 +31,18 @@ regex = #@CENTER\{(.+?)\}#\\qc $1\\ql #
 ; Centering: @CENTER[...]
 regex = #@CENTER\[(.+?)\]#\\qc $1\\ql #
 
+; Style: @STYLE(...)
+regex = #@STYLE\[(.+?)\]#\\qc $1\\ql #
+regex = #@STYLE\((.+?)\)#\\qc $1\\ql #
+
+; Style: @BLANKSPACE(...)
+regex = #@BLANKSPACE\[(.+?)\]#\\qc $1\\ql #
+regex = #@BLANKSPACE\((.+?)\)#\\qc $1\\ql #
+
+; Style: @PAGEHEADING(...)
+regex = #@PAGEHEADING\[(.+?)\]#\\qc $1\\ql #
+regex = #@PAGEHEADING\((.+?)\)#\\qc $1\\ql #
+
 ; Flush left: @FLUSHLEFT(...)
 regex = #@FLUSHLEFT\((.+?)\)#$1 #
 regex = #@FLUSHLEFT\[(.+?)\]#$1 #
