@@ -145,6 +145,11 @@ public class TransformDirectory
 			// System.err.println("Character: "+c+" value: "+(int)c);
 			switch (c)
 			{
+			case 8212: // emdash through Dave
+				c = '-';
+				needsRenamed = true;
+				newName += c;
+				break;
 			case 61474: // backslash through Dave
 				c = '-';
 				needsRenamed = true;
@@ -155,13 +160,36 @@ public class TransformDirectory
 				needsRenamed = true;
 				newName += c;
 				break;
+			case 32: // Space
+				if (j == 0)  // Leading space?  Baaaaad.
+				{
+					c = '_';
+					needsRenamed = true;
+				}
+				newName += c;
+				break;
+			case 42: // Asterisk
+				c = '_';
+				needsRenamed = true;
+				newName += c;
+				break;
 			case 58: // Backslash
 				c = '-';
 				needsRenamed = true;
 				newName += c;
 				break;
+			case 63: // Some Crazy Mac crap
+				c = '_';
+				needsRenamed = true;
+				newName += c;
+				break;
 			default:
-				if (c > 127)
+				if (c > 255) // In case we have unicode characters - replace them
+				{
+					needsRenamed = true;
+					c = '_';
+				}
+				else if (c == 127) // Let's fix this one
 				{
 					needsRenamed = true;
 					c = '_';
