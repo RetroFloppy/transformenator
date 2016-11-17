@@ -35,8 +35,8 @@ import org.transformenator.internal.UnsignedByte;
 /*
  * ExtractMagiFiles
  * 
- * Helper app to pull the files off of the virtual file system of a Magi
- * 8" disk image.
+ * Helper app to pull the files off of the virtual file system of a
+ * Magi Major Leaguer 8" disk image.
  * 
  * Disk geometry: 1 side, 128 bytes per sector, 26 sectors per track, 77 tracks
  *
@@ -174,7 +174,7 @@ public class ExtractMagiFiles
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractMagiFiles " + Version.VersionString + " - Extract files from Magi disk images.");
+		System.err.println("ExtractMagiFiles " + Version.VersionString + " - Extract files from Magi Major Leaguer disk images.");
 		System.err.println();
 		System.err.println("Usage: ExtractMagiFiles infile [out_directory]");
 	}
