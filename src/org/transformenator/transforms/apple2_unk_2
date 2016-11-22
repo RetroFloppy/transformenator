@@ -1,0 +1,21 @@
+;
+; Unknown Apple II word processor
+;
+
+trim_leading = 0200
+
+; Emphasis on/off
+07 =
+08 =
+
+; Newlines
+00d0 = 0d0a
+
+; Control break of some sort
+..0000.. =
+
+; Unknown
+f4 =
+
+; End of file
+ffff = "{@@<FiLe_EoF>@@}"
