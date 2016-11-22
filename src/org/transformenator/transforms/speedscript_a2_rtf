@@ -1,0 +1,76 @@
+;
+; Speedscript on Apple II
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Return/newline
+3c = "\\r\\n\par\ql "
+
+; Center on
+43 = "\qc "
+
+; Underline toggle
+55 % "\ul ","\ul0 "
+
+; Bold on/off
+db = "\b1 "
+dd = "\b0 "
+
+; Strip high bits
+[e1..fa] = 61
+[a0..da] = 20
+
+; Additional Speedscript commands that may not be handled yet:
+;
+;Stage 1 Commands
+;
+;L     Left Margin (default 5)
+;
+;R     Right Margin (default 75)
+;
+;T     Top Margin (default 5)
+;
+;B     Bottom Margin (default 58)
+;
+;P     Page Length (default 66)
+;
+;S     Spacing (default single spacing)
+;
+;@     Starts numbering at page given.
+;
+;?     Disables printing until selected page number is reached.
+;
+;X     Sets page width (default 80)
+;
+;N     Forced Paging (no numbers required)
+;
+;M     Margin Release (used for outdenting)
+;
+;W     Page Wait (used with individual sheet printing)
+;
+;J     Selects auto line feed after carriage return
+;
+;I     Information (line ignored during printing)
+;
+;H     Header define and enabled
+;
+;F     Footer define and enabled
+;
+;G     Go to (link) next file
+;
+;
+;Stage 2 Commands
+;
+;     These commands either precede a line of text or are embeded within a line.
+;
+;C     Centering
+;
+;#     Prints current page number
+;
+;U     Underlining
+;
+;E     Edge right
