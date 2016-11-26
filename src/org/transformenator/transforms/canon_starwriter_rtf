@@ -56,6 +56,8 @@ a6 = "$"
 84 = ed
 ; Small e acute
 8c = e9
+; Small e grave
+8d = e8
 ; Small u acute
 88 = fa
 ; Capital U acute
