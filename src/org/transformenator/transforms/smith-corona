@@ -4,12 +4,21 @@
 
 trim_leading = 40
 
+; Unknown emphasis
+01 =
+
+; Underline
+02 = 
+
+; Bold
+04 = 
+
 ; Various whitespace
 03 =
 06 =
 08 =
 0d = 0d0a
-..0e =
+0e = 0d0a0d0a
 10 = 0d0a
 1b = 20
 1e = 20
