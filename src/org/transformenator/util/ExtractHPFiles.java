@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2014 - 2015 by David Schmidt
+ * Copyright (C) 2014 - 2017 by David Schmidt
  * david__schmidt at users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -162,26 +162,28 @@ public class ExtractHPFiles
 							fileLength = j - fileStart;
 						// System.out.println("Found file: "+filename+" Start: 0x"+Integer.toHexString(fileStart)+" End: 0x"+Integer.toHexString(fileStart+fileLength-1)+" Length: 0x"+Integer.toHexString(fileLength));
 						filename = filename.trim();
-						FileOutputStream out;
-						try
+						if ((filename.length() > 0) && (fileLength > 0))
 						{
-							String fullname = new String(outputDirectory + File.separator + filename);
-							if (fileStart + fileLength < inData.length)
+							FileOutputStream out;
+							try
 							{
-								out = new FileOutputStream(fullname);
-								System.err.println("Creating file: " + fullname);
-								out.write(inData, fileStart, fileLength);
-								out.flush();
-								out.close();
+								String fullname = new String(outputDirectory + File.separator + filename);
+								if (fileStart + fileLength < inData.length)
+								{
+									out = new FileOutputStream(fullname);
+									System.err.println("Creating file: " + fullname);
+									out.write(inData, fileStart, fileLength);
+									out.flush();
+									out.close();
+								}
+								else
+									System.err.println("Error: file " + fullname + " would exceed the capacity of the disk image.");
 							}
-							else
-								System.err.println("Error: file " + fullname + " would exceed the capacity of the disk image.");
+							catch (IOException io)
+							{
+								io.printStackTrace();
+							}
 						}
-						catch (IOException io)
-						{
-							io.printStackTrace();
-						}
-
 					}
 					else
 						break;
