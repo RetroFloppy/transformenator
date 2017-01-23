@@ -14,36 +14,54 @@ tail = "}"
 regex = #@U\((.+?)\)#\\ul $1\\ul0 #
 regex = #@U\[(.+?)\]#\\ul $1\\ul0 #
 regex = #@U\{(.+?)\}#\\ul $1\\ul0 #
+regex = #@u\((.+?)\)#\\ul $1\\ul0 #
+regex = #@u\[(.+?)\]#\\ul $1\\ul0 #
+regex = #@u\{(.+?)\}#\\ul $1\\ul0 #
 
 ; Some other kind of emphasis: @UX(...)
 regex = #@UX\((.+?)\)#\\ul $1\\ul0 #
 regex = #@UX\[(.+?)\]#\\ul $1\\ul0 #
 regex = #@UX\{(.+?)\}#\\ul $1\\ul0 #
+regex = #@ux\((.+?)\)#\\ul $1\\ul0 #
+regex = #@ux\[(.+?)\]#\\ul $1\\ul0 #
+regex = #@ux\{(.+?)\}#\\ul $1\\ul0 #
 
 ; Some other kind of emphasis: @UN(...)
 regex = #@UN\((.+?)\)#\\ul $1\\ul0 #
 regex = #@UN\[(.+?)\]#\\ul $1\\ul0 #
+regex = #@un\((.+?)\)#\\ul $1\\ul0 #
+regex = #@un\[(.+?)\]#\\ul $1\\ul0 #
 
 ; Centering: @CENTER(...)
+; Saw this once: [center = "@value(page)"] - no idea if this is valid or not
 regex = #@CENTER\((.+?)\)#\\qc $1\\ql #
 regex = #@CENTER\{(.+?)\}#\\qc $1\\ql #
-
-; Centering: @CENTER[...]
 regex = #@CENTER\[(.+?)\]#\\qc $1\\ql #
+regex = #@center\((.+?)\)#\\qc $1\\ql #
+regex = #@center\{(.+?)\}#\\qc $1\\ql #
+regex = #@center\[(.+?)\]#\\qc $1\\ql #
 
 ; Style: @STYLE(...)
-regex = #@STYLE\[(.+?)\]#\\qc $1\\ql #
-regex = #@STYLE\((.+?)\)#\\qc $1\\ql #
+regex = #@STYLE\[(.+?)\]##
+regex = #@STYLE\((.+?)\)##
+regex = #@style\[(.+?)\]##
+regex = #@style\((.+?)\)##
 
 ; Style: @BLANKSPACE(...)
 regex = #@BLANKSPACE\[(.+?)\]#\\qc $1\\ql #
 regex = #@BLANKSPACE\((.+?)\)#\\qc $1\\ql #
+regex = #@blankspace\[(.+?)\]#\\qc $1\\ql #
+regex = #@blankspace\((.+?)\)#\\qc $1\\ql #
 
 ; Style: @PAGEHEADING(...)
 regex = #@PAGEHEADING\[(.+?)\]#\\qc $1\\ql #
 regex = #@PAGEHEADING\((.+?)\)#\\qc $1\\ql #
+regex = #@pageheading\[(.+?)\]#\\qc $1\\ql #
+regex = #@pageheading\((.+?)\)#\\qc $1\\ql #
 
 ; Flush left: @FLUSHLEFT(...)
+regex = #@flushleft\((.+?)\)#$1 #
+regex = #@flushleft\[(.+?)\]#$1 #
 regex = #@FLUSHLEFT\((.+?)\)#$1 #
 regex = #@FLUSHLEFT\[(.+?)\]#$1 #
 
@@ -51,42 +69,65 @@ regex = #@FLUSHLEFT\[(.+?)\]#$1 #
 regex = #@FLUSHRIGHT\((.+?)\)#\\qr $1 \\par\\slmulti #
 regex = #@FLUSHRIGHT\[(.+?)\]#\\qr $1 \\par\\slmulti #
 regex = #@FLUSHRIGHT\{(.+?)\}#\\qr $1 \\par\\slmulti #
+regex = #@flushright\((.+?)\)#\\qr $1 \\par\\slmulti #
+regex = #@flushright\[(.+?)\]#\\qr $1 \\par\\slmulti #
+regex = #@flushright\{(.+?)\}#\\qr $1 \\par\\slmulti #
 
 ; Pagefooting: @PAGEFOOTING()
 regex = #@PAGEFOOTING\(()\)##
 regex = #@PAGEFOOTING##
+regex = #@pagefooting\(()\)##
+regex = #@pagefooting##
 
 ; I.e. @SET(page=132)
 regex = #@SET\((.+?)\)##
+regex = #@set\((.+?)\)##
 
 ; I.e. @BEGIN(VERBATIM)/@END(VERBATIM)
 regex = #@BEGIN\((.+?)\)##
 regex = #@BEGIN\[(.+?)\]##
+regex = #@begin\((.+?)\)##
+regex = #@begin\[(.+?)\]##
 regex = #@END\((.+?)\)##
 regex = #@END\[(.+?)\]##
+regex = #@end\((.+?)\)##
+regex = #@end\[(.+?)\]##
 
 ; I.e. @STYLE(spacing 2 lines)
 regex = #@STYLE\((.+?)\)##
 regex = #@STYLE\[(.+?)\]##
+regex = #@style\((.+?)\)##
+regex = #@style\[(.+?)\]##
 
 ; I.e. @COMMENT[...]
 regex = #@COMMENT\((.+?)\)#\\par [COMMENT: $1] #
 regex = #@COMMENT\[(.+?)\]#\\par [COMMENT: $1] #
 regex = #@COMMENT\{(.+?)\}#\\par [COMMENT: $1] #
+regex = #@comment\((.+?)\)#\\par [COMMENT: $1] #
+regex = #@comment\[(.+?)\]#\\par [COMMENT: $1] #
+regex = #@comment\{(.+?)\}#\\par [COMMENT: $1] #
 
 ; I.e. @NOTE[...]
 regex = #@NOTE\((.+?)\)#\\par [NOTE: $1] #
 regex = #@NOTE\[(.+?)\]#\\par [NOTE: $1] #
 regex = #@NOTE\{(.+?)\}#\\par [NOTE: $1] #
+regex = #@note\((.+?)\)#\\par [NOTE: $1] #
+regex = #@note\[(.+?)\]#\\par [NOTE: $1] #
+regex = #@note\{(.+?)\}#\\par [NOTE: $1] #
 
 ; I.e. @QUOTATION[...]
 regex = #@QUOTATION\[(.+?)\]#\\li725 $1 \\par \\li0 #
 regex = #@QUOTATION\{(.+?)\}#\\li725 $1 \\par \\li0 #
+regex = #@quotation\[(.+?)\]#\\li725 $1 \\par \\li0 #
+regex = #@quotation\{(.+?)\}#\\li725 $1 \\par \\li0 #
 
 ; I.e. @INDENT[...]
 regex = #@INDENT\((.+?)\)#\\li725 $1 \\par \\li0 #
 regex = #@INDENT\[(.+?)\]#\\li725 $1 \\par \\li0 #
 regex = #@INDENT\{(.+?)\}#\\li725 $1 \\par \\li0 #
+regex = #@indent\((.+?)\)#\\li725 $1 \\par \\li0 #
+regex = #@indent\[(.+?)\]#\\li725 $1 \\par \\li0 #
+regex = #@indent\{(.+?)\}#\\li725 $1 \\par \\li0 #
 
 ; I.e. @W( )/@w( )
 regex = #@[W|w]\((.+?)\)##
@@ -95,23 +136,34 @@ regex = #@[W|w]\((.+?)\)##
 regex = #@BLANKSPACE\((.+?)\)##
 regex = #@BLANKSPACE\[(.+?)\]##
 regex = #@BLANKSPACE\{(.+?)\}##
+regex = #@blankspace\((.+?)\)##
+regex = #@blankspace\[(.+?)\]##
+regex = #@blankspace\{(.+?)\}##
 
 ; I.e. @ADDRESS(...)
 regex = #@ADDRESS\((.+?)\)#$1 #
 regex = #@ADDRESS\[(.+?)\]#$1 #
+regex = #@address\((.+?)\)#$1 #
+regex = #@address\[(.+?)\]#$1 #
 
 ; I.e. @CLOSING(...)
 regex = #@CLOSING\((.+?)\)#$1 #
 regex = #@CLOSING\[(.+?)\]#$1 #
+regex = #@closing\((.+?)\)#$1 #
+regex = #@closing\[(.+?)\]#$1 #
 
 ; I.e. @PAGEHEADING(center="Some Profile")
 ; or @PAGEHEADING()
 regex = #@PAGEHEADING\(.+?\"(.+?)\"\)#{\\header $1 }#
 regex = #@PAGEHEADING\[.+?\"(.+?)\"\]#{\\header $1 }#
 regex = #@PAGEHEADING\(.*\)##
+regex = #@pageheading\(.+?\"(.+?)\"\)#{\\header $1 }#
+regex = #@pageheading\[.+?\"(.+?)\"\]#{\\header $1 }#
+regex = #@pageheading\(.*\)##
 
 ; Ignore page eject
 regex = #@NEWPAGE##
+regex = #@newpage##
 
 ; End of file is EOF
 1a = "{@@<FiLe_EoF>@@}"
