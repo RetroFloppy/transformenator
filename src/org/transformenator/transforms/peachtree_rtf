@@ -1,0 +1,25 @@
+;
+; Transform for Peachtree word processor
+;
+;   First, remove controls that conflict with RTF specification (peachtree transform) - leaving plain text with some decoration
+;     Note - call peachtree with a null suffix (i.e. transformutil peachtree Originals Step1 "")
+;   Next, use this transform (peachtree_rtf) to pretty the files up
+;     (i.e. transformutil peachtree_rtf Step1 Converted)
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fnil\fcharset0 Courier;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Toggle underline on and off
+5f % "\ul ","\ul0 "
+
+; Toggle bold on and off
+40 % "\b1 ","\b0 "
+
+; Preserve newlines
+0d0a = "\\r\\n\par "
+
+; EOF is ctrl-Z
+1a = "{@@<FiLe_EoF>@@}"
