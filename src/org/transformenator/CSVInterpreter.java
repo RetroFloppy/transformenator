@@ -338,7 +338,7 @@ public class CSVInterpreter
 						}
 						else if (leftTemp.equalsIgnoreCase("SELECTIF"))
 						{
-							String[] commaSplits = rightTemp1.split(",");
+							String[] commaSplits = rightTemp1.trim().split(",");
 							if (commaSplits.length == 2)
 							{
 								SelectSpec newSelectionSpec = new SelectSpec();
@@ -441,6 +441,7 @@ public class CSVInterpreter
 
 	public byte[] asBytes(String str)
 	{
+		str = str.trim();
 		if ((str.length() % 2) == 1)
 			str = "0" + str; // pad leading 0 if needed
 		byte[] buf = new byte[str.length() / 2];
@@ -495,18 +496,14 @@ public class CSVInterpreter
 
 	int fromByteArray(byte[] digits)
 	{
-		// Thunk everything to six hex digits
 		int result = 0;
-		byte bytes[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-		int len = digits.length;
 		int j = 0;
-		// Right-justify digits
-		for (int i = len - 1; i > -1; i--)
+		int multiplier = 1;
+		for (j = digits.length -1; j > -1; j--)
 		{
-			bytes[j] = digits[i];
-			j++;
+			result += (UnsignedByte.intValue(digits[j]) * multiplier);
+			multiplier *= 256;
 		}
-		result = (bytes[0] & 0xFF) | (bytes[1] & 0xFF) * 256 | (bytes[2] & 0xFF) * 512 | (bytes[3] & 0xFF) * 1024 | (bytes[4] & 0xFF) * 2048 | (bytes[5] & 0xFF) * 4096;
 		return result;
 	}
 
