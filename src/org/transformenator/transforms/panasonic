@@ -1,0 +1,9 @@
+;
+; Very minor cleanup for Panasonic KX-* word processor files
+; Works with ExtractPanasonicFiles utility
+;
+
+0d = 0d0a
+
+; Ensure that if we accidentally span files, cut it off there
+00 = "{@@<FiLe_EoF>@@}"
