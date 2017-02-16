@@ -27,8 +27,18 @@ tail = "}"
 a0 = 20
 e0 = 20
 
-; Remove c0 
-c0 = 
+; Remove 80..
+8031 =
+8032 =
+8033 =
+8034 =
+8035 =
+8036 =
+8037 =
+8038 =
+8039 =
+80a3 = 20
+80c5 = 
 
 ; To deal with the Easyscript control structures, we first break them up into individual elements.
 
