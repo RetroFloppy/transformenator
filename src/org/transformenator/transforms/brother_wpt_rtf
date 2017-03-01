@@ -7,25 +7,45 @@ head = "{\rtf1{\*\generator David Schmidt - Transformenator ;}\f0 "
 ; Closing brace for RTF format
 tail = "}"
 
-; Common chunk
-980d78008403000006....0d98 =
+; Common chunks
+;980d780084030000......0d98 =
+;980f78008403000006....b4000f98 =
+;980d2237220218001d98 =
+;980d7800840300000002010d
 
 ; Leading/intro
-8f810101000042521e1110023000000000003000ff0513111e =
+8f810101000042521e........000000..003000..05..111e =
 
 ; Space
 00 = 20
 
 ; Line break
 1b =
-db = 20
 95 = 20
-da =
+db = 20
 
 ; Newline
-02 = "\\r\\n\par "
+;02 = "\\r\\n\par "
+;da = "\\r\\n\par "
+02 = "\par "
+da = "\par "
+
+; Bold on/off
+bd = "\b1 "
+bc = "\b0 "
 
 ; Unknown
-bd..bc =
+8a =
 8c =
 8d =
+bc = 
+be =
+
+; Command structures
+980d = "<on>"
+0d98 = "<off>"
+980f = "<on>"
+0f98 = "<off>"
+
+; Remove all instances of <on>...<off>
+regex = @<on>.+?<off>@@
