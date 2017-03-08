@@ -36,7 +36,7 @@ import org.transformenator.internal.UnsignedByte;
  * 
  * Helper app to pull the files off of the virtual file system of HP instrument (not LIF) disk image.
  * 
- * Disk geometry: 2 sides, 256 bytes per sector, 16 sectors per track, 35 tracks
+ * Floppy disk geometry: 2 sides, 256 bytes per sector, 16 sectors per track, 35 tracks
  *
  */
 public class ExtractHPFiles
@@ -45,6 +45,7 @@ public class ExtractHPFiles
 	public static void main(java.lang.String[] args)
 	{
 		String outputDirectory = "";
+		int fileStart = 0, fileLength = 0, fileEnd = 0;
 		if ((args.length == 1) || (args.length == 2))
 		{
 			byte[] inData = null;
@@ -111,82 +112,158 @@ public class ExtractHPFiles
 						baseDirFile.mkdirs();
 					}
 				}
-				/*
-				 * Catalog starts on track 0, second sector and stretches to the
-				 * end of the track.
-				 * 
-				 * Catalog entries are 32 (0x20) bytes long; stuff we know/care
-				 * about: bytes 0x00-0x0a: Filename (space padded) bytes
-				 * 0x0e-0x0f: File start (in sectors) bytes 0x12-0x13: File
-				 * length (in sectors)
-				 */
-				int fileStart = 0, fileLength = 0;
-				for (int i = 0x0200; i < 0x1000; i += 0x20)
+				if (inData.length < 21430272) // If the image is smaller than a Bernoulli disk, assume it's a little floppy
 				{
-					String filename = "";
-					if (inData[i] != 0x00)
+					/*
+					 * Catalog starts on track 0, second sector and stretches to the
+					 * end of the track.
+					 * 
+					 * Catalog entries are 32 (0x20) bytes long; stuff we know/care
+					 * about: bytes 0x00-0x0a: Filename (space padded) bytes
+					 * 0x0e-0x0f: File start (in sectors) bytes 0x12-0x13: File
+					 * length (in sectors)
+					 */
+					for (int i = 0x0200; i < 0x1000; i += 0x20)
 					{
-						fileStart = UnsignedByte.intValue(inData[i + 0x0f], inData[i + 0x0e]) * 256;
-						fileLength = UnsignedByte.intValue(inData[i + 0x13], inData[i + 0x12]) * 256;
-						int j;
-						for (j = 0; j < 10; j++)
+						String filename = "";
+						if (inData[i] != 0x00)
 						{
-							if (inData[j + i] != 0x00)
+							fileStart = UnsignedByte.intValue(inData[i + 0x0f], inData[i + 0x0e]) * 256;
+							fileLength = UnsignedByte.intValue(inData[i + 0x13], inData[i + 0x12]) * 256;
+							int j;
+							for (j = 0; j < 10; j++)
 							{
-								filename += (char) inData[j + i];
-							}
-							else
-								break;
-						}
-						// Find the end-of-file marker, trim down to that length
-						boolean foundEOF = false;
-						for (j = fileStart + fileLength - 1; j > fileStart; j--)
-						{
-							// System.err.println(Integer.toHexString(UnsignedByte.intValue(inData[j])));
-							if (UnsignedByte.intValue(inData[j]) == 0xff)
-							{
-								continue;
-							}
-							if (UnsignedByte.intValue(inData[j]) == 0xef)
-							{
-								// System.err.println("Found a trailing 0xef at "+(j-fileStart));
-								foundEOF = true;
-								break;
-							}
-							else
-							{
-								break;
-							}
-						}
-						if (foundEOF)
-							fileLength = j - fileStart;
-						// System.out.println("Found file: "+filename+" Start: 0x"+Integer.toHexString(fileStart)+" End: 0x"+Integer.toHexString(fileStart+fileLength-1)+" Length: 0x"+Integer.toHexString(fileLength));
-						filename = filename.trim();
-						if ((filename.length() > 0) && (fileLength > 0))
-						{
-							FileOutputStream out;
-							try
-							{
-								String fullname = new String(outputDirectory + File.separator + filename);
-								if (fileStart + fileLength < inData.length)
+								if (inData[j + i] != 0x00)
 								{
-									out = new FileOutputStream(fullname);
-									System.err.println("Creating file: " + fullname);
-									out.write(inData, fileStart, fileLength);
-									out.flush();
-									out.close();
+									filename += (char) inData[j + i];
 								}
 								else
-									System.err.println("Error: file " + fullname + " would exceed the capacity of the disk image.");
+									break;
 							}
-							catch (IOException io)
+							// Find the end-of-file marker, trim down to that length
+							boolean foundEOF = false;
+							for (j = fileStart + fileLength - 1; j > fileStart; j--)
 							{
-								io.printStackTrace();
+								// System.err.println(Integer.toHexString(UnsignedByte.intValue(inData[j])));
+								if (UnsignedByte.intValue(inData[j]) == 0xff)
+								{
+									continue;
+								}
+								if (UnsignedByte.intValue(inData[j]) == 0xef)
+								{
+									// System.err.println("Found a trailing 0xef at "+(j-fileStart));
+									foundEOF = true;
+									break;
+								}
+								else
+								{
+									break;
+								}
+							}
+							if (foundEOF)
+								fileLength = j - fileStart;
+							// System.out.println("Found file: "+filename+" Start: 0x"+Integer.toHexString(fileStart)+" End: 0x"+Integer.toHexString(fileStart+fileLength-1)+" Length: 0x"+Integer.toHexString(fileLength));
+							filename = filename.trim();
+							if ((filename.length() > 0) && (fileLength > 0))
+							{
+								FileOutputStream out;
+								try
+								{
+									String fullname = new String(outputDirectory + File.separator + filename);
+									if (fileStart + fileLength < inData.length)
+									{
+										out = new FileOutputStream(fullname);
+										System.err.println("Creating file: " + fullname);
+										out.write(inData, fileStart, fileLength);
+										out.flush();
+										out.close();
+									}
+									else
+										System.err.println("Error: file " + fullname + " would exceed the capacity of the disk image.");
+								}
+								catch (IOException io)
+								{
+									io.printStackTrace();
+								}
 							}
 						}
+						else
+							break;
 					}
-					else
-						break;
+ 				}
+				else
+				// It's a bigger (i.e. Bernoulli) image
+				{
+					/*
+					 * Catalog starts at 0xa10000 and stretches to A2ffff.
+					 * 
+					 * Catalog entries are 32 (0x20) bytes long; stuff we know/care
+					 * about: bytes 0x00-0x0a: Filename (space padded) bytes
+					 * 0x0e-0x0f: File start (in sectors) bytes 0x12-0x13: File
+					 * length (in sectors)
+					 */
+					for (int i = 0xa10000; i < 0xa30000; i += 0x20)
+					{
+						if (UnsignedByte.intValue(inData[i]) == 0x98) // Good/live file marker
+						{
+							String filename = "";
+							fileStart = UnsignedByte.intValue(inData[i + 0x13], inData[i + 0x12]) * 0x1000 + 0x10000;
+							fileEnd = UnsignedByte.intValue(inData[i + 0x15], inData[i + 0x14]) * 0x1000 + 0x10000;
+							fileLength = fileEnd - fileStart + 4096;
+							int j;
+							for (j = 1; j < 16; j++)
+							{
+								if (inData[j + i] != 0x00)
+								{
+									filename += (char) inData[j + i];
+								}
+								else
+									break;
+							}
+							// Find the end-of-file marker, trim down to that length
+							boolean foundEOF = false;
+							for (j = fileStart + fileLength - 1; j > fileStart; j--)
+							{
+								// System.err.println(Integer.toHexString(UnsignedByte.intValue(inData[j])));
+								if (UnsignedByte.intValue(inData[j]) == 0xff)
+								{
+									continue;
+								}
+								if (UnsignedByte.intValue(inData[j]) == 0xff)
+								{
+									// System.err.println("Found a trailing 0xff at "+(j-fileStart));
+									foundEOF = true;
+									break;
+								}
+							}
+							if (foundEOF)
+								fileLength = j - fileStart;
+							// System.out.println("Found file: "+filename+" Start: 0x"+Integer.toHexString(fileStart)+" End: 0x"+Integer.toHexString(fileEnd + 4096)+" Length: 0x"+Integer.toHexString(fileLength));
+							filename = filename.trim();
+							if ((filename.length() > 0) && (fileLength > 0))
+							{
+								FileOutputStream out;
+								try
+								{
+									String fullname = new String(outputDirectory + File.separator + filename);
+									if (fileStart + fileLength < inData.length)
+									{
+										out = new FileOutputStream(fullname);
+										System.err.println("Creating file: " + fullname);
+										out.write(inData, fileStart, fileLength);
+										out.flush();
+										out.close();
+									}
+									else
+										System.err.println("Error: file " + fullname + " would exceed the capacity of the disk image.");
+								}
+								catch (IOException io)
+								{
+									io.printStackTrace();
+								}
+							}
+						}
+					}					
 				}
 			}
 		}
