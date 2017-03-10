@@ -27,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import org.transformenator.Version;
 import org.transformenator.internal.UnsignedByte;
@@ -37,6 +38,7 @@ import org.transformenator.internal.UnsignedByte;
  * Helper app to pull the files off of the virtual file system of HP instrument (not LIF) disk image.
  * 
  * Floppy disk geometry: 2 sides, 256 bytes per sector, 16 sectors per track, 35 tracks
+ * Bernoulli disk: as dumped by 'dd conv=noerror,sync" to ensure symmetric sizes; 20MB cartridge assumed
  *
  */
 public class ExtractHPFiles
@@ -45,7 +47,7 @@ public class ExtractHPFiles
 	public static void main(java.lang.String[] args)
 	{
 		String outputDirectory = "";
-		int fileStart = 0, fileLength = 0, fileEnd = 0;
+		int fileStart = 0, fileLength = 0, fileEnd = 0, fileType = 0;
 		if ((args.length == 1) || (args.length == 2))
 		{
 			byte[] inData = null;
@@ -197,50 +199,58 @@ public class ExtractHPFiles
 					/*
 					 * Catalog starts at 0xa10000 and stretches to A2ffff.
 					 * 
-					 * Catalog entries are 32 (0x20) bytes long; stuff we know/care
-					 * about: bytes 0x00-0x0a: Filename (space padded) bytes
-					 * 0x0e-0x0f: File start (in sectors) bytes 0x12-0x13: File
-					 * length (in sectors)
+					 * Catalog entries are 32 (0x20) bytes long; stuff we know/care about:
+					 * bytes 0x00-0x0a: Filename (space padded)
+					 * bytes 0x12-0x13: File start (in sectors)
+					 * bytes 0x14-0x15: final (or next available) sector of file
 					 */
 					for (int i = 0xa10000; i < 0xa30000; i += 0x20)
 					{
-						if (UnsignedByte.intValue(inData[i]) == 0x98) // Good/live file marker
+//						if (UnsignedByte.intValue(inData[i]) == 0x98) // Good/live file marker
+						if (UnsignedByte.intValue(inData[i]) != 0x00) // Anything but null
 						{
-							String filename = "";
-							fileStart = UnsignedByte.intValue(inData[i + 0x13], inData[i + 0x12]) * 0x1000 + 0x10000;
-							fileEnd = UnsignedByte.intValue(inData[i + 0x15], inData[i + 0x14]) * 0x1000 + 0x10000;
-							fileLength = fileEnd - fileStart + 4096;
+							String filename = "", fileSuffix = "", filePrefix = "", fileTypeString = "";
+							fileStart = UnsignedByte.intValue(inData[i + 0x13], inData[i + 0x12]);
+							fileEnd = UnsignedByte.intValue(inData[i + 0x15], inData[i + 0x14]);
+							fileType = UnsignedByte.intValue(inData[i + 0x11], inData[i + 0x10]);
+							switch (fileType)
+							{
+								case 0x02: fileTypeString = "source"; break;
+								case 0x03: fileTypeString = "reloc"; break;
+								case 0x04: fileTypeString = "listing"; break;
+								case 0x05: fileTypeString = "link_sym"; break;
+								case 0x06: fileTypeString = "emul_com"; break;
+								case 0x07: fileTypeString = "link_com"; break;
+								case 0x08: fileTypeString = "trace"; break;
+								case 0x0a: fileTypeString = "data"; break;
+								case 0x0c: fileTypeString = "asmb_sym"; break;
+								case 0x0d: fileTypeString = "absolute"; break;
+								case 0x0e: fileTypeString = "comp_sym"; break;
+								default: break;
+							}
 							int j;
-							for (j = 1; j < 16; j++)
+							for (j = 1; j < 10; j++)
 							{
 								if (inData[j + i] != 0x00)
 								{
-									filename += (char) inData[j + i];
+									filePrefix += (char) inData[j + i];
 								}
 								else
 									break;
 							}
-							// Find the end-of-file marker, trim down to that length
-							boolean foundEOF = false;
-							for (j = fileStart + fileLength - 1; j > fileStart; j--)
+							for (j = 10; j < 16; j++)
 							{
-								// System.err.println(Integer.toHexString(UnsignedByte.intValue(inData[j])));
-								if (UnsignedByte.intValue(inData[j]) == 0xff)
+								if (inData[j + i] != 0x00)
 								{
-									continue;
+									fileSuffix += (char) inData[j + i];
 								}
-								if (UnsignedByte.intValue(inData[j]) == 0xff)
-								{
-									// System.err.println("Found a trailing 0xff at "+(j-fileStart));
-									foundEOF = true;
+								else
 									break;
-								}
 							}
-							if (foundEOF)
-								fileLength = j - fileStart;
-							// System.out.println("Found file: "+filename+" Start: 0x"+Integer.toHexString(fileStart)+" End: 0x"+Integer.toHexString(fileEnd + 4096)+" Length: 0x"+Integer.toHexString(fileLength));
+							filename = filePrefix.trim() + "." + fileSuffix.trim() + "." + Integer.toHexString(UnsignedByte.intValue(inData[i])) + "." + fileTypeString;// + "." + Integer.toHexString(fileStart);
+							// System.out.println("Found file: "+filename+" Start: 0x"+Integer.toHexString(fileStart)+" End: 0x"+Integer.toHexString(fileEnd)+" Length: 0x"+Integer.toHexString(fileLength));
 							filename = filename.trim();
-							if ((filename.length() > 0) && (fileLength > 0))
+							if ((filename.length() > 0) && (fileTypeString.length() > 0))
 							{
 								FileOutputStream out;
 								try
@@ -250,7 +260,7 @@ public class ExtractHPFiles
 									{
 										out = new FileOutputStream(fullname);
 										System.err.println("Creating file: " + fullname);
-										out.write(inData, fileStart, fileLength);
+										dumpFileChain(out, inData, fileStart, 0x10000, 1);
 										out.flush();
 										out.close();
 									}
@@ -274,10 +284,34 @@ public class ExtractHPFiles
 		}
 	}
 
+	public static void dumpFileChain(FileOutputStream out, byte[] inData, int currentSector, int preambleOffset, int firstSectorComp) throws IOException
+	{
+		int realOffset = currentSector * 0x1000 + preambleOffset;
+		int nextSector = UnsignedByte.intValue((byte) inData[realOffset + 0xfff], (byte) inData[realOffset + 0xffe]);
+		/*
+		System.err.println("dumpFileChain: currentSector: " + Integer.toHexString(currentSector) + 
+				" nextSector: "+ Integer.toHexString(nextSector) + 
+				" nS pointer address: " + Integer.toHexString(realOffset + 0xfff));
+		*/
+		if (realOffset < inData.length)
+		{
+			// System.err.println("dumpFileChain: realOffset: "+Integer.toHexString(realOffset));
+			byte range[] = Arrays.copyOfRange(inData, realOffset+2+firstSectorComp, realOffset + 0xffe);
+			out.write(range);
+			// System.err.println("dumpFileChain: nextSector: "+ Integer.toHexString(nextSector));
+			if ((nextSector != 0xffff) && // Not standard end of sector chain
+					(nextSector != 0) &&  // Not zero, which is almost certainly an error
+					(nextSector * 0x1000 + preambleOffset < inData.length) && // Lies within the image
+					(nextSector != currentSector)) // Not the sector we just came from
+				// Still have to worry about loops... those won't be detected
+				dumpFileChain(out, inData, nextSector, preambleOffset, 0);
+		}
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractHPFiles " + Version.VersionString + " - Extract files from HP instrument disk images.");
+		System.err.println("ExtractHPFiles " + Version.VersionString + " - Extract files from Hewlett-Packard disk images.");
 		System.err.println();
 		System.err.println("Usage: ExtractHPFiles infile [out_directory]");
 	}
