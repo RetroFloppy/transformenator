@@ -39,6 +39,7 @@ import org.transformenator.internal.UnsignedByte;
  * 
  * Floppy disk geometry: 2 sides, 256 bytes per sector, 16 sectors per track, 35 tracks
  * Bernoulli disk: as dumped by 'dd conv=noerror,sync" to ensure symmetric sizes; 20MB cartridge assumed
+ *  - 10MB cartridge support could be trivially added if the start location of the FAT were known
  *
  */
 public class ExtractHPFiles
@@ -47,7 +48,7 @@ public class ExtractHPFiles
 	public static void main(java.lang.String[] args)
 	{
 		String outputDirectory = "";
-		int fileStart = 0, fileLength = 0, fileEnd = 0, fileType = 0;
+		int fileStart = 0, fileLength = 0, fileType = 0;
 		if ((args.length == 1) || (args.length == 2))
 		{
 			byte[] inData = null;
@@ -146,6 +147,13 @@ public class ExtractHPFiles
 							boolean foundEOF = false;
 							for (j = fileStart + fileLength - 1; j > fileStart; j--)
 							{
+								if ((UnsignedByte.intValue(inData[j]) == 0xff) && 
+										(UnsignedByte.intValue(inData[j+1]) == 0xff))
+								{
+									// System.err.println("Found final 0xffff at "+(j-fileStart));
+									foundEOF = true;
+									break;
+								}
 								// System.err.println(Integer.toHexString(UnsignedByte.intValue(inData[j])));
 								if (UnsignedByte.intValue(inData[j]) == 0xff)
 								{
@@ -197,12 +205,15 @@ public class ExtractHPFiles
 				// It's a bigger (i.e. Bernoulli) image
 				{
 					/*
-					 * Catalog starts at 0xa10000 and stretches to A2ffff.
+					 * Catalog starts at 0xa10000 and stretches to A2ffff on 20MB cartridges, right around the center.
 					 * 
 					 * Catalog entries are 32 (0x20) bytes long; stuff we know/care about:
-					 * bytes 0x00-0x0a: Filename (space padded)
+					 * bytes 0x00: (Unknown file marker)
+					 * bytes 0x01-0x09: Filename (space padded)
+					 * bytes 0x0a-0x0f: User name
+					 * bytes 0x10-0x11: File type
 					 * bytes 0x12-0x13: File start (in sectors)
-					 * bytes 0x14-0x15: final (or next available) sector of file
+					 * bytes 0x14-0x15: Final (or next available) sector of file
 					 */
 					for (int i = 0xa10000; i < 0xa30000; i += 0x20)
 					{
@@ -211,7 +222,6 @@ public class ExtractHPFiles
 						{
 							String filename = "", fileSuffix = "", filePrefix = "", fileTypeString = "";
 							fileStart = UnsignedByte.intValue(inData[i + 0x13], inData[i + 0x12]);
-							fileEnd = UnsignedByte.intValue(inData[i + 0x15], inData[i + 0x14]);
 							fileType = UnsignedByte.intValue(inData[i + 0x11], inData[i + 0x10]);
 							switch (fileType)
 							{
@@ -247,7 +257,7 @@ public class ExtractHPFiles
 								else
 									break;
 							}
-							filename = filePrefix.trim() + "." + fileSuffix.trim() + "." + Integer.toHexString(UnsignedByte.intValue(inData[i])) + "." + fileTypeString;// + "." + Integer.toHexString(fileStart);
+							filename = filePrefix.trim() + "." + fileSuffix.trim() + "." + fileTypeString;
 							// System.out.println("Found file: "+filename+" Start: 0x"+Integer.toHexString(fileStart)+" End: 0x"+Integer.toHexString(fileEnd)+" Length: 0x"+Integer.toHexString(fileLength));
 							filename = filename.trim();
 							if ((filename.length() > 0) && (fileTypeString.length() > 0))
@@ -315,5 +325,4 @@ public class ExtractHPFiles
 		System.err.println();
 		System.err.println("Usage: ExtractHPFiles infile [out_directory]");
 	}
-
 }
