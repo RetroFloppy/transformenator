@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2013 - 2016 by David Schmidt
+ * Copyright (C) 2013 - 2017 by David Schmidt
  * david__schmidt at users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -39,8 +39,9 @@ import org.transformenator.internal.UnsignedByte;
  * mountable on systems that don't pay attention to the media descriptor byte, but 
  * instead require the BPB to tell them what the disk geometry is.
  *
- * With 'update' parameter, also checks for and removes the Stoned virus:
- *   http://en.wikipedia.org/wiki/Stoned_%28computer_virus%29
+ * With 'update' parameter, also checks for and removes the Stoned and Michelangelo viruses:
+ *   https://en.wikipedia.org/wiki/Stoned_(computer_virus)
+ *   https://en.wikipedia.org/wiki/Michelangelo_(computer_virus)
  *
  */
 public class DOSImage
@@ -153,7 +154,9 @@ public class DOSImage
 							System.out.println("Media descriptor [0x15]: 0x"+UnsignedByte.toString(result[0x15]));
 							System.out.println("Description(s):");
 							System.out.println(mediaDescriptor(result[0x15]));
-							System.out.println("Logical sectors per File Allocation Table [0x16-0x17]: "+(UnsignedByte.intValue(result[0x16])+UnsignedByte.intValue(result[0x17])*256));			
+							System.out.println("Logical sectors per File Allocation Table [0x16-0x17]: "+(UnsignedByte.intValue(result[0x16])+UnsignedByte.intValue(result[0x17])*256));
+							if (hasStonedVirus(inData)) System.out.println("Stoned virus detected");
+							if (hasMichelangeloVirus(inData)) System.out.println("Michelangelo virus detected");
 						}
 						else
 						{
@@ -379,7 +382,8 @@ public class DOSImage
 			{
 				return true;
 			}
-		else if (hasMichelangeloVirus(inData) && (inData.length == 1200*1024))
+		else if ((hasMichelangeloVirus(inData) && (inData.length == 360*1024)) ||
+				(hasMichelangeloVirus(inData) && (inData.length == 1200*1024)))
 			{
 				return true;
 			}
