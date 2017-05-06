@@ -2,6 +2,8 @@
 ; Xerox 860 Word Processor - quite rudimentary, based on extant files
 ;
 
+; Let's see what happens when 00 is EOF
+00000000 = "{@@<FiLe_EoF>@@}"
 00 =
 
 90 % "<header>","</header>"
@@ -26,12 +28,19 @@ a196 =
 91..91 =
 94 =
 95 =
-96 = 20
+96 = 0d0a
+;96 = 20
 97 = 0d0a
-99 = 202020
+aa = 20
+
+; tab
+99 = 09
+
 9a =
 9c =
 ; Superscript
 9d =
+
+ac = ","
 
 regex = @<header>.*</header>@@
