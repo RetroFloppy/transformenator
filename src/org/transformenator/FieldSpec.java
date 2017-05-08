@@ -35,4 +35,15 @@ public class FieldSpec
 	 */
 	public int interp = 0;
 	public boolean csvLiteral = false;
+	
+	public static String interpString(int interp)
+	{
+		switch (interp)
+		{
+			case 1: return "ASCII";
+			case 2: return "EBCDIC";
+			case 3: return "HEX";
+		}
+		return "<undefined>";
+	}
 }

@@ -7,7 +7,7 @@ Data from the original file can be interpreted as ASCII text, as EBCDIC text, or
 <p>
 The table below defines the keywords and values used to define an interpretation of a file as records.
 The case of the keywords is not significant.
-All numerical values are given in hexadecimal.
+All numerical values are given in undecorated hexadecimal.
 <table border="1">
 <tbody>
 <tr>
@@ -38,7 +38,7 @@ All numerical values are given in hexadecimal.
 </tr>
 <tr>
 <td align="center"><xmp>Layout</xmp></td>
-<td align="left">(Optional) Textual definition of fields based on positions of repeating or transitioning characters.</td>
+<td align="left">(Optional) Textual definition of fields based on positions of repeating characters.</td>
 <td align="left"><xmp>; Define field layout by example</xmp>
 <xmp>LAYOUT="mmddyy..nnnnnnxxxxxxxpppppp"</xmp>
 </tr>
@@ -50,7 +50,7 @@ Each field definition must contain one each of the following four keywords.
 Multiple sets of these specifications typically make up a full record to export.
 The case of the keywords is not significant.
 Fields can overlap and skip positions as desired.
-All numerical values are given in hexadecimal.
+All numerical values are given in undecorated hexadecimal.
 <table border="1">
 <tbody>
 <tr>
@@ -80,8 +80,8 @@ All numerical values are given in hexadecimal.
 </tr>
 </tbody>
 </table>
-<p>
-Alternately, you can let the computer do the computing by specifying graphically where the fields are and what to call the fields and how to interpret them.
+<h2>Automatic Layout Processing</h2>
+Alternately, you can let the computer do the computing by specifying textually where the fields are and what to call the fields and how to interpret them.
 So, given a representation like this:
 <br>
 <code>
@@ -90,8 +90,11 @@ LAYOUT="aaaaa2222rrrffftttt"<br>
 This specifies that there are going to be five fields (each character transition triggers a new field definition) and they have
 the positional and length specifications as demonstrated directly by the existence of repeating characters.
 It is not significant what the characters actually are.
-It is not possible to skip over bytes, and it is not possible to overlap fields when using LAYOUT.
-With a LAYOUT specification, the definition of each field is minimized to just the name and interpretation:
+It is not possible to skip over bytes, and it is not possible to overlap fields when using <code>LAYOUT</code>.
+When a CSV extraction is performed with a transform containing a <code>LAYOUT</code> specification,
+the computed field values will be printed
+to the console so they can be used to refine the specification if things like overlapping fields are required.
+With a <code>LAYOUT</code> specification, the definition of each field is minimized to just the name and interpretation:
 <table border="1">
 <tbody>
 <tr>
@@ -111,6 +114,13 @@ With a LAYOUT specification, the definition of each field is minimized to just t
 </tr>
 </tbody>
 </table>
+<p>
+When there are both <code>LAYOUT</code> and full field specifications present, they will all be merged.
+That is, the "manual" field specifications will be respected for their field names and interpretation
+types, but the position attributes will be overwritten by the <code>LAYOUT</code> specification.
+Additional fields specified by <code>LAYOUT</code> but missing accompanying manual definitions will
+be given default names and interpretation types, and will be given position specifications from
+the <code>LAYOUT</code> pattern.
 <h2>Examples</h2>
 Below is an example csv-transform file that interprets a disk image taken from an IBM System/36 floppy disk that was used for record storage:
 <xmp>

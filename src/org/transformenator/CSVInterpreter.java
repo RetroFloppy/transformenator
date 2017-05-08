@@ -411,7 +411,7 @@ public class CSVInterpreter
 									if (autoFieldSpec != null)
 									{
 										autoFieldSpec.fieldOrigin = fieldStart;
-										autoFieldSpec.fieldLength = i-fieldStart;
+										autoFieldSpec.fieldLength = i - fieldStart;
 										autoFieldSpec.interp = 1; // ASCII by default
 										fieldStart = i;
 										autoFields.addElement(autoFieldSpec);
@@ -424,7 +424,7 @@ public class CSVInterpreter
 								}
 							}
 							autoFieldSpec.fieldOrigin = fieldStart;
-							autoFieldSpec.fieldLength = layout.length()-fieldStart;
+							autoFieldSpec.fieldLength = layout.length() - fieldStart;
 							autoFieldSpec.interp = 1; // ASCII by default
 							autoFields.addElement(autoFieldSpec);
 							autoFieldSpec = null;
@@ -451,7 +451,7 @@ public class CSVInterpreter
 									currentFieldSpec.interp = 3;
 								else
 								{
-									System.err.println("ERROR: unexpected value for field \""+currentFieldSpec.fieldName+"\" interpretation: " + rightTemp1.trim());
+									System.err.println("ERROR: unexpected value for field \"" + currentFieldSpec.fieldName + "\" interpretation: " + rightTemp1.trim());
 									currentFieldSpec.interp = 0;
 								}
 								fields.addElement(currentFieldSpec);
@@ -476,14 +476,23 @@ public class CSVInterpreter
 			}
 			if (!autoFields.isEmpty())
 			{
-				int i,j;
-				System.err.println("Found "+autoFields.size()+" auto fields, and there are "+fields.size() +" manual fields.");
+				int i, j;
+				// System.err.println("DEBUG: Found "+autoFields.size()+" auto fields, and there are "+fields.size() +" manual fields.");
 				for (i = 0; i < fields.size(); i++)
 				{
 					if (autoFields.size() > i)
 					{
 						fields.elementAt(i).fieldOrigin = autoFields.elementAt(i).fieldOrigin;
 						fields.elementAt(i).fieldLength = autoFields.elementAt(i).fieldLength;
+						/*
+						System.err.println("DEBUG: NAME=\""+fields.elementAt(i).fieldName+"\"");
+						System.err.println("DEBUG: ORIGIN="+Integer.toHexString(fields.elementAt(i).fieldOrigin));
+						System.err.println("DEBUG: LENGTH="+Integer.toHexString(fields.elementAt(i).fieldLength));
+						if (fields.elementAt(i).csvLiteral)
+							System.err.println("DEBUG: INTERPLITERAL="+FieldSpec.interpString(fields.elementAt(i).interp));
+						else
+							System.err.println("DEBUG: INTERP="+FieldSpec.interpString(fields.elementAt(i).interp));
+						*/
 					}
 				}
 				j = fields.size();
@@ -494,9 +503,22 @@ public class CSVInterpreter
 					fields.add(autoFields.elementAt(j + i));
 				}
 			}
-			for (int i = 0; i < fields.size(); i++)
+			if (!autoFields.isEmpty())
 			{
-				// System.err.println("DEBUG: "+fields.elementAt(i).fieldName+" origin: "+Integer.toHexString(fields.elementAt(i).fieldOrigin)+" length: "+Integer.toHexString(fields.elementAt(i).fieldLength));
+				System.out.println("; Fields automatically defined by layout:");
+				for (int i = 0; i < fields.size(); i++)
+				{
+					System.out.println("NAME=\"" + fields.elementAt(i).fieldName + "\"");
+					System.out.println("ORIGIN=" + Integer.toHexString(fields.elementAt(i).fieldOrigin));
+					System.out.println("LENGTH=" + Integer.toHexString(fields.elementAt(i).fieldLength));
+					if (fields.elementAt(i).csvLiteral)
+						System.out.println("INTERPLITERAL=" + FieldSpec.interpString(fields.elementAt(i).interp));
+					else
+						System.out.println("INTERP=" + FieldSpec.interpString(fields.elementAt(i).interp));
+					if (i + 1 < fields.size())
+						System.out.println(";");
+				}
+				System.out.println("; End of automatic field definition.");
 			}
 		}
 		catch (Exception ex)
@@ -565,7 +587,7 @@ public class CSVInterpreter
 		int result = 0;
 		int j = 0;
 		int multiplier = 1;
-		for (j = digits.length -1; j > -1; j--)
+		for (j = digits.length - 1; j > -1; j--)
 		{
 			result += (UnsignedByte.intValue(digits[j]) * multiplier);
 			multiplier *= 256;
