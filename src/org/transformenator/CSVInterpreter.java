@@ -394,6 +394,48 @@ public class CSVInterpreter
 								System.err.println("ERROR: field length found with no prior field name to associate it with.");
 							}
 						}
+						else if (leftTemp.equalsIgnoreCase("LAYOUT"))
+						{
+							int fieldNumber = 1;
+							char previousChar = 0, currentChar;
+							int fieldStart = 0;
+							FieldSpec autoFieldSpec = null;
+							String layout = new String(rightBytes);
+							// System.err.println("DEBUG: Layout: [" + layout +"]");
+							for (int i = 0; i < layout.length(); i++)
+							{
+								currentChar = layout.charAt(i);
+								if (currentChar != previousChar)
+								{
+									// System.err.println("DEBUG: We have a field transition!");
+									if (autoFieldSpec != null)
+									{
+										autoFieldSpec.fieldOrigin = fieldStart;
+										autoFieldSpec.fieldLength = i-fieldStart;
+										autoFieldSpec.interp = 1; // ASCII by default
+										fieldStart = i;
+										autoFields.addElement(autoFieldSpec);
+										autoFieldSpec = null;
+									}
+									autoFieldSpec = new FieldSpec();
+									autoFieldSpec.fieldName = "Field" + fieldNumber;
+									previousChar = currentChar;
+									fieldNumber++;
+								}
+							}
+							autoFieldSpec.fieldOrigin = fieldStart;
+							autoFieldSpec.fieldLength = layout.length()-fieldStart;
+							autoFieldSpec.interp = 1; // ASCII by default
+							autoFields.addElement(autoFieldSpec);
+							autoFieldSpec = null;
+							Iterator<FieldSpec> af = autoFields.iterator();
+							while (af.hasNext())
+							{
+								autoFieldSpec = af.next();
+								// System.err.println("DEBUG: Auto field name: "+autoFieldSpec.fieldName+" start: 0x"+Integer.toHexString(autoFieldSpec.fieldOrigin)+" length: 0x"+Integer.toHexString(autoFieldSpec.fieldLength));
+							}
+
+						}
 						else if (leftTemp.equalsIgnoreCase("INTERP") || leftTemp.equalsIgnoreCase("INTERPLITERAL"))
 						{
 							String typeString = new String(rightBytes).trim();
@@ -431,6 +473,30 @@ public class CSVInterpreter
 				{
 
 				}
+			}
+			if (!autoFields.isEmpty())
+			{
+				int i,j;
+				System.err.println("Found "+autoFields.size()+" auto fields, and there are "+fields.size() +" manual fields.");
+				for (i = 0; i < fields.size(); i++)
+				{
+					if (autoFields.size() > i)
+					{
+						fields.elementAt(i).fieldOrigin = autoFields.elementAt(i).fieldOrigin;
+						fields.elementAt(i).fieldLength = autoFields.elementAt(i).fieldLength;
+					}
+				}
+				j = fields.size();
+				// Are there more auto fields than manual ones?  Add them in!
+				for (i = 0; i < (autoFields.size() - j); i++)
+				{
+					// System.err.println("DEBUG: Adding autoField " + (j + i + 1) + ": "+autoFields.elementAt(j+i).fieldName + ", 0x"+Integer.toHexString(autoFields.elementAt(j+i).fieldOrigin));
+					fields.add(autoFields.elementAt(j + i));
+				}
+			}
+			for (int i = 0; i < fields.size(); i++)
+			{
+				// System.err.println("DEBUG: "+fields.elementAt(i).fieldName+" origin: "+Integer.toHexString(fields.elementAt(i).fieldOrigin)+" length: "+Integer.toHexString(fields.elementAt(i).fieldLength));
 			}
 		}
 		catch (Exception ex)
@@ -509,6 +575,7 @@ public class CSVInterpreter
 
 	byte inData[] = null;
 	Vector<FieldSpec> fields = new Vector<FieldSpec>();
+	Vector<FieldSpec> autoFields = new Vector<FieldSpec>();
 	Vector<SelectSpec> selection = new Vector<SelectSpec>();
 	String inFile, outFile, transformName;
 	public int firstRec = 0, nextRec = 0;

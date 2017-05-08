@@ -36,13 +36,20 @@ All numerical values are given in hexadecimal.
 <td align="left"><xmp>SELECTIF=00,40 ; First byte must be 0x40 to be valid</xmp>
 <xmp>SELECTIF=01,20 ; Or, second byte can be 0x20</xmp></td>
 </tr>
+<tr>
+<td align="center"><xmp>Layout</xmp></td>
+<td align="left">(Optional) Textual definition of fields based on positions of repeating or transitioning characters.</td>
+<td align="left"><xmp>; Define field layout by example</xmp>
+<xmp>LAYOUT="mmddyy..nnnnnnxxxxxxxpppppp"</xmp>
+</tr>
 </tbody>
 </table>
 <p>
-The table below defines export instructions for a single field.
+The table below defines export instructions for a single field when there is no <code>LAYOUT</code> definition.
 Each field definition must contain one each of the following four keywords.
 Multiple sets of these specifications typically make up a full record to export.
 The case of the keywords is not significant.
+Fields can overlap and skip positions as desired.
 All numerical values are given in hexadecimal.
 <table border="1">
 <tbody>
@@ -73,7 +80,38 @@ All numerical values are given in hexadecimal.
 </tr>
 </tbody>
 </table>
-<h2>Example</h2>
+<p>
+Alternately, you can let the computer do the computing by specifying graphically where the fields are and what to call the fields and how to interpret them.
+So, given a representation like this:
+<br>
+<code>
+LAYOUT="aaaaa2222rrrffftttt"<br>
+</code>
+This specifies that there are going to be five fields (each character transition triggers a new field definition) and they have
+the positional and length specifications as demonstrated directly by the existence of repeating characters.
+It is not significant what the characters actually are.
+It is not possible to skip over bytes, and it is not possible to overlap fields when using LAYOUT.
+With a LAYOUT specification, the definition of each field is minimized to just the name and interpretation:
+<table border="1">
+<tbody>
+<tr>
+<th align="center"><b>Keyword</b></th>
+<th align="left"><b>Explanation</b></th>
+<th align="left"><b>Example</b></th>
+</tr>
+<tr>
+<td align="center"><xmp>Name</xmp></td>
+<td align="left">Field name to be exported on header row of output CSV file</td>
+<td align="left"><xmp>NAME="Field 1"</xmp></td>
+</tr>
+<tr>
+<td align="center"><xmp>Interp</xmp> or <xmp>InterpLiteral</xmp></td>
+<td align="left">Interpretation of field data to export - one of:<br><code>ASCII</code> - ASCII text<br><code>EBCDIC</code> - EBCDIC text<br><code>HEX</code> - Hexadecimal notation<br>Text will be encoded in the output CSV file as specified with surrounding quotes.  With <code>InterpLiteral</code>, additional syntax and quoting will be added to the output CSV file that convinces spreadsheets not to re-interpret numerical values.</td>
+<td align="left"><xmp>INTERPLITERAL=EBCDIC</xmp></td>
+</tr>
+</tbody>
+</table>
+<h2>Examples</h2>
 Below is an example csv-transform file that interprets a disk image taken from an IBM System/36 floppy disk that was used for record storage:
 <xmp>
 ;
@@ -106,5 +144,34 @@ INTERP=EBCDIC     ; Interpret data as EBCDIC
 NAME="Field 5"    ; Fifth field definition
 ORIGIN=2f         ; Starts at byte 0x2f (zero-indexed)
 LENGTH=3d         ; Runs for a length of 0x3d bytes
+INTERP=HEX        ; Interpret data as hexadecimal bytes
+</xmp>
+<p>
+Here is that same example, using the <code>LAYOUT</code> specification:
+<xmp>
+;
+; Custom IBM System/36 to CSV transform
+;
+FIRSTREC=0E00     ; First record starts at 0xE00
+NEXTREC=100       ; Records continue every 0x100 bytes
+SELECTIF=00,40    ; The zeroeth byte needs to be an EBCDIC space
+LAYOUT="011111111122222222222222222222222222222233333445555555555555555555555555555555555555555555555555555555555555"
+;
+NAME="Ignore"
+INTERP=EBCDIC
+;
+NAME="Field 1"    ; First field definition
+INTERP=EBCDIC     ; Interpret data as EBCDIC
+;
+NAME="Field 2"    ; Second field definition
+INTERP=EBCDIC     ; Interpret data as EBCDIC
+;
+NAME="Field 3"    ; Third field definition
+INTERP=EBCDIC     ; Interpret data as EBCDIC
+;
+NAME="Field 4"    ; Fourth field definition
+INTERP=EBCDIC     ; Interpret data as EBCDIC
+;
+NAME="Field 5"    ; Fifth field definition
 INTERP=HEX        ; Interpret data as hexadecimal bytes
 </xmp>
