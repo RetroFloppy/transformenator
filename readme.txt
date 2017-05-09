@@ -6,18 +6,9 @@ that's no problem - head over to http://retrofloppy.com and let us know.
 New for this version:
 =====================
 New utilities:
- - ExtractCSV - update that lets you specify field positions in a "by example" way using the LAYOUT keyword
- - ExtractEnsoniqFiles to extract sequencer files from 10-sector Ensoniq floppy disk images
- - ExtractIBM8Files to extract files on any of several densities of IBM 8" disk images
- - ExtractMagiFiles to extract files from Magi Major Leaguer 8" disk images
- - ExtractNBIFiles to extract files from NBI word processor disk images
- - ExtractPanasonicFiles to extract files from Panasonic (especially KX models) word processor disk images
 
 New transforms: 
- - aol - Rudimentary AOL message formatter
- - panasonic - Panasonic KX word processor formatter
- - writers_choice - IBM Writer's Choice word processor formatter
- 
+
 Transformenator introduction:
 =============================
 
