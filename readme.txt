@@ -1,3 +1,8 @@
+This is one of many tools that RetroFloppy.com creates and gives away free
+to do the work of bringing old files into the new world.  If you have no
+idea how to use these tools, or just want this work to be done for you, 
+that's no problem - head over to http://retrofloppy.com and let us know. 
+
 New for this version:
 =====================
 New utilities: 
