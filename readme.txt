@@ -1,14 +1,17 @@
 New for this version:
 =====================
 New utilities: 
- - ExtractMagiFiles to extract files from Magi Major Leaguer 8" disk images
  - ExtractEnsoniqFiles to extract sequencer files from 10-sector Ensoniq floppy disk images
+ - ExtractIBM8Files to extract files on any of several densities of IBM 8" disk images
+ - ExtractMagiFiles to extract files from Magi Major Leaguer 8" disk images
+ - ExtractNBIFiles to extract files from NBI word processor disk images
+ - ExtractPanasonicFiles to extract files from Panasonic (especially KX models) word processor disk images
 
 New transforms: 
- - Two-step conversion for Peachtree Text
-
-Upated transform: PFS:Write is now split into PC and Apple II variants, as they differ a little bit.
-
+ - aol - Rudimentary AOL message formatter
+ - panasonic - Panasonic KX word processor formatter
+ - writers_choice - IBM Writer's Choice word processor formatter
+ 
 Transformenator introduction:
 =============================
 
