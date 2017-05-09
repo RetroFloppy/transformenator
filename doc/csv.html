@@ -115,12 +115,18 @@ With a <code>LAYOUT</code> specification, the definition of each field is minimi
 </tbody>
 </table>
 <p>
-When there are both <code>LAYOUT</code> and full field specifications present, they will all be merged.
+When there are both <code>LAYOUT</code> and full field (<code>ORIGIN</code> and <code>LENGTH</code>) specifications 
+present, they will all be merged.
 That is, the "manual" field specifications will be respected for their field names and interpretation
 types, but the position attributes will be overwritten by the <code>LAYOUT</code> specification.
 Additional fields specified by <code>LAYOUT</code> but missing accompanying manual definitions will
 be given default names and interpretation types, and will be given position specifications from
 the <code>LAYOUT</code> pattern.
+<p>
+When exploring an otherwise unknown disk's files, it is often useful to first dump the entire set of records with a textual
+representation of the entire thing on one line, then manually inspect those results to ascertain where the field boundaries
+are based on common patterns in the data.
+Using the <code>LAYOUT</code> keyword here is an easy way to line up the data with positionally-dependent fields visually.
 <h2>Examples</h2>
 Below is an example csv-transform file that interprets a disk image taken from an IBM System/36 floppy disk that was used for record storage:
 <xmp>
