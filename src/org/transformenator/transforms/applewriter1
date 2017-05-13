@@ -5,11 +5,17 @@
 ;   "Convert to non-Apple II formats" <<<< uncheck
 ;   "Don't convert text files" <<<< check
 ;
-; Some command-line environments may do a little chicanery with data passed via stdin -
-;   if transforms aren't working the way you expect, are missing transforms especially on
-;   bytes greater than 0x7f, try passing the literal file instead of stdin, or set your 
-;   console encoding appropriately (-Dconsole.encoding=<your local encoding>).
-;
+
+; Extended ASCII characters
+
+; Capital A umlaut
+1b = c4
+; Capital U umlaut
+1d = dc
+; Lower a umlaut
+db = e4
+; Lower u umlaut
+dd = fc
 
 ; Transform A-Z in the control character range up to capitals in ASCII
 [01..1a] = 41
@@ -34,3 +40,4 @@ e0 = 20
 60 = "{@@<FiLe_EoF>@@}"
 83 = 
 8d = "\\r\\n"
+
