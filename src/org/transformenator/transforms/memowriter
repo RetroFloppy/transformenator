@@ -1,0 +1,41 @@
+;
+; Memowriter - files with .MSS suffix
+;
+
+; Header for RTF format
+;head = "{\rtf1{\fonttbl{\f0\fnil\fcharset0 Courier New;}}{\*\generator David Schmidt - Transformenator;}\f0\fs20 "
+; Closing brace for RTF format
+;tail = "}"
+
+0f =
+; Bold toggle
+02 =
+c1=
+d3=
+; Underline toggle
+13 =
+; Superscript toggle 
+14 =
+
+; Strip high bits
+;[80..ff] # 00
+
+; .CWx
+regex = @\.[c|C][w|W].*@@
+; .FO
+regex = @\.[f|F][o|O].*@@
+; .MBx
+regex = @\.[m|M][b|B].*@@
+; .MTx
+regex = @\.[m|M][t|T].*@@
+; .OP
+regex = @\.[o|O][p|P].*@@
+; .PA
+regex = @\.[p|P][a|A].*@@
+; .PN
+regex = @\.[p|P][n|N].*@@
+; .RR
+regex = @\.[r|R][r|R].*@@
+
+; End of file is EOF
+1a = "{@@<FiLe_EoF>@@}"
