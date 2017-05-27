@@ -19,10 +19,18 @@ ee =
 ; Bold toggle
 ed =
 
-
+b0b1 =
+b0b2 =
+b0b3 =
+b0b4 =
 
 ; Unknown controls
+b1 =
+b2 =
+b3 =
+b4 =
 db =
+df =
 e6 =
 f1 =
 ff =
