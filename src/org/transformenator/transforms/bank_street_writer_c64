@@ -1,0 +1,18 @@
+;
+; Bank Street Writer for C-64 conversion to plain text
+;
+
+; SOF
+0080 = "{@@<FiLe_SoF>@@}"
+
+; Two nulls is really EOF, but play it safe
+00 =
+
+; Hard space
+8e = 20
+
+; Transform capitals to lowercase
+[41..5a] = 61
+
+; Strip high bit from capitals
+[c1..da] = 41
