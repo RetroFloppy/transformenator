@@ -78,6 +78,7 @@ regex = @\.[m|M][t|T].*@@
 regex = @\\par \.[m|M][b|B].*@@
 regex = @\.[p|P][s|S].*@@
 regex = @\.[a|A][w|W].*@@
+regex = @\.[u|U][j|J].*@@
 
 ; Header directive removal
 regex = @\.[h|H][e|E]@@
