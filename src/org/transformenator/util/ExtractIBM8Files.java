@@ -127,8 +127,10 @@ public class ExtractIBM8Files
 				int indexCylinderSize = 0;
 				int headSize = 0;
 				int sectorSize = 0;
-				int volOffset = 768;
+				int volOffset = 0x300;
 
+				if (inData.length == 1258496) // AS/400 / System/36 disks
+					volOffset = 0x600; 
 				// Track 0 side 0 sector 7 on each IBM formatted diskette contains the Volume Label.
 				if (DEBUG)
 				{
@@ -142,7 +144,7 @@ public class ExtractIBM8Files
 					case '2' : sectorSize = 512; break;
 					case '3' : sectorSize = 1024; break;
 					default: 
-						System.err.println("ERROR: Unable to determine sector size.");
+						System.err.println("ERROR: Unable to determine sector size; sector identifier is ["+EbcdicUtil.asciiChar(inData[volOffset + 0x4b])+"] (0x"+Integer.toHexString(UnsignedByte.intValue(inData[volOffset + 0x4b]))+")");
 						break;
 				}
 				switch (EbcdicUtil.asciiChar(inData[volOffset + 0x47]))
@@ -178,9 +180,19 @@ public class ExtractIBM8Files
 						else if (sectorSize == 1024)
 							cylinderSize = sectorSize * 8;
 						break;
-					default:
-						System.err.println("ERROR: Unable to determine disk density.");
+					case 0xb6: indexCylinderSize = 13312;
+						headSize = 1;
+						if (DEBUG)
+							System.err.print("IBM AS/400-System/36");
+						cylinderSize = sectorSize * 8;
 						break;
+					default:
+						System.err.println("ERROR: Unable to determine disk density; density identifier is ["+EbcdicUtil.asciiChar(inData[volOffset + 0x47])+"] (0x"+Integer.toHexString(UnsignedByte.intValue(inData[volOffset + 0x47]))+")");
+						break;
+				}
+				if (inData.length == 1258496) // AS/400 / System/36 disks
+				{
+					indexCylinderSize = 13312;
 				}
 				cylinderSize *= (headSize + 1); // Double-sided gets double cylinder sized
 				if ((sectorSize > 0) && (cylinderSize > 0) && (indexCylinderSize > 0))
@@ -193,6 +205,7 @@ public class ExtractIBM8Files
 					int lrecl = 0;
 					for (int i = 0; i < indexCylinderSize - directoryOffset; i += 128)
 					{
+						// System.err.println(EbcdicUtil.asciiChar(inData[directoryOffset + i]));
 						if (EbcdicUtil.asciiChar(inData[directoryOffset + i]) != 'D')
 						{
 							String fileName = EbcdicUtil.toAscii(inData,directoryOffset + i + 0x05,0x10).trim();
@@ -258,7 +271,7 @@ public class ExtractIBM8Files
 											fileLength = fileEnd - fileStart;
 										}
 										String fullname = new String(outputDirectory + File.separator + fileName);
-										if (fileStart + fileLength < inData.length)
+										if (fileStart + fileLength <= inData.length)
 										{
 											out = new FileOutputStream(fullname);
 											System.err.println("Creating file: " + fullname + " (LRECL 0x"+Integer.toHexString(lrecl)+")");
@@ -284,7 +297,8 @@ public class ExtractIBM8Files
 							}
 							catch (NumberFormatException e)
 							{
-								System.err.println("ERROR: Unable to determine file head/tail.");
+								if (DEBUG)
+									System.err.println("ERROR: Unable to determine file head/tail.");
 							}
 						}
 					}
