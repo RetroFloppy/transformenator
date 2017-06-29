@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2015 by David Schmidt
+ * Copyright (C) 2015, 2017 by David Schmidt
  * david__schmidt at users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -45,6 +45,7 @@ public class ExtractSmithCoronaFiles
 
 	public static void main(java.lang.String[] args)
 	{
+		File file = new File(args[0]);
 		baseName = "";
 		if ((args.length == 1) || (args.length == 2))
 		{
@@ -61,8 +62,17 @@ public class ExtractSmithCoronaFiles
 				baseDirFile.mkdir();
 				baseName = new String(args[1]) + File.separator;
 			}
+			else
+			{
+				if (file.getName().endsWith(".img"))
+				{
+					// System.out.println("Making image directory: ["+"." + File.separator + file.getName().substring(0, file.getName().length() - 4)+"]");
+					baseName = "." + File.separator + file.getName().substring(0, file.getName().length() - 4) + File.separator;;
+					File baseDirFile = new File(baseName);
+					baseDirFile.mkdirs();
+				}
+			}
 			System.err.println("Reading input file " + args[0]);
-			File file = new File(args[0]);
 			byte[] result = new byte[(int) file.length()];
 			try
 			{
