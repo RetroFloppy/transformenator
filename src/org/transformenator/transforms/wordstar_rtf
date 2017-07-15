@@ -32,7 +32,9 @@ tail = " }"
 ; Remove overstrike/backspace
 08 =
 
+
 ; Unknown emphasis
+03 =
 04 =
 
 ; Toggle Underline mode
