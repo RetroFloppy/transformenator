@@ -1,0 +1,31 @@
+;
+; Brother DOS-based Word Processor - typically with a WPT file suffix
+; Files of this type start with 0x928301
+;
+
+; Header for RTF format
+head = "{\rtf1{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+4df9051600000007160005061600000007160006 = "{@@<FiLe_SoF_GrEeDy>@@}"
+
+; Commands
+fb01000001180118190219051600000007160005061600000007160006 =
+01....01 =
+05..............05 =
+06..............06 =
+0d..........0d = "\\r\\n\par "
+0f..........................................0f =
+0f..................................0f =
+0f........................0f0f =
+18..18 =
+1a..1a =
+1a....1a =
+1b......................................1b =
+1d............1d =
+fc....fc =
+
+; 
+02 =
+1a =
