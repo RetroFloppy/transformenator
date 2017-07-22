@@ -66,6 +66,8 @@ regex = @\\par \.f5.*@@
 ; Various directive removals
 regex = @\\par \.[p|P][l|L].*@@
 regex = @\\par \.[p|P][n|N].*@@
+regex = @\.[r|R][m|M].*@@
+regex = @\.[p|P][c|C].*@@
 regex = @\.[p|P][o|O].*@@
 regex = @\.[p|P][n|N].*@@
 regex = @\.[c|C][w|W].*@@
@@ -81,6 +83,7 @@ regex = @\\par \.[m|M][b|B].*@@
 regex = @\.[p|P][s|S].*@@
 regex = @\.[a|A][w|W].*@@
 regex = @\.[u|U][j|J].*@@
+regex = @\.[s|S][r|R].*@@
 
 ; Header directive removal
 regex = @\.[h|H][e|E]@@
