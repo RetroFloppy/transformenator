@@ -272,6 +272,7 @@ public class ExtractWangFiles
 					/*
 					 * Check for WP files on 360k disks (5-1/4").
 					 */
+					Boolean foundAny = false;
 					for (int i = 0; i < inData.length; i += 256)
 					{
 						if ((inData[i + 2] == -1) && (inData[i + 3] == 65)) /* 0xff 0x41 */
@@ -302,6 +303,69 @@ public class ExtractWangFiles
 							System.out.println("   Description 2: ["+dsc2+"]");
 							System.out.println("   Description 3: ["+dsc3+"]");
 							decodeWPFile(inData, fileName, 0, UnsignedByte.intValue(inData[i]), UnsignedByte.intValue(inData[i + 1]), fileID, 0);
+						}
+					}
+					if (!foundAny)
+					{
+						/*
+						 * Couldn't find anything at all... scrape the disk surface.
+						 */
+
+						// TODO: would be nice if this could be invokable, on demand.
+						List<Integer> fileChain;
+						Hashtable<Integer, List<Integer>> hash = new Hashtable<Integer, List<Integer>>();
+						FileOutputStream out = null;
+						for (int track = 0; track < inData.length / 5120; track++)
+						{
+							for (int sector = 0; sector < 5; sector++)
+							{
+								int dataOffset = track * sector;
+								int fileID = UnsignedByte.intValue(inData[dataOffset + 4]) * 256 + UnsignedByte.intValue(inData[dataOffset + 5]);
+								if (fileID != 0)
+								{
+									Integer fid = new Integer(fileID);
+									if (!hash.containsKey(fid))
+									{
+										hash.put(fid, new ArrayList<Integer>());
+									}
+									fileChain = hash.get(fid);
+									fileChain.add(dataOffset);
+								}
+							}
+						}
+						for (Map.Entry<Integer, List<Integer>> entry : hash.entrySet())
+						{
+							Integer key = entry.getKey();
+							fileChain = hash.get(key);
+							String fileName = new String("recovered_file_" + key);
+							fileName = new String(args[1]) + File.separator + fileName;
+							try
+							{
+								out = new FileOutputStream(fileName);
+								System.err.println("Creating file: " + fileName);
+							}
+							catch (IOException e)
+							{
+								e.printStackTrace();
+							}
+							for (Iterator<Integer> iter = fileChain.iterator(); iter.hasNext();)
+							{
+								int myInt = iter.next();
+								// System.out.println("gathering offset: "+myInt);
+								try
+								{
+									if (out != null)
+									{
+										byte range2[] = Arrays.copyOfRange(inData, myInt + 7, myInt + UnsignedByte.intValue(inData[myInt + 2]) + 1);
+										out.write(range2);
+										out.flush();
+									}
+								}
+								catch (IOException e)
+								{
+									e.printStackTrace();
+								}
+							}
 						}
 					}
 				}
