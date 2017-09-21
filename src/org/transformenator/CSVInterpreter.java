@@ -412,6 +412,7 @@ public class CSVInterpreter
 									{
 										autoFieldSpec.fieldOrigin = fieldStart;
 										autoFieldSpec.fieldLength = i - fieldStart;
+										nextRecGuess = autoFieldSpec.fieldOrigin + i;
 										autoFieldSpec.interp = 1; // ASCII by default
 										fieldStart = i;
 										autoFields.addElement(autoFieldSpec);
@@ -426,6 +427,7 @@ public class CSVInterpreter
 							autoFieldSpec.fieldOrigin = fieldStart;
 							autoFieldSpec.fieldLength = layout.length() - fieldStart;
 							autoFieldSpec.interp = 1; // ASCII by default
+							nextRecGuess = autoFieldSpec.fieldOrigin + autoFieldSpec.fieldLength;
 							autoFields.addElement(autoFieldSpec);
 							autoFieldSpec = null;
 							Iterator<FieldSpec> af = autoFields.iterator();
@@ -455,6 +457,7 @@ public class CSVInterpreter
 									currentFieldSpec.interp = 0;
 								}
 								fields.addElement(currentFieldSpec);
+								nextRecGuess = currentFieldSpec.fieldOrigin + currentFieldSpec.fieldLength;
 								// System.err.println("DEBUG Added field " + currentFieldSpec.fieldName + " with interpretation: " + currentFieldSpec.interp);
 								currentFieldSpec = null;
 							}
@@ -506,6 +509,11 @@ public class CSVInterpreter
 			if (!autoFields.isEmpty())
 			{
 				System.out.println("; Fields automatically defined by layout:");
+				if (nextRec == 0)
+				{
+					System.out.println("NEXTREC="+Integer.toHexString(nextRecGuess));
+					System.out.println(";");
+				}
 				for (int i = 0; i < fields.size(); i++)
 				{
 					System.out.println("NAME=\"" + fields.elementAt(i).fieldName + "\"");
@@ -520,6 +528,8 @@ public class CSVInterpreter
 				}
 				System.out.println("; End of automatic field definition.");
 			}
+			if (nextRec == 0)
+				nextRec = nextRecGuess;
 		}
 		catch (Exception ex)
 		{
@@ -600,6 +610,6 @@ public class CSVInterpreter
 	Vector<FieldSpec> autoFields = new Vector<FieldSpec>();
 	Vector<SelectSpec> selection = new Vector<SelectSpec>();
 	String inFile, outFile, transformName;
-	public int firstRec = 0, nextRec = 0;
+	public int firstRec = 0, nextRec = 0, nextRecGuess = 0;
 	public boolean isOK;
 }
