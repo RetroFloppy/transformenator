@@ -6,6 +6,7 @@ The ExtractCSV utility function takes a file and divides it up into fixed-length
 Data from the original file can be interpreted as ASCII text, as EBCDIC text, or as hexadecimal values.
 <p>
 The table below defines the keywords and values used to define an interpretation of a file as records.
+Note that <code>NEXTREC</code> is <b>required</b>.
 The case of the keywords is not significant.
 All numerical values are given in undecorated hexadecimal.
 <table border="1">
@@ -27,7 +28,7 @@ All numerical values are given in undecorated hexadecimal.
 </tr>
 <tr>
 <td align="center"><xmp>NextRec</xmp></td>
-<td align="left">Offset (in hex bytes) to the next record</td>
+<td align="left"><b>(Required)</b> Offset (in hex bytes) to the next record</td>
 <td align="left"><xmp>NEXTREC=100 ; One record every 0x100 bytes</xmp></td>
 </tr>
 <tr>
