@@ -34,9 +34,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.security.CodeSource;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
@@ -1185,7 +1183,6 @@ public class Transformation
 								System.err.println("Available internal transform files:");
 								printedHeaderYet = true;
 							}
-							System.err.println("  " + finalName);
 						}
 					}
 				}
@@ -1205,7 +1202,6 @@ public class Transformation
 					for (int i = 0; i < listOfFiles.length; i++)
 					{
 						transforms.add(listOfFiles[i].toString().substring(offset));
-						// System.err.println("  " + listOfFiles[i].toString().substring(offset));
 					}
 				}
 			}

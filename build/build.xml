@@ -1,12 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="transformenator" default="all" basedir="..">
+<project name="transformenator" default="all" basedir=".." >
 	<property name="builddir" value="${basedir}/build" />
-	<target name="all" description="">
-		<copy file="${basedir}/LICENSE" tofile="${basedir}/bin/LICENSE" />
-		<jar jarfile="transformenator.jar"
+	<property name="outdir" value="${basedir}/out" />
+	<target name="all" depends="wipe,ver,build,zip" description="" />
+	<target name="wipe" description="Delete the Distribution Directory" >
+		<!--
+		Really, really clean up everything
+		-->
+		<echo message="wipe"/>	
+		<delete dir="${outdir}" />
+	</target>
+
+	<target name="ver">
+		<loadfile
+			encoding="UTF-8"
+			property="version"
+			srcFile="${basedir}/src/org/transformenator/Version.java" >
+			<filterchain>
+				<tokenfilter>
+					<containsregex
+						pattern="^.*Version.*&quot;(.*)&quot;;$"
+						replace="\1" />
+				</tokenfilter>
+				<striplinebreaks/>
+			</filterchain>
+		</loadfile>
+		<echo message="Version: ${version}" />
+	</target>
+
+	<target name="build" depends="wipe,ver" description="">
+		<mkdir dir="${outdir}/${version}" />
+		<copy todir="${outdir}/${version}">
+			<fileset dir="${basedir}">
+				<include name="LICENSE"/>
+				<include name="readme.txt"/>
+				<include name="**/*.sh"/>
+				<include name="**/*.bat"/>
+			</fileset>
+		</copy>
+
+		<jar jarfile="${outdir}/${version}/transformenator.jar"
 			manifest="build/manifest.mf"
 			basedir="${basedir}/bin"
 			includes="org/**/*.class org/**/*.java org/**/*.properties org/**/*.png org/**/*.dmp org/**/**/* LICENSE"
 			excludes="org/**/**/test" />
+
+	</target>
+
+	<target name="zip" description="Zip it up!">
+		<echo message="Zipping up file named: transformenator_${version}.zip" />
+		<zip destfile="${outdir}/transformenator_${version}.zip"
+			basedir="${outdir}"
+			includes="**/*"/>
 	</target>
 </project>
