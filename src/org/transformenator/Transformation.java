@@ -34,7 +34,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.security.CodeSource;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
@@ -1158,6 +1160,7 @@ public class Transformation
 		boolean printedHeaderYet = false;
 		String prefix = "org/transformenator/transforms/";
 		CodeSource src = Transformation.class.getProtectionDomain().getCodeSource();
+		Vector<String> transforms = new Vector<String>();
 
 		if (src != null)
 		{
@@ -1174,6 +1177,7 @@ public class Transformation
 					if (entryName.startsWith(prefix))
 					{
 						String finalName = entryName.substring(prefix.length());
+						transforms.add(finalName);
 						if (finalName.length() > 0)
 						{
 							if (printedHeaderYet == false)
@@ -1200,10 +1204,12 @@ public class Transformation
 					System.err.println("Available internal transform files:");
 					for (int i = 0; i < listOfFiles.length; i++)
 					{
-						System.err.println("  " + listOfFiles[i].toString().substring(offset));
+						transforms.add(listOfFiles[i].toString().substring(offset));
+						// System.err.println("  " + listOfFiles[i].toString().substring(offset));
 					}
 				}
 			}
+			printElements(transforms);
 		}
 	}
 
@@ -1212,6 +1218,7 @@ public class Transformation
 		boolean printedHeaderYet = false;
 		String prefix = "org/transformenator/util/";
 		CodeSource src = Transformation.class.getProtectionDomain().getCodeSource();
+		Vector<String> utilities = new Vector<String>();
 
 		if (src != null)
 		{
@@ -1236,7 +1243,9 @@ public class Transformation
 								printedHeaderYet = true;
 							}
 							if ((finalName.indexOf('$') == -1) && (!finalName.equals("TransformUtilities.class")))
-								System.err.println("  " + finalName.substring(0, finalName.length() - 6));
+							{
+								utilities.add(finalName.substring(0, finalName.length() - 6));
+							}
 						}
 					}
 				}
@@ -1257,10 +1266,13 @@ public class Transformation
 					{
 						String finalName = listOfFiles[i].toString().substring(offset);
 						if ((finalName.indexOf('$') == -1) && (!finalName.equals("TransformUtilities.class")))
-							System.err.println("  " + finalName.substring(0, finalName.length() - 6));
+						{
+							utilities.add(finalName.substring(0, finalName.length() - 6));
+						}
 					}
 				}
 			}
+			printElements(utilities);
 		}
 	}
 
@@ -1282,6 +1294,35 @@ public class Transformation
 	public String getSuffix()
 	{
 		return suffix;
+	}
+
+	public static void printElements(Vector<String> elements)
+	{
+		/*
+		 *  Print out a vector of elements in two columns
+		 *   - is not smart enough to know terminal width; assumes 80 
+		 *   - is not smart enough to know if two columns actually fit; assumes 37 chars max name length
+		 */
+		if (!elements.isEmpty())
+		{
+			int halfway = (int)elements.size() / 2;
+			if (elements.size() % 2 > 0)
+				halfway += 1;
+			for (int i = 0; i < halfway; i++)
+			{
+				System.err.print("  "+elements.get(i));
+				if (elements.size() > i+halfway) // If there is a final element (even number of elements)
+				{
+					for (int j = 0; j < 40-(elements.get(i).length()); j++)
+					{
+						System.err.print(" ");
+					}
+					System.err.println("  "+elements.get(i+halfway));
+				}
+				else
+					System.err.println();
+			}
+		}
 	}
 
 	byte inData[] = null;
