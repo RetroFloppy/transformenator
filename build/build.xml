@@ -34,17 +34,24 @@
 			<fileset dir="${basedir}">
 				<include name="LICENSE"/>
 				<include name="readme.txt"/>
-				<include name="**/*.sh"/>
-				<include name="**/*.bat"/>
 			</fileset>
 		</copy>
-
+		<copy todir="${outdir}/${version}">
+			<fileset dir="${basedir}/src">
+				<include name="*.sh"/>
+				<include name="*.bat"/>
+			</fileset>
+		</copy>
+		<copy todir="${outdir}/${version}">
+			<fileset dir="${basedir}/doc">
+				<include name="readme.txt"/>
+			</fileset>
+		</copy>
 		<jar jarfile="${outdir}/${version}/transformenator.jar"
 			manifest="build/manifest.mf"
 			basedir="${basedir}/bin"
 			includes="org/**/*.class org/**/*.java org/**/*.properties org/**/*.png org/**/*.dmp org/**/**/* LICENSE"
 			excludes="org/**/**/test" />
-
 	</target>
 
 	<target name="zip" description="Zip it up!">
