@@ -1,16 +1,4 @@
-This is one of many tools that RetroFloppy.com creates and gives away free
-to do the work of bringing old files into the new world.  If you have no
-idea how to use these tools, or just want this work to be done for you, 
-that's no problem - head over to http://retrofloppy.com and let us know. 
-
-New for this version:
-=====================
-New utilities:
-
-New transforms: 
-
-Transformenator introduction:
-=============================
+# Transformenator
 
 Transformenation is something that should be possible to do with some rudimentary shell scripting. You should be able to run a binary file through sed or awk and have byte sequences change to different byte sequences.
 
@@ -20,9 +8,4 @@ You could probably run a file through a hex dumper, change hex values, then un-t
 
 You're stuck.
 
-Maybe that's why you're here. Transformenator can help.
-
-Invocation:
-java -jar transformenator.jar transform_name infile outfile
-
-See http://transformenator.sourceforge.net for details.
+Maybe that's why you're here. Transformenator can help.  Learn more: https://github.com/RetroFloppy/transformenator/wiki
