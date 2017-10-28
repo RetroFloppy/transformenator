@@ -6,7 +6,7 @@
 ;
 
 ; Start of file, maybe page eject
-regex=@â€ 1@@
+regex=@†.@@
 
 ; Newline
 83 = 0d0a
