@@ -1,0 +1,39 @@
+;
+; Spellbinder to RTF
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 \\r\\n\par \par \pard "
+; Closing brace for RTF format
+tail = "}"
+
+08="\tab "
+0e=" "
+0d="\\r\\n\par \pard "
+ac="-"
+af="/"
+
+; Move emphasized characters down
+[c1..ff]=41
+
+; Move numbers around
+[b1..b9]=31
+
+; Header: .H Put the header out, including page numbering
+regex = @\\pard \.H(.*)(##)(.*)@\\pard {\\header $1\\chpgn $3}@
+
+; Center: .C
+regex = @\\pard \.[C|c]@\\pard \\qc @
+
+; .E
+regex = @\\pard \.[E|e].*@\\pard @
+
+; .R
+regex = @^\.[R|r].*@@
+regex = @\\pard \.[R|r].*@@ 
+
+; .Y[T?]
+regex = @\\pard \.[Y|y].*@@
+
+; EOF is ctrl-Z
+1a = "{@@<FiLe_EoF>@@}"
