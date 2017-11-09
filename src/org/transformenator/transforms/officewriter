@@ -7,6 +7,8 @@ trim_leading = 600
 ; Gorp at the start of a file
 b3..fa..fa10fafafafa10fafafafa10 =
 b3..fa..fafa10fafafafa10fafafafa10 =
+b3..fa............................ =
+
 fa =
 de =
 
@@ -15,4 +17,12 @@ fe =
 
 04 = 0d0a
 
+; Tab
+10 = 2020202020
+; Newline
 11 = 0d0a
+; Control character follows 12
+12.. = 
+; Emphasis of some sort
+13 =
+7f =
