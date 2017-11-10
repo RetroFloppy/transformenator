@@ -42,8 +42,13 @@ public class Dmk2Raw
 	{
 		FileOutputStream out = null;
 		String outputFile = "";
-		if (args.length == 2)
+		Boolean rx01Mode = false;
+		if ((args.length == 2) || (args.length == 3))
 		{
+			if (args.length == 3 && args[2].equalsIgnoreCase("rx01"))
+			{
+				rx01Mode = true;
+			}
 			byte[] inData = null;
 			System.err.println("Reading input file " + args[0]);
 			File file = new File(args[0]);
@@ -116,7 +121,18 @@ public class Dmk2Raw
 						int dataIndex = trackOffset + sectorOffset + 50;
 						try
 						{
-							out.write(inData, dataIndex, 256);
+							if (rx01Mode)
+							{
+								for (int j = 0; j < 256; j++)
+								{
+									if (j %2 == 0)
+										out.write(inData, dataIndex+j, 1);
+								}
+							}
+							else
+							{
+								out.write(inData, dataIndex, 256);
+							}
 							// System.err.println("  Offset to data in sector "+index/2+": "+Integer.toHexString(dataIndex)+ "  "+Integer.toHexString(sectorOffset));
 						} 
 						catch (IOException e)
@@ -140,8 +156,8 @@ public class Dmk2Raw
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("Dmk2Raw " + Version.VersionString + " - Convert DMK disk image file to raw data.");
+		System.err.println("Dmk2Raw " + Version.VersionString + " - Convert DMK disk image file to raw data.  Optional final parameter rx01 drops every other byte from image.");
 		System.err.println();
-		System.err.println("Usage: Dmk2Raw infile outfile");
+		System.err.println("Usage: Dmk2Raw infile outfile [rx01]");
 	}
 }
