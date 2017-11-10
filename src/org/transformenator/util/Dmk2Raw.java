@@ -43,12 +43,8 @@ public class Dmk2Raw
 		FileOutputStream out = null;
 		String outputFile = "";
 		Boolean rx01Mode = false;
-		if ((args.length == 2) || (args.length == 3))
+		if (args.length == 2)
 		{
-			if (args.length == 3 && args[2].equalsIgnoreCase("rx01"))
-			{
-				rx01Mode = true;
-			}
 			byte[] inData = null;
 			System.err.println("Reading input file " + args[0]);
 			File file = new File(args[0]);
@@ -108,17 +104,46 @@ public class Dmk2Raw
 				System.err.println("Number of tracks: "+numTracks+" Track length: "+trackLength);
 				int zeroOffset = 0x10;
 				int trackOffset = 0;
-				for (int i = 0; i < numTracks; i++)
+				int dataIndex = 0;
+				int sectorOffset = 0;
+				int i;
+				sectorOffset = UnsignedByte.intValue(result[trackOffset],result[trackOffset+1]);
+				dataIndex = trackOffset + sectorOffset + 50;
+				int accum1 = 0, accum2 = 1;
+				boolean hasData = false;
+				int track = 0;
+				// Search for non-zero data, and see if it repeats 000011112222 (i.e. rx01)
+				// or differs: 00112233 (i.e. rx02)
+				while (hasData == false)
+				{
+					trackOffset = zeroOffset + track * trackLength;
+					accum1 = 0;
+					accum2 = 0;
+					for (i = 0; i < 512; i += 2)
+					{
+						accum1 = inData[dataIndex + i];
+						accum2 = inData[dataIndex + i + 1];
+						if (accum1 > 0)
+							hasData = true;
+					}
+					track ++;
+				}
+				if (accum1 == accum2)
+				{
+					System.out.println("Repeating data found; assuming RX01 format.");
+					rx01Mode = true;
+				}
+				for (i = 0; i < numTracks; i++)
 				{
 					trackOffset = zeroOffset + i * trackLength;
-					int firstByte = result[trackOffset];
 					// System.err.println("Track "+i+" offset: "+Integer.toHexString(trackOffset)+" Value there: 0x"+Integer.toHexString(UnsignedByte.intValue(result[trackOffset],result[trackOffset+1])));
-					int sectorOffset = UnsignedByte.intValue(result[trackOffset],result[trackOffset+1]);
+					sectorOffset = UnsignedByte.intValue(result[trackOffset],result[trackOffset+1]);
 					int index = 0;
+					dataIndex = 0;
 					while (sectorOffset > 0)
 					{
 						// System.err.println("  Sector: "+index/2);
-						int dataIndex = trackOffset + sectorOffset + 50;
+						dataIndex = trackOffset + sectorOffset + 50;
 						try
 						{
 							if (rx01Mode)
@@ -156,8 +181,8 @@ public class Dmk2Raw
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("Dmk2Raw " + Version.VersionString + " - Convert DMK disk image file to raw data.  Optional final parameter rx01 drops every other byte from image.");
+		System.err.println("Dmk2Raw " + Version.VersionString + " - Convert DMK disk image file to raw data.  Autodetects DEC RX01 format and halves data.");
 		System.err.println();
-		System.err.println("Usage: Dmk2Raw infile outfile [rx01]");
+		System.err.println("Usage: Dmk2Raw infile outfile");
 	}
 }
