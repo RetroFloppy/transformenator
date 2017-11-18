@@ -1,0 +1,27 @@
+;
+; Word Writer/Timeworks conversion to text - very little touchup of newlines and paragraph marks
+;
+
+; Header for RTF format
+head = "{\rtf1{\*\generator David Schmidt - Transformenator;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+00=
+1b=
+
+; Itallics on/off
+81="\i1 "
+80="\i0 "
+
+0d0a2020202020="\\r\\n\\r\\n\par\fi360 "
+0d0a20202020="\\r\\n\\r\\n\par\fi360 "
+0d0a202020="\\r\\n\\r\\n\par\fi360 "
+0d0a2020="\\r\\n\\r\\n\par\fi360 "
+0d0a20="\\r\\n\\r\\n\par\fi360 "
+0d0a="{NEWLINE}"
+fb="{MarginsBegin}"
+1a="{@@<FiLe_EoF>@@}"
+
+regex = @\{MarginsBegin\}(.)*@@
+regex = @\{NEWLINE\}@ @
