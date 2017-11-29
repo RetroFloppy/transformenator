@@ -44,10 +44,16 @@ import org.transformenator.internal.UnsignedByte;
 
 public class Transformation
 {
+	public boolean isOK = false;
 	public Transformation(String transform_name)
 	{
 		transformName = transform_name;
 		isOK = readTransform(transform_name);
+	}
+
+	public String describe()
+	{
+		return description;
 	}
 
 	public boolean createOutput(String inFile, String outFile)
@@ -659,7 +665,7 @@ public class Transformation
 					skip = false;
 					// System.err.println("DEBUG Left side token: ["+leftTemp+"]");
 					// If you add a left side keyword that will get consumed, be sure to add it here, otherwise the fall through processing will try to eat it:
-					if (leftTemp.equals("head") || leftTemp.equals("tail") || leftTemp.equals("trim_leading") || leftTemp.equals("trim_trailing") || leftTemp.equals("eof_lo") || leftTemp.equals("eof_mid") || leftTemp.equals("eof_hi") || leftTemp.trim().charAt(0) == (';'))
+					if (leftTemp.equals("description") || leftTemp.equals("head") || leftTemp.equals("tail") || leftTemp.equals("trim_leading") || leftTemp.equals("trim_trailing") || leftTemp.equals("eof_lo") || leftTemp.equals("eof_mid") || leftTemp.equals("eof_hi") || leftTemp.trim().charAt(0) == (';'))
 					{
 						if (leftTemp.trim().charAt(0) == (';'))
 						{
@@ -818,7 +824,11 @@ public class Transformation
 						}
 
 						// System.err.println("DEBUG Right side token: ["+rightTemp1+"]");
-						if (leftTemp.equals("head"))
+						if (leftTemp.equals("description"))
+						{
+							description = rightTemp1;
+						}
+						else if (leftTemp.equals("head"))
 						{
 							rightTemp1 = result[1];
 							for (int j = 2; j < result.length; j++)
@@ -1327,10 +1337,10 @@ public class Transformation
 	Vector<RegSpec> leftSide = new Vector<RegSpec>();
 	Vector<byte[]> rightSide = new Vector<byte[]>();
 	Vector<byte[]> rightToggle = new Vector<byte[]>();
-	String prefix, suffix;
+	String description, prefix, suffix;
 	String inFile, outFile, transformName;
 	int trimLeading = 0, trimTrailing = 0, trimmedEnd;
 	int eofHi = 0, eofMid = 0, eofLo = 0, eofOffset = 0;
-	boolean isOK, foundSOF;
+	boolean foundSOF;
 	int backupBytes;
 }
