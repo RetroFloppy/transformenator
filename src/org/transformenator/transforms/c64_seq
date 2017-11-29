@@ -1,0 +1,13 @@
+;
+; Transform for an unknown C64 word processor that laid down SEQ files
+;
+
+; Transform capitals to lowercase
+[41..5a] = 61
+
+; Strip high bit from capitals
+[c1..da] = 41
+
+8d = "{@@<FiLe_SoF>@@}"
+5c = "{@@<FiLe_EoF>@@}"
+5f = 0d

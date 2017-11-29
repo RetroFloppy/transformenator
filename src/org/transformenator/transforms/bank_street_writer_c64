@@ -11,6 +11,9 @@
 ; Hard space
 8e = 20
 
+; Emphasis of some kind
+03 = 
+
 ; Transform capitals to lowercase
 [41..5a] = 61
 
