@@ -1,5 +1,5 @@
 ;
-; Amiga WordPerfect word processor, output in RTF
+description = "Amiga WordPerfect word processor, output in RTF."
 ;
 
 ; Header for RTF format

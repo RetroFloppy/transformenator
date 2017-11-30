@@ -1,5 +1,5 @@
 ;
-; NBI word processor to RTF
+description = "NBI word processor to RTF."
 ;
 
 ; Header for RTF format

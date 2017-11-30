@@ -1,6 +1,5 @@
 ;
-; Brother DOS-based Word Processor - typically with a WPT file suffix
-; Files of this type start with 0x928301
+description = "Brother DOS-based Word Processor - typically with a WPT file suffix.  Files of this type start with 928301."
 ;
 
 ; Header for RTF format

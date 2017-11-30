@@ -1,7 +1,5 @@
 ;
-; Transform for C64 Easyscript from PETSCII to RTF
-;
-; Expects PETSCII-exported files from tools like DirMaster; these would typically have a .PRG suffix
+description = "Transform for C64 Easyscript from PETSCII to RTF.  Expects PETSCII-exported files from tools like DirMaster; these would typically have a .PRG suffix."
 ;
 
 ; Header for RTF format

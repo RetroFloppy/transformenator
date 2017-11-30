@@ -1,5 +1,5 @@
 ;
-; Unknown Apple II word processor
+description = "Unknown Apple II word processor.  Newlines are 02 and 0d."
 ;
 
 ; Start of text

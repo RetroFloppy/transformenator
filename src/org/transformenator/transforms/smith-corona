@@ -1,5 +1,5 @@
 ;
-; Smith-Corona word processor
+description = "Smith-Corona word processor."
 ;
 
 trim_leading = 40

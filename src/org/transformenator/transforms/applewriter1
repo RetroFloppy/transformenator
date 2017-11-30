@@ -1,9 +1,5 @@
 ;
-; Transform binary Applewriter 1.0 to ASCII - mostly just strips high bits off
-;
-; When extracting files with CiderPress, ensure you pay attention to these attributes:
-;   "Convert to non-Apple II formats" <<<< uncheck
-;   "Don't convert text files" <<<< check
+description = "Transform binary Applewriter 1.0 to ASCII - mostly just strips high bits off.  When extracting files with CiderPress, ensure you pay attention to these attributes: "Convert to non-Apple II formats" is unchecked, "Don't convert text files" is checked."
 ;
 
 ; Extended ASCII characters
@@ -40,4 +36,3 @@ e0 = 20
 60 = "{@@<FiLe_EoF>@@}"
 83 = 
 8d = "\\r\\n"
-

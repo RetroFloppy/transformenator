@@ -1,5 +1,5 @@
 ;
-; Transform Data-20 word processor to text
+description = "Transform C-64 Data-20 word processor to text."
 ;
 
 ; Transform capitals to lowercase

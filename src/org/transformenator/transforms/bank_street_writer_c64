@@ -1,5 +1,5 @@
 ;
-; Bank Street Writer for C-64 conversion to plain text
+description = "Bank Street Writer for C-64 to plain text."
 ;
 
 ; SOF

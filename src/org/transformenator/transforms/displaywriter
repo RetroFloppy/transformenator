@@ -1,7 +1,5 @@
 ;
-; IBM 6580 Displaywriter
-; 
-; Notes - EBCDIC encoding, many printer-specific codes; non-understood data represented by a tilde character (~)
+description = "IBM 6580 Displaywriter to plain text.  Notes - EBCDIC encoding, contains many printer-specific codes; non-understood data represented by a tilde character (~)."
 ;
 
 ; Horizontal tab

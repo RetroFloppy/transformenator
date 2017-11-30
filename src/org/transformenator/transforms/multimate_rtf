@@ -1,5 +1,5 @@
 ;
-; Transform for early Multimate word processor to RTF - very skeletal so far
+description = "Transform for early Multimate word processor to RTF - very skeletal so far."
 ;
 
 ; Header for RTF format

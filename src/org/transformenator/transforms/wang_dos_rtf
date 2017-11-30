@@ -1,8 +1,5 @@
 ;
-; Transform for DOS-based Wang Word Processor
-;
-; Note - files will need to have gone through the Transformenator ExtractWangFiles 
-; process first to unwind their index structure.
+description = "Transform for DOS-based Wang Word Processor.  Note - files will need to have gone through the Transformenator ExtractWangFiles process first to unwind their index structure."
 ;
 
 ; Header for RTF format

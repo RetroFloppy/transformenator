@@ -1,5 +1,5 @@
 ;
-; Unknown Apple II word processor
+description = "Unknown Apple II word processor.  Newlines are 000d."
 ;
 
 trim_leading = 0200

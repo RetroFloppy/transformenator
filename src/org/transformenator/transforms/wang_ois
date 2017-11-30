@@ -1,5 +1,5 @@
 ;
-; Transform for Wang OIS Word Processor
+description = "Transform for Wang OIS Word Processor."
 ;
 
 ; Page control commands - one is probably page eject

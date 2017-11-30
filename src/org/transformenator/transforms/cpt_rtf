@@ -1,5 +1,5 @@
 ;
-; CPT word processor to RTF
+description = "CPT word processor to RTF."
 ;
 
 ; Header for RTF format

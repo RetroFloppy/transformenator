@@ -1,5 +1,5 @@
 ;
-; Word Writer/Timeworks conversion to text - very little touchup of newlines and paragraph marks
+description = "Word Writer/Timeworks conversion to text - very little touchup of newlines and paragraph marks."
 ;
 
 ; Header for RTF format

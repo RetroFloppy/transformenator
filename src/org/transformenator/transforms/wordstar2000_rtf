@@ -1,5 +1,5 @@
 ;
-; Wordstar 2000 word processor, output in RTF
+description = "Wordstar 2000 word processor, output in RTF."
 ;
 
 ; Header for RTF format

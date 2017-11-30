@@ -1,7 +1,5 @@
 ;
-; Transform PC EasyWriter to RTF	
-;
-; Based on extant files with no particular technical reference - may be breathtakingly incomplete
+description = "Transform PC EasyWriter to RTF.  Based on extant files with no particular technical reference - may be breathtakingly incomplete."
 ;
 
 ; Header for RTF format

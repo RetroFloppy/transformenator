@@ -1,5 +1,5 @@
 ;
-; Transform for basic readability of EBCDIC data
+description = "Transform for basic readability of EBCDIC data."
 ; 
 
 2d = "-"

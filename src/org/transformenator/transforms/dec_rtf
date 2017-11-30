@@ -1,5 +1,5 @@
 ;
-; DEC RX50K-based word processor (Rainbow?) to RTF
+description = "DEC RX50K-based word processor (Rainbow?) to RTF."
 ;
 
 ; Header for RTF format

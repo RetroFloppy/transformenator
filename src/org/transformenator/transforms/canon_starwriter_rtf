@@ -1,5 +1,5 @@
 ;
-; Transform Canon StarWriter ETW1 word processor to RTF
+description = "Transform Canon StarWriter ETW1 word processor to RTF."
 ;
 
 ; Header for RTF format

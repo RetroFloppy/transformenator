@@ -1,5 +1,5 @@
 ;
-; Memowriter - files with .MSS suffix
+description = "Memowriter - files with .MSS suffix."
 ;
 
 ; Header for RTF format

@@ -1,5 +1,5 @@
 ;
-; Transform for files with embedded Epson printer codes
+description = "Transform for files with embedded Epson printer codes."
 ;
 
 ; Header for RTF format

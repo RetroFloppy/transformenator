@@ -1,5 +1,5 @@
 ;
-; Xerox 860 Word Processor - quite rudimentary, based on extant files
+description = "Xerox 860 Word Processor - quite rudimentary, based on extant files."
 ;
 
 ; Let's see what happens when 00 is EOF

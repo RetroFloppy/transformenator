@@ -1,6 +1,5 @@
 ;
-; Mac WordPerfect 1.0 word processor, output in RTF
-; ...this is closely related to wordperfect_pc_rtf, and so may actually be a superset.
+description = "Mac WordPerfect 1.0 word processor, output in RTF ...this is closely related to wordperfect_pc_rtf, and so may actually be a superset."
 ;
 
 ; Header for RTF format

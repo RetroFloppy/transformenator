@@ -1,5 +1,5 @@
 ;
-; Transform for Wang WPS Word Processor
+description = "Transform for Wang WPS Word Processor."
 ;
 
 ; Header for RTF format
