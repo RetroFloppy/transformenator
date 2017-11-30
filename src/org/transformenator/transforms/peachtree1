@@ -1,0 +1,9 @@
+;
+description = "Transform for Peachtree word processor - step 1 of 2.  First, remove controls that conflict with RTF specification - leaving plain text with some decoration.   Note - call tranformutil with a null suffix (i.e. transformutil peachtree1 Originals Step1 "").   Next, use the peachtree2_rtf transform to pretty the files up (i.e. transformutil peachtree2_rtf Step1 Converted)."
+;
+
+; Remove controls - lines beginning with a backslash
+regex = @\\.*\r\n@@
+
+; EOF is ctrl-Z
+1a = "{@@<FiLe_EoF>@@}"

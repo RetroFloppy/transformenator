@@ -1,0 +1,20 @@
+;
+description = "Transform for Peachtree word processor - step 2 of 2.  Use the peachtree2_rtf transform to pretty files up that had been conditioned with peachtree1 (i.e. transformutil peachtree2_rtf Step1 Converted)."
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fnil\fcharset0 Courier;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Toggle underline on and off
+5f % "\ul ","\ul0 "
+
+; Toggle bold on and off
+40 % "\b1 ","\b0 "
+
+; Preserve newlines
+0d0a = "\\r\\n\par "
+
+; EOF is ctrl-Z
+1a = "{@@<FiLe_EoF>@@}"
