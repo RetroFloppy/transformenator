@@ -111,7 +111,7 @@ public class Dmk2Raw
 				dataIndex = trackOffset + sectorOffset + 50;
 				int accum1 = 0, accum2 = 1;
 				boolean hasData = false;
-				int track = 0;
+				int track = 1;
 				// Search for non-zero data, and see if it repeats 000011112222 (i.e. rx01)
 				// or differs: 00112233 (i.e. rx02)
 				while (hasData == false)
@@ -119,7 +119,7 @@ public class Dmk2Raw
 					trackOffset = zeroOffset + track * trackLength;
 					accum1 = 0;
 					accum2 = 0;
-					for (i = 0; i < 512; i += 2)
+					for (i = 0; i < 26624; i += 2)
 					{
 						accum1 = inData[dataIndex + i];
 						accum2 = inData[dataIndex + i + 1];
