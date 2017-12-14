@@ -1,5 +1,5 @@
 ;
-; Leading Edge Word Processor
+description = "Leading Edge Word Processor."
 ;
 
 ; Header for RTF format - Note 1.5 line spacing \sl360

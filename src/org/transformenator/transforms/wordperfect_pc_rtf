@@ -1,6 +1,5 @@
 ;
-; DOS WordPerfect 4.2 word processor, output in RTF
-; Also covers Apple IIgs version of WP
+description = "DOS WordPerfect 4.2 word processor, output in RTF.  Also known to cover Apple IIgs."
 ;
 
 ; Header for RTF format

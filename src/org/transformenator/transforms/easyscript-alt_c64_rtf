@@ -1,8 +1,5 @@
 ;
-; Transform for C64 Easyscript to RTF
-;
-; ... an alternate approach to an Easyscript transform: assumes ASCII export from 
-; tools like DirMaster
+description = "Transform for C64 Easyscript to RTF.  This is an alternate approach to an Easyscript transform: assumes ASCII export from tools like DirMaster."
 ;
 
 ; Header for RTF format

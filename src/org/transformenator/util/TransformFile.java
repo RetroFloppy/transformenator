@@ -41,13 +41,34 @@ public class TransformFile
 
 	public static void main(String[] args)
 	{
-		if (args.length == 3)
+		if (args.length > 0)
 		{
 			Transformation transform = new Transformation(args[0]);
-			if (transform != null)
+			if (args.length == 3)
 			{
-				transform.createOutput(args[1], args[2]);
+				if (transform != null)
+				{
+					transform.createOutput(args[1], args[2]);
+				}
 			}
+			else if ((args.length == 1) && (transform.isOK))
+			{
+				String description = transform.describe();
+				if (description != null)
+				{
+					System.err.println();
+					System.err.println("Description: ");
+					System.out.println(description);
+				}
+				else
+					System.out.println("No description available for transform \""+args[0]+"\".");
+			}
+			else
+			{
+				// two args
+				help();
+			}
+
 		}
 		else
 		{

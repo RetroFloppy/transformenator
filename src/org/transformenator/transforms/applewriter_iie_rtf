@@ -1,5 +1,5 @@
 ;
-; AppleWriter IIe to RTF format
+description = "AppleWriter IIe to RTF format."
 ;
 
 ; Header for RTF format

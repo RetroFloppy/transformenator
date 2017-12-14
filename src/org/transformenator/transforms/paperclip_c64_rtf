@@ -1,5 +1,5 @@
 ;
-; Transform for PaperClip C64 word processor to RTF
+description = "PaperClip C64 word processor to RTF"
 ;
 
 ; Commands:

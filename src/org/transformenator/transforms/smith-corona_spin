@@ -1,7 +1,5 @@
 ;
-; Smith-Corona typewriter spin-codes - very preliminary
-;
-; Notes: any unknown codes resolve to "~"; any unknown but extant control codes are removed
+description = "Smith-Corona typewriter spin-codes - very preliminary.  Notes: any unknown codes resolve to "~"; any unknown but extant control codes are removed."
 ;
 
 00=" "

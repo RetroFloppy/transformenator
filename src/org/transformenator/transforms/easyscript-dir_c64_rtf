@@ -1,7 +1,5 @@
 ;
-; Transform for C64 Easyscript from PETSCII to RTF
-;
-; Expects text-exported files from tools like DirMaster in batch mode; these would typically have a .txt suffix
+description = "Transform for C64 Easyscript from PETSCII to RTF.  Expects text-exported files from tools like DirMaster in batch mode; these would typically have a .txt suffix."
 ;
 
 ; Header for RTF format

@@ -1,5 +1,5 @@
 ;
-; Tandy 100/102/200/WP-2, output in RTF
+description = "Tandy 100/102/200/WP-2, output in RTF."
 ;
 
 ; Header for RTF format

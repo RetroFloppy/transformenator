@@ -1,5 +1,5 @@
 ;
-; Transform for an unknown C64 word processor that laid down SEQ files
+description = "Transform for an unknown C64 word processor that wrote SEQ files."
 ;
 
 ; Transform capitals to lowercase

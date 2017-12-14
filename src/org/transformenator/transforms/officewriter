@@ -1,5 +1,5 @@
 ;
-; PC OfficeWriter - just a few example files available
+description = "PC OfficeWriter - just a few example files available."
 ;
 
 trim_leading = 600

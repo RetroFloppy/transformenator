@@ -1,5 +1,5 @@
 ;
-; Transform for PFS:Write on the PC to text
+description = "Transform for PFS:Write on the PC to text."
 ;
 ; Start of file contains "GERBILDOC3"
 ;

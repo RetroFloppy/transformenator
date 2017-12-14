@@ -1,5 +1,5 @@
 ;
-; Perfect Writer - Kaypro CP/M (files with .mss suffix)
+description = "Perfect Writer from Kaypro CP/M (files with .mss suffix)"
 ;
 
 ; Header for RTF format

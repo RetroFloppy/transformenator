@@ -1,5 +1,5 @@
 ;
-; Brown Bag PC word processor
+description = "Brown Bag PC word processor"
 ;
 
 ; Header for RTF format

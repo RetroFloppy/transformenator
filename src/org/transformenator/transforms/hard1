@@ -1,5 +1,5 @@
 ;
-; Transform matching the ExtractHardSectors-based files; unknown 8' word processor format
+description = "Unknown word processor format found on a hard-sectored 8 inch disk."
 ;
 
 ; Special substitutions
@@ -15,7 +15,6 @@
 04 = 
 
 0bff = "{@@<FiLe_EoF>@@}"
-;0b7f = "{@@<FiLe_EoF>@@}"
 
 ; Newlines
 0a = 0d0a

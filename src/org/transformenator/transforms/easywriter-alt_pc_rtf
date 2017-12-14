@@ -1,7 +1,5 @@
 ;
-; Transform very early PC (possibly) EasyWriter for PC, output in RTF
-;
-; Native file suffix: EWF
+description = "Transform very early PC (possibly) EasyWriter for PC, output in RTF.  File suffix is EWF."
 ;
 
 ; Header for RTF format

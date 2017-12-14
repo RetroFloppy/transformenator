@@ -1,7 +1,5 @@
 ;
-; Transform John Draper's EasyWriter (Cap'n Software) to RTF
-;
-; Based on extant files with no particular technical reference - may be breathtakingly incomplete
+description = "Transform John Draper's EasyWriter (Cap'n Software) to RTF.  Based on extant files with no particular technical reference - may be breathtakingly incomplete."
 ;
 
 ; Header for RTF format
