@@ -485,7 +485,7 @@ public class Transformation
 					for (int i = 0; i < regReplace.size(); i++)
 					{
 						// System.err.println("DEBUG Replacing ["+regPattern.elementAt(i)+"] with ["+regReplace.elementAt(i)+"].");
-						tempStr = tempStr.replaceAll(regPattern.elementAt(i), regReplace.elementAt(i));
+						tempStr = tempStr.replaceAll("(?m)"+regPattern.elementAt(i), regReplace.elementAt(i));
 					}
 					byte[] stdout = tempStr.getBytes();
 					out.write(stdout, 0, stdout.length);
@@ -1280,16 +1280,6 @@ public class Transformation
 			}
 			printElements(utilities);
 		}
-	}
-
-	String runRegularExpressions(String tempStr)
-	{
-		for (int i = 0; i < regReplace.size(); i++)
-		{
-			// System.err.println("DEBUG Replacing ["+regPattern.elementAt(i)+"] with ["+regReplace.elementAt(i)+"].");
-			tempStr = tempStr.replaceAll(regPattern.elementAt(i), regReplace.elementAt(i));
-		}
-		return tempStr;
 	}
 
 	public String getPrefix()
