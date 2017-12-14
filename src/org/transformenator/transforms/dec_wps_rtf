@@ -1,0 +1,39 @@
+;
+description = "DEC RT11-based word processor to RTF; files use a WPS extension."
+;
+0d = "\\r\\n\par \ql " 
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1\fcharset128 Courier New;}}{\*\generator David Schmidt - Transformenator;}\f0 \fs18 "
+; Closing brace for RTF format
+tail = "}"
+
+; Naked curly braces
+7d =
+7b =
+
+; Underlining on and off
+5e % "\ul1 ","\ul0 "
+
+; Center
+regex = @^\.[c|C]\;@\\qc @
+
+; Rule? i.e. ".ru 57,1"
+regex = @^\.[r|R][u|U].*@@
+
+; Line rules (they follow a .ru production on the following line)
+regex = @^--.*j@@
+regex = @^--.*R@@
+
+; Paginate
+regex = @^\.pg.*@@
+
+; Unknown
+regex = @^\.s.*@@
+regex = @^\.ht.*@@
+regex = @^\.tp.*@@
+regex = @^\.lm.*@@
+regex = @^\.nm.*@@
+regex = @^\.ph.*@@
+regex = @^\.ft.*@@
+regex = @^\.nhy@@
