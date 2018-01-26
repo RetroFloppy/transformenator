@@ -1,0 +1,15 @@
+;
+description = "Atari Prowriter - Atari 5-1/4" disks"
+;
+
+; Carriage return
+9b=0d0a
+
+; Tab
+10="     "
+
+; Worry about high bits
+[c1..ff] = 41
+
+03 =
+16 =
