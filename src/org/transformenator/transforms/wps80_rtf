@@ -1,0 +1,25 @@
+;
+description = "DEC Rainbow WPS-80 format.  Assumes files pre-processed with ConvertWps80File utility."
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; SOF may appear several times; use the last one
+10 = "{@@<FiLe_SoF_GrEeDy>@@}"
+01 = "{@@<FiLe_EoF>@@}"
+
+08 = "\\r\\n\par "
+0b = "\\r\\n\par "
+0d = "\\r\\n\par "
+0e = "\\r\\n\par "
+
+; Bold toggle
+12 % "\b1 ","\b0 "
+
+; Italics toggle
+13 % "\i1 ","\i0 "
+
+1f = " "
