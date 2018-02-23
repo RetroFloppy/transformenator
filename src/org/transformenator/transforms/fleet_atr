@@ -1,0 +1,8 @@
+;
+description = "Fleet Systems Word Processor - Atari 5-1/4" disks"
+;
+
+
+00=
+[01..1e]=61
+1f=0d0a
