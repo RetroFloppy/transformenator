@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2014 - 2016 by David Schmidt
+ * Copyright (C) 2014 - 2018 by David Schmidt
  * david__schmidt at users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -22,5 +22,5 @@ package org.transformenator;
 
 public class Version
 {
-	public static String VersionString = "v1.14beta";
+	public static String VersionString = "v1.14";
 }
