@@ -15,7 +15,7 @@
 		<loadfile
 			encoding="UTF-8"
 			property="version"
-			srcFile="${basedir}/src/org/transformenator/Version.java" >
+			srcFile="${basedir}/src/org/transformenator/internal/Version.java" >
 			<filterchain>
 				<tokenfilter>
 					<containsregex

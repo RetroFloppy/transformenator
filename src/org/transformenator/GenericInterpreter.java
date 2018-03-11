@@ -1,7 +1,7 @@
 /*
- * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2013 - 2015 by David Schmidt
- * david__schmidt at users.sourceforge.net
+ * Transformenator - perform transformation operations on files
+ * Copyright (C) 2013 - 2018 by David Schmidt
+ * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU General Public License as published by the 
@@ -40,12 +40,14 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.transformenator.detangle.ADetangle;
+import org.transformenator.internal.RegSpec;
 import org.transformenator.internal.UnsignedByte;
 
-public class Transformation
+public class GenericInterpreter
 {
 	public boolean isOK = false;
-	public Transformation(String transform_name)
+	public GenericInterpreter(String transform_name)
 	{
 		transformName = transform_name;
 		isOK = readTransform(transform_name);
@@ -583,7 +585,7 @@ public class Transformation
 			try
 			{
 				InputStream is;
-				is = Transformenator.class.getResourceAsStream("/org/transformenator/transforms/" + filename);
+				is = TransformFile.class.getResourceAsStream("/org/transformenator/transforms/" + filename);
 				if (is != null)
 				{
 					InputStreamReader isr = new InputStreamReader(is);
@@ -604,6 +606,7 @@ public class Transformation
 		return isOK;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void parseTransforms(Reader fr)
 	{
 		String line;
@@ -665,7 +668,7 @@ public class Transformation
 					skip = false;
 					// System.err.println("DEBUG Left side token: ["+leftTemp+"]");
 					// If you add a left side keyword that will get consumed, be sure to add it here, otherwise the fall through processing will try to eat it:
-					if (leftTemp.equals("description") || leftTemp.equals("head") || leftTemp.equals("tail") || leftTemp.equals("trim_leading") || leftTemp.equals("trim_trailing") || leftTemp.equals("eof_lo") || leftTemp.equals("eof_mid") || leftTemp.equals("eof_hi") || leftTemp.trim().charAt(0) == (';'))
+					if (leftTemp.equals("utility") || leftTemp.equals("description") || leftTemp.equals("head") || leftTemp.equals("tail") || leftTemp.equals("trim_leading") || leftTemp.equals("trim_trailing") || leftTemp.equals("eof_lo") || leftTemp.equals("eof_mid") || leftTemp.equals("eof_hi") || leftTemp.trim().charAt(0) == (';'))
 					{
 						if (leftTemp.trim().charAt(0) == (';'))
 						{
@@ -827,6 +830,25 @@ public class Transformation
 						if (leftTemp.equals("description"))
 						{
 							description = rightTemp1;
+						}
+						else if (leftTemp.equals("detangle"))
+						{
+							try
+							{
+								detangle = (Class<ADetangle>) java.lang.Class.forName(rightTemp1);
+							}
+							catch (ClassNotFoundException e)
+							{
+								try
+								{
+									detangle = (Class<ADetangle>) java.lang.Class.forName("org.transformenator.detangle."+rightTemp1);
+								}
+								catch (ClassNotFoundException e2)
+								{
+									// No utility for YOU!
+									System.err.println("No detangler code "+rightTemp1+" found.");
+								}
+							}
 						}
 						else if (leftTemp.equals("head"))
 						{
@@ -1167,7 +1189,7 @@ public class Transformation
 	{
 		boolean printedHeaderYet = false;
 		String prefix = "org/transformenator/transforms/";
-		CodeSource src = Transformation.class.getProtectionDomain().getCodeSource();
+		CodeSource src = GenericInterpreter.class.getProtectionDomain().getCodeSource();
 		Vector<String> transforms = new Vector<String>();
 
 		if (src != null)
@@ -1223,7 +1245,7 @@ public class Transformation
 	{
 		boolean printedHeaderYet = false;
 		String prefix = "org/transformenator/util/";
-		CodeSource src = Transformation.class.getProtectionDomain().getCodeSource();
+		CodeSource src = GenericInterpreter.class.getProtectionDomain().getCodeSource();
 		Vector<String> utilities = new Vector<String>();
 
 		if (src != null)
@@ -1328,6 +1350,7 @@ public class Transformation
 	Vector<byte[]> rightSide = new Vector<byte[]>();
 	Vector<byte[]> rightToggle = new Vector<byte[]>();
 	String description, prefix, suffix;
+	Class<ADetangle> detangle = null;
 	String inFile, outFile, transformName;
 	int trimLeading = 0, trimTrailing = 0, trimmedEnd;
 	int eofHi = 0, eofMid = 0, eofLo = 0, eofOffset = 0;

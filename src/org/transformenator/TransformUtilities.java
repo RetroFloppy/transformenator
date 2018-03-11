@@ -1,7 +1,7 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2013-2015 by David Schmidt
- * david__schmidt at users.sourceforge.net
+ * Copyright (C) 2015 by David Schmidt
+ * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU General Public License as published by the 
@@ -20,24 +20,20 @@
 
 package org.transformenator;
 
-public class RegSpec
+import org.transformenator.internal.Version;
+
+public class TransformUtilities
 {
-	// Just struct-ifying this data type
-	public byte[] leftCompare;
-	public byte[] leftMask;
-	/*
-	 * Commands: 
-	 * 0 = Normal search
-	 * 1 = EOF
-	 * 2 = SOF
-	 * 3 = SOF (greedy)
-	 */
-	public int command = 0;
-	public boolean backtrack = true;
-	public boolean toggle = false;
-	/*
-	 *  Start out in "false" state for toggling specifications -
-	 *  the first action will be to emit the first element, or "on" state
-	 */
-	public boolean toggleState = false;
+
+	public static void main(String[] args)
+	{
+		System.err.println();
+		System.err.println("TransformUtilities " + Version.VersionString + " - perform transformation utility functions.");
+		System.err.println();
+		System.err.println("Usage: TransformUtilities function parameter [parameter...]");
+		System.err.println();
+		System.err.println("  See http://transformenator.sourceforge.net/#Utility for more details.");
+		System.err.println();
+		GenericInterpreter.listUtilities();
+	}
 }

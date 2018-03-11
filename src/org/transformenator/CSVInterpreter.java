@@ -1,7 +1,7 @@
 /*
  * Transformenator - perform transformation operations on binary files
  * Copyright (C) 2016 by David Schmidt
- * david__schmidt at users.sourceforge.net
+ * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU General Public License as published by the 
@@ -35,6 +35,8 @@ import java.util.Vector;
 import java.util.Iterator;
 
 import org.transformenator.internal.EbcdicUtil;
+import org.transformenator.internal.FieldSpec;
+import org.transformenator.internal.SelectSpec;
 import org.transformenator.internal.UnsignedByte;
 
 public class CSVInterpreter

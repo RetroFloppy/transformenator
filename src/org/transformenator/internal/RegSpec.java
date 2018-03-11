@@ -1,7 +1,7 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2016 by David Schmidt
- * david__schmidt at users.sourceforge.net
+ * Copyright (C) 2013-2015 by David Schmidt
+ * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU General Public License as published by the 
@@ -18,32 +18,26 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.transformenator;
+package org.transformenator.internal;
 
-public class FieldSpec
+public class RegSpec
 {
-	// Struct-ifying field specifications
-	public String fieldName = "";
-	public int fieldOrigin = 0;
-	public int fieldLength = 0;
+	// Just struct-ifying this data type
+	public byte[] leftCompare;
+	public byte[] leftMask;
 	/*
-	 * Interpretation of field:
-	 * 0 = error
-	 * 1 = ASCII text
-	 * 2 = EBCDIC text
-	 * 3 = Hex dump
+	 * Commands: 
+	 * 0 = Normal search
+	 * 1 = EOF
+	 * 2 = SOF
+	 * 3 = SOF (greedy)
 	 */
-	public int interp = 0;
-	public boolean csvLiteral = false;
-	
-	public static String interpString(int interp)
-	{
-		switch (interp)
-		{
-			case 1: return "ASCII";
-			case 2: return "EBCDIC";
-			case 3: return "HEX";
-		}
-		return "<undefined>";
-	}
+	public int command = 0;
+	public boolean backtrack = true;
+	public boolean toggle = false;
+	/*
+	 *  Start out in "false" state for toggling specifications -
+	 *  the first action will be to emit the first element, or "on" state
+	 */
+	public boolean toggleState = false;
 }

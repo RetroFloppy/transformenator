@@ -1,7 +1,7 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2014 - 2018 by David Schmidt
- * david__schmidt at users.sourceforge.net
+ * Copyright (C) 2016 by David Schmidt
+ * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU General Public License as published by the 
@@ -18,9 +18,11 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.transformenator;
+package org.transformenator.internal;
 
-public class Version
+public class SelectSpec
 {
-	public static String VersionString = "v2.0-beta";
+	// Struct-ifying record selection criteria
+	public int offset;
+	public byte[] rightCompare;
 }

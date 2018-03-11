@@ -1,7 +1,7 @@
 /*
  * Transformenator - perform transformation operations on binary files
  * Copyright (C) 2016 by David Schmidt
- * david__schmidt at users.sourceforge.net
+ * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU General Public License as published by the 
@@ -29,8 +29,8 @@ import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import org.transformenator.Version;
 import org.transformenator.internal.UnsignedByte;
+import org.transformenator.internal.Version;
 
 /*
  * ExtractMagiFiles
