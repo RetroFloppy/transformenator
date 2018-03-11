@@ -1122,11 +1122,11 @@ public class Transformation
 					// SOF reached
 					if (foundSOF == false)
 					{
-						outBuf.reset();
 						bytesMatched = currLeftLength;
+						outBuf.reset();
 						foundSOF = true;
-					}
-					break;
+						break;
+					} // Else we already found (non-greedy) SOF, so keep matching
 				}
 				else if (currentSpec.command == 3)
 				{
