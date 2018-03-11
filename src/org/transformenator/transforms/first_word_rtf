@@ -1,0 +1,31 @@
+;
+description = "First Word word processor, output in RTF."
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = " }"
+
+; Skip header cruft 
+trim_leading = 29
+
+; Space
+1e = 20
+
+; Newline really is newline
+0d0a = "\\r\\n\par "
+
+; Italics on/off
+1b88 = "\i1 "
+1b80 = "\i0 "
+
+; Footnotes - the problem is there can be multiple footnotes.  There's a begin for each,
+;   But if there's multiples - there's a single end marker (0x1f45).  So annotating
+;   them as real footnotes in RTF is difficult.
+1f4e................................ = "\\r\\n\par <Footnote begin>\\r\\n\par "
+1f45 = "\\r\\n\par <Footnote end>\\r\\n\par "
+
+; Ruler (7f/2e productions bounded by numbers and brackets)
+; i.e. 9[...................................................]001
+1f..................................................................................................................................5d...... = 
