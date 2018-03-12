@@ -59,6 +59,14 @@ public class GenericInterpreter
 		return description;
 	}
 
+	public String detanglerName()
+	{
+		if (detangler != null)
+			return detangler.getName();
+		else
+			return null;
+	}
+
 	public boolean createOutput(String inFile, String outFile)
 	{
 		return createOutput(inFile, outFile, "txt");

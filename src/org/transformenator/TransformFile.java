@@ -61,6 +61,13 @@ public class TransformFile
 				}
 				else
 					System.out.println("No description available for transform \""+args[0]+"\".");
+				String detanglerName = transform.detanglerName();
+				if (detanglerName != null)
+				{
+					System.err.println();
+					System.err.println("Detangler: ");
+					System.out.println(detanglerName);
+				}
 			}
 			else
 			{
