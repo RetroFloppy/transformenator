@@ -1,7 +1,7 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2012 - 2013 by David Schmidt
- * david__schmidt at users.sourceforge.net
+ * Copyright (C) 2013 - 2014 by David Schmidt
+ * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU General Public License as published by the 
@@ -20,46 +20,61 @@
 
 package org.transformenator;
 
-public class Transformenator
+import org.transformenator.internal.Version;
+
+public class TransformFile
 {
-/*
- * This has just become an alias of TransformFile.
- */
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("TransformFile "+Version.VersionString+" - perform transformation operations on binary files.");
+		System.err.println("TransformFile " + Version.VersionString + " - perform transformation operations on files.");
 		System.err.println();
-		System.err.println("Usage: TransformFile transform infile outfile");
+		System.err.println("Usage: TransformFile <transform> <infile> <out_directory> [suffix]");
 		System.err.println();
-		System.err.println("  See http://transformenator.sourceforge.net/ for transform file specification.");
-		System.err.println("  If using a valdocs transform, outfile specifies an output directory.");
+		System.err.println("See transform file specification documentation here:");
+		System.err.println("   https://github.com/RetroFloppy/transformenator/wiki/Transform-Specification");
 		System.err.println();
-		Transformation.listInternalTransforms();
+		GenericInterpreter.listInternalTransforms();
 	}
 
 	public static void main(String[] args)
 	{
 		if (args.length > 0)
 		{
-			Transformation transform = new Transformation(args[0]);
-			if (args.length == 3)
+			GenericInterpreter transform = new GenericInterpreter(args[0]);
+			if (args.length == 4)
+			{
+				if (transform != null)
+				{
+					transform.createOutput(args[1], args[2], args[3]);
+				}
+			}
+			else if (args.length == 3)
 			{
 				if (transform != null)
 				{
 					transform.createOutput(args[1], args[2]);
 				}
 			}
-			else if (args.length == 1)
+			else if ((args.length == 1) && (transform.isOK))
 			{
 				String description = transform.describe();
 				if (description != null)
 				{
+					System.err.println();
 					System.err.println("Description: ");
 					System.out.println(description);
 				}
 				else
 					System.out.println("No description available for transform \""+args[0]+"\".");
+				String detanglerName = transform.detanglerName();
+				if (detanglerName != null)
+				{
+					System.err.println();
+					System.err.println("Detangler: ");
+					System.out.println(detanglerName);
+				}
 			}
 			else
 			{

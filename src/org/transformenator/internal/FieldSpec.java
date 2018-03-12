@@ -1,7 +1,7 @@
 /*
  * Transformenator - perform transformation operations on binary files
  * Copyright (C) 2016 by David Schmidt
- * david__schmidt at users.sourceforge.net
+ * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU General Public License as published by the 
@@ -18,40 +18,32 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.transformenator.util;
+package org.transformenator.internal;
 
-import org.transformenator.CSVInterpreter;
-import org.transformenator.Version;
-
-/*
- * ExtractCSV
- * 
- * The intent of this helper app is to take a file and interpret it as 
- * records and fields, extracting a .csv file in the process.
- *
- */
-public class ExtractCSV
+public class FieldSpec
 {
-
-	public static void main(java.lang.String[] args)
+	// Struct-ifying field specifications
+	public String fieldName = "";
+	public int fieldOrigin = 0;
+	public int fieldLength = 0;
+	/*
+	 * Interpretation of field:
+	 * 0 = error
+	 * 1 = ASCII text
+	 * 2 = EBCDIC text
+	 * 3 = Hex dump
+	 */
+	public int interp = 0;
+	public boolean csvLiteral = false;
+	
+	public static String interpString(int interp)
 	{
-		if (args.length == 3)
+		switch (interp)
 		{
-			CSVInterpreter csvi = new CSVInterpreter(args[0]);
-			csvi.createOutput(args[1], args[2]);
+			case 1: return "ASCII";
+			case 2: return "EBCDIC";
+			case 3: return "HEX";
 		}
-		else
-		{
-			// wrong args
-			help();
-		}
-	}
-
-	public static void help()
-	{
-		System.err.println();
-		System.err.println("ExtractCSV " + Version.VersionString + " - extract fixed-length records from a file as comma seperated values.");
-		System.err.println();
-		System.err.println("Usage: ExtractCSV csv-transform infile outfile.csv");
+		return "<undefined>";
 	}
 }

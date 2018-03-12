@@ -1,7 +1,7 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2016 by David Schmidt
- * david__schmidt at users.sourceforge.net
+ * Copyright (C) 2015 by David Schmidt
+ * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU General Public License as published by the 
@@ -20,9 +20,20 @@
 
 package org.transformenator;
 
-public class SelectSpec
+import org.transformenator.internal.Version;
+
+public class TransformUtilities
 {
-	// Struct-ifying record selection criteria
-	public int offset;
-	public byte[] rightCompare;
+
+	public static void main(String[] args)
+	{
+		System.err.println();
+		System.err.println("TransformUtilities " + Version.VersionString + " - perform transformation utility functions.");
+		System.err.println();
+		System.err.println("Usage: TransformUtilities function parameter [parameter...]");
+		System.err.println();
+		System.err.println("  See http://transformenator.sourceforge.net/#Utility for more details.");
+		System.err.println();
+		GenericInterpreter.listUtilities();
+	}
 }
