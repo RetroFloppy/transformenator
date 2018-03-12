@@ -67,17 +67,13 @@ public class GenericInterpreter
 			return null;
 	}
 
-	public boolean createOutput(String inFile, String outFile)
+	public boolean createOutput(String inFile, String outDirectory)
 	{
-		return createOutput(inFile, outFile, "txt");
+		return createOutput(inFile, outDirectory, "txt");
 	}
 
-	public boolean createOutput(String inFile, String outFile, String fileSuffix)
+	public boolean createOutput(String inFile, String outDirectory, String fileSuffix)
 	{
-		/*
-		 * We specify the literal outFile in the general case. For Valdocs, though, we discover the real filename once we start looking inside the file itself. So in those cases where we need to re-create the outFile filename, we look up the directory where outFile should be placed and generate a new filename using the supplied fileSuffix along with the newly discovered filename.
-		 */
-		String valdocsName = null;
 		foundSOF = false;
 		if (isOK)
 		{
@@ -123,61 +119,7 @@ public class GenericInterpreter
 			if ((inData != null) && (inData.length > 0))
 			{
 				// System.err.println("Incoming data length: "+inData.length);
-				if (transformName.toUpperCase().equalsIgnoreCase("VALDOCS"))
-				{
-					// If they are using a Valdocs transform, let's pick apart the file first.
-					System.err.println("De-indexing valdocs file " + file);
-					// Figure out the original file name
-					char[] name = new char[110];
-					byte[] newBuf = new byte[inData.length];
-					int newBufCursor = 0;
-					for (int i = 0; i < 110; i++)
-					{
-						char newChar = (char) inData[i + 4];
-						if (newChar == ':')
-							newChar = '-';
-						else if (newChar == '/')
-							newChar = '-';
-						else if (newChar == '?')
-							newChar = 'x';
-						name[i] = newChar;
-					}
-					valdocsName = new String(name).trim();
-					System.err.println("Found file: \"" + valdocsName + "\"");
-					if (valdocsName.length() > 0)
-					{
-						/*
-						 * Pick apart the file hunk indices. The first few indices seem to be non-useful... so start in at 0x80a. It's unclear how deep the indices can go. It's possible it should look deeper than it does, but the field of 0xFFs has some noise near the end.
-						 * 
-						 * Each index is a pointer to the next 512 bytes (a sector) of data in the file.
-						 */
-						for (int i = 0x80a; i < 0xa00; i += 2)
-						{
-							int idx = UnsignedByte.intValue(inData[i], inData[i + 1]);
-							if (idx < 32768)
-							{
-								// System.err.println("DEBUG: idx: "+idx);
-								if (((idx * 512) + 1) < inData.length)
-								{
-									// Chunks may start with a pointer to skip over blank space
-									int offset = UnsignedByte.intValue(inData[(idx * 512)], inData[(idx * 512) + 1]);
-									// Pull out the data in the chunk
-									for (int j = offset + 4; j < 0x200; j++)
-									{
-										newBuf[newBufCursor++] = inData[(idx * 512) + j];
-									}
-								}
-								// else
-								// System.err.println("DEBUG: Found an index out of bounds: "+idx);
-							}
-						}
-						inData = new byte[newBufCursor];
-						for (int i = 0; i < newBufCursor; i++)
-							inData[i] = newBuf[i];
-						// System.err.println("DEBUG: Data length after de-indexing: "+inData.length);
-					}
-				}
-				else if (transformName.toUpperCase().equalsIgnoreCase("LEADING_EDGE"))
+				if (transformName.toUpperCase().equalsIgnoreCase("LEADING_EDGE"))
 				{
 					// If they are using a Leading Edge Word Processor transform, let's pick apart the file first.
 					System.err.println("De-indexing Leading Edge file " + file);
@@ -354,6 +296,8 @@ public class GenericInterpreter
 						Object t = detangler.newInstance();
 						Method detangle = detangler.getDeclaredMethod("detangle", byte[].class);
 						inData = (byte[]) detangle.invoke(t, inData);
+						Method getNewName = detangler.getDeclaredMethod("getNewName");
+						newName = (String) getNewName.invoke(t);
 					} catch (NoSuchMethodException e) {
 						e.printStackTrace();
 					} catch (SecurityException e) {
@@ -370,7 +314,8 @@ public class GenericInterpreter
 					// System.err.println("DEBUG: After detangling, length: "+inData.length);
 				}
 				// Dump what we have so far
-				File f2 = new File("hello");
+				/*
+				File f2 = new File("intermediate");
 				FileOutputStream f2o;
 				try {
 					f2o = new FileOutputStream(f2);
@@ -380,6 +325,7 @@ public class GenericInterpreter
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				*/
 				// System.err.println("DEBUG: Trimming leading "+trimLeading+" and "+ trimTrailing +" trailing bytes.");
 				trimmedEnd = inData.length - trimTrailing;
 				// Clean out the toggle states
@@ -403,28 +349,22 @@ public class GenericInterpreter
 				}
 				if (isOK) try
 				{
-					if ((valdocsName != null) && (valdocsName.length() > 0))
+					// If they wanted an output directory, go ahead and make it.
+					File baseDirFile = new File(outDirectory);
+					if (!baseDirFile.isAbsolute())
 					{
-						/*
-						 * Valdocs files contain their own names internally. If the outFile was passed in to us as a literal filename, then get the parent directory's name and use that instead along with the newly discovered file name. If outFile was passed in as a directory, then use it as the place to write the newly discovered file name.
-						 */
-						File tmpOutFile = new File(outFile);
-						if (tmpOutFile.isDirectory())
-						{
-							/*
-							 * We have a directory - so just append the newly discovered filename.
-							 */
-							outFile = outFile + File.separator + valdocsName + "." + fileSuffix;
-						}
-						else
-						{
-							/*
-							 * Get the directory parent of the specified file and use that to re-generate a new file path with the newly discovered filename.
-							 */
-							outFile = tmpOutFile.getAbsoluteFile().getParentFile().toString() + File.separator + valdocsName + "." + fileSuffix;
-						}
-						System.err.println("Creating file: \"" + outFile + "\"");
+						baseDirFile = new File("." + File.separator + outDirectory);
 					}
+					// System.out.println("Making directory: ["+baseDirFile+"]");
+					baseDirFile.mkdir();
+
+					/*
+					 * We have a directory - so just append the newly discovered filename.
+					 */
+					if (newName == null)
+						newName = file.getName();
+					String outFile = outDirectory + File.separator + newName + "." + fileSuffix;
+					System.err.println("Creating file: \"" + outFile + "\"");
 					FileOutputStream out = new FileOutputStream(outFile);
 					if (prefix != null)
 					{
@@ -1249,9 +1189,9 @@ public class GenericInterpreter
 	Vector<RegSpec> leftSide = new Vector<RegSpec>();
 	Vector<byte[]> rightSide = new Vector<byte[]>();
 	Vector<byte[]> rightToggle = new Vector<byte[]>();
-	String description, prefix, suffix;
+	String description, prefix, suffix, newName = null;
 	Class<ADetangler> detangler = null;
-	String inFile, outFile, transformName;
+	String inFile, transformName;
 	int trimLeading = 0, trimTrailing = 0, trimmedEnd;
 	int eofHi = 0, eofMid = 0, eofLo = 0, eofOffset = 0;
 	boolean foundSOF;

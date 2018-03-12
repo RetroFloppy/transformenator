@@ -1,5 +1,6 @@
 ;
-description = "Valdocs transform.  Note - any transform with 'valdocs' in the file name will trigger additional processing to untangle the indices from the original .val file."
+description = "Valdocs from Epson QX-10 (CP/M) transform."
+detangler = Valdocs
 ;
 
 ; All control structures

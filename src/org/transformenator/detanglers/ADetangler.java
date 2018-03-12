@@ -28,4 +28,5 @@ package org.transformenator.detanglers;
 public abstract class ADetangler
 {
 	  public abstract byte[] detangle(byte inData[]);
+	  public abstract String getNewName();
 }

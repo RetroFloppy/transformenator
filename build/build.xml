@@ -33,7 +33,7 @@
 		<copy todir="${outdir}/${version}">
 			<fileset dir="${basedir}">
 				<include name="LICENSE"/>
-				<include name="readme.txt"/>
+				<include name="README.md"/>
 			</fileset>
 		</copy>
 		<copy todir="${outdir}/${version}">
@@ -44,7 +44,6 @@
 		</copy>
 		<copy todir="${outdir}/${version}">
 			<fileset dir="${basedir}/doc">
-				<include name="readme.txt"/>
 			</fileset>
 		</copy>
 		<jar jarfile="${outdir}/${version}/transformenator.jar"

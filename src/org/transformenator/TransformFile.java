@@ -30,7 +30,7 @@ public class TransformFile
 		System.err.println();
 		System.err.println("TransformFile " + Version.VersionString + " - perform transformation operations on files.");
 		System.err.println();
-		System.err.println("Usage: TransformFile transform infile outfile");
+		System.err.println("Usage: TransformFile <transform> <infile> <out_directory> [suffix]");
 		System.err.println();
 		System.err.println("See transform file specification documentation here:");
 		System.err.println("   https://github.com/RetroFloppy/transformenator/wiki/Transform-Specification");
@@ -43,7 +43,14 @@ public class TransformFile
 		if (args.length > 0)
 		{
 			GenericInterpreter transform = new GenericInterpreter(args[0]);
-			if (args.length == 3)
+			if (args.length == 4)
+			{
+				if (transform != null)
+				{
+					transform.createOutput(args[1], args[2], args[3]);
+				}
+			}
+			else if (args.length == 3)
 			{
 				if (transform != null)
 				{

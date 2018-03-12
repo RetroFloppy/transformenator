@@ -25,6 +25,11 @@ public class Null extends ADetangler
 	@Override
 	public byte[] detangle(byte[] inData)
 	{
-		return inData;
+		return null;
+	}
+
+	@Override
+	public String getNewName() {
+		return null;
 	}
 }

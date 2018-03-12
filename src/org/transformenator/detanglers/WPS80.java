@@ -38,7 +38,7 @@ public class WPS80 extends ADetangler
 	@Override
 	public byte[] detangle(byte[] inData)
 	{
-		ByteBuffer bb = ByteBuffer.allocate(10000);
+		ByteBuffer bb = ByteBuffer.allocate(inData.length);
 		if ((inData.length % 256) > 0)
 		{
 			System.err.println("Warning: file size is not an integral of 256, this may not be a WPS-80 file.");
@@ -60,7 +60,8 @@ public class WPS80 extends ADetangler
 				e.printStackTrace();
 			}
 		}
-		return bb.array();
+		inData = bb.array();
+		return inData;
 	}
 
 	static int nextWpsPage(byte[] inData, int thisPage)
@@ -83,5 +84,10 @@ public class WPS80 extends ADetangler
 			}
 		}
 		return nextPage;
+	}
+
+	@Override
+	public String getNewName() {
+		return null;
 	}
 }

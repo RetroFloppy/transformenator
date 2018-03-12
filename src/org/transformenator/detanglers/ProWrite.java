@@ -71,4 +71,10 @@ public class ProWrite extends ADetangler
 			System.err.println("Not a ProWrite file.");
 		return inData;
 	}
+
+	@Override
+	public String getNewName() {
+		return null;
+	}
+
 }

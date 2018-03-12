@@ -116,4 +116,9 @@ public class DisplayWrite extends ADetangler {
 		return len;
 	}
 
+	@Override
+	public String getNewName() {
+		return null;
+	}
+
 }
