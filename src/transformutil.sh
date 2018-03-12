@@ -14,5 +14,5 @@ if [ "$1" != "" ]
 then
 	java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.util."$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9"
 else
-	java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.util.TransformUtilities
+	java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.TransformUtilities
 fi

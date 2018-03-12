@@ -48,6 +48,6 @@
 @goto end
 
 :usage
-@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.util.TransformUtilities
+@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.TransformUtilities
 
 :end
