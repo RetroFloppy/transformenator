@@ -28,8 +28,8 @@ import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 
-import org.transformenator.Version;
 import org.transformenator.internal.UnsignedByte;
+import org.transformenator.internal.Version;
 
 /*
  * ConvertCatweaselDatastream

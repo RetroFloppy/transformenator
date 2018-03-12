@@ -1,5 +1,6 @@
 ;
-description = "DEC Rainbow WPS-80 format.  Assumes files pre-processed with ConvertWps80File utility."
+description = "DEC Rainbow WPS-80 format."
+detangler = WPS80
 ;
 
 ; Header for RTF format

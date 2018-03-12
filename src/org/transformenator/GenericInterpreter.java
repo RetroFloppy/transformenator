@@ -1,7 +1,7 @@
 /*
- * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2013 - 2015 by David Schmidt
- * david__schmidt at users.sourceforge.net
+ * Transformenator - perform transformation operations on files
+ * Copyright (C) 2013 - 2018 by David Schmidt
+ * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU General Public License as published by the 
@@ -32,20 +32,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.security.CodeSource;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.transformenator.detanglers.ADetangler;
+import org.transformenator.internal.RegSpec;
 import org.transformenator.internal.UnsignedByte;
 
-public class Transformation
+public class GenericInterpreter
 {
 	public boolean isOK = false;
-	public Transformation(String transform_name)
+	public GenericInterpreter(String transform_name)
 	{
 		transformName = transform_name;
 		isOK = readTransform(transform_name);
@@ -56,17 +59,21 @@ public class Transformation
 		return description;
 	}
 
-	public boolean createOutput(String inFile, String outFile)
+	public String detanglerName()
 	{
-		return createOutput(inFile, outFile, "txt");
+		if (detangler != null)
+			return detangler.getName();
+		else
+			return null;
 	}
 
-	public boolean createOutput(String inFile, String outFile, String fileSuffix)
+	public boolean createOutput(String inFile, String outDirectory)
 	{
-		/*
-		 * We specify the literal outFile in the general case. For Valdocs, though, we discover the real filename once we start looking inside the file itself. So in those cases where we need to re-create the outFile filename, we look up the directory where outFile should be placed and generate a new filename using the supplied fileSuffix along with the newly discovered filename.
-		 */
-		String valdocsName = null;
+		return createOutput(inFile, outDirectory, "txt");
+	}
+
+	public boolean createOutput(String inFile, String outDirectory, String fileSuffix)
+	{
 		foundSOF = false;
 		if (isOK)
 		{
@@ -112,108 +119,7 @@ public class Transformation
 			if ((inData != null) && (inData.length > 0))
 			{
 				// System.err.println("Incoming data length: "+inData.length);
-				if (transformName.toUpperCase().equalsIgnoreCase("VALDOCS"))
-				{
-					// If they are using a Valdocs transform, let's pick apart the file first.
-					System.err.println("De-indexing valdocs file " + file);
-					// Figure out the original file name
-					char[] name = new char[110];
-					byte[] newBuf = new byte[inData.length];
-					int newBufCursor = 0;
-					for (int i = 0; i < 110; i++)
-					{
-						char newChar = (char) inData[i + 4];
-						if (newChar == ':')
-							newChar = '-';
-						else if (newChar == '/')
-							newChar = '-';
-						else if (newChar == '?')
-							newChar = 'x';
-						name[i] = newChar;
-					}
-					valdocsName = new String(name).trim();
-					System.err.println("Found file: \"" + valdocsName + "\"");
-					if (valdocsName.length() > 0)
-					{
-						/*
-						 * Pick apart the file hunk indices. The first few indices seem to be non-useful... so start in at 0x80a. It's unclear how deep the indices can go. It's possible it should look deeper than it does, but the field of 0xFFs has some noise near the end.
-						 * 
-						 * Each index is a pointer to the next 512 bytes (a sector) of data in the file.
-						 */
-						for (int i = 0x80a; i < 0xa00; i += 2)
-						{
-							int idx = UnsignedByte.intValue(inData[i], inData[i + 1]);
-							if (idx < 32768)
-							{
-								// System.err.println("DEBUG: idx: "+idx);
-								if (((idx * 512) + 1) < inData.length)
-								{
-									// Chunks may start with a pointer to skip over blank space
-									int offset = UnsignedByte.intValue(inData[(idx * 512)], inData[(idx * 512) + 1]);
-									// Pull out the data in the chunk
-									for (int j = offset + 4; j < 0x200; j++)
-									{
-										newBuf[newBufCursor++] = inData[(idx * 512) + j];
-									}
-								}
-								// else
-								// System.err.println("DEBUG: Found an index out of bounds: "+idx);
-							}
-						}
-						inData = new byte[newBufCursor];
-						for (int i = 0; i < newBufCursor; i++)
-							inData[i] = newBuf[i];
-						// System.err.println("DEBUG: Data length after de-indexing: "+inData.length);
-					}
-				}
-				else if ((transformName.length() > 13) && (transformName.toUpperCase().substring(0, 13).equalsIgnoreCase("DISPLAYWRITE_")))
-				{
-					if ((inData.length > 0x66) && ((UnsignedByte.intValue(inData[0x64]) == 0xaa) && (UnsignedByte.intValue(inData[0x65]) == 0xaa) && (UnsignedByte.intValue(inData[0x66]) == 0xaa)))
-					{
-						// If they are using a DisplayWrite transform, let's pick apart the file first.
-						System.err.println("De-indexing DisplayWrite file " + file);
-						/*
-						 * Pick apart the file chunk indices. Chunk indices start at 0x6b and follow 3 bytes of 0xaa. There are a maximum of 59 indices.
-						 * 
-						 * Each index is a pointer to a hunk at 512 bytes * the index number in the file.
-						 */
-						byte[] newBuf = new byte[inData.length];
-						int newBufCursor = 0, bytesFound;
-						for (int i = 0x6b; i < 0x200; i += 7)
-						{
-							// System.err.println("DEBUG: Asking for chunk #"+(1+(i-0x6b)/7));
-							bytesFound = grabDisplayWriteChunk(inData, newBuf, i, newBufCursor);
-							// System.err.println("DEBUG: Got chunk, pulled "+bytesFound+" bytes.");
-							newBufCursor += bytesFound;
-						}
-						if (inData.length > 0x11200)
-						{
-							for (int i = 0x11010; i < 0x11200; i += 7)
-							{
-								bytesFound = grabDisplayWriteChunk(inData, newBuf, i, newBufCursor);
-								// System.err.println("DEBUG: Got chunk, pulled "+bytesFound+" bytes.");
-								newBufCursor += bytesFound;
-							}
-							if (inData.length > 0x25100)
-								for (int i = 0x25010; i < 0x25100; i += 7)
-								{
-									bytesFound = grabDisplayWriteChunk(inData, newBuf, i, newBufCursor);
-									// System.err.println("DEBUG: Got chunk, pulled "+bytesFound+" bytes.");
-									newBufCursor += bytesFound;
-								}
-						}
-						inData = new byte[newBufCursor];
-						for (int i = 0; i < newBufCursor; i++)
-							inData[i] = newBuf[i];
-						// System.err.println("DEBUG: Data length after de-indexing: "+inData.length);
-					}
-					else
-					{
-						System.err.println("Probably not a Displaywrite file.");
-						isOK = false;
-					}
-				}
-				else if (transformName.toUpperCase().equalsIgnoreCase("LEADING_EDGE"))
+				if (transformName.toUpperCase().equalsIgnoreCase("LEADING_EDGE"))
 				{
 					// If they are using a Leading Edge Word Processor transform, let's pick apart the file first.
 					System.err.println("De-indexing Leading Edge file " + file);
@@ -369,55 +275,6 @@ public class Transformation
 						inData[i] = newBuf[i];
 					// System.err.println("DEBUG: Data length after de-indexing: "+inData.length);
 				}
-				else if ((transformName.length() > 9) && (transformName.toUpperCase().substring(0, 9).equalsIgnoreCase("PROWRITE_")))
-				{
-					byte[] newBuf = new byte[inData.length];
-					byte textEyecatcher[] = { 0x54, 0x45, 0x58, 0x54 }; // "TEXT"
-					byte paraEyecatcher[] = { 0x50, 0x41, 0x52, 0x41 }; // "PARA"
-					byte formEyecatcher[] = { 0x46, 0x4f, 0x52, 0x4d }; // "FORM"
-					int length, newBufCursor = 0;
-					// byte[] byteSegment;
-					// String segment;
-					if (Arrays.equals(Arrays.copyOfRange(inData, 0, 4), formEyecatcher))
-					{
-						System.err.println("Interpreting ProWrite file " + file);
-						for (int i = 0; i < inData.length; i ++)
-						{
-							if (inData.length - i > 8)
-							{
-								byte range[] = Arrays.copyOfRange(inData, i, i+0x04);
-								length = UnsignedByte.intValue(inData[i+7]) + 256*(UnsignedByte.intValue(inData[i+6]));
-								if (Arrays.equals(range, textEyecatcher))
-								{
-									// System.out.println("Found text segment @ $"+Integer.toHexString(i)+" for length "+length);
-									if (length > 0)
-									{
-										// byteSegment = Arrays.copyOfRange(inData, i+8, i+8+length);
-										// segment = new String(byteSegment);
-										// System.out.println("["+segment+"]");
-										// System.out.println(segment);
-										for (int k = 0; k < length; k++)
-										{
-											newBuf[newBufCursor++] = inData[i + 8 + k];
-										}
-										i += length; // Move past this text segment
-									}
-									newBuf[newBufCursor++] = 0x0d;
-									newBuf[newBufCursor++] = 0x0a;
-								}
-								else if (Arrays.equals(range, paraEyecatcher))
-								{
-									// System.out.println("Found para segment @ $"+Integer.toHexString(i)+" for length "+length);
-								}
-							}
-						}
-						inData = new byte[newBufCursor];
-						for (int i = 0; i < newBufCursor; i++)
-							inData[i] = newBuf[i];
-					}
-					else
-						System.err.println("Not a ProWrite file: " + file);
-				}
 				// Did they ask for a EOF to be calculated from inside the file? Get it!
 				if (eofLo + eofMid + eofHi + eofOffset > 0)
 				{
@@ -431,6 +288,44 @@ public class Transformation
 					// System.err.println("DEBUG: After dereference, calculated EOF: "+calculatedEOF);
 					trimTrailing = inData.length - calculatedEOF;
 				}
+				if (detangler != null)
+				{
+					System.err.println("Using detangler "+detangler.getName());
+					try
+					{
+						Object t = detangler.newInstance();
+						Method detangle = detangler.getDeclaredMethod("detangle", byte[].class);
+						inData = (byte[]) detangle.invoke(t, inData);
+						Method getNewName = detangler.getDeclaredMethod("getNewName");
+						newName = (String) getNewName.invoke(t);
+					} catch (NoSuchMethodException e) {
+						e.printStackTrace();
+					} catch (SecurityException e) {
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					} catch (IllegalArgumentException e) {
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						e.printStackTrace();
+					} catch (InstantiationException e) {
+						e.printStackTrace();
+					}
+					// System.err.println("DEBUG: After detangling, length: "+inData.length);
+				}
+				// Dump what we have so far
+				/*
+				File f2 = new File("intermediate");
+				FileOutputStream f2o;
+				try {
+					f2o = new FileOutputStream(f2);
+					f2o.write(inData,0,inData.length);
+					f2o.flush();
+					f2o.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				*/
 				// System.err.println("DEBUG: Trimming leading "+trimLeading+" and "+ trimTrailing +" trailing bytes.");
 				trimmedEnd = inData.length - trimTrailing;
 				// Clean out the toggle states
@@ -454,28 +349,22 @@ public class Transformation
 				}
 				if (isOK) try
 				{
-					if ((valdocsName != null) && (valdocsName.length() > 0))
+					// If they wanted an output directory, go ahead and make it.
+					File baseDirFile = new File(outDirectory);
+					if (!baseDirFile.isAbsolute())
 					{
-						/*
-						 * Valdocs files contain their own names internally. If the outFile was passed in to us as a literal filename, then get the parent directory's name and use that instead along with the newly discovered file name. If outFile was passed in as a directory, then use it as the place to write the newly discovered file name.
-						 */
-						File tmpOutFile = new File(outFile);
-						if (tmpOutFile.isDirectory())
-						{
-							/*
-							 * We have a directory - so just append the newly discovered filename.
-							 */
-							outFile = outFile + File.separator + valdocsName + "." + fileSuffix;
-						}
-						else
-						{
-							/*
-							 * Get the directory parent of the specified file and use that to re-generate a new file path with the newly discovered filename.
-							 */
-							outFile = tmpOutFile.getAbsoluteFile().getParentFile().toString() + File.separator + valdocsName + "." + fileSuffix;
-						}
-						System.err.println("Creating file: \"" + outFile + "\"");
+						baseDirFile = new File("." + File.separator + outDirectory);
 					}
+					// System.out.println("Making directory: ["+baseDirFile+"]");
+					baseDirFile.mkdir();
+
+					/*
+					 * We have a directory - so just append the newly discovered filename.
+					 */
+					if (newName == null)
+						newName = file.getName();
+					String outFile = outDirectory + File.separator + newName + "." + fileSuffix;
+					System.err.println("Creating file: \"" + outFile + "\"");
 					FileOutputStream out = new FileOutputStream(outFile);
 					if (prefix != null)
 					{
@@ -510,53 +399,6 @@ public class Transformation
 		return 0;
 	}
 
-	public int grabDisplayWriteChunk(byte[] inData, byte[] newBuf, int i, int newBufCursor)
-	{
-		int len = 0;
-		if (((UnsignedByte.intValue(inData[i]) == 0xaa) && (UnsignedByte.intValue(inData[i + 1]) == 0xaa) && (UnsignedByte.intValue(inData[i + 2]) == 0xaa)) || ((UnsignedByte.intValue(inData[i]) == 0x00) && (UnsignedByte.intValue(inData[i + 1]) > 0x00) && (UnsignedByte.intValue(inData[i + 2]) == 0x00)))
-		{
-			int idx = UnsignedByte.intValue(inData[i + 4], inData[i + 3]);
-			len = UnsignedByte.intValue(inData[i + 6], inData[i + 5]) + 6;
-			// System.err.println("DEBUG: idx: 0x"+UnsignedByte.toString(idx)+" length: "+len);
-			if (idx < 32768)
-			{
-				if (((idx * 512) + 1) < inData.length)
-				{
-					// System.err.println("DEBUG: Pulling data from "+idx*512+" to "+((idx*512)+len)+".");
-					/*
-					 * Need to hunt for the SOT. It will be 3 bytes: 0xe80700.
-					 */
-					int offset = 0;
-					for (int j = 0; j < 0xff; j++)
-					{
-						if ((UnsignedByte.intValue(inData[(idx * 512) + j + 0]) == 0xe8) && (UnsignedByte.intValue(inData[(idx * 512) + j + 1]) == 0x07) && (UnsignedByte.intValue(inData[(idx * 512) + j + 2]) == 0x00))
-						{
-							offset = j + 3;
-							// System.err.println("DEBUG: Found start of text at offset 0x"+UnsignedByte.toString(offset));
-						}
-					}
-					if (offset == 0)
-					{
-						System.err.println("No SOT found for index 0x" + UnsignedByte.toString(idx) + ".");
-					}
-					// Pull out the data in the chunk
-					else
-					{
-						if (idx*512 + len > inData.length)
-							len = inData.length - (idx * 512);
-						for (int k = offset; k < len; k++)
-						{
-							newBuf[newBufCursor++] = inData[(idx * 512) + k];
-						}
-					}
-				}
-				else
-					System.err.println("Found an index out of bounds: " + idx);
-			}
-		}
-		return len;
-	}
-
 	public boolean readTransform(String filename)
 	{
 		isOK = true;
@@ -583,7 +425,7 @@ public class Transformation
 			try
 			{
 				InputStream is;
-				is = Transformenator.class.getResourceAsStream("/org/transformenator/transforms/" + filename);
+				is = TransformFile.class.getResourceAsStream("/org/transformenator/transforms/" + filename);
 				if (is != null)
 				{
 					InputStreamReader isr = new InputStreamReader(is);
@@ -604,6 +446,7 @@ public class Transformation
 		return isOK;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void parseTransforms(Reader fr)
 	{
 		String line;
@@ -665,7 +508,7 @@ public class Transformation
 					skip = false;
 					// System.err.println("DEBUG Left side token: ["+leftTemp+"]");
 					// If you add a left side keyword that will get consumed, be sure to add it here, otherwise the fall through processing will try to eat it:
-					if (leftTemp.equals("description") || leftTemp.equals("head") || leftTemp.equals("tail") || leftTemp.equals("trim_leading") || leftTemp.equals("trim_trailing") || leftTemp.equals("eof_lo") || leftTemp.equals("eof_mid") || leftTemp.equals("eof_hi") || leftTemp.trim().charAt(0) == (';'))
+					if (leftTemp.equals("detangler") || leftTemp.equals("description") || leftTemp.equals("head") || leftTemp.equals("tail") || leftTemp.equals("trim_leading") || leftTemp.equals("trim_trailing") || leftTemp.equals("eof_lo") || leftTemp.equals("eof_mid") || leftTemp.equals("eof_hi") || leftTemp.trim().charAt(0) == (';'))
 					{
 						if (leftTemp.trim().charAt(0) == (';'))
 						{
@@ -827,6 +670,25 @@ public class Transformation
 						if (leftTemp.equals("description"))
 						{
 							description = rightTemp1;
+						}
+						else if (leftTemp.equals("detangler"))
+						{
+							try
+							{
+								detangler = (Class<ADetangler>) java.lang.Class.forName(rightTemp1);
+							}
+							catch (ClassNotFoundException e)
+							{
+								try
+								{
+									detangler = (Class<ADetangler>) java.lang.Class.forName("org.transformenator.detanglers."+rightTemp1.trim());
+								}
+								catch (ClassNotFoundException e2)
+								{
+									// No detangler for YOU!
+									System.err.println("No detangler code "+rightTemp1.trim()+" found.");
+								}
+							}
 						}
 						else if (leftTemp.equals("head"))
 						{
@@ -1035,7 +897,7 @@ public class Transformation
 			byte[] maskLeft = leftSide.elementAt(i).leftMask;
 			byte[] replRight = rightSide.elementAt(i);
 			byte[] replRightToggle = rightToggle.elementAt(i);
-			// rightToggle.
+
 			match = true;
 			for (int j = 0; j < compLeft.length; j++)
 			{
@@ -1053,7 +915,7 @@ public class Transformation
 			}
 			if (match == true)
 			{
-				// System.err.println("DEBUG Found a match at offset "+offset+"; left length = "+currLeftLength+" command: "+currentSpec.command+" backtrack: "+currentSpec.backtrack);
+				// System.err.println("DEBUG Match @ offset 0x"+Integer.toHexString(offset)+"; left length = "+currLeftLength+" command: "+currentSpec.command+" backtrack: "+currentSpec.backtrack);
 				if (currentSpec.command == 0)
 				{
 					try
@@ -1167,7 +1029,7 @@ public class Transformation
 	{
 		boolean printedHeaderYet = false;
 		String prefix = "org/transformenator/transforms/";
-		CodeSource src = Transformation.class.getProtectionDomain().getCodeSource();
+		CodeSource src = GenericInterpreter.class.getProtectionDomain().getCodeSource();
 		Vector<String> transforms = new Vector<String>();
 
 		if (src != null)
@@ -1223,7 +1085,7 @@ public class Transformation
 	{
 		boolean printedHeaderYet = false;
 		String prefix = "org/transformenator/util/";
-		CodeSource src = Transformation.class.getProtectionDomain().getCodeSource();
+		CodeSource src = GenericInterpreter.class.getProtectionDomain().getCodeSource();
 		Vector<String> utilities = new Vector<String>();
 
 		if (src != null)
@@ -1327,8 +1189,9 @@ public class Transformation
 	Vector<RegSpec> leftSide = new Vector<RegSpec>();
 	Vector<byte[]> rightSide = new Vector<byte[]>();
 	Vector<byte[]> rightToggle = new Vector<byte[]>();
-	String description, prefix, suffix;
-	String inFile, outFile, transformName;
+	String description, prefix, suffix, newName = null;
+	Class<ADetangler> detangler = null;
+	String inFile, transformName;
 	int trimLeading = 0, trimTrailing = 0, trimmedEnd;
 	int eofHi = 0, eofMid = 0, eofLo = 0, eofOffset = 0;
 	boolean foundSOF;
