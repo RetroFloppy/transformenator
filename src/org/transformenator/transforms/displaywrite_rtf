@@ -1,5 +1,6 @@
 ;
-description = "DisplayWrite (3?) format, EBCDIC input, output in RTF.  Note - any transform with 'displaywrite_' in the file name will trigger additional processing to untangle the indices from the original file."
+description = "DisplayWrite (3?) format, EBCDIC input, output in RTF."
+detangler = DisplayWrite
 ;
 
 ; Header for RTF format

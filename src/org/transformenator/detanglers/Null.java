@@ -18,11 +18,13 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.transformenator.detangle;
+package org.transformenator.detanglers;
 
-public class Null extends ADetangle{
+public class Null extends ADetangler
+{
 	@Override
-	public byte[] detangle(byte[] inData) {
+	public byte[] detangle(byte[] inData)
+	{
 		return inData;
 	}
 }

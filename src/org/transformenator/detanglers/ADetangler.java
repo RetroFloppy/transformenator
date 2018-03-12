@@ -18,8 +18,14 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.transformenator.detangle;
+/*
+ * Abstract class for detangler types.  The only thing descendants of this class
+ * need to do is take in a byte[] and send back a byte[] after having done 
+ * whatever detangling work is necessary on it.
+ */
+package org.transformenator.detanglers;
 
-public abstract class ADetangle {
+public abstract class ADetangler
+{
 	  public abstract byte[] detangle(byte inData[]);
 }

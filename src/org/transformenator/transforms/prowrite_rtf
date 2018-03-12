@@ -1,7 +1,6 @@
 ;
 description = "Amiga ProWrite to RTF."
-;
-; Note - has associated interpretation/detangler in Transformenation.java
+detangler = ProWrite
 ;
 
 ; Header for RTF format
