@@ -114,9 +114,8 @@ public class TransformDirectory
 							}
 							else
 							{
-								String newFileName = conditionFileName(files[i].getName());
-								System.out.println("Transforming file: " + files[i] + " to file: " + out_directory + java.io.File.separator + newFileName + "." + file_suffix);
-								transform.createOutput(files[i].toString(), out_directory + java.io.File.separator + newFileName + "." + file_suffix, file_suffix);
+								System.out.println("Transforming file: " + files[i] + " to directory: " + out_directory);
+								transform.createOutput(files[i].toString(), out_directory, file_suffix);
 							}
 						}
 					}

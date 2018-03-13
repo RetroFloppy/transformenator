@@ -74,6 +74,7 @@ public class GenericInterpreter
 
 	public boolean createOutput(String inFile, String outDirectory, String fileSuffix)
 	{
+		String newName = null;
 		foundSOF = false;
 		if (isOK)
 		{
@@ -1189,7 +1190,7 @@ public class GenericInterpreter
 	Vector<RegSpec> leftSide = new Vector<RegSpec>();
 	Vector<byte[]> rightSide = new Vector<byte[]>();
 	Vector<byte[]> rightToggle = new Vector<byte[]>();
-	String description, prefix, suffix, newName = null;
+	String description, prefix, suffix;
 	Class<ADetangler> detangler = null;
 	String inFile, transformName;
 	int trimLeading = 0, trimTrailing = 0, trimmedEnd;

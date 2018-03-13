@@ -19,4 +19,4 @@ fe = 0d0a
 00 = "{@@<FiLe_SoF>@@}"
 fd = "{@@<FiLe_EoF>@@}"
 
-regex=@<Control>.?\ @@
+regex=@<Control>.*\ @@
