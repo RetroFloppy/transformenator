@@ -19,14 +19,26 @@
  */
 
 /*
- * Abstract class for detangler types.  The only thing descendants of this class
- * need to do is take in a byte[] and send back a byte[] after having done 
- * whatever detangling work is necessary on it.
+ * Abstract class for detangler types.  Descendants of this class need to
+ * take in a byte[] and send back a byte[] after having done whatever
+ * detangling work is necessary on it.  They can optionally return a new
+ * file name, potentially derived from the contents of the incoming data.
+ * If there is no file name modification required, getNewName() can return
+ * null.
  */
 package org.transformenator.detanglers;
 
 public abstract class ADetangler
 {
-	  public abstract byte[] detangle(byte inData[]);
-	  public abstract String getNewName();
+	/*
+	 * Given a byte stream, do whatever work is necessary to "flatten" or
+	 * detangle the file.
+	 */
+	public abstract byte[] detangle(byte inData[]);
+
+	/*
+	 * If the byte stream coming in includes a specification of a file
+	 * name, send that back out.  If not, return null.
+	 */
+	public abstract String getNewName();
 }

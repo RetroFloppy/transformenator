@@ -20,12 +20,15 @@
 
 package org.transformenator.detanglers;
 
+/*
+ * Null detangler - i.e. do nothing to the input, just send it back out.
+ */
 public class Null extends ADetangler
 {
 	@Override
 	public byte[] detangle(byte[] inData)
 	{
-		return null;
+		return inData;
 	}
 
 	@Override

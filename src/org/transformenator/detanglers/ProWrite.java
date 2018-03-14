@@ -43,7 +43,7 @@ public class ProWrite extends ADetangler
 					length = UnsignedByte.intValue(inData[i+7]) + 256*(UnsignedByte.intValue(inData[i+6]));
 					if (Arrays.equals(range, textEyecatcher))
 					{
-						// System.out.println("Found text segment @ $"+Integer.toHexString(i)+" for length "+length);
+						// System.err.println("Found text segment @ $"+Integer.toHexString(i)+" for length "+length);
 						if (length > 0)
 						{
 							for (int k = 0; k < length; k++)
@@ -51,15 +51,15 @@ public class ProWrite extends ADetangler
 								newBuf[newBufCursor++] = inData[i + 8 + k];
 							}
 							i += length; // Move past this text segment
-							// System.out.println("cursor after text: "+newBufCursor);
+							// System.err.println("cursor after text: "+newBufCursor);
 						}
 						newBuf[newBufCursor++] = 0x0d;
 						newBuf[newBufCursor++] = 0x0a;
-						// System.out.println("cursor after newl: "+newBufCursor);
+						// System.err.println("cursor after newl: "+newBufCursor);
 					}
 					else if (Arrays.equals(range, paraEyecatcher))
 					{
-						// System.out.println("Found para segment @ $"+Integer.toHexString(i)+" for length "+length);
+						// System.err.println("Found para segment @ $"+Integer.toHexString(i)+" for length "+length);
 					}
 				}
 			}
