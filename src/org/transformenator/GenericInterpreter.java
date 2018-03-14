@@ -289,22 +289,26 @@ public class GenericInterpreter
 					// System.err.println("DEBUG: After dereference, calculated EOF: "+calculatedEOF);
 					trimTrailing = inData.length - calculatedEOF;
 				}
-				try
+				if (detangler != null)
 				{
-					inData = (byte[]) detangle.invoke(t, inData);
-					newName = (String) getNewName.invoke(t);
-				}
-				catch (IllegalAccessException e)
-				{
-					e.printStackTrace();
-				}
-				catch (IllegalArgumentException e)
-				{
-					e.printStackTrace();
-				}
-				catch (InvocationTargetException e)
-				{
-					e.printStackTrace();
+					// Run the detangler if the transform specifies one
+					try
+					{
+						inData = (byte[]) detangle.invoke(t, inData);
+						newName = (String) getNewName.invoke(t);
+					}
+					catch (IllegalAccessException e)
+					{
+						e.printStackTrace();
+					}
+					catch (IllegalArgumentException e)
+					{
+						e.printStackTrace();
+					}
+					catch (InvocationTargetException e)
+					{
+						e.printStackTrace();
+					}
 				}
 				// System.err.println("DEBUG: Trimming leading "+trimLeading+" and "+ trimTrailing +" trailing bytes.");
 				trimmedEnd = inData.length - trimTrailing;
@@ -364,6 +368,7 @@ public class GenericInterpreter
 					}
 					out.flush();
 					out.close();
+					//newName = null;
 				}
 				catch (Exception ex)
 				{
