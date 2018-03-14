@@ -2,7 +2,26 @@
 description = "Very minor cleanup for Panasonic KX-* word processor files - works with ExtractPanasonicFiles utility."
 ;
 
+; Likely double-space
+D6 = 0d0a0d0a
+
+; Possibly SOF
+AC =
+
+; Emphasis on
+F8 = 
+FA =
+FD = """
+; Emphasis off
+F9 =
+FB =
+FE = """
+
+; Newline
 0d = 0d0a
 
+; 0xC5 is definitely an EOF
+c5 = "{@@<FiLe_EoF>@@}"
+
 ; Ensure that if we accidentally span files, cut it off there
-00 = "{@@<FiLe_EoF>@@}"
+;00 = "{@@<FiLe_EoF>@@}"
