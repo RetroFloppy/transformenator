@@ -1,13 +1,22 @@
 ;
-description = "C64 word processor Word Writer 4"
+description = "C64 word processor Timeworks Word Writer"
 ;
 
-; Remove first x101 bytes
-trim_leading = 0101
+7a = "<Control>"
 
 ; Translate a-z down in the control character range up to ASCII
 [01..1a] = 61
 
+; Emphasis on
+d5=
+; Emphasis off
+95=
+
 ; Newlines
 ff = 0d
 fe = 0d0a
+
+00 = "{@@<FiLe_SoF>@@}"
+fd = "{@@<FiLe_EoF>@@}"
+
+regex=@<Control>.*\ @@

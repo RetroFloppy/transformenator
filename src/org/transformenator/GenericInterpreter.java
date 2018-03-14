@@ -74,6 +74,7 @@ public class GenericInterpreter
 
 	public boolean createOutput(String inFile, String outDirectory, String fileSuffix)
 	{
+		String newName = null;
 		foundSOF = false;
 		if (isOK)
 		{
@@ -134,7 +135,7 @@ public class GenericInterpreter
 					for (int indexIndex = 0x400; indexIndex < 0x500; indexIndex += 2)
 					{
 						int indexStart = UnsignedByte.intValue(inData[indexIndex], inData[indexIndex + 1]);
-						// System.out.println("DEBUG: Index start value: "+indexStart);
+						// System.err.println("DEBUG: Index start value: "+indexStart);
 						if ((indexStart >= 65520) || (indexStart < 9))
 							continue;
 						if (indexStart == 9)
@@ -288,44 +289,23 @@ public class GenericInterpreter
 					// System.err.println("DEBUG: After dereference, calculated EOF: "+calculatedEOF);
 					trimTrailing = inData.length - calculatedEOF;
 				}
-				if (detangler != null)
+				try
 				{
-					System.err.println("Using detangler "+detangler.getName());
-					try
-					{
-						Object t = detangler.newInstance();
-						Method detangle = detangler.getDeclaredMethod("detangle", byte[].class);
-						inData = (byte[]) detangle.invoke(t, inData);
-						Method getNewName = detangler.getDeclaredMethod("getNewName");
-						newName = (String) getNewName.invoke(t);
-					} catch (NoSuchMethodException e) {
-						e.printStackTrace();
-					} catch (SecurityException e) {
-						e.printStackTrace();
-					} catch (IllegalAccessException e) {
-						e.printStackTrace();
-					} catch (IllegalArgumentException e) {
-						e.printStackTrace();
-					} catch (InvocationTargetException e) {
-						e.printStackTrace();
-					} catch (InstantiationException e) {
-						e.printStackTrace();
-					}
-					// System.err.println("DEBUG: After detangling, length: "+inData.length);
+					inData = (byte[]) detangle.invoke(t, inData);
+					newName = (String) getNewName.invoke(t);
 				}
-				// Dump what we have so far
-				/*
-				File f2 = new File("intermediate");
-				FileOutputStream f2o;
-				try {
-					f2o = new FileOutputStream(f2);
-					f2o.write(inData,0,inData.length);
-					f2o.flush();
-					f2o.close();
-				} catch (Exception e) {
+				catch (IllegalAccessException e)
+				{
 					e.printStackTrace();
 				}
-				*/
+				catch (IllegalArgumentException e)
+				{
+					e.printStackTrace();
+				}
+				catch (InvocationTargetException e)
+				{
+					e.printStackTrace();
+				}
 				// System.err.println("DEBUG: Trimming leading "+trimLeading+" and "+ trimTrailing +" trailing bytes.");
 				trimmedEnd = inData.length - trimTrailing;
 				// Clean out the toggle states
@@ -355,7 +335,7 @@ public class GenericInterpreter
 					{
 						baseDirFile = new File("." + File.separator + outDirectory);
 					}
-					// System.out.println("Making directory: ["+baseDirFile+"]");
+					// System.err.println("Making directory: ["+baseDirFile+"]");
 					baseDirFile.mkdir();
 
 					/*
@@ -364,7 +344,7 @@ public class GenericInterpreter
 					if (newName == null)
 						newName = file.getName();
 					String outFile = outDirectory + File.separator + newName + "." + fileSuffix;
-					System.err.println("Creating file: \"" + outFile + "\"");
+					System.out.println("Creating file: \"" + outFile + "\"");
 					FileOutputStream out = new FileOutputStream(outFile);
 					if (prefix != null)
 					{
@@ -443,6 +423,40 @@ public class GenericInterpreter
 		}
 		if (isOK == false)
 			System.err.println("Unable to locate transform file named \"" + filename + "\".");
+		if (detangler != null)
+		{
+			System.err.println("Using detangler "+detangler.getName());
+			try
+			{
+				t = detangler.newInstance();
+				detangle = detangler.getDeclaredMethod("detangle", byte[].class);
+				getNewName = detangler.getDeclaredMethod("getNewName");
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			}
+			// System.err.println("DEBUG: After detangling, length: "+inData.length);
+		}
+		// Dump what we have so far
+		/*
+		File f2 = new File("intermediate");
+		FileOutputStream f2o;
+		try {
+			f2o = new FileOutputStream(f2);
+			f2o.write(inData,0,inData.length);
+			f2o.flush();
+			f2o.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		*/
 		return isOK;
 	}
 
@@ -1183,13 +1197,19 @@ public class GenericInterpreter
 		}
 	}
 
+	// Dynamic class loading for detangler
+	Object t;
+	Method detangle;
+	Method getNewName;
+
+	// Global variables
 	byte inData[] = null;
 	Vector<String> regPattern = new Vector<String>();
 	Vector<String> regReplace = new Vector<String>();
 	Vector<RegSpec> leftSide = new Vector<RegSpec>();
 	Vector<byte[]> rightSide = new Vector<byte[]>();
 	Vector<byte[]> rightToggle = new Vector<byte[]>();
-	String description, prefix, suffix, newName = null;
+	String description, prefix, suffix;
 	Class<ADetangler> detangler = null;
 	String inFile, transformName;
 	int trimLeading = 0, trimTrailing = 0, trimmedEnd;
