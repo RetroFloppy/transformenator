@@ -111,23 +111,21 @@ public class ExtractPanasonicFiles
 
 	static void emitFiles(byte[] inData, String baseName)
 	{
-		// System.err.print("Filename: " + filename + "  File number: " + UnsignedByte.toString(filenumber));
-		// System.err.println();
 		for (int i = 0x100; i < 0x1c00; i+=0x20)
 		{
 			String filename = "";
-			int result = 0, j;
+			int j, result = 0;
 			for (j = 0x10; j < 0x19; j++)
 				result += inData[i+j];
-			if (result == 0x10)
+			filename = "";
+			for (j = 0x00; j < 0x0a; j++)
 			{
-				filename = "";
-				for (j = 0x00; j < 0x0a; j++)
-				{
-					if (UnsignedByte.intValue(inData[i+j]) != 0xe5)
-						filename += (char)inData[i+j];
-				}
-				filename = filename.trim();
+				if (UnsignedByte.intValue(inData[i+j]) != 0xe5)
+					filename += (char)inData[i+j];
+			}
+			filename = filename.trim();
+			if ((filename.length() > 0) && (result == 0))
+			{
 				System.err.println("Creating file: " + baseName + filename);
 				try
 				{
