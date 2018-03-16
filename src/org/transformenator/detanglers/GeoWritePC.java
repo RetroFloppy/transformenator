@@ -23,13 +23,13 @@ package org.transformenator.detanglers;
 import java.util.Arrays;
 import org.transformenator.internal.UnsignedByte;
 
-public class Canon extends ADetangler
+public class GeoWritePC extends ADetangler
 {
 	@Override
 	public byte[] detangle(byte[] inData) {
 
 		/*
-		 * Canon Starwriter (not the early ETW one, but the later proto-WYSIWYG one.)
+		 * GeoWritePC Starwriter (not the early ETW one, but the later proto-WYSIWYG one.)
 		 * We still don't know how to order the segments.
 		 */
 		byte[] newBuf = new byte[inData.length];
@@ -93,7 +93,7 @@ public class Canon extends ADetangler
 			inData = Arrays.copyOfRange(newBuf, 0, newBufCursor);
 		}
 		else
-			System.err.println("Not a Canon Starwriter file.");
+			System.err.println("Not a GeoWritePC Starwriter file.");
 		return inData;
 	}
 

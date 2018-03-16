@@ -1,0 +1,9 @@
+;
+description="GeoWrite (PC) word processor"
+;
+detangler=GeoWritePC
+
+; Emdash
+be="--"
+
+0d=0d0a

@@ -1,9 +1,0 @@
-;
-description="Canon word processor"
-;
-detangler=Canon
-
-; Emdash
-be="--"
-
-0d=0d0a
