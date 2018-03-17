@@ -2,10 +2,12 @@ package org.transformenator.detanglers;
 
 import org.transformenator.internal.UnsignedByte;
 
-public class LeadingEdge extends ADetangler {
+public class LeadingEdge extends ADetangler
+{
 
 	@Override
-	public byte[] detangle(byte[] inData) {
+	public byte[] detangle(byte[] inData)
+	{
 		/*
 		 * Pick apart the file hunk indices. Hunk indices start at 0x1200.
 		 * 
@@ -15,7 +17,8 @@ public class LeadingEdge extends ADetangler {
 		byte[] newBuf = new byte[inData.length];
 		int newBufCursor = 0;
 		boolean found9Yet = false;
-		for (int indexIndex = 0x400; indexIndex < 0x500; indexIndex += 2) {
+		for (int indexIndex = 0x400; indexIndex < 0x500; indexIndex += 2)
+		{
 			int indexStart = UnsignedByte.intValue(inData[indexIndex], inData[indexIndex + 1]);
 			// System.err.println("DEBUG: Index start value: "+indexStart);
 			if ((indexStart >= 65520) || (indexStart < 9))
@@ -28,7 +31,8 @@ public class LeadingEdge extends ADetangler {
 			// System.err.println("DEBUG: Found index table
 			// 0x"+UnsignedByte.toString(inData[indexIndex+1])+UnsignedByte.toString(inData[indexIndex])+"
 			// at "+indexStart);
-			for (int i = indexStart; i < indexStart + 256; i += 2) {
+			for (int i = indexStart; i < indexStart + 256; i += 2)
+			{
 				int block = UnsignedByte.intValue(inData[i], inData[i + 1]);
 				int index = block * 512;
 				// System.err.println("DEBUG: block:
@@ -37,8 +41,10 @@ public class LeadingEdge extends ADetangler {
 				// 0x"+UnsignedByte.toString(UnsignedByte.hiByte(index))+UnsignedByte.toString(UnsignedByte.loByte(index)));
 				if (block == 0)
 					break;
-				if (block < 32768) {
-					if (index + 1 < inData.length) {
+				if (block < 32768)
+				{
+					if (index + 1 < inData.length)
+					{
 						int j;
 						// Find out where the block really ends - remove trailing zeroes
 						for (j = index + 511; j >= index; j--)
@@ -47,10 +53,12 @@ public class LeadingEdge extends ADetangler {
 						// System.err.println("DEBUG: Found end of chunk at "+j+", or length
 						// "+(j-index)+".");
 						// Pull out the data in the chunk
-						for (int k = 0; k < (j - index + 1); k++) {
+						for (int k = 0; k < (j - index + 1); k++)
+						{
 							newBuf[newBufCursor++] = inData[index + k];
 						}
-					} else
+					}
+					else
 						System.err.println("Found an index out of bounds: " + block);
 				}
 			}
@@ -63,7 +71,8 @@ public class LeadingEdge extends ADetangler {
 	}
 
 	@Override
-	public String getNewName() {
+	public String getNewName()
+	{
 		// No name change associated with LEWP
 		return null;
 	}
