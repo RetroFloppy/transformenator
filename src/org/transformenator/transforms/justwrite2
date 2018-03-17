@@ -1,5 +1,6 @@
 ;
-description = "JustWrite 2 word processor.  Bears some resemblance to the earlier version of JustWrite, but this one has a much more complex index/chain structure.  Additional processing is present in the Transformenation class to untangle that based on seeing the transform name 'justwrite2'."
+description = "JustWrite 2 word processor.  Bears some resemblance to the earlier version of JustWrite, but this one has a much more complex index/chain structure."
+detangler = JustWrite
 ;
 
 ; Start of file, maybe page eject
