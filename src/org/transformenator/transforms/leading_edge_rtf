@@ -1,5 +1,6 @@
 ;
 description = "Leading Edge Word Processor."
+detangler = LeadingEdge
 ;
 
 ; Header for RTF format - Note 1.5 line spacing \sl360
