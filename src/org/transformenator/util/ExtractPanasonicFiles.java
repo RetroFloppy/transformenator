@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2015 by David Schmidt
+ * Copyright (C) 2015 - 2018 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -131,8 +131,10 @@ public class ExtractPanasonicFiles
 				{
 					currentOut = new FileOutputStream(baseName + filename);
 					int fileHead = UnsignedByte.intValue(inData[i+0x1a],inData[i+0x1b]);
+					int fileLength = UnsignedByte.intValue(inData[i+0x1c],inData[i+0x1d]);
 					fileHead = (fileHead * 0x400) + 0x1400 + 0x110;
-					for (j = fileHead; j < inData.length - fileHead; j++)
+					fileLength = fileLength - 0x110;
+					for (j = fileHead; j < fileHead+fileLength; j++)
 					{
 						if (UnsignedByte.intValue(inData[j]) != 0xc5)
 							currentOut.write(inData[j]);
