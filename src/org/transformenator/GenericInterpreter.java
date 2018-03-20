@@ -890,7 +890,6 @@ public class GenericInterpreter
 
 	public static void listInternalTransforms()
 	{
-		boolean printedHeaderYet = false;
 		String prefix = "org/transformenator/transforms/";
 		CodeSource src = GenericInterpreter.class.getProtectionDomain().getCodeSource();
 		Vector<String> transforms = new Vector<String>();
@@ -910,15 +909,8 @@ public class GenericInterpreter
 					if (entryName.startsWith(prefix))
 					{
 						String finalName = entryName.substring(prefix.length());
-						transforms.add(finalName);
 						if (finalName.length() > 0)
-						{
-							if (printedHeaderYet == false)
-							{
-								System.err.println("Available internal transform files:");
-								printedHeaderYet = true;
-							}
-						}
+							transforms.add(finalName);
 					}
 				}
 			}
@@ -926,20 +918,20 @@ public class GenericInterpreter
 			{
 				e.printStackTrace();
 			}
-			if (!printedHeaderYet)
+			File path = new File(jar.getPath() + prefix);
+			File[] listOfFiles = path.listFiles();
+			if (listOfFiles != null)
 			{
-				File path = new File(jar.getPath() + prefix);
-				File[] listOfFiles = path.listFiles();
-				if (listOfFiles != null)
+				int offset = path.toString().length() + 1;
+				String name;
+				for (int i = 0; i < listOfFiles.length; i++)
 				{
-					int offset = path.toString().length() + 1;
-					System.err.println("Available internal transform files:");
-					for (int i = 0; i < listOfFiles.length; i++)
-					{
-						transforms.add(listOfFiles[i].toString().substring(offset));
-					}
+					name = listOfFiles[i].toString().substring(offset).trim();
+					if (!name.equals("") && !name.equals(".gitignore") && !name.equals(".cvsignore"))
+						transforms.add(name);
 				}
 			}
+			System.err.println("Available internal transform files:");
 			printElements(transforms);
 		}
 	}
@@ -1029,6 +1021,7 @@ public class GenericInterpreter
 			int halfway = (int)elements.size() / 2;
 			if (elements.size() % 2 > 0)
 				halfway += 1;
+			System.err.println("halfway: "+halfway);
 			for (int i = 0; i < halfway; i++)
 			{
 				System.err.print("  "+elements.get(i));
