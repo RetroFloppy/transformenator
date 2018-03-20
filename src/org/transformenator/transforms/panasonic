@@ -20,8 +20,14 @@ FE = """
 ; Newline
 0d = 0d0a
 
+; Might be an emdash, or maybe newline
+e8 = " "
+
+01 =
+03 =
+ 
 ; 0xC5 is definitely an EOF
 c5 = "{@@<FiLe_EoF>@@}"
 
 ; Ensure that if we accidentally span files, cut it off there
-;00 = "{@@<FiLe_EoF>@@}"
+00 = "{@@<FiLe_EoF>@@}"
