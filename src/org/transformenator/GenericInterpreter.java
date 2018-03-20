@@ -1021,7 +1021,6 @@ public class GenericInterpreter
 			int halfway = (int)elements.size() / 2;
 			if (elements.size() % 2 > 0)
 				halfway += 1;
-			System.err.println("halfway: "+halfway);
 			for (int i = 0; i < halfway; i++)
 			{
 				System.err.print("  "+elements.get(i));
