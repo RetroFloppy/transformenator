@@ -1,0 +1,29 @@
+;
+description="Spinnaker WinWorks; documents start with "WINWORKS DOCUMENT" in the header."
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Start of file
+101602001616030016160400161605001616060016="{@@<FiLe_SoF>@@}"
+
+; Italics on
+16040116 = "\i1 "
+; Italics off
+16040016 = "\i0 "
+
+; Bold on
+16030116 = "\b1 "
+; Bold off
+16030016 = "\b0 "
+
+; Newline productions
+11......11 = "\\r\\n\par "
+..000000000000 = "\\r\\n "
+..010000000000 = "\\r\\n "
+..020000000000 = "\\r\\n "
+..030000000000 = "\\r\\n "
+....0000040000 =
