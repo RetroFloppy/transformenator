@@ -22,6 +22,7 @@ package org.transformenator;
 
 import java.io.File;
 
+import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.Version;
 
 public class TransformDirectory
@@ -35,7 +36,7 @@ public class TransformDirectory
 				tranformDirectory(null, args[0], args[1]);
 			else
 			{
-				GenericInterpreter transform = new GenericInterpreter(args[0]);
+				FileInterpreter transform = new FileInterpreter(args[0]);
 				if (args.length == 3)
 					tranformDirectory(transform, args[0], args[1], args[2], false);
 				else if (args.length == 4)
@@ -48,7 +49,7 @@ public class TransformDirectory
 			help();
 	}
 
-	public static void tranformDirectory(GenericInterpreter transform, String transform_name, String in_directory)
+	public static void tranformDirectory(FileInterpreter transform, String transform_name, String in_directory)
 	{
 		if (transform_name.equals("fix_filenames"))
 		{
@@ -62,7 +63,7 @@ public class TransformDirectory
 			help();
 	}
 
-	public static void tranformDirectory(GenericInterpreter transform, String transform_name, String in_directory, String out_directory, boolean only_fix_filenames)
+	public static void tranformDirectory(FileInterpreter transform, String transform_name, String in_directory, String out_directory, boolean only_fix_filenames)
 	{
 		/*
 		 * Guess a suitable file suffix based on the final part of the transform name
@@ -75,7 +76,7 @@ public class TransformDirectory
 		tranformDirectory(transform, transform_name, in_directory, out_directory, suffix_guess, only_fix_filenames);
 	}
 
-	public static void tranformDirectory(GenericInterpreter transform, String transform_name, String in_directory, String out_directory, String file_suffix, boolean only_fix_filenames)
+	public static void tranformDirectory(FileInterpreter transform, String transform_name, String in_directory, String out_directory, String file_suffix, boolean only_fix_filenames)
 	{
 		/*
 		 * Get the files in the in_directory For each file, check if it's a file or a directory. - If a file: Transform it - If a directory: recursively call tranformDirectory

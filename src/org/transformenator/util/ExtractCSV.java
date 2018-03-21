@@ -18,8 +18,9 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.transformenator;
+package org.transformenator.util;
 
+import org.transformenator.internal.CSVInterpreter;
 import org.transformenator.internal.Version;
 
 /*
@@ -29,7 +30,7 @@ import org.transformenator.internal.Version;
  * records and fields, extracting a .csv file in the process.
  *
  */
-public class TransformCSV
+public class ExtractCSV
 {
 
 	public static void main(java.lang.String[] args)

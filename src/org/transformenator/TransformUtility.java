@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2015 by David Schmidt
+ * Copyright (C) 2015 - 2018 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -20,20 +20,22 @@
 
 package org.transformenator;
 
+import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.Version;
 
-public class TransformUtilities
+public class TransformUtility
 {
 
 	public static void main(String[] args)
 	{
 		System.err.println();
-		System.err.println("TransformUtilities " + Version.VersionString + " - perform transformation utility functions.");
+		System.err.println("TransformUtility " + Version.VersionString + " - perform transformation utility functions.");
 		System.err.println();
-		System.err.println("Usage: TransformUtilities function parameter [parameter...]");
+		System.err.println("Usage: TransformUtility function parameter [parameter...]");
 		System.err.println();
-		System.err.println("  See http://transformenator.sourceforge.net/#Utility for more details.");
+		System.err.println("  For more details, see:");
+		System.err.println("  https://github.com/RetroFloppy/transformenator/wiki/Utility-Functions");
 		System.err.println();
-		GenericInterpreter.listUtilities();
+		FileInterpreter.listUtilities();
 	}
 }

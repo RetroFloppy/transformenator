@@ -18,7 +18,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.transformenator;
+package org.transformenator.internal;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -41,14 +41,13 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.transformenator.TransformFile;
 import org.transformenator.detanglers.ADetangler;
-import org.transformenator.internal.RegSpec;
-import org.transformenator.internal.UnsignedByte;
 
-public class GenericInterpreter
+public class FileInterpreter
 {
 	public boolean isOK = false;
-	public GenericInterpreter(String transform_name)
+	public FileInterpreter(String transform_name)
 	{
 		transformName = transform_name;
 		isOK = readTransform(transform_name);
@@ -891,7 +890,7 @@ public class GenericInterpreter
 	public static void listInternalTransforms()
 	{
 		String prefix = "org/transformenator/transforms/";
-		CodeSource src = GenericInterpreter.class.getProtectionDomain().getCodeSource();
+		CodeSource src = FileInterpreter.class.getProtectionDomain().getCodeSource();
 		Vector<String> transforms = new Vector<String>();
 
 		if (src != null)
@@ -940,7 +939,7 @@ public class GenericInterpreter
 	{
 		boolean printedHeaderYet = false;
 		String prefix = "org/transformenator/util/";
-		CodeSource src = GenericInterpreter.class.getProtectionDomain().getCodeSource();
+		CodeSource src = FileInterpreter.class.getProtectionDomain().getCodeSource();
 		Vector<String> utilities = new Vector<String>();
 
 		if (src != null)
@@ -965,7 +964,7 @@ public class GenericInterpreter
 								System.err.println("Transformenator utility functions available:");
 								printedHeaderYet = true;
 							}
-							if ((finalName.indexOf('$') == -1) && (!finalName.equals("TransformUtilities.class")))
+							if ((finalName.indexOf('$') == -1) && (!finalName.equals("TransformUtility.class")))
 							{
 								utilities.add(finalName.substring(0, finalName.length() - 6));
 							}
@@ -988,7 +987,7 @@ public class GenericInterpreter
 					for (int i = 0; i < listOfFiles.length; i++)
 					{
 						String finalName = listOfFiles[i].toString().substring(offset);
-						if ((finalName.indexOf('$') == -1) && (!finalName.equals("TransformUtilities.class")))
+						if ((finalName.indexOf('$') == -1) && (!finalName.equals("TransformUtility.class")))
 						{
 							utilities.add(finalName.substring(0, finalName.length() - 6));
 						}

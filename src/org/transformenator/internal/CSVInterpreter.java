@@ -18,7 +18,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.transformenator;
+package org.transformenator.internal;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -33,11 +33,6 @@ import java.io.Reader;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Iterator;
-
-import org.transformenator.internal.EbcdicUtil;
-import org.transformenator.internal.FieldSpec;
-import org.transformenator.internal.SelectSpec;
-import org.transformenator.internal.UnsignedByte;
 
 public class CSVInterpreter
 {

@@ -20,6 +20,7 @@
 
 package org.transformenator;
 
+import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.Version;
 
 public class TransformFile
@@ -35,14 +36,14 @@ public class TransformFile
 		System.err.println("See transform file specification documentation here:");
 		System.err.println("   https://github.com/RetroFloppy/transformenator/wiki/Transform-Specification");
 		System.err.println();
-		GenericInterpreter.listInternalTransforms();
+		FileInterpreter.listInternalTransforms();
 	}
 
 	public static void main(String[] args)
 	{
 		if (args.length > 0)
 		{
-			GenericInterpreter transform = new GenericInterpreter(args[0]);
+			FileInterpreter transform = new FileInterpreter(args[0]);
 			if (args.length == 4)
 			{
 				if (transform != null)
