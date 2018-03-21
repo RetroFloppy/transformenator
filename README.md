@@ -1,11 +1,7 @@
 # Transformenator
 
-Transformenation is something that should be possible to do with some rudimentary shell scripting. You should be able to run a binary file through sed or awk and have byte sequences change to different byte sequences.
+Transformenator is a tool (a set of tools, really) that makes it possible to do some very in-depth conversion of files from one "format" to another. It turns out that this is really, really useful when faced with files from ancient word processors, for example. They used all kinds of crazy binary annotations within a file (this is before the days of text markup, remember). With Transformenator, it's easy to swap out those binary annotations for HTML or RTF tags that all of a sudden make those ancient files readable again, maybe even with their original formatting and highlighting intact. Many samples come built into Transformenator that can make such file conversions easy.
 
-But you can't.
+There are some other things Transformenator can do that are along these same lines - extracting individual files from a disk image of some very ancient computers, converting structured records in a file into Comma Separated Values (CSV) for use in a modern spreadsheet, and some other miscellaneous utilities to aid repetitive conversion of lots of related files.
 
-You could probably run a file through a hex dumper, change hex values, then un-transform it back to binary. But that's kind of a pain too. The problem is that sed and awk work on lines, defined as things that are delineated by what they consider line ending characters like 0x0d or 0x0a. But what if your data stream contains 0x0d and 0x0a bytes - but you don't want them to count as line endings? What if you need to remove nulls, hex zeroes, or whatever you want to call them from a binary file or data stream?
-
-You're stuck.
-
-Maybe that's why you're here. Transformenator can help.  Learn more: https://github.com/RetroFloppy/transformenator/wiki
+Learn more: https://github.com/RetroFloppy/transformenator/wiki
