@@ -36,53 +36,66 @@ public class TransformFile
 		System.err.println("See transform file specification documentation here:");
 		System.err.println("   https://github.com/RetroFloppy/transformenator/wiki/Transform-Specification");
 		System.err.println();
+		System.err.println("Or invoke TransformFile help");
+		System.err.println();
 		FileInterpreter.listInternalTransforms();
+	}
+
+	public static void syntax()
+	{
+		FileInterpreter.listExamples();
 	}
 
 	public static void main(String[] args)
 	{
 		if (args.length > 0)
 		{
-			FileInterpreter transform = new FileInterpreter(args[0]);
-			if (args.length == 4)
+			if ((args.length == 1) && args[0].equalsIgnoreCase("help"))
 			{
-				if (transform != null)
-				{
-					transform.createOutput(args[1], args[2], args[3]);
-				}
-			}
-			else if (args.length == 3)
-			{
-				if (transform != null)
-				{
-					transform.createOutput(args[1], args[2]);
-				}
-			}
-			else if ((args.length == 1) && (transform.isOK))
-			{
-				String description = transform.describe();
-				if (description != null)
-				{
-					System.err.println();
-					System.err.println("Description: ");
-					System.out.println(description);
-				}
-				else
-					System.out.println("No description available for transform \""+args[0]+"\".");
-				String detanglerName = transform.detanglerName();
-				if (detanglerName != null)
-				{
-					System.err.println();
-					System.err.println("Detangler: ");
-					System.out.println(detanglerName);
-				}
+				syntax();
 			}
 			else
 			{
-				// two args
-				help();
+				FileInterpreter transform = new FileInterpreter(args[0]);
+				if (args.length == 4)
+				{
+					if (transform != null)
+					{
+						transform.createOutput(args[1], args[2], args[3]);
+					}
+				}
+				else if (args.length == 3)
+				{
+					if (transform != null)
+					{
+						transform.createOutput(args[1], args[2]);
+					}
+				}
+				else if ((args.length == 1) && (transform.isOK))
+				{
+					String description = transform.describe();
+					if (description != null)
+					{
+						System.err.println();
+						System.err.println("Description: ");
+						System.out.println(description);
+					}
+					else
+						System.out.println("No description available for transform \"" + args[0] + "\".");
+					String detanglerName = transform.detanglerName();
+					if (detanglerName != null)
+					{
+						System.err.println();
+						System.err.println("Detangler: ");
+						System.out.println(detanglerName);
+					}
+				}
+				else
+				{
+					// two args
+					help();
+				}
 			}
-
 		}
 		else
 		{
