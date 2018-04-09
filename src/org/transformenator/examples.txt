@@ -1,0 +1,50 @@
+Tranform specification examples:
+================================
+
+; This is a comment
+
+; Replace 0x00 with 0x20
+00=20
+
+; Add a newline - may need to add two
+8d # 0d0a
+0d0a9d = 0d0a0d0a
+
+; Toggle italics on and off
+7f047f % "\i1 ","\i0 "
+
+; Shift 0x41 through 0x5a up to 0x61
+[41..5a] = 61
+
+; Remove 0xf0 through 0xff
+[f0..ff] = 
+
+; Calculate the EOF based on file contents
+eof_hi = 00
+eof_mid = 7d
+eof_lo = 7c
+eof_offset = 100
+
+; Header for HTML format
+head = "<html>"
+
+; Trailer for HTML format
+tail = "</html>"
+
+; Trim the leading 0x400 bytes
+trim_leading = 0400
+
+; Trim the trailing 0xDF bytes
+trim_trailing = df
+
+; Remove margin specs: zlmxx, :rmxx
+regex = @[z|:][l|r]m[0-9]*@@
+
+; SOF is \r\n
+0d0a53 = "{@@<FiLe_SoF>@@}"
+
+; SOF may appear several times; use the last one
+1f = "{@@<FiLe_SoF_GrEeDy>@@}"
+
+; EOF is ctrl-Z
+1a = "{@@<FiLe_EoF>@@}"

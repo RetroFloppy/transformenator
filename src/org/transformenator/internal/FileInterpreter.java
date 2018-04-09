@@ -887,6 +887,41 @@ public class FileInterpreter
 		return result;
 	}
 
+	public static void listExamples()
+	{
+		InputStream is = null;
+		is = TransformFile.class.getResourceAsStream("/org/transformenator/examples.txt");
+
+		if (is != null)
+		{
+			int bytesAvailable;
+			try
+			{
+				bytesAvailable = is.available();
+				byte[] buffer = new byte[bytesAvailable];
+				int bytesRead = is.read(buffer);
+				while (bytesRead < bytesAvailable)
+				{
+					bytesRead += is.read(buffer, bytesRead, bytesAvailable - bytesRead);
+				}
+				StringBuffer sb = new StringBuffer();
+				for (int i = 0; i < buffer.length; i++)
+				{
+					sb.append((char)buffer[i]);
+				}
+				System.err.println(sb.toString());
+			}
+			catch (IOException e)
+			{
+				System.err.println("Unable to access examples.");
+			}
+		}
+		else
+		{
+			System.err.println("Unable to access examples.");
+		}
+	}
+
 	public static void listInternalTransforms()
 	{
 		String prefix = "org/transformenator/transforms/";
