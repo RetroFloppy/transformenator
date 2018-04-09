@@ -21,6 +21,7 @@ tail = " }"
 
 ; Ruler line removal
 2e72720d =
+2e2e0d = "{ruler}"
 
 ; Bold (Note - not always a toggle)
 02 % "\b1 ","\b0 "
@@ -36,6 +37,8 @@ tail = " }"
 ; Unknown emphasis
 03 =
 04 =
+0e =
+19 =
 
 ; Toggle Underline mode
 13 % "\ul ","\ul0 "
@@ -67,6 +70,7 @@ regex = @\\par \.f5.*@@
 regex = @\\par \.[p|P][l|L].*@@
 regex = @\\par \.[p|P][n|N].*@@
 regex = @\.[r|R][m|M].*@@
+regex = @\.[h|H][m|M].*@@
 regex = @\.[p|P][c|C].*@@
 regex = @\.[p|P][o|O].*@@
 regex = @\.[p|P][n|N].*@@
@@ -90,6 +94,7 @@ regex = @\.[h|H][e|E]@@
 
 ; Embedded ruler removal: .rr n
 regex = @\.[r|R][r|R].*@@
+regex = @\{ruler\}.*@@
 
 ; Continuous underlining
 regex = @\\par \.[ulon|ULON].*@@
