@@ -1,16 +1,16 @@
-Tranform specification examples:
-================================
+Tranform specification examples - all numbers are in hexadecimal:
+=================================================================
 
 ; This is a comment
 
 ; Replace 0x00 with 0x20
 00=20
 
-; Add a newline - may need to add two
+; Replace with repeat (#) - may need to add two
 8d # 0d0a
 0d0a9d = 0d0a0d0a
 
-; Toggle italics on and off
+; Toggle italics on and off (%)
 7f047f % "\i1 ","\i0 "
 
 ; Shift 0x41 through 0x5a up to 0x61
@@ -37,14 +37,14 @@ trim_leading = 0400
 ; Trim the trailing 0xDF bytes
 trim_trailing = df
 
-; Remove margin specs: zlmxx, :rmxx
-regex = @[z|:][l|r]m[0-9]*@@
+; Regular expressions - first character is taken as delimiter
+regex = @haystack@needle@
 
-; SOF is \r\n
+; SOF indicator
 0d0a53 = "{@@<FiLe_SoF>@@}"
 
-; SOF may appear several times; use the last one
+; SOF greedy - when there may be more than one
 1f = "{@@<FiLe_SoF_GrEeDy>@@}"
 
-; EOF is ctrl-Z
+; EOF indicator
 1a = "{@@<FiLe_EoF>@@}"
