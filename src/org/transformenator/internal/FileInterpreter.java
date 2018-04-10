@@ -41,7 +41,7 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.transformenator.TransformFile;
+import org.transformenator.Transform;
 import org.transformenator.detanglers.ADetangler;
 
 public class FileInterpreter
@@ -253,7 +253,7 @@ public class FileInterpreter
 			try
 			{
 				InputStream is;
-				is = TransformFile.class.getResourceAsStream("/org/transformenator/transforms/" + filename);
+				is = Transform.class.getResourceAsStream("/org/transformenator/transforms/" + filename);
 				if (is != null)
 				{
 					InputStreamReader isr = new InputStreamReader(is);
@@ -890,7 +890,7 @@ public class FileInterpreter
 	public static void listExamples()
 	{
 		InputStream is = null;
-		is = TransformFile.class.getResourceAsStream("/org/transformenator/examples.txt");
+		is = Transform.class.getResourceAsStream("/org/transformenator/examples.txt");
 
 		if (is != null)
 		{

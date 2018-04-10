@@ -1,4 +1,4 @@
-# Two-phase Architecture
+# Transformenator Architecture
 
 The transformenation of files needs to be able to support the following scenarios:
 
@@ -11,25 +11,18 @@ The transformenation of files needs to be able to support the following scenario
 
 Invocation of a program to make these file transformenations should be this:
 ``` 
-TransformFile transform_spec input_file output_directory [suffix]
+Transform transform_spec input output_directory [suffix]
 ```
 The specified `output_directory` is created if it doesn't exist.
-This transforms `input_file` to `output_directory/input_file.txt` by default, or in the case of the transform having an `_rtf`
+If `input` is a file, then the `transform_spec` is applied to that file.  If `input` is a directory, then `transform_spec` is applied to every file in that directory, and directories are scanned recursively for additional files to transform.  This has the side-effect of creating a filesystem directory tree `output_directory` that mirrors `input`.
+The file `input` will be converted to `output_directory/input_file.txt` by default, or in the case of the transform having an `_rtf`
 suffix such as `tansform_spec_rtf`, then the new file name would be `output_directory/input_file.rtf`.
 Alternatively, a suffix can be supplied as an optional parameter to specify a new suffix independent of what might otherwise have been applied.
-It can be specified to add no suffix at all by supplying two double quotes (i.e. `""`) as the optinal suffix parameter. 
+It can be specified to add no suffix at all by supplying two double quotes (i.e. `""`) as the optional suffix parameter. 
 
 In the case where there is computational reorganization of the file done prior to output file creation, the name of the
 generated file may be completely changed.
 The same rules to add a file suffix apply.
 
-Invocation of a program to make these file transformenations recursively should be this:
-``` 
-TransformDirectory transform_spec input_directory output_directory [suffix]
-```
-This will create a filesystem directory tree `output_directory` that mirrors `input_directory`, and contains all the files
-from `input_directory` as transformed by `transform_spec` with all the suffix addition rules as specified earlier.
-
-Separate from, and prior to these two phases is the extraction of individual files from a (virtual) disk image;
+Separate from, and prior to these reorganization and substitution phases is the extraction of individual files from a (virtual) disk image;
 that is handled by the various `ExtractFooFiles` utility programs.  
-

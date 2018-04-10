@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2013 - 2015 by David Schmidt
+ * Copyright (C) 2013 - 2018 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -25,24 +25,89 @@ import java.io.File;
 import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.Version;
 
-public class TransformDirectory
+public class Transform
 {
 
 	public static void main(String[] args)
 	{
-		if (args.length > 1)
+		/*
+		System.err.println("DEBUG: args.length: "+args.length);
+		for (int q = 0; q < args.length; q++)
 		{
+			System.err.println("DEBUG: args["+q+"]: "+args[q]);
+		}
+		*/
+		if ((args.length == 1) && args[0].equalsIgnoreCase("help"))
+		{
+			FileInterpreter.listExamples();
+		}
+		else if (args.length == 1)
+		{
+			// Special case: just describe the transform if they give its name
+			FileInterpreter transform = new FileInterpreter(args[0]);
+			if (transform.isOK)
+			{
+				String description = transform.describe();
+				if (description != null)
+				{
+					System.out.println();
+					System.out.println("Description: ");
+					System.out.println(description);
+				}
+				else
+					System.out.println("No description available for transform \"" + args[0] + "\".");
+				String detanglerName = transform.detanglerName();
+				if (detanglerName != null)
+				{
+					System.out.println();
+					System.out.println("Detangler: ");
+					System.out.println(detanglerName);
+				}
+			}
+		}
+		else if (args.length > 1)
+		{
+			String suffix_guess = "txt";
+			if (args[1].toLowerCase().endsWith("_rtf"))
+				suffix_guess = "rtf";
+			else if (args[1].toLowerCase().endsWith("_html"))
+				suffix_guess = "html";
 			if (args.length == 2)
 				tranformDirectory(null, args[0], args[1]);
 			else
 			{
 				FileInterpreter transform = new FileInterpreter(args[0]);
-				if (args.length == 3)
-					tranformDirectory(transform, args[0], args[1], args[2], false);
-				else if (args.length == 4)
-					tranformDirectory(transform, args[0], args[1], args[2], args[3], false);
+				File whatisit = new File(args[1]);
+				if (whatisit.isDirectory())
+				{
+					// Directory-style processing
+					// System.err.println("DEBUG: starting directory processing.");
+					if (args.length == 3)
+						tranformDirectory(transform, args[0], args[1], args[2], suffix_guess, false);
+					else if (args.length == 4)
+						tranformDirectory(transform, args[0], args[1], args[2], args[3], false);
+					else
+						help();
+				}
 				else
-					help();
+				{
+					// File-style processing
+					// System.err.println("DEBUG: starting single-file processing.");
+					if (args.length == 4)
+					{
+						if (transform != null)
+						{
+							transform.createOutput(args[1], args[2], args[3]);
+						}
+					}
+					else if (args.length == 3)
+					{
+						if (transform != null)
+						{
+							transform.createOutput(args[1], args[2], suffix_guess);
+						}
+					}
+				}
 			}
 		}
 		else
@@ -53,27 +118,10 @@ public class TransformDirectory
 	{
 		if (transform_name.equals("fix_filenames"))
 		{
-			/*
-			 * Guess a suitable file suffix based on the final part of the transform name
-			 */
-			String suffix_guess = "txt";
-			tranformDirectory(transform, transform_name, in_directory, in_directory, suffix_guess, true);
+			tranformDirectory(transform, transform_name, in_directory, in_directory, "", true);
 		}
 		else
 			help();
-	}
-
-	public static void tranformDirectory(FileInterpreter transform, String transform_name, String in_directory, String out_directory, boolean only_fix_filenames)
-	{
-		/*
-		 * Guess a suitable file suffix based on the final part of the transform name
-		 */
-		String suffix_guess = "txt";
-		if (transform_name.toLowerCase().endsWith("_rtf"))
-			suffix_guess = "rtf";
-		else if (transform_name.toLowerCase().endsWith("_html"))
-			suffix_guess = "html";
-		tranformDirectory(transform, transform_name, in_directory, out_directory, suffix_guess, only_fix_filenames);
 	}
 
 	public static void tranformDirectory(FileInterpreter transform, String transform_name, String in_directory, String out_directory, String file_suffix, boolean only_fix_filenames)
@@ -81,6 +129,7 @@ public class TransformDirectory
 		/*
 		 * Get the files in the in_directory For each file, check if it's a file or a directory. - If a file: Transform it - If a directory: recursively call tranformDirectory
 		 */
+		// System.err.println("DEBUG: in_directory: [" + in_directory + "]");
 		File inDirFile = new File(in_directory);
 		if (inDirFile.exists())
 		{
@@ -97,6 +146,7 @@ public class TransformDirectory
 				{
 					for (int i = 0; i < files.length; i++)
 					{
+						// System.err.println("DEBUG: files["+i+"]: "+files[i]);
 						if (files[i].isDirectory())
 						{
 							if (only_fix_filenames)
@@ -129,14 +179,14 @@ public class TransformDirectory
 		}
 		else
 		{
-			System.err.println("Error: Specified in_directory does not exist.");
+			System.err.println("Error: Specified directory does not exist.");
 		}
 	}
 
 	public static File fixFilename(File infile)
 	{
 		String name = infile.getName(), newName = "";
-		// System.out.println("Checking file: " + name);
+		// System.err.println("DEBUG: Checking file: " + name);
 		boolean needsRenamed = false;
 		for (int j = 0; j < name.length(); j++)
 		{
@@ -160,7 +210,7 @@ public class TransformDirectory
 				newName += c;
 				break;
 			case 32: // Space
-				if (j == 0)  // Leading space?  Baaaaad.
+				if (j == 0) // Leading space?  Baaaaad.
 				{
 					c = '_';
 					needsRenamed = true;
@@ -234,10 +284,14 @@ public class TransformDirectory
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("TransformDirectory " + Version.VersionString + " - Recursively apply transform to all files in a filesystem");
+		System.err.println("Transform " + Version.VersionString + " - Apply transform specification to a file or directory");
 		System.err.println();
-		System.err.println("Usage: TransformDirectory <transform> <in_directory> <out_directory> [suffix]");
-		System.err.println("       TransformDirectory fix_filenames <in_directory>");
+		System.err.println("Usage: Transform <transform_spec> <input> <out_directory> [suffix]");
+		System.err.println("       Transform fix_filenames <in_directory>");
+		System.err.println("       Transform help");
+		System.err.println();
+		System.err.println("See transform specification documentation here:");
+		System.err.println("   https://github.com/RetroFloppy/transformenator/wiki/Transform-Specification");
 		System.err.println();
 		FileInterpreter.listInternalTransforms();
 	}
