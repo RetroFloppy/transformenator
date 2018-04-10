@@ -23,6 +23,7 @@ package org.transformenator;
 import java.io.File;
 import java.lang.reflect.Method;
 
+import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.Version;
 
 public class UtilityDirectory
@@ -106,5 +107,7 @@ public class UtilityDirectory
 		System.err.println("UtilityDirectory " + Version.VersionString + " - Recursively apply utility function to all files in a filesystem");
 		System.err.println();
 		System.err.println("Usage: UtilityDirectory <utility> <in_directory> <out_directory>");
+		System.err.println();
+		FileInterpreter.listUtilities();
 	}
 }

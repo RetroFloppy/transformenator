@@ -1,5 +1,5 @@
 @rem
-@rem Batch file Invoker for TransformDirectory - call with no parameters for usage instructions 
+@rem Batch file Invoker for UtilityDirectory - call with no parameters for usage instructions 
 @rem
 @rem Set TRANSFORM_HOME to the absolute location of the transformenator.jar file.  The default
 @rem location is the current working directory.

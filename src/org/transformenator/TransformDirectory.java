@@ -238,5 +238,7 @@ public class TransformDirectory
 		System.err.println();
 		System.err.println("Usage: TransformDirectory <transform> <in_directory> <out_directory> [suffix]");
 		System.err.println("       TransformDirectory fix_filenames <in_directory>");
+		System.err.println();
+		FileInterpreter.listInternalTransforms();
 	}
 }

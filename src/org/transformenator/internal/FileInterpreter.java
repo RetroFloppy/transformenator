@@ -965,7 +965,7 @@ public class FileInterpreter
 						transforms.add(name);
 				}
 			}
-			System.err.println("Available internal transform files:");
+			System.err.println("Available internal transforms:");
 			printElements(transforms);
 		}
 	}
@@ -996,7 +996,7 @@ public class FileInterpreter
 						{
 							if (printedHeaderYet == false)
 							{
-								System.err.println("Transformenator utility functions available:");
+								System.err.println("Available utilities:");
 								printedHeaderYet = true;
 							}
 							if ((finalName.indexOf('$') == -1) && (!finalName.equals("TransformUtility.class")))
@@ -1018,7 +1018,7 @@ public class FileInterpreter
 				if (listOfFiles != null)
 				{
 					int offset = path.toString().length() + 1;
-					System.err.println("Transformenator utility functions available:");
+					System.err.println("Available utilities:");
 					for (int i = 0; i < listOfFiles.length; i++)
 					{
 						String finalName = listOfFiles[i].toString().substring(offset);

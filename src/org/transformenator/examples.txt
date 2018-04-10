@@ -1,22 +1,23 @@
+
 Tranform specification examples - all numbers are in hexadecimal:
 =================================================================
 
-; This is a comment
+; Comments start with a semicolon (;)
 
-; Replace 0x00 with 0x20
+; Simple replacement: replace all occurrences of 0x00 with 0x20
 00=20
 
-; Replace with repeat (#) - may need to add two
+; Replace with repeat (#)
 8d # 0d0a
 0d0a9d = 0d0a0d0a
 
-; Toggle italics on and off (%)
+; Toggle replacement on every other occurrence (%)
 7f047f % "\i1 ","\i0 "
 
-; Shift 0x41 through 0x5a up to 0x61
+; Shift a range of values to a different starting value
 [41..5a] = 61
 
-; Remove 0xf0 through 0xff
+; Using a range, remove all occurrences of values
 [f0..ff] = 
 
 ; Calculate the EOF based on file contents
@@ -25,20 +26,20 @@ eof_mid = 7d
 eof_lo = 7c
 eof_offset = 100
 
-; Header for HTML format
+; Emit a header
 head = "<html>"
 
-; Trailer for HTML format
+; Emit a trailer
 tail = "</html>"
 
-; Trim the leading 0x400 bytes
+; Trim leading bytes
 trim_leading = 0400
 
-; Trim the trailing 0xDF bytes
+; Trim trailing bytes
 trim_trailing = df
 
-; Regular expressions - first character is taken as delimiter
-regex = @haystack@needle@
+; Regular expression replacement - first character is taken as delimiter
+regex = @regspec@replacement@
 
 ; SOF indicator
 0d0a53 = "{@@<FiLe_SoF>@@}"
