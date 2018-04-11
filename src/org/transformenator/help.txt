@@ -1,5 +1,5 @@
 
-Tranform specification examples - all numbers are in hexadecimal:
+Transform specification examples - all numbers are in hexadecimal:
 =================================================================
 
 ; Comments start with a semicolon (;)

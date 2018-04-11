@@ -47,6 +47,7 @@ import org.transformenator.detanglers.ADetangler;
 public class FileInterpreter
 {
 	public boolean isOK = false;
+	public boolean isInternal = false;
 	public FileInterpreter(String transform_name)
 	{
 		transformName = transform_name;
@@ -222,14 +223,10 @@ public class FileInterpreter
 		return isOK;
 	}
 
-	public int dumpJW2Block(byte[] inData, int block)
-	{
-		return 0;
-	}
-
 	public boolean readTransform(String filename)
 	{
 		isOK = true;
+		isInternal = true;
 		FileReader fr = null;
 		// First try to load an external transform file. That should take
 		// precedence over an internal one.
@@ -239,8 +236,8 @@ public class FileInterpreter
 			if (fr != null)
 			{
 				isOK = true;
+				isInternal = false;
 				parseTransforms(fr);
-				System.err.println("Using external transform file \"" + filename + "\".");
 			}
 		}
 		catch (Exception e)
@@ -258,8 +255,8 @@ public class FileInterpreter
 				{
 					InputStreamReader isr = new InputStreamReader(is);
 					parseTransforms(isr);
-					System.err.println("Using internal transform file \"" + filename + "\".");
 					isOK = true;
+					isInternal = true;
 				}
 				else
 					isOK = false;
@@ -269,11 +266,8 @@ public class FileInterpreter
 				isOK = false;
 			}
 		}
-		if (isOK == false)
-			System.err.println("Unable to locate transform file named \"" + filename + "\".");
 		if (detangler != null)
 		{
-			System.err.println("Using detangler "+detangler.getName());
 			try
 			{
 				t = detangler.newInstance();
@@ -311,6 +305,7 @@ public class FileInterpreter
 	@SuppressWarnings("unchecked")
 	public void parseTransforms(Reader fr)
 	{
+		StringBuffer messageBuffer = new StringBuffer();
 		String line;
 		try
 		{
@@ -370,7 +365,7 @@ public class FileInterpreter
 					skip = false;
 					// System.err.println("DEBUG Left side token: ["+leftTemp+"]");
 					// If you add a left side keyword that will get consumed, be sure to add it here, otherwise the fall through processing will try to eat it:
-					if (leftTemp.equals("detangler") || leftTemp.equals("description") || leftTemp.equals("head") || leftTemp.equals("tail") || leftTemp.equals("trim_leading") || leftTemp.equals("trim_trailing") || leftTemp.equals("eof_lo") || leftTemp.equals("eof_mid") || leftTemp.equals("eof_hi") || leftTemp.trim().charAt(0) == (';'))
+					if (leftTemp.toLowerCase().equals("detangler") || leftTemp.toLowerCase().equals("description") || leftTemp.equals("head") || leftTemp.equals("tail") || leftTemp.equals("trim_leading") || leftTemp.equals("trim_trailing") || leftTemp.equals("eof_lo") || leftTemp.equals("eof_mid") || leftTemp.equals("eof_hi") || leftTemp.trim().charAt(0) == (';'))
 					{
 						if (leftTemp.trim().charAt(0) == (';'))
 						{
@@ -529,11 +524,11 @@ public class FileInterpreter
 						}
 
 						// System.err.println("DEBUG Right side token: ["+rightTemp1+"]");
-						if (leftTemp.equals("description"))
+						if (leftTemp.toLowerCase().equals("description"))
 						{
 							description = rightTemp1;
 						}
-						else if (leftTemp.equals("detangler"))
+						else if (leftTemp.toLowerCase().equals("detangler"))
 						{
 							try
 							{
@@ -548,7 +543,7 @@ public class FileInterpreter
 								catch (ClassNotFoundException e2)
 								{
 									// No detangler for YOU!
-									System.err.println("No detangler code "+rightTemp1.trim()+" found.");
+									messageBuffer.append("No detangler code "+rightTemp1.trim()+" found.");
 								}
 							}
 						}
@@ -890,7 +885,7 @@ public class FileInterpreter
 	public static void listExamples()
 	{
 		InputStream is = null;
-		is = Transform.class.getResourceAsStream("/org/transformenator/examples.txt");
+		is = Transform.class.getResourceAsStream("/org/transformenator/help.txt");
 
 		if (is != null)
 		{
@@ -1072,6 +1067,33 @@ public class FileInterpreter
 		}
 	}
 
+	public void emitStatus()
+	{
+		if (isOK == false)
+			System.err.println("Unable to locate transform file named \"" + transformName + "\".");
+		else
+		{
+			if (isInternal)
+				System.err.println("Using internal transform file \"" + transformName + "\".");
+			else
+				System.err.println("Using external transform file \"" + transformName + "\".");
+		}
+
+		if (description != null)
+		{
+			System.out.println();
+			System.out.println("Description: ");
+			System.out.println(description);
+		}
+		if (detanglerName() != null)
+		{
+			System.out.println();
+			System.out.println("Detangler: ");
+			System.out.println(detanglerName());
+		}
+
+	}
+
 	// Dynamic class loading for detangler
 	Object t;
 	Method detangle;
@@ -1084,7 +1106,7 @@ public class FileInterpreter
 	Vector<RegSpec> leftSide = new Vector<RegSpec>();
 	Vector<byte[]> rightSide = new Vector<byte[]>();
 	Vector<byte[]> rightToggle = new Vector<byte[]>();
-	String description, prefix, suffix;
+	String description, prefix, suffix, messages = null;
 	Class<ADetangler> detangler = null;
 	String inFile, transformName;
 	int trimLeading = 0, trimTrailing = 0, trimmedEnd;

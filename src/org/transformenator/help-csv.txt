@@ -1,0 +1,38 @@
+
+CSV transform specification examples - all numbers are in hexadecimal:
+======================================================================
+
+; Comments start with a semicolon (;)
+
+; NEXTREC: required - defines record length within file
+NEXTREC=100
+
+; FIRSTREC: offset (in hex bytes) to the first record to be considered
+FIRSTREC=0E00
+
+; SELECTIF: criteria for record inclusion
+SELECTIF=00,40 ; First byte must be 0x40 to be valid
+
+; LAYOUT: define field layout by example
+LAYOUT="mmddyy..nnnnnnxxxxxxxpppppp"
+
+
+Individual field definition keywords follow:
+--------------------------------------------
+
+; NAME: field name
+NAME="Field 1"
+
+; ORIGIN: offset within the record to this field's data
+ORIGIN=01
+
+; LENGTH: length of this field's data
+LENGTH=0a
+
+; INTERP|INTERPLITERAL: Interpretation type of field data to export
+INTERP=ASCII
+INTERP=HEX
+INTERP=EBCDIC
+
+Also see: 
+   https://github.com/RetroFloppy/transformenator/wiki/CSV-Transform-Specification#automatic-layout-processing

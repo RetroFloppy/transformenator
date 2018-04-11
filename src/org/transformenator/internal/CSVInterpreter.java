@@ -32,6 +32,9 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
+import org.transformenator.Transform;
+
 import java.util.Iterator;
 
 public class CSVInterpreter
@@ -42,10 +45,15 @@ public class CSVInterpreter
 		isOK = readTransform(transform_name);
 	}
 
-	public boolean createOutput(String inFile, String outFile)
+	public boolean createOutput(String inFile, String outDirectory)
+	{
+		return createOutput(inFile, outDirectory, "csv");
+	}
+
+	public boolean createOutput(String inFile, String outDirectory, String fileSuffix)
 	{
 		inData = null;
-		System.err.println("Reading input file \"" + inFile + "\".");
+		System.err.println("Reading CSV input file \"" + inFile + "\".");
 		File file = new File(inFile);
 		byte[] result = new byte[(int) file.length()];
 		try
@@ -68,7 +76,17 @@ public class CSVInterpreter
 				inData = result;
 				if (isOK)
 				{
-					System.err.println("Writing output file \"" + outFile + "\".");
+					// If they wanted an output directory, go ahead and make it.
+					File baseDirFile = new File(outDirectory);
+					if (!baseDirFile.isAbsolute())
+					{
+						baseDirFile = new File("." + File.separator + outDirectory);
+					}
+					// System.err.println("Making directory: ["+baseDirFile+"]");
+					baseDirFile.mkdir();
+
+					String outFile = outDirectory + File.separator + file.getName() + "." + fileSuffix;
+					System.err.println("Creating CSV file: \"" + outFile + "\"");
 					FileOutputStream out = new FileOutputStream(outFile);
 					Iterator<FieldSpec> header = fields.iterator();
 					FieldSpec fs;
@@ -243,30 +261,31 @@ public class CSVInterpreter
 
 	public boolean readTransform(String filename)
 	{
-		isOK = true;
 		FileReader fr = null;
 		try
 		{
 			fr = new FileReader(filename);
 			if (fr != null)
 			{
-				isOK = true;
 				parseTransforms(fr);
-				System.err.println("Using transform file \"" + filename + "\".");
+				if (nextRec > 0)
+					isOK = true;
+				else
+					isOK = false;
 			}
 		}
 		catch (Exception e)
 		{
 			isOK = false;
 		}
-		if (isOK == false)
-			System.err.println("Unable to locate transform file named \"" + filename + "\".");
 		return isOK;
 	}
 
 	public void parseTransforms(Reader fr)
 	{
 		String line;
+		StringBuffer messageBuffer = new StringBuffer();
+		StringBuffer layoutBuffer = new StringBuffer();
 		try
 		{
 			BufferedReader br = new BufferedReader(fr);
@@ -346,14 +365,14 @@ public class CSVInterpreter
 							}
 							else
 							{
-								System.err.println("ERROR: Incomplete selection criteria.");
+								messageBuffer.append("ERROR: Incomplete CSV selection criteria.");
 							}
 						}
 						else if (leftTemp.equalsIgnoreCase("NAME"))
 						{
 							if (currentFieldSpec != null)
 							{
-								System.err.println("ERROR: found a new field before completing the prior one.  Abandoning: " + currentFieldSpec.fieldName);
+								messageBuffer.append("ERROR: found a new CSV field before completing the prior one.  Abandoning: " + currentFieldSpec.fieldName);
 								currentFieldSpec = null;
 							}
 							currentFieldSpec = new FieldSpec();
@@ -370,7 +389,7 @@ public class CSVInterpreter
 							}
 							else
 							{
-								System.err.println("ERROR: field origin found with no prior name to associate it with.");
+								messageBuffer.append("ERROR: CSV field origin found with no prior name to associate it with.");
 							}
 						}
 						else if (leftTemp.equalsIgnoreCase("LENGTH"))
@@ -382,13 +401,13 @@ public class CSVInterpreter
 								currentFieldSpec.fieldLength = fieldLength;
 								if (fieldLength < 1)
 								{
-									System.err.println("ERROR: field named \"" + currentFieldSpec.fieldName + "\" must have a length greater than zero.  Abandoning it.");
+									messageBuffer.append("ERROR: CSV field named \"" + currentFieldSpec.fieldName + "\" must have a length greater than zero.  Abandoning it.");
 									currentFieldSpec = null;
 								}
 							}
 							else
 							{
-								System.err.println("ERROR: field length found with no prior field name to associate it with.");
+								messageBuffer.append("ERROR: CSV field length found with no prior field name to associate it with.");
 							}
 						}
 						else if (leftTemp.equalsIgnoreCase("LAYOUT"))
@@ -450,7 +469,7 @@ public class CSVInterpreter
 									currentFieldSpec.interp = 3;
 								else
 								{
-									System.err.println("ERROR: unexpected value for field \"" + currentFieldSpec.fieldName + "\" interpretation: " + rightTemp1.trim());
+									messageBuffer.append("ERROR: unexpected value for CSV field \"" + currentFieldSpec.fieldName + "\" interpretation: " + rightTemp1.trim());
 									currentFieldSpec.interp = 0;
 								}
 								fields.addElement(currentFieldSpec);
@@ -460,12 +479,12 @@ public class CSVInterpreter
 							}
 							else
 							{
-								System.err.println("ERROR: field interpretation found with no prior name to associate it with.");
+								messageBuffer.append("ERROR: CSV field interpretation found with no prior name to associate it with.");
 							}
 						}
 						else
 						{
-							System.err.println("ERROR: unknown specification encountered in transform file: " + leftTemp);
+							messageBuffer.append("ERROR: unknown specification encountered in CSV transform file: " + leftTemp);
 						}
 					}
 				}
@@ -505,25 +524,25 @@ public class CSVInterpreter
 			}
 			if (!autoFields.isEmpty())
 			{
-				System.out.println("; Fields automatically defined by layout:");
+				layoutBuffer.append(System.lineSeparator()+"; Fields automatically defined by layout:"+System.lineSeparator());
 				if (nextRec == 0)
 				{
-					System.out.println("NEXTREC="+Integer.toHexString(nextRecGuess));
-					System.out.println(";");
+					layoutBuffer.append("NEXTREC="+Integer.toHexString(nextRecGuess)+System.lineSeparator());
+					layoutBuffer.append(";"+System.lineSeparator());
 				}
 				for (int i = 0; i < fields.size(); i++)
 				{
-					System.out.println("NAME=\"" + fields.elementAt(i).fieldName + "\"");
-					System.out.println("ORIGIN=" + Integer.toHexString(fields.elementAt(i).fieldOrigin));
-					System.out.println("LENGTH=" + Integer.toHexString(fields.elementAt(i).fieldLength));
+					layoutBuffer.append("NAME=\"" + fields.elementAt(i).fieldName + "\""+System.lineSeparator());
+					layoutBuffer.append("ORIGIN=" + Integer.toHexString(fields.elementAt(i).fieldOrigin)+System.lineSeparator());
+					layoutBuffer.append("LENGTH=" + Integer.toHexString(fields.elementAt(i).fieldLength)+System.lineSeparator());
 					if (fields.elementAt(i).csvLiteral)
-						System.out.println("INTERPLITERAL=" + FieldSpec.interpString(fields.elementAt(i).interp));
+						layoutBuffer.append("INTERPLITERAL=" + FieldSpec.interpString(fields.elementAt(i).interp)+System.lineSeparator());
 					else
-						System.out.println("INTERP=" + FieldSpec.interpString(fields.elementAt(i).interp));
+						layoutBuffer.append("INTERP=" + FieldSpec.interpString(fields.elementAt(i).interp)+System.lineSeparator());
 					if (i + 1 < fields.size())
-						System.out.println(";");
+						layoutBuffer.append(";"+System.lineSeparator());
 				}
-				System.out.println("; End of automatic field definition.");
+				layoutBuffer.append("; End of automatic field definition."+System.lineSeparator());
 			}
 			if (nextRec == 0)
 				nextRec = nextRecGuess;
@@ -532,6 +551,8 @@ public class CSVInterpreter
 		{
 			ex.printStackTrace();
 		}
+		messages = new String(messageBuffer);
+		autoLayout = new String(layoutBuffer);
 	}
 
 	public byte[] asBytes(String str)
@@ -602,11 +623,58 @@ public class CSVInterpreter
 		return result;
 	}
 
+	public void emitStatus()
+	{
+		if (isOK == false)
+			System.err.println("Unable to find or use CSV transform file named \"" + transformName + "\".");
+		else
+			System.err.println("Using CSV transform file \"" + transformName + "\".");
+		if (messages.length() > 0)
+			System.err.println(messages);
+		if (autoLayout.length() > 0)
+			System.out.println(autoLayout);
+	}
+
+	public static void listExamples()
+	{
+		InputStream is = null;
+		is = Transform.class.getResourceAsStream("/org/transformenator/help-csv.txt");
+
+		if (is != null)
+		{
+			int bytesAvailable;
+			try
+			{
+				bytesAvailable = is.available();
+				byte[] buffer = new byte[bytesAvailable];
+				int bytesRead = is.read(buffer);
+				while (bytesRead < bytesAvailable)
+				{
+					bytesRead += is.read(buffer, bytesRead, bytesAvailable - bytesRead);
+				}
+				StringBuffer sb = new StringBuffer();
+				for (int i = 0; i < buffer.length; i++)
+				{
+					sb.append((char)buffer[i]);
+				}
+				System.err.println(sb.toString());
+			}
+			catch (IOException e)
+			{
+				System.err.println("Unable to access CSV examples.");
+			}
+		}
+		else
+		{
+			System.err.println("Unable to access CSV examples.");
+		}
+	}
+
 	byte inData[] = null;
 	Vector<FieldSpec> fields = new Vector<FieldSpec>();
 	Vector<FieldSpec> autoFields = new Vector<FieldSpec>();
 	Vector<SelectSpec> selection = new Vector<SelectSpec>();
-	String inFile, outFile, transformName;
+	String inFile, outFile, transformName, messages = null, autoLayout = null;
 	public int firstRec = 0, nextRec = 0, nextRecGuess = 0;
-	public boolean isOK;
+	public boolean isOK = false;
 }

@@ -22,6 +22,7 @@ package org.transformenator;
 
 import java.io.File;
 
+import org.transformenator.internal.CSVInterpreter;
 import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.Version;
 
@@ -30,40 +31,38 @@ public class Transform
 
 	public static void main(String[] args)
 	{
+		boolean isText = true;
 		/*
-		System.err.println("DEBUG: args.length: "+args.length);
+		System.err.println("DEBUG: args.length: " + args.length);
 		for (int q = 0; q < args.length; q++)
 		{
-			System.err.println("DEBUG: args["+q+"]: "+args[q]);
+			System.err.println("DEBUG: args[" + q + "]: " + args[q]);
 		}
 		*/
+		FileInterpreter fileTransform = null;
+		CSVInterpreter csvTransform = null;
+		if (args.length > 0)
+		{
+			fileTransform = new FileInterpreter(args[0]);
+			csvTransform = new CSVInterpreter(args[0]);
+			if (csvTransform.isOK)
+				isText = false;
+		}
 		if ((args.length == 1) && args[0].equalsIgnoreCase("help"))
 		{
 			FileInterpreter.listExamples();
 		}
+		else if ((args.length == 1) && args[0].equalsIgnoreCase("help-csv"))
+		{
+			CSVInterpreter.listExamples();
+		}
 		else if (args.length == 1)
 		{
 			// Special case: just describe the transform if they give its name
-			FileInterpreter transform = new FileInterpreter(args[0]);
-			if (transform.isOK)
-			{
-				String description = transform.describe();
-				if (description != null)
-				{
-					System.out.println();
-					System.out.println("Description: ");
-					System.out.println(description);
-				}
-				else
-					System.out.println("No description available for transform \"" + args[0] + "\".");
-				String detanglerName = transform.detanglerName();
-				if (detanglerName != null)
-				{
-					System.out.println();
-					System.out.println("Detangler: ");
-					System.out.println(detanglerName);
-				}
-			}
+			if (isText)
+				fileTransform.emitStatus();
+			else
+				csvTransform.emitStatus();
 		}
 		else if (args.length > 1)
 		{
@@ -72,20 +71,36 @@ public class Transform
 				suffix_guess = "rtf";
 			else if (args[1].toLowerCase().endsWith("_html"))
 				suffix_guess = "html";
-			if (args.length == 2)
+			if ((args.length == 2) && isText)
+			{
+				fileTransform.emitStatus();
 				tranformDirectory(null, args[0], args[1]);
+			}
+			else if ((args.length == 2) && !isText)
+			{
+				help();
+			}
 			else
 			{
-				FileInterpreter transform = new FileInterpreter(args[0]);
 				File whatisit = new File(args[1]);
 				if (whatisit.isDirectory())
 				{
 					// Directory-style processing
 					// System.err.println("DEBUG: starting directory processing.");
 					if (args.length == 3)
-						tranformDirectory(transform, args[0], args[1], args[2], suffix_guess, false);
+					{
+						if (isText)
+							tranformDirectory(fileTransform, args[0], args[1], args[2], suffix_guess, false);
+						else
+							csvDirectory(csvTransform, args[0], args[1], args[2], "csv", false);
+					}
 					else if (args.length == 4)
-						tranformDirectory(transform, args[0], args[1], args[2], args[3], false);
+					{
+						if (isText)
+							tranformDirectory(fileTransform, args[0], args[1], args[2], args[3], false);
+						else
+							csvDirectory(csvTransform, args[0], args[1], args[2], args[3], false);
+					}
 					else
 						help();
 				}
@@ -95,16 +110,16 @@ public class Transform
 					// System.err.println("DEBUG: starting single-file processing.");
 					if (args.length == 4)
 					{
-						if (transform != null)
+						if (fileTransform != null)
 						{
-							transform.createOutput(args[1], args[2], args[3]);
+							fileTransform.createOutput(args[1], args[2], args[3]);
 						}
 					}
 					else if (args.length == 3)
 					{
-						if (transform != null)
+						if (fileTransform != null)
 						{
-							transform.createOutput(args[1], args[2], suffix_guess);
+							fileTransform.createOutput(args[1], args[2], suffix_guess);
 						}
 					}
 				}
@@ -156,6 +171,65 @@ public class Transform
 							}
 							else
 								tranformDirectory(transform, transform_name, in_directory + java.io.File.separator + files[i].getName(), out_directory + java.io.File.separator + files[i].getName(), file_suffix, only_fix_filenames);
+						}
+						else if (!files[i].isHidden())
+						{
+							if (only_fix_filenames)
+							{
+								fixFilename(files[i]);
+							}
+							else
+							{
+								System.out.println("Transforming file: " + files[i] + " to directory: " + out_directory);
+								transform.createOutput(files[i].toString(), out_directory, file_suffix);
+							}
+						}
+					}
+				}
+			}
+			catch (Throwable t1)
+			{
+				t1.printStackTrace();
+			}
+		}
+		else
+		{
+			System.err.println("Error: Specified directory does not exist.");
+		}
+	}
+
+	public static void csvDirectory(CSVInterpreter transform, String transform_name, String in_directory, String out_directory, String file_suffix, boolean only_fix_filenames)
+	{
+		/*
+		 * Get the files in the in_directory For each file, check if it's a file or a directory. - If a file: Transform it - If a directory: recursively call tranformDirectory
+		 */
+		// System.err.println("DEBUG: in_directory: [" + in_directory + "]");
+		File inDirFile = new File(in_directory);
+		if (inDirFile.exists())
+		{
+			if (!only_fix_filenames)
+			{
+				File outDirFile = new File(out_directory);
+				outDirFile.mkdirs();
+				// System.out.println("mkdirs:  "+out_directory);
+			}
+			try
+			{
+				File[] files = inDirFile.listFiles();
+				if (files != null)
+				{
+					for (int i = 0; i < files.length; i++)
+					{
+						// System.err.println("DEBUG: files["+i+"]: "+files[i]);
+						if (files[i].isDirectory())
+						{
+							if (only_fix_filenames)
+							{
+								File file = fixFilename(files[i]);
+								csvDirectory(transform, transform_name, in_directory + java.io.File.separator + file.getName(), out_directory + java.io.File.separator + file.getName(), file_suffix, only_fix_filenames);
+							}
+							else
+								csvDirectory(transform, transform_name, in_directory + java.io.File.separator + files[i].getName(), out_directory + java.io.File.separator + files[i].getName(), file_suffix, only_fix_filenames);
 						}
 						else if (!files[i].isHidden())
 						{
@@ -289,9 +363,11 @@ public class Transform
 		System.err.println("Usage: Transform <transform_spec> <input> <out_directory> [suffix]");
 		System.err.println("       Transform fix_filenames <in_directory>");
 		System.err.println("       Transform help");
+		System.err.println("       Transform help-csv");
 		System.err.println();
 		System.err.println("See transform specification documentation here:");
 		System.err.println("   https://github.com/RetroFloppy/transformenator/wiki/Transform-Specification");
+		System.err.println("   https://github.com/RetroFloppy/transformenator/wiki/CSV-Transform-Specification");
 		System.err.println();
 		FileInterpreter.listInternalTransforms();
 	}
