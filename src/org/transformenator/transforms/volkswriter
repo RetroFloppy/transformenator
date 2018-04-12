@@ -1,0 +1,15 @@
+;
+description = "Volkswriter word processor - minimal cleanup."
+;
+
+12 =
+14 =
+
+; soft(?) word break
+16 = "-"
+
+; Commands start a line with two periods
+regex = @^\.\..*@@
+
+; End of text
+1a = "{@@<FiLe_EoF>@@}"
