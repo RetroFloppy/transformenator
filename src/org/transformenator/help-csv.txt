@@ -35,4 +35,4 @@ INTERP=HEX
 INTERP=EBCDIC
 
 Also see: 
-   https://github.com/RetroFloppy/transformenator/wiki/CSV-Transform-Specification#automatic-layout-processing
+   https://github.com/RetroFloppy/transformenator/wiki/CSV-Transform-Specification
