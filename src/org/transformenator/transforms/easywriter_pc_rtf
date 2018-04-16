@@ -41,6 +41,7 @@ ce....ce =
 cf..cf =
 d0........d0 =
 d5....d5 =
+d8....d8 =
 de....de =
 e0....e0 =
 84 =
@@ -94,3 +95,5 @@ bc54bc4d = "\'99"
 ; Superscript one character
 bc =
 
+; Unsure
+e1..e1
