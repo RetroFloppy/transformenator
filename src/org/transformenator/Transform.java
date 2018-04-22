@@ -67,9 +67,9 @@ public class Transform
 		else if (args.length > 1)
 		{
 			String suffix_guess = "txt";
-			if (args[1].toLowerCase().endsWith("_rtf"))
+			if (args[0].toLowerCase().endsWith("_rtf"))
 				suffix_guess = "rtf";
-			else if (args[1].toLowerCase().endsWith("_html"))
+			else if (args[0].toLowerCase().endsWith("_html"))
 				suffix_guess = "html";
 			if ((args.length == 2) && isText)
 			{
