@@ -25,11 +25,16 @@ description = "IBM 6580 Displaywriter to plain text.  Notes - EBCDIC encoding, c
 16 = 
 
 2d = "-"
+ca = "-"
+b7 = "-1/4"
+b8 = "-1/2"
 
 ; Space
 40 = 20
 41 = 20
 
+; Cent sign
+4a =
 4b = "."
 4c = "<"
 4d = "("

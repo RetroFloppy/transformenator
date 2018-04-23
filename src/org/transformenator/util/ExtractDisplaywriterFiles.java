@@ -97,7 +97,7 @@ public class ExtractDisplaywriterFiles
 					}
 					System.err.println("Read " + result.length + " bytes.");
 					/*
-					 * We have the whole sheebang pulled into 'result' now. Now we need to find the d record, and decide how much to clip off the beginning in order to remove the first cylinder.
+					 * We have the whole sheebang pulled into 'result' now. Now we need to find the EHL1 record, and decide how much to clip off the beginning in order to remove the first cylinder.
 					 */
 					for (int i = 0; i < result.length; i += 128)
 					{
@@ -264,27 +264,32 @@ public class ExtractDisplaywriterFiles
 		int recLength = UnsignedByte.intValue(inData[offset + 0]) * 256 + UnsignedByte.intValue(inData[offset + 1]);
 		int recTypeHi = UnsignedByte.intValue(inData[offset + 2]);
 		int recTypeLo = UnsignedByte.intValue(inData[offset + 3]);
+//		String recordEyecatcher = "---- (0x"+Integer.toHexString(0x100 | recTypeHi).substring(1)+")";
 		String recordEyecatcher = "----";
 		if ((recTypeHi == 0x20) && (recTypeLo == 0x00) && (recLength == 0x19))
 			recordEyecatcher = "EHL1 (0x20)";
 		else if ((recTypeHi == 0x40) && (recTypeLo == 0x00))
-			recordEyecatcher = "ABM  (0x40)";
+			recordEyecatcher = "ABM  (0x40)"; // Allocation bitmap
 		else if ((recTypeHi == 0x60) && (recTypeLo == 0x00))
-			recordEyecatcher = "DSL2 (0x60)";
+			recordEyecatcher = "DSL2 (0x60)"; // Document header
 		else if (recTypeHi == 0x80)
-			recordEyecatcher = "NAME (0x80)";
+			recordEyecatcher = "NAME (0x80)"; // Document name
 		else if (recTypeHi == 0xA0)
-			recordEyecatcher = "DATE (0xa0)";
+			recordEyecatcher = "DATE (0xa0)"; // Document date
 		else if (recTypeHi == 0xC0)
-			recordEyecatcher = "DOCS (0xc0)";
+			recordEyecatcher = "DOCS (0xc0)"; // Document starting lines
 		else if (recTypeHi == 0xE0)
-			recordEyecatcher = "DEXT (0xe0)";
+			recordEyecatcher = "DEXT (0xe0)"; // Disk extent table
 		else if (recTypeHi == 0xE1)
-			recordEyecatcher = "TXHD (0xe1)";
+			recordEyecatcher = "TXHD (0xe1)"; // Text header
 		else if (recTypeHi == 0xE2)
-			recordEyecatcher = "FDAT (0xe2)";
+			recordEyecatcher = "FDAT (0xe2)"; // Formatting data
+		else if (recTypeHi == 0xE3)
+			recordEyecatcher = "E304 (0xe3)"; // Text wrapper of some sort
+		else if (recTypeHi == 0xE5)
+			recordEyecatcher = "E504 (0xe5)"; // Text wrapper of some sort
 		else if (recTypeHi == 0xE8)
-			recordEyecatcher = "TEXT (0xe8)";
+			recordEyecatcher = "TEXT (0xe8)"; // Text data
 		return recordEyecatcher;
 	}
 
@@ -308,11 +313,13 @@ public class ExtractDisplaywriterFiles
 					int newRec = UnsignedByte.intValue(inData[offset + q]) * 65536;
 					newRec += UnsignedByte.intValue(inData[offset + q + 1]) * 256;
 					newRec += UnsignedByte.intValue(inData[offset + q + 2]);
+					if (debugLevel > 0)
+						System.err.println("   DEXT newRec: 0x"+ Integer.toHexString(0x1000000 | newRec).substring(1));
 					if ((newRec < inData.length) && (newRec > 0))
 					{
 						if (debugLevel > 0)
 						{
-							System.err.print("0x" + Integer.toHexString(0x1000000 | offset).substring(1) + "  Pointer: 0x" + Integer.toHexString(0x1000000 | newRec).substring(1) + ": ");
+							System.err.print("0x" + Integer.toHexString(0x1000000 | offset+q).substring(1) + ": Pointer: 0x" + Integer.toHexString(0x1000000 | newRec).substring(1) + ": ");
 							if (newRec == locEHL1)
 								System.err.print("(Won't follow since it's the EHL1 pointer)");
 							System.err.println();
@@ -323,35 +330,10 @@ public class ExtractDisplaywriterFiles
 				}
 				// Note - DEXT entries will not have others following it in the same sector
 			}
-			else if (ec.equals("DSL2 (0x60)"))
-			{
-				if (dive)
-					emitRecord(inData, offset + recLen, dive, debugLevel);
-			}
-			else if (ec.equals("TXHD (0xe1)"))
-			{
-				if (dive)
-					emitRecord(inData, offset + recLen, dive, debugLevel);
-			}
 			else if (ec.equals("EHL1 (0x20)"))
 			{
 				// Dig out the EHL1 length, return it when we pop back out
 				ret = UnsignedByte.intValue(inData[offset + 0x10]) * 65536 + UnsignedByte.intValue(inData[offset + 0x11]) * 256 + UnsignedByte.intValue(inData[offset + 0x12]);
-				if (dive)
-					emitRecord(inData, offset + recLen, dive, debugLevel);
-			}
-			else if (ec.equals("ABM  (0x40)"))
-			{
-				if (dive)
-					emitRecord(inData, offset + recLen, dive, debugLevel);
-			}
-			else if (ec.equals("TXHD (0xe1)"))
-			{
-				if (dive)
-					emitRecord(inData, offset + recLen, dive, debugLevel);
-			}
-			else if (ec.equals("FDAT (0xe2)"))
-			{
 				if (dive)
 					emitRecord(inData, offset + recLen, dive, debugLevel);
 			}
@@ -416,6 +398,11 @@ public class ExtractDisplaywriterFiles
 						e.printStackTrace();
 					}
 				}
+			}
+			else
+			{
+				if (dive)
+					emitRecord(inData, offset + recLen, dive, debugLevel);
 			}
 		}
 		return ret;
