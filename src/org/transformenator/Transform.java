@@ -31,7 +31,7 @@ public class Transform
 
 	public static void main(String[] args)
 	{
-		boolean isText = true;
+		boolean isCSV = false;
 		/*
 		System.err.println("DEBUG: args.length: " + args.length);
 		for (int q = 0; q < args.length; q++)
@@ -46,23 +46,23 @@ public class Transform
 			fileTransform = new FileInterpreter(args[0]);
 			csvTransform = new CSVInterpreter(args[0]);
 			if (csvTransform.isOK)
-				isText = false;
+				isCSV = true;
 		}
 		if ((args.length == 1) && args[0].equalsIgnoreCase("help"))
 		{
 			FileInterpreter.listExamples();
 		}
-		else if ((args.length == 1) && args[0].equalsIgnoreCase("help-csv"))
+		else if ((args.length == 1) && (args[0].equalsIgnoreCase("help-csv") || args[0].equalsIgnoreCase("help_csv")))
 		{
 			CSVInterpreter.listExamples();
 		}
 		else if (args.length == 1)
 		{
 			// Special case: just describe the transform if they give its name
-			if (isText)
-				fileTransform.emitStatus();
-			else
+			if (isCSV)
 				csvTransform.emitStatus();
+			else
+				fileTransform.emitStatus();
 		}
 		else if (args.length > 1)
 		{
@@ -71,14 +71,14 @@ public class Transform
 				suffix_guess = "rtf";
 			else if (args[0].toLowerCase().endsWith("_html"))
 				suffix_guess = "html";
-			if ((args.length == 2) && isText)
+			if ((args.length == 2) && isCSV)
+			{
+				help();
+			}
+			else if ((args.length == 2) && !isCSV)
 			{
 				fileTransform.emitStatus();
 				tranformDirectory(null, args[0], args[1]);
-			}
-			else if ((args.length == 2) && !isText)
-			{
-				help();
 			}
 			else
 			{
@@ -89,17 +89,17 @@ public class Transform
 					// System.err.println("DEBUG: starting directory processing.");
 					if (args.length == 3)
 					{
-						if (isText)
-							tranformDirectory(fileTransform, args[0], args[1], args[2], suffix_guess, false);
-						else
+						if (isCSV)
 							csvDirectory(csvTransform, args[0], args[1], args[2], "csv", false);
+						else
+							tranformDirectory(fileTransform, args[0], args[1], args[2], suffix_guess, false);
 					}
 					else if (args.length == 4)
 					{
-						if (isText)
-							tranformDirectory(fileTransform, args[0], args[1], args[2], args[3], false);
-						else
+						if (isCSV)
 							csvDirectory(csvTransform, args[0], args[1], args[2], args[3], false);
+						else
+							tranformDirectory(fileTransform, args[0], args[1], args[2], args[3], false);
 					}
 					else
 						help();
