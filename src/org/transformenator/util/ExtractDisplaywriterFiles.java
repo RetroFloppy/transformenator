@@ -489,7 +489,7 @@ public class ExtractDisplaywriterFiles
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractDisplaywriterFiles " + Version.VersionString + " - Extract files from Displaywriter word processor disk images.");
+		System.err.println("ExtractDisplaywriterFiles " + Version.VersionString + " - Extract files from IBM 6580 8\" Displaywriter word processor disk images.");
 		System.err.println();
 		System.err.println("Usage: ExtractDisplaywriterFiles infile [out_directory]|[-debug1]|[-debug2]|[-debug3]");
 	}
