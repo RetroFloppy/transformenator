@@ -20,13 +20,29 @@
 
 package org.transformenator.detanglers;
 
+import java.io.File;
+
+import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.UnsignedByte;
 
-public class DisplayWrite extends ADetangler {
+public class DisplayWrite extends ADetangler
+{
 	@Override
-	public byte[] detangle(byte[] inData) {
+	public void detangle(FileInterpreter interpreter, byte[] inData, String inFile, String outDirectory, String fileSuffix)
+	{
 		if ((inData.length > 0x66) && ((UnsignedByte.intValue(inData[0x64]) == 0xaa) && (UnsignedByte.intValue(inData[0x65]) == 0xaa) && (UnsignedByte.intValue(inData[0x66]) == 0xaa)))
 		{
+			/*
+			 * Make the output directory
+			 */
+			File baseDirFile = new File(outDirectory);
+			if (!baseDirFile.isAbsolute())
+			{
+				baseDirFile = new File("." + File.separator + outDirectory);
+			}
+			baseDirFile.mkdirs();
+			if (fileSuffix.length() > 0)
+				fileSuffix = "."+fileSuffix;
 			/*
 			 * Pick apart the file chunk indices. Chunk indices start at 0x6b and follow 3 bytes of 0xaa. There are a maximum of 59 indices.
 			 * 
@@ -61,12 +77,12 @@ public class DisplayWrite extends ADetangler {
 			for (int i = 0; i < newBufCursor; i++)
 				inData[i] = newBuf[i];
 			// System.err.println("DEBUG: Data length after de-indexing: "+inData.length);
+			interpreter.emitFile(inData, outDirectory + File.separator + inFile + fileSuffix);
 		}
 		else
 		{
-			System.err.println("Probably not a Displaywrite file.");
+			System.err.println("Probably not a DisplayWrite file.");
 		}
-		return inData;
 	}
 
 	public int grabDisplayWriteChunk(byte[] inData, byte[] newBuf, int i, int newBufCursor)
@@ -101,7 +117,7 @@ public class DisplayWrite extends ADetangler {
 					// Pull out the data in the chunk
 					else
 					{
-						if (idx*512 + len > inData.length)
+						if (idx * 512 + len > inData.length)
 							len = inData.length - (idx * 512);
 						for (int k = offset; k < len; k++)
 						{
@@ -114,11 +130,6 @@ public class DisplayWrite extends ADetangler {
 			}
 		}
 		return len;
-	}
-
-	@Override
-	public String getNewName() {
-		return null;
 	}
 
 }

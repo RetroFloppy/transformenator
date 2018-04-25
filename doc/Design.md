@@ -2,9 +2,7 @@
 
 The transformenation of files needs to be able to support the following scenarios:
 
-1. Computational reorganization of a file (i.e. de-indexing); the resulting file name can be processed one of two ways:
-  - No filename change, requiring a different destination directory (i.e. `dir1/file.name` produces `dir2/file.name`)
-  - New file name is discovered as part of the reorganization operation (i.e. `dir1/file.name` produces `dir2/whole-new-name`)
+1. Computational reorganization of a file (i.e. de-indexing or file extraction from a disk image)
 2. Simple text substitution (i.e. 0x0d -> 0x0d0a) of a file; resulting file name can be processed one of two ways:
   - Automatic file suffix addition based on transform file suffix (i.e. `transform_rtf` of `file.name` produces `file.name.rtf`)
   - No filename change, requiring a different destination directory (i.e. `transform_rtf` of `dir1/file.name` produces `dir2/file.name`)

@@ -1,12 +1,15 @@
 package org.transformenator.detanglers;
 
+import java.io.File;
+
+import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.UnsignedByte;
 
 public class LeadingEdge extends ADetangler
 {
 
 	@Override
-	public byte[] detangle(byte[] inData)
+	public void detangle(FileInterpreter interpreter, byte[] inData, String inFile, String outDirectory, String fileSuffix)
 	{
 		/*
 		 * Pick apart the file hunk indices. Hunk indices start at 0x1200.
@@ -62,14 +65,6 @@ public class LeadingEdge extends ADetangler
 		for (int i = 0; i < newBufCursor; i++)
 			inData[i] = newBuf[i];
 		// System.err.println("DEBUG: Data length after de-indexing: "+inData.length);
-		return inData;
+		interpreter.emitFile(inData, outDirectory + File.separator + inFile + fileSuffix);
 	}
-
-	@Override
-	public String getNewName()
-	{
-		// No name change associated with LEWP
-		return null;
-	}
-
 }

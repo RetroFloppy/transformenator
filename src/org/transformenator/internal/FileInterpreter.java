@@ -48,6 +48,7 @@ public class FileInterpreter
 {
 	public boolean isOK = false;
 	public boolean isInternal = false;
+
 	public FileInterpreter(String transform_name)
 	{
 		transformName = transform_name;
@@ -67,18 +68,16 @@ public class FileInterpreter
 			return null;
 	}
 
-	public boolean createOutput(String inFile, String outDirectory)
+	public boolean process(String inFile, String outDirectory)
 	{
-		return createOutput(inFile, outDirectory, "txt");
+		return process(inFile, outDirectory, "txt");
 	}
 
-	public boolean createOutput(String inFile, String outDirectory, String fileSuffix)
+	public boolean process(String inFile, String outDirectory, String fileSuffix)
 	{
-		String newName = null;
-		foundSOF = false;
 		if (isOK)
 		{
-			ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
+			foundSOF = false;
 			inData = null;
 			// System.err.println("DEBUG Reading input file " + inFile);
 			File file = new File(inFile);
@@ -116,7 +115,6 @@ public class FileInterpreter
 			{
 				ex.printStackTrace();
 			}
-			int bytesForward = 0;
 			if ((inData != null) && (inData.length > 0))
 			{
 				// System.err.println("Incoming data length: "+inData.length);
@@ -138,8 +136,7 @@ public class FileInterpreter
 					// Run the detangler if the transform specifies one
 					try
 					{
-						inData = (byte[]) detangle.invoke(t, inData);
-						newName = (String) getNewName.invoke(t);
+						detangle.invoke(t, this, inData, file.getName(), outDirectory, fileSuffix);
 					}
 					catch (IllegalAccessException e)
 					{
@@ -154,70 +151,84 @@ public class FileInterpreter
 						e.printStackTrace();
 					}
 				}
-				// System.err.println("DEBUG: Trimming leading "+trimLeading+" and "+ trimTrailing +" trailing bytes.");
-				trimmedEnd = inData.length - trimTrailing;
-				// Clean out the toggle states
-				for (int i = 0; i < leftSide.size(); i++) // For each left specification
-				{
-					RegSpec currentSpec = leftSide.elementAt(i);
-					currentSpec.toggleState = false;
-				}
-				for (int i = trimLeading; i < trimmedEnd; i++)
-				{
-					backupBytes = 0;
-					bytesForward = evaluateTransforms(outBuf, i, trimmedEnd);
-					// System.err.println("DEBUG: i=" + i + "; bytesForward=" + bytesForward+"; backupBytes="+backupBytes);
-					if (bytesForward > 0)
-						i = i + bytesForward - 1;
-					if (backupBytes > 0)
-						i = i - backupBytes;
-					if (bytesForward == -1)
-						// EOF reached
-						break;
-				}
-				if (isOK) try
-				{
-					// If they wanted an output directory, go ahead and make it.
-					File baseDirFile = new File(outDirectory);
-					if (!baseDirFile.isAbsolute())
-					{
-						baseDirFile = new File("." + File.separator + outDirectory);
-					}
-					// System.err.println("Making directory: ["+baseDirFile+"]");
-					baseDirFile.mkdir();
+			}
+		}
+		return isOK;
+	}
 
-					/*
-					 * We have a directory - so just append the newly discovered filename.
-					 */
-					if (newName == null)
-						newName = file.getName();
-					String outFile = outDirectory + File.separator + newName + "." + fileSuffix;
-					System.out.println("Creating file: \"" + outFile + "\"");
-					FileOutputStream out = new FileOutputStream(outFile);
-					if (prefix != null)
-					{
-						out.write(prefix.getBytes(), 0, prefix.length());
-					}
-					String tempStr = outBuf.toString();
-					for (int i = 0; i < regReplace.size(); i++)
-					{
-						// System.err.println("DEBUG Replacing ["+regPattern.elementAt(i)+"] with ["+regReplace.elementAt(i)+"].");
-						tempStr = tempStr.replaceAll("(?m)"+regPattern.elementAt(i), regReplace.elementAt(i));
-					}
-					byte[] stdout = tempStr.getBytes();
-					out.write(stdout, 0, stdout.length);
-					if (suffix != null)
-					{
-						out.write(suffix.getBytes(), 0, suffix.length());
-					}
-					out.flush();
-					out.close();
-					//newName = null;
-				}
-				catch (Exception ex)
+	public boolean emitFile(byte[] data, String filename)
+	{
+		if (isOK)
+		{
+			ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
+			foundSOF = false;
+			inData = data;
+			int bytesForward = 0;
+			// System.err.println("Incoming data length: "+inData.length);
+			// Did they ask for a EOF to be calculated from inside the file? Get it!
+			if (eofLo + eofMid + eofHi + eofOffset > 0)
+			{
+				int calculatedEOF = eofOffset;
+				if (eofLo > 0)
+					calculatedEOF = calculatedEOF + UnsignedByte.intValue(inData[eofLo]);
+				if (eofMid > 0)
+					calculatedEOF = calculatedEOF + (256 * UnsignedByte.intValue(inData[eofMid]));
+				if (eofHi > 0)
+					calculatedEOF = calculatedEOF + (65536 * UnsignedByte.intValue(inData[eofHi]));
+				// System.err.println("DEBUG: After dereference, calculated EOF: "+calculatedEOF);
+				trimTrailing = inData.length - calculatedEOF;
+			}
+			// System.err.println("DEBUG: Trimming leading "+trimLeading+" and "+ trimTrailing +" trailing bytes.");
+			trimmedEnd = inData.length - trimTrailing;
+			// Clean out the toggle states
+			for (int i = 0; i < leftSide.size(); i++) // For each left specification
+			{
+				RegSpec currentSpec = leftSide.elementAt(i);
+				currentSpec.toggleState = false;
+			}
+			for (int i = trimLeading; i < trimmedEnd; i++)
+			{
+				backupBytes = 0;
+				bytesForward = evaluateTransforms(outBuf, i, trimmedEnd);
+				// System.err.println("DEBUG: i=" + i + "; bytesForward=" + bytesForward+"; backupBytes="+backupBytes);
+				if (bytesForward > 0)
+					i = i + bytesForward - 1;
+				if (backupBytes > 0)
+					i = i - backupBytes;
+				if (bytesForward == -1)
+					// EOF reached
+					break;
+			}
+			try
+			{
+				/*
+				 * We have a directory - so just append the newly discovered filename.
+				 */
+				System.out.println("Creating file: \"" + filename + "\"");
+				FileOutputStream out = new FileOutputStream(filename);
+				if (prefix != null)
 				{
-					ex.printStackTrace();
+					out.write(prefix.getBytes(), 0, prefix.length());
 				}
+				String tempStr = outBuf.toString();
+				for (int i = 0; i < regReplace.size(); i++)
+				{
+					// System.err.println("DEBUG Replacing ["+regPattern.elementAt(i)+"] with ["+regReplace.elementAt(i)+"].");
+					tempStr = tempStr.replaceAll("(?m)" + regPattern.elementAt(i), regReplace.elementAt(i));
+				}
+				byte[] stdout = tempStr.getBytes();
+				out.write(stdout, 0, stdout.length);
+				if (suffix != null)
+				{
+					out.write(suffix.getBytes(), 0, suffix.length());
+				}
+				out.flush();
+				out.close();
+				//newName = null;
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
 			}
 		}
 		return isOK;
@@ -271,34 +282,29 @@ public class FileInterpreter
 			try
 			{
 				t = detangler.newInstance();
-				detangle = detangler.getDeclaredMethod("detangle", byte[].class);
-				getNewName = detangler.getDeclaredMethod("getNewName");
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (InstantiationException e) {
+				detangle = detangler.getDeclaredMethod("detangle", FileInterpreter.class, byte[].class, String.class, String.class, String.class);
+			}
+			catch (NoSuchMethodException e)
+			{
 				e.printStackTrace();
 			}
-			// System.err.println("DEBUG: After detangling, length: "+inData.length);
+			catch (SecurityException e)
+			{
+				e.printStackTrace();
+			}
+			catch (IllegalAccessException e)
+			{
+				e.printStackTrace();
+			}
+			catch (IllegalArgumentException e)
+			{
+				e.printStackTrace();
+			}
+			catch (InstantiationException e)
+			{
+				e.printStackTrace();
+			}
 		}
-		// Dump what we have so far
-		/*
-		File f2 = new File("intermediate");
-		FileOutputStream f2o;
-		try {
-			f2o = new FileOutputStream(f2);
-			f2o.write(inData,0,inData.length);
-			f2o.flush();
-			f2o.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		*/
 		return isOK;
 	}
 
@@ -538,12 +544,12 @@ public class FileInterpreter
 							{
 								try
 								{
-									detangler = (Class<ADetangler>) java.lang.Class.forName("org.transformenator.detanglers."+rightTemp1.trim());
+									detangler = (Class<ADetangler>) java.lang.Class.forName("org.transformenator.detanglers." + rightTemp1.trim());
 								}
 								catch (ClassNotFoundException e2)
 								{
 									// No detangler for YOU!
-									messageBuffer.append("No detangler code "+rightTemp1.trim()+" found.");
+									messageBuffer.append("No detangler code " + rightTemp1.trim() + " found.");
 								}
 							}
 						}
@@ -642,6 +648,11 @@ public class FileInterpreter
 					rightSide.add(null);
 					rightToggle.add(null); // Keep up with the toggle side
 				}
+			}
+			if (detangler == null)
+			{
+				// System.err.println("DEBUG: Using null detangler.");
+				detangler = (Class<ADetangler>) java.lang.Class.forName("org.transformenator.detanglers.Null");
 			}
 		}
 		catch (Exception ex)
@@ -902,7 +913,7 @@ public class FileInterpreter
 				StringBuffer sb = new StringBuffer();
 				for (int i = 0; i < buffer.length; i++)
 				{
-					sb.append((char)buffer[i]);
+					sb.append((char) buffer[i]);
 				}
 				System.err.println(sb.toString());
 			}
@@ -1047,19 +1058,19 @@ public class FileInterpreter
 		 */
 		if (!elements.isEmpty())
 		{
-			int halfway = (int)elements.size() / 2;
+			int halfway = (int) elements.size() / 2;
 			if (elements.size() % 2 > 0)
 				halfway += 1;
 			for (int i = 0; i < halfway; i++)
 			{
-				System.err.print("  "+elements.get(i));
-				if (elements.size() > i+halfway) // If there is a final element (even number of elements)
+				System.err.print("  " + elements.get(i));
+				if (elements.size() > i + halfway) // If there is a final element (even number of elements)
 				{
-					for (int j = 0; j < 40-(elements.get(i).length()); j++)
+					for (int j = 0; j < 40 - (elements.get(i).length()); j++)
 					{
 						System.err.print(" ");
 					}
-					System.err.println("  "+elements.get(i+halfway));
+					System.err.println("  " + elements.get(i + halfway));
 				}
 				else
 					System.err.println();
@@ -1085,8 +1096,9 @@ public class FileInterpreter
 			System.out.println("Description: ");
 			System.out.println(description);
 		}
-		if (detanglerName() != null)
+		if ((detanglerName() != null) && (!detanglerName().equals("org.transformenator.detanglers.Null")))
 		{
+			// Only bother reporting the detangler if it's not the default one
 			System.out.println();
 			System.out.println("Detangler: ");
 			System.out.println(detanglerName());
