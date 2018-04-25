@@ -151,6 +151,8 @@ public class FileInterpreter
 						e.printStackTrace();
 					}
 				}
+				else
+					emitFile(inData, outDirectory + File.pathSeparator + file.getName() + fileSuffix);
 			}
 		}
 		return isOK;
@@ -649,11 +651,6 @@ public class FileInterpreter
 					rightToggle.add(null); // Keep up with the toggle side
 				}
 			}
-			if (detangler == null)
-			{
-				// System.err.println("DEBUG: Using null detangler.");
-				detangler = (Class<ADetangler>) java.lang.Class.forName("org.transformenator.detanglers.Null");
-			}
 		}
 		catch (Exception ex)
 		{
@@ -1096,7 +1093,7 @@ public class FileInterpreter
 			System.out.println("Description: ");
 			System.out.println(description);
 		}
-		if ((detanglerName() != null) && (!detanglerName().equals("org.transformenator.detanglers.Null")))
+		if (detanglerName() != null)
 		{
 			// Only bother reporting the detangler if it's not the default one
 			System.out.println();
