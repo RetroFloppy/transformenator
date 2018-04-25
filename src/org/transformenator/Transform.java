@@ -32,13 +32,16 @@ public class Transform
 	public static void main(String[] args)
 	{
 		boolean isCSV = false;
-		// System.err.println("DEBUG: args.length: " + args.length);
+		/*
+		System.err.println("DEBUG: args.length: " + args.length);
 		for (int q = 0; q < args.length; q++)
 		{
-			// System.err.println("DEBUG: args[" + q + "]: " + args[q]);
+			System.err.println("DEBUG: args[" + q + "]: " + args[q]);
 		}
+		*/
 		FileInterpreter fileTransform = null;
 		CSVInterpreter csvTransform = null;
+
 		if (args.length > 0)
 		{
 			fileTransform = new FileInterpreter(args[0]);
@@ -46,7 +49,10 @@ public class Transform
 			if (csvTransform.isOK)
 				isCSV = true;
 		}
-		if ((args.length == 1) && args[0].equalsIgnoreCase("help"))
+
+		if (args.length == 0)
+			help();
+		else if ((args.length == 1) && args[0].equalsIgnoreCase("help"))
 		{
 			FileInterpreter.listExamples();
 		}
@@ -56,13 +62,23 @@ public class Transform
 		}
 		else if (args.length == 1)
 		{
-			// Special case: just describe the transform if they give its name
+			// Special case: describe the transform if they just give its name
 			if (isCSV)
 				csvTransform.emitStatus();
 			else
 				fileTransform.emitStatus();
 		}
-		else if (args.length > 1)
+		else if (args.length == 2)
+		{
+			// Special case: fix_filenames
+			if (args[0].equals("fix_filenames"))
+			{
+				tranformDirectory(null, args[0], args[1], null, "", true);
+			}
+			else
+				help();
+		}
+		else if ((args.length == 3) || (args.length == 4))
 		{
 			/*
 			 * Make the output directory
@@ -70,7 +86,8 @@ public class Transform
 			File baseDirFile = new File(args[2]);
 			if (!baseDirFile.isAbsolute())
 			{
-				baseDirFile = new File("." + File.separator + args[2]);
+				if (!args[2].equals("."))
+					baseDirFile = new File("." + File.separator + args[2]);
 			}
 			baseDirFile.mkdirs();
 
@@ -79,11 +96,7 @@ public class Transform
 				suffix_guess = ".rtf";
 			else if (args[0].toLowerCase().endsWith("_html"))
 				suffix_guess = ".html";
-			if ((args.length == 2) && isCSV)
-			{
-				help();
-			}
-			else if ((args.length == 2) && !isCSV)
+			if ((args.length == 2) && !isCSV)
 			{
 				fileTransform.emitStatus();
 				tranformDirectory(null, args[0], args[1]);
@@ -192,6 +205,7 @@ public class Transform
 						{
 							if (only_fix_filenames)
 							{
+								// System.err.println("DEBUG: Fixing filename "+files[i]);
 								fixFilename(files[i]);
 							}
 							else

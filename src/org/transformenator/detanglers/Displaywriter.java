@@ -34,7 +34,12 @@ public class Displaywriter extends ADetangler
 	{
 		_interpreter = interpreter;
 		if (fileSuffix.length() > 0)
-			_fileSuffix = "."+fileSuffix;
+		{
+			if (!fileSuffix.startsWith("."))
+				_fileSuffix = "." + fileSuffix;
+			else
+				_fileSuffix = fileSuffix;
+		}
 		else
 			_fileSuffix = "";
 		newBuf = new byte[inData.length];
@@ -93,14 +98,10 @@ public class Displaywriter extends ADetangler
 			/*
 			 * If they wanted an output directory, go ahead and make it.
 			 */
-			File baseDirFile = new File(outDirectory + File.separator + inFile);
-			if (!baseDirFile.isAbsolute())
-			{
-				baseDirFile = new File("." + File.separator + outDirectory + File.separator + inFile);
-			}
+			File baseDirFile = new File(outDirectory + File.separator + inFile + ".files");
 			// System.err.println("DEBUG: baseDirFile = " + baseDirFile);
 			baseDirFile.mkdirs();
-			baseName = new String(outDirectory + File.separator + inFile + File.separator);
+			baseName = new String(baseDirFile + File.separator);
 			// System.err.println("DEBUG: baseName = " + baseName);
 			int offset = locEHL1;
 			int total = offset + processRecord(clippedImage, offset, true, debugLevel);
@@ -245,7 +246,7 @@ public class Displaywriter extends ADetangler
 			// System.err.println("DEBUG: Displaywriter finishing file: \"" + currentName + "\" with length "+newBufCursor);
 			// Clip out the "file", send to parent for interpretation
 			currentFile = Arrays.copyOfRange(newBuf, 0, newBufCursor);
-			_interpreter.emitFile(currentFile, currentName+_fileSuffix);
+			_interpreter.emitFile(currentFile, currentName + _fileSuffix);
 			currentFile = null;
 		}
 		//if ((name != null) && (name.length() > 0))
