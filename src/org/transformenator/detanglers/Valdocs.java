@@ -1,11 +1,14 @@
 package org.transformenator.detanglers;
 
+import java.io.File;
+
+import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.UnsignedByte;
 
 public class Valdocs extends ADetangler 
 {
 	@Override
-	public byte[] detangle(byte[] inData)
+	public void detangle(FileInterpreter interpreter, byte[] inData, String inFile, String outDirectory, String fileSuffix)
 	{
 		// Figure out the original file name
 		char[] name = new char[110];
@@ -58,14 +61,7 @@ public class Valdocs extends ADetangler
 			}
 		}
 		// System.err.println("DEBUG: Data length after de-indexing: "+inData.length);
-		return inData;
+		interpreter.emitFile(inData, outDirectory + File.separator + newName + fileSuffix);
 	}
-
-	@Override
-	public String getNewName()
-	{
-		return newName;
-	}
-
 	String newName = null;
 }

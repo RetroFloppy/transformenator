@@ -32,13 +32,11 @@ public class Transform
 	public static void main(String[] args)
 	{
 		boolean isCSV = false;
-		/*
-		System.err.println("DEBUG: args.length: " + args.length);
+		// System.err.println("DEBUG: args.length: " + args.length);
 		for (int q = 0; q < args.length; q++)
 		{
-			System.err.println("DEBUG: args[" + q + "]: " + args[q]);
+			// System.err.println("DEBUG: args[" + q + "]: " + args[q]);
 		}
-		*/
 		FileInterpreter fileTransform = null;
 		CSVInterpreter csvTransform = null;
 		if (args.length > 0)
@@ -66,11 +64,21 @@ public class Transform
 		}
 		else if (args.length > 1)
 		{
-			String suffix_guess = "txt";
+			/*
+			 * Make the output directory
+			 */
+			File baseDirFile = new File(args[2]);
+			if (!baseDirFile.isAbsolute())
+			{
+				baseDirFile = new File("." + File.separator + args[2]);
+			}
+			baseDirFile.mkdirs();
+
+			String suffix_guess = ".txt";
 			if (args[0].toLowerCase().endsWith("_rtf"))
-				suffix_guess = "rtf";
+				suffix_guess = ".rtf";
 			else if (args[0].toLowerCase().endsWith("_html"))
-				suffix_guess = "html";
+				suffix_guess = ".html";
 			if ((args.length == 2) && isCSV)
 			{
 				help();
@@ -90,16 +98,20 @@ public class Transform
 					if (args.length == 3)
 					{
 						if (isCSV)
-							csvDirectory(csvTransform, args[0], args[1], args[2], "csv", false);
+							csvDirectory(csvTransform, args[0], args[1], args[2], ".csv", false);
 						else
 							tranformDirectory(fileTransform, args[0], args[1], args[2], suffix_guess, false);
 					}
 					else if (args.length == 4)
 					{
-						if (isCSV)
-							csvDirectory(csvTransform, args[0], args[1], args[2], args[3], false);
+						if (args[3].startsWith("."))
+							suffix_guess = args[3];
 						else
-							tranformDirectory(fileTransform, args[0], args[1], args[2], args[3], false);
+							suffix_guess = "."+args[3];
+						if (isCSV)
+							csvDirectory(csvTransform, args[0], args[1], args[2], suffix_guess, false);
+						else
+							tranformDirectory(fileTransform, args[0], args[1], args[2], suffix_guess, false);
 					}
 					else
 						help();
@@ -110,16 +122,20 @@ public class Transform
 					// System.err.println("DEBUG: starting single-file processing.");
 					if (args.length == 4)
 					{
+						if (args[3].startsWith("."))
+							suffix_guess = args[3];
+						else
+							suffix_guess = "."+args[3];
 						if (fileTransform != null)
 						{
-							fileTransform.createOutput(args[1], args[2], args[3]);
+							fileTransform.process(args[1], args[2], args[3]);
 						}
 					}
 					else if (args.length == 3)
 					{
 						if (fileTransform != null)
 						{
-							fileTransform.createOutput(args[1], args[2], suffix_guess);
+							fileTransform.process(args[1], args[2], suffix_guess);
 						}
 					}
 				}
@@ -181,7 +197,7 @@ public class Transform
 							else
 							{
 								System.out.println("Transforming file: " + files[i] + " to directory: " + out_directory);
-								transform.createOutput(files[i].toString(), out_directory, file_suffix);
+								transform.process(files[i].toString(), out_directory, file_suffix);
 							}
 						}
 					}

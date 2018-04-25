@@ -331,7 +331,8 @@ public class CSVInterpreter
 							// System.err.println("DEBUG Found a right side string: ["+rightTemp1.trim()+"]");
 							String newString = "";
 							rightTemp1 = rightTemp1.trim();
-							rightTemp1 = rightTemp1.substring(1, rightTemp1.length() - 1);
+							if (rightTemp1.length() > 1)
+								rightTemp1 = rightTemp1.substring(1, rightTemp1.length() - 1);
 							newString = rightTemp1.replace("\\\\r", "\r").replace("\\\\n", "\n");
 							rightBytes = newString.getBytes();
 						}

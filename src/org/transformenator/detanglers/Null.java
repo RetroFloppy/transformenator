@@ -20,19 +20,18 @@
 
 package org.transformenator.detanglers;
 
+import java.io.File;
+
+import org.transformenator.internal.FileInterpreter;
+
 /*
- * Null detangler - i.e. do nothing to the input, just send it back out.
+ * Null detangler - i.e. do nothing to the input; just send it back out as-is.
  */
 public class Null extends ADetangler
 {
 	@Override
-	public byte[] detangle(byte[] inData)
+	public void detangle(FileInterpreter interpreter, byte[] inData, String inFile, String outDirectory, String fileSuffix)
 	{
-		return inData;
-	}
-
-	@Override
-	public String getNewName() {
-		return null;
+		interpreter.emitFile(inData, outDirectory + File.separator + inFile + fileSuffix);
 	}
 }

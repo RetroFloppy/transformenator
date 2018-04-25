@@ -1,12 +1,15 @@
 package org.transformenator.detanglers;
 
+import java.io.File;
+
+import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.UnsignedByte;
 
 public class JustWrite extends ADetangler
 {
 
 	@Override
-	public byte[] detangle(byte[] inData)
+	public void detangle(FileInterpreter interpreter, byte[] inData, String inFile, String outDirectory, String fileSuffix)
 	{
 		// Re-assemble the file based on index before starting
 		/*
@@ -107,13 +110,6 @@ public class JustWrite extends ADetangler
 		for (int i = 0; i < newBufCursor; i++)
 			inData[i] = newBuf[i];
 		// System.err.println("DEBUG: Data length after de-indexing: "+inData.length);
-		return inData;
+		interpreter.emitFile(inData, outDirectory + File.separator + inFile + fileSuffix);
 	}
-
-	@Override
-	public String getNewName()
-	{
-		return null;
-	}
-
 }

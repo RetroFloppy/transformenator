@@ -20,15 +20,17 @@
 
 package org.transformenator.detanglers;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.UnsignedByte;
 
 /*
  * ConvertWps80File
  * 
- * The intent of this helper app is to convert the block structure of DEC Rainbow WPS-80 files.
+ * Convert the block structure of DEC Rainbow WPS-80 files.
  * (WPS-80 was marketed by Exceptional Business Solutions (EBS) running on CP/M on the Rainbow.)
  * They have a forward-and-backward linked list structure to 256-byte blocks with inner used-length,
  * very much like WANG did.
@@ -36,7 +38,7 @@ import org.transformenator.internal.UnsignedByte;
 public class WPS80 extends ADetangler
 {
 	@Override
-	public byte[] detangle(byte[] inData)
+	public void detangle(FileInterpreter interpreter, byte[] inData, String inFile, String outDirectory, String fileSuffix)
 	{
 		ByteBuffer bb = ByteBuffer.allocate(inData.length);
 		if ((inData.length % 256) > 0)
@@ -61,7 +63,7 @@ public class WPS80 extends ADetangler
 			}
 		}
 		inData = bb.array();
-		return inData;
+		interpreter.emitFile(inData, outDirectory + File.separator + inFile + fileSuffix);
 	}
 
 	static int nextWpsPage(byte[] inData, int thisPage)
@@ -84,10 +86,5 @@ public class WPS80 extends ADetangler
 			}
 		}
 		return nextPage;
-	}
-
-	@Override
-	public String getNewName() {
-		return null;
 	}
 }

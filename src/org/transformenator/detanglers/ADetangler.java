@@ -28,17 +28,15 @@
  */
 package org.transformenator.detanglers;
 
+import org.transformenator.internal.FileInterpreter;
+
 public abstract class ADetangler
 {
 	/*
 	 * Given a byte stream, do whatever work is necessary to "flatten" or
-	 * detangle the file.
+	 * detangle the file.  This may include creating multiple files (in 
+	 * the case of a disk image containing zero or more) or discovering
+	 * a new file name that should be used instead of the original name.
 	 */
-	public abstract byte[] detangle(byte inData[]);
-
-	/*
-	 * If the byte stream coming in includes a specification of a file
-	 * name, send that back out.  If not, return null.
-	 */
-	public abstract String getNewName();
+	public abstract void detangle(FileInterpreter parent, byte inData[], String inFile, String outDirectory, String fileSuffix);
 }
