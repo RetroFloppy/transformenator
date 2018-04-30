@@ -152,7 +152,7 @@ public class FileInterpreter
 					}
 				}
 				else
-					emitFile(inData, outDirectory + File.pathSeparator + file.getName() + fileSuffix);
+					emitFile(inData, outDirectory + File.separator + file.getName() + fileSuffix);
 			}
 		}
 		return isOK;
