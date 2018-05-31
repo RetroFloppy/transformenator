@@ -21,6 +21,7 @@ trim_leading = 162
 131181..1113 = "\par\par "
 1311..811113 = "\par\par "
 1311....1113 =
+131180....1113 = "\par\par "
 131181....1113 = "\par\par "
 1311..81..1113 = "\par\par "
 1311....811113 = "\par\par "
@@ -30,7 +31,12 @@ trim_leading = 162
 1311....81..1113 = "\par\par "
 1311......811113 = "\par\par "
 1311........1113 =
-1311..........1113 =
+1311..........1113 = "\par\par "
+1011............1113 = 
+
+; Near EOF
+1311....03 =
+1311..03 =
 
 1310 = "[CB]"
 1311 = "[CB]"
@@ -39,10 +45,6 @@ trim_leading = 162
 1013 = "[CE]"
 1113 = "[CE]"
 1213 = "[CE]"
-
-; Characters near EOF
-;80 =
-81 =
 
 ; Newline in data makes our regex not work
 0a =
@@ -70,6 +72,9 @@ a6 = "$"
 ; Small n tilde
 9a = f1
 
+; Characters near EOF
+;80 =
+81 =
 
 ; Remove everything between control sequence signals
 regex = @\[CB\].*?\[CE\]@\\par\\par @
@@ -82,4 +87,4 @@ regex = @\[CE\]@@
 eof_hi = 00
 eof_mid = 7d
 eof_lo = 7c
-eof_offset = 7f
+eof_offset = 80
