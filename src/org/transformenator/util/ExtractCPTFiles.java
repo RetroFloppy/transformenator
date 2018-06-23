@@ -116,7 +116,6 @@ public class ExtractCPTFiles
 					// Ok, we have good sectors.
 					int trackLen = 256 * 16;
 					int i, j, startSector = -1;
-					// byte fnb[] = new byte[256];
 					String currentFile = "";
 					FileOutputStream outFile = null;
 					String continuationFile = "";
@@ -127,7 +126,7 @@ public class ExtractCPTFiles
 						{
 							if (!fileName.equals(""))
 							{
-								// System.err.println("...started a new track, but we haven't fininshed file " + fileName + " yet.");
+								// System.err.println("DEBUG: ...started a new track, but we haven't finished file " + fileName + " yet.");
 								continuationFile = fileName;
 							}
 							// Hunt for a logical beginning of a track
@@ -137,9 +136,9 @@ public class ExtractCPTFiles
 								int sectorStart = offset * 256 + (i * trackLen);
 								byte startByte = inData[sectorStart];
 								boolean pad = false;
-								;
 								if (startByte == 0x01)
 								{
+									fileName = "";
 									startSector = j;
 									for (int k2 = 1; k2 < 17; k2++)
 									{
@@ -148,7 +147,7 @@ public class ExtractCPTFiles
 										if (!pad)
 											fileName += (char) inData[sectorStart + k2];
 									}
-									// System.err.println("Found a new file ["+fileName+"] in track "+i);
+									// System.err.println("DEBUG: Found a new file ["+fileName+"] in track "+i);
 								}
 							}
 							if (startSector == 0)
@@ -164,7 +163,6 @@ public class ExtractCPTFiles
 								for (j = startSector; j < startSector + 16; j++)
 								{
 									int offset = mapSector(j, 1);
-									// fnb = Arrays.copyOfRange(inData, offset * 256 + (i * trackLen), (offset + 1) * 256 + (i * trackLen));
 									fileName = "";
 									boolean pad = false;
 									int firstByteOfSector = UnsignedByte.intValue(inData[offset * 256 + (i * trackLen)]);
@@ -191,7 +189,7 @@ public class ExtractCPTFiles
 											if (!pad)
 												fileName += (char) inData[offset * 256 + (i * trackLen) + k2];
 										}
-										// System.err.println("Found file [" + fileName + "] in track " + i);
+										// System.err.println("DEBUG: Found file [" + fileName + "] in track " + i + ", sector "+j+" ("+offset+")");
 										currentFile = fileName;
 										if (outFile != null)
 										{
@@ -208,9 +206,11 @@ public class ExtractCPTFiles
 										}
 										// System.err.println();
 									}
-									else if ((firstByteOfSector == 0x30) || (firstByteOfSector == 0x31))
+									else if (false) // ((firstByteOfSector == 0x30) || (firstByteOfSector == 0x31))
 									{
+										// Ignore the catalog sectors, read past them...
 										// Ok, we hit a catalog sector.  This resets us.
+										// System.err.println("DEBUG: hit a catalog sector.");
 										currentFile = "";
 										if (outFile != null)
 										{
@@ -226,7 +226,7 @@ public class ExtractCPTFiles
 									}
 									else if (!currentFile.equals(""))
 									{
-										// System.err.println("  Dump of sector for file " + currentFile);
+										// System.err.println("  Dump of sector "+j+" ("+offset+"), offset 0x"+Integer.toHexString(offset * 256 + (i * trackLen))+" for file " + currentFile);
 										for (int x = 0; x < 256; x++)
 										{
 											if (inData[offset * 256 + (i * trackLen) + x] == 0x03)
@@ -305,17 +305,6 @@ public class ExtractCPTFiles
 	{
 		int skewedSectorMap[] = { 0, 3, 6, 9, 12, 15, 2, 5, 8, 11, 14, 1, 4, 7, 10, 13, 0, 3, 6, 9, 12, 15, 2, 5, 8, 11, 14, 1, 4, 7, 10, 13 };
 		return skewedSectorMap[sectorIn];
-	}
-
-	public static int realAddress(int sector, int offset)
-	{
-		return sector * 256 + offset;
-	}
-
-	public static int realWPAddress(int track, int sector, int offset, int skew)
-	{
-		int newSector = mapSector(sector, skew);
-		return track * 4096 + newSector * 256 + offset;
 	}
 
 	public static void help()
