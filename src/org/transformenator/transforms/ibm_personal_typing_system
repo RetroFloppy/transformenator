@@ -1,0 +1,20 @@
+;
+; IBM Personal Typing System - to text
+;
+; The IBM PTS was a modified ISA-based PS/2 Model 30 with a low-density
+; 3-1/2" disk drive that ran DOS and a word processor of some sort.
+;
+
+trim_leading = 0a
+
+0b =
+0f =
+16 =
+18 =
+19 =
+c4 = "_"
+
+1b % "%control%","%/control%"
+1d = 0d0a
+
+regex = @%control%(.|\r)*%/control%@@
