@@ -290,7 +290,7 @@ public class Transform
 	public static File fixFilename(File infile)
 	{
 		String name = infile.getName(), newName = "";
-		// System.err.println("DEBUG: Checking file: " + name);
+		// System.err.println("DEBUG: Checking file: [" + name + "]");
 		boolean needsRenamed = false;
 		for (int j = 0; j < name.length(); j++)
 		{
@@ -314,7 +314,7 @@ public class Transform
 				newName += c;
 				break;
 			case 32: // Space
-				if (j == 0) // Leading space?  Baaaaad.
+				if ((j == 0) || (j == (name.length() - 1))) // Leading or final space?  Baaaaad.
 				{
 					c = '_';
 					needsRenamed = true;
