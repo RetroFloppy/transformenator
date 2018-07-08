@@ -54,10 +54,10 @@ public class ExtractCPTFiles
 	{
 		if ((args.length == 1) || (args.length == 2))
 		{
-			byte[] inData = null;
 			System.err.println("Reading input file " + args[0]);
 			File file = new File(args[0]);
 			byte[] result = new byte[(int) file.length()];
+			byte[] inData = new byte[(int) file.length()];
 			String directory = "";
 			if (args.length == 2)
 			{
@@ -92,7 +92,33 @@ public class ExtractCPTFiles
 							totalBytesRead = totalBytesRead + bytesRead;
 						}
 					}
-					inData = result;
+					int skew[] = {0, 3, 6, 9, 12, 15, 2, 5, 8, 11, 14, 1, 4, 7, 10, 13};
+					// De-skew the disk image in memory
+					for (int i = 0; i < result.length / 4096; i++)
+					{
+						for (int j = 0; j < 16; j++)
+						{
+							System.arraycopy( result, (skew[j]*256)+i*4096, inData, (j*256)+i*4096, 256 );
+						}
+					}
+					// Write an un-screwed image
+					if (true) // i.e. never
+					{
+						try
+						{
+							String unwoundName = "unwound.img";
+							System.err.println("Creating unwound file "+unwoundName);
+							FileOutputStream out = new FileOutputStream(unwoundName, false);
+							out.write(inData, 0, inData.length);
+							out.flush();
+							out.close();
+						}
+						catch (IOException e)
+						{
+							e.printStackTrace();
+						}
+					}
+					//inData = result;
 				}
 				finally
 				{
@@ -115,7 +141,7 @@ public class ExtractCPTFiles
 				{
 					// Ok, we have good sectors.
 					int trackLen = 256 * 16;
-					int i, j, startSector = -1;
+					int i, startSector = -1;
 					String currentFile = "";
 					FileOutputStream outFile = null;
 					String continuationFile = "";
@@ -130,16 +156,15 @@ public class ExtractCPTFiles
 								continuationFile = fileName;
 							}
 							// Hunt for a logical beginning of a track
-							for (j = 0; j < 16; j++)
+							for (int sectorNum = 0; sectorNum < 16; sectorNum++)
 							{
-								int offset = mapSector(j, 1);
-								int sectorStart = offset * 256 + (i * trackLen);
+								int sectorStart = sectorNum * 256 + (i * trackLen);
 								byte startByte = inData[sectorStart];
 								boolean pad = false;
 								if (startByte == 0x01)
 								{
 									fileName = "";
-									startSector = j;
+									startSector = sectorNum;
 									for (int k2 = 1; k2 < 17; k2++)
 									{
 										if (inData[sectorStart + k2] == 0x02)
@@ -160,11 +185,13 @@ public class ExtractCPTFiles
 							}
 							if (startSector > -1)
 							{
-								for (j = startSector; j < startSector + 16; j++)
+								for (int sectorNum = startSector; sectorNum < startSector + 16; sectorNum++)
 								{
-									int offset = mapSector(j, 1);
 									fileName = "";
 									boolean pad = false;
+									int offset = sectorNum;
+									if (offset > 15)
+										offset -= 16;
 									int firstByteOfSector = UnsignedByte.intValue(inData[offset * 256 + (i * trackLen)]);
 									if (firstByteOfSector == 0x00)
 									{
@@ -299,12 +326,6 @@ public class ExtractCPTFiles
 			// wrong args
 			help();
 		}
-	}
-
-	public static int mapSector(int sectorIn, int trackIn)
-	{
-		int skewedSectorMap[] = { 0, 3, 6, 9, 12, 15, 2, 5, 8, 11, 14, 1, 4, 7, 10, 13, 0, 3, 6, 9, 12, 15, 2, 5, 8, 11, 14, 1, 4, 7, 10, 13 };
-		return skewedSectorMap[sectorIn];
 	}
 
 	public static void help()
