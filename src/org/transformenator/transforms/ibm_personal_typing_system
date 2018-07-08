@@ -8,6 +8,7 @@
 trim_leading = 0a
 
 0b =
+0c =
 0f =
 16 =
 18 =
@@ -18,3 +19,4 @@ c4 = "_"
 1d = 0d0a
 
 regex = @%control%(.|\r)*%/control%@@
+regex = @%control%(.|\n)*%/control%@@
