@@ -1,5 +1,5 @@
 ;
-; IBM Personal Typing System - to text
+description = "IBM Personal Typing System - PCDOS-based files to text"
 ;
 ; The IBM PTS was a modified ISA-based PS/2 Model 30 with a low-density
 ; 3-1/2" disk drive that ran DOS and a word processor of some sort.
