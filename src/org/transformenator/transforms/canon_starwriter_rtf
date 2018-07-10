@@ -7,7 +7,7 @@ head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transf
 ; Closing brace for RTF format
 tail = "}"
 
-; Trim the leading 0x164 bytes
+; Trim the leading 0x162 bytes
 trim_leading = 162
 
 1311811113 = "\par "
@@ -17,7 +17,7 @@ trim_leading = 162
 1011..1110 =
 1011....1110 =
 1310........1013 =
-131181841113 =
+131181841113 = "\par "
 131181..1113 = "\par\par "
 1311..811113 = "\par\par "
 1311....1113 =
@@ -33,10 +33,12 @@ trim_leading = 162
 1311........1113 =
 1311..........1113 = "\par\par "
 1011............1113 = 
+13................13 = 
 
 ; Near EOF
 1311....03 =
 1311..03 =
+03 =
 
 1310 = "[CB]"
 1311 = "[CB]"
@@ -79,6 +81,8 @@ a6 = "$"
 ; Remove everything between control sequence signals
 regex = @\[CB\].*?\[CE\]@\\par\\par @
 
+; Address problematic SOF location issue
+regex = @^.*\[CE\]@@
 ; Remove any remaining control sequences
 regex = @\[CB\]@@
 regex = @\[CE\]@@
