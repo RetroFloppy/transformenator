@@ -20,7 +20,10 @@ FE = """
 ; Newline
 0d = 0d0a
 
-; Might be an emdash, or maybe newline
+; Might be an emdash
+bc = "-"
+
+; Might be a newline
 e8 = " "
 
 01 =
