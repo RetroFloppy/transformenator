@@ -111,11 +111,13 @@ public class ExtractPanasonicFiles
 
 	static void emitFiles(byte[] inData, String baseName)
 	{
+		// Panasonic disks came in SS and DS sizes.  Inspect the image size; if it's larger than SS * 1.5, it's DS.
+		int diskSize = inData.length > (360 * 1024 * 1.5)? SIZE_DS: SIZE_SS;
 		for (int i = 0x100; i < 0x1c00; i+=0x20)
 		{
 			String filename = "";
 			int j, result = 0;
-			for (j = 0x10; j < 0x19; j++)
+			for (j = zeroesBegin[diskSize]; j < zeroesBegin[diskSize] + 0x09; j++)
 				result += inData[i+j];
 			filename = "";
 			for (j = 0x00; j < 0x0a; j++)
@@ -132,8 +134,8 @@ public class ExtractPanasonicFiles
 					currentOut = new FileOutputStream(baseName + filename);
 					int fileHead = UnsignedByte.intValue(inData[i+0x1a],inData[i+0x1b]);
 					int fileLength = UnsignedByte.intValue(inData[i+0x1c],inData[i+0x1d]);
-					fileHead = (fileHead * 0x400) + 0x1400 + 0x110;
-					fileLength = fileLength - 0x110;
+					fileHead = (fileHead * 0x400) + fileHeadOffset[diskSize];
+					fileLength = fileLength - 0x100;
 					for (j = fileHead; j < fileHead+fileLength; j++)
 					{
 						if (UnsignedByte.intValue(inData[j]) != 0xc5)
@@ -222,4 +224,9 @@ public class ExtractPanasonicFiles
 		System.err.println();
 		System.err.println("Usage: ExtractPanasonicFiles infile [out_directory]");
 	}
+
+	static int SIZE_SS = 0;
+	static int SIZE_DS = 1;
+	static int zeroesBegin[] = { 0x0c, 0x0c }; // + 0x09
+	static int fileHeadOffset[] = { 0x1110, 0x1510 };
 }
