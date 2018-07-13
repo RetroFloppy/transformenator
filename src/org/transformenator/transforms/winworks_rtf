@@ -1,5 +1,5 @@
 ;
-description="Spinnaker WinWorks; documents start with "WINWORKS DOCUMENT" in the header."
+description="Spinnaker/PFS:Window Works; documents start with "WINWORKS DOCUMENT" in the header, typically have WPD file suffix."
 ;
 
 ; Header for RTF format
@@ -10,20 +10,24 @@ tail = "}"
 ; Start of file
 101602001616030016160400161605001616060016="{@@<FiLe_SoF>@@}"
 
-; Italics on
-16040116 = "\i1 "
+; Underline on
+16040116 = "\ul "
 ; Italics off
-16040016 = "\i0 "
+16040016 = "\ul0 "
 
-; Bold on
-16030116 = "\b1 "
-; Bold off
-16030016 = "\b0 "
+; Centered on
+16060016 = "\qc "
+
+; Italic on
+16030116 = "\i1 "
+; Italic off
+16030016 = "\i0 "
 
 ; Newline productions
-11......11 = "\\r\\n\par "
-..000000000000 = "\\r\\n "
-..010000000000 = "\\r\\n "
-..020000000000 = "\\r\\n "
-..030000000000 = "\\r\\n "
-....0000040000 =
+;..000000000000
+11......11 = "\\r\\n\ul0\qc0\pard\par "
+..000000000000 = "\\r\\n\ul0\qc0\pard\par "
+..010000000000 = "\\r\\n\ul0\qc0\pard "
+..020000000000 = "\\r\\n\ul0\qc0\pard "
+..030000000000 = "\\r\\n\ul0\qc0\pard "
+....0000040000 = "\ul0\qc0\pard "
