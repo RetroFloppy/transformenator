@@ -1,0 +1,8 @@
+;
+description = "PC Memowriter - files with .MMO suffix."
+;
+
+trim_leading=5a
+05=
+0d=0d0a
+18=
