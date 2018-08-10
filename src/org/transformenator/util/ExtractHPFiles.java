@@ -129,7 +129,7 @@ public class ExtractHPFiles
 					for (int i = 0x0200; i < 0x1000; i += 0x20)
 					{
 						String filename = "";
-						if ((inData[i] != 0x00) && (inData[i] != -1))
+						if ((inData[i] != 0x00) && (inData[i] != -1) && (inData[i + 0x0a] != -1))
 						{
 							fileStart = UnsignedByte.intValue(inData[i + 0x0f], inData[i + 0x0e]) * 256;
 							fileLength = UnsignedByte.intValue(inData[i + 0x13], inData[i + 0x12]) * 256;
@@ -147,8 +147,8 @@ public class ExtractHPFiles
 							boolean foundEOF = false;
 							for (j = fileStart + fileLength - 1; j > fileStart; j--)
 							{
-								if ((UnsignedByte.intValue(inData[j]) == 0xff) && 
-										(UnsignedByte.intValue(inData[j+1]) == 0xff))
+								// System.err.println("file start: "+fileStart+" file length: "+fileLength+" j: "+j);
+								if ((inData[j] == -1) && (inData[j+1] == -1))
 								{
 									// System.err.println("Found final 0xffff at "+(j-fileStart));
 									foundEOF = true;
@@ -163,10 +163,6 @@ public class ExtractHPFiles
 								{
 									// System.err.println("Found a trailing 0xef at "+(j-fileStart));
 									foundEOF = true;
-									break;
-								}
-								else
-								{
 									break;
 								}
 							}
