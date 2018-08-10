@@ -22,6 +22,7 @@ tail = " }"
 ; Ruler line removal
 2e72720d =
 2e2e0d = "{ruler}"
+0b = "{ruler}"
 
 ; Bold (Note - not always a toggle)
 02 % "\b1 ","\b0 "
@@ -37,7 +38,9 @@ tail = " }"
 ; Unknown emphasis
 03 =
 04 =
+0c =
 0e =
+0f =
 19 =
 
 ; Toggle Underline mode
@@ -88,6 +91,9 @@ regex = @\.[p|P][s|S].*@@
 regex = @\.[a|A][w|W].*@@
 regex = @\.[u|U][j|J].*@@
 regex = @\.[s|S][r|R].*@@
+regex = @\.[x|X][t|T].*@@
+regex = @\.[x|X][b|B].*@@
+regex = @\.[f|F].*@@
 
 ; Header directive removal
 regex = @\.[h|H][e|E]@@
