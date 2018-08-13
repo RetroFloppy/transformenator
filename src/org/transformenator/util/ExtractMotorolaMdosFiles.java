@@ -174,7 +174,7 @@ public class ExtractMotorolaMdosFiles
 				{
 					// Check all directory sectors for files
 					// System.out.println("Dir sector " + i);
-					for (int j = 0; j < 128; j += 16)
+					for (int j = 0; j < SECTOR_SIZE; j += 16)
 					{
 						// Check a particular sector for files - 16 entries possible
 						deleted1 = false;
@@ -236,7 +236,7 @@ public class ExtractMotorolaMdosFiles
 				out = new FileOutputStream(fileName);
 				// The first sector contains the RIB
 				// System.out.println("RIB sector: 0x" + Integer.toHexString(ribStart));
-				int sizeInSectors = UnsignedByte.intValue(inData[(ribStart * SECTOR_SIZE) + 0x77],inData[(ribStart * SECTOR_SIZE) + 0x76]) & 0xffff;
+				int sizeInSectors = UnsignedByte.intValue(inData[(ribStart * SECTOR_SIZE) + 0x77], inData[(ribStart * SECTOR_SIZE) + 0x76]) & 0xffff;
 				int totalClusters = sizeInSectors / 0x80;
 				if (sizeInSectors % 0x80 > 0)
 					totalClusters++;
@@ -258,7 +258,7 @@ public class ExtractMotorolaMdosFiles
 					{
 						if (totalClusters == 1)
 							writeLength = SECTOR_SIZE * sizeInSectors;
-						if (extent/2 + 1 == totalClusters)
+						if (extent / 2 + 1 == totalClusters)
 						{
 							// System.out.println("Last extent in a binary file; snipping.");
 							writeLength -= (SECTOR_SIZE - lastByteLastSector);
