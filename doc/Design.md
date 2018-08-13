@@ -19,8 +19,7 @@ Alternatively, a suffix can be supplied as an optional parameter to specify a ne
 It can be specified to add no suffix at all by supplying two double quotes (i.e. `""`) as the optional suffix parameter. 
 
 In the case where there is computational reorganization of the file done prior to output file creation, the name of the
-generated file may be completely changed.
+generated file may be completely changed.  
+In the case where a file is a disk image or other compound file, computational reorganization would typically result in
+multiple output files of names unrelated to the original file name.
 The same rules to add a file suffix apply.
-
-Separate from, and prior to these reorganization and substitution phases is the extraction of individual files from a (virtual) disk image;
-that is handled by the various `ExtractFooFiles` utility programs.  
