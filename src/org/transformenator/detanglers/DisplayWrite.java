@@ -41,8 +41,6 @@ public class DisplayWrite extends ADetangler
 				baseDirFile = new File("." + File.separator + outDirectory);
 			}
 			baseDirFile.mkdirs();
-			if (fileSuffix.length() > 0)
-				fileSuffix = "."+fileSuffix;
 			/*
 			 * Pick apart the file chunk indices. Chunk indices start at 0x6b and follow 3 bytes of 0xaa. There are a maximum of 59 indices.
 			 * 

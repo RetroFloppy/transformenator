@@ -15,6 +15,8 @@ tail = "}"
 2bd1028a = "\b1 "
 2bd1028e = "\b0 "
 2bd4020e = "\ul0 "
+2bd4027a = "\b1 "
+2bd4027e = "\b0 "
 
 ; More emphasis
 2ae80700 = 
@@ -39,7 +41,6 @@ tail = "}"
 2bd4040a0100 =
 2bd8026640 =
 2bd4030b03 =
-2bd40202 =
 2bd40206 =
 
 ; Unknown emphasis pair
