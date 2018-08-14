@@ -1,2 +1,4 @@
+;
 description=Pulls the files off of the virtual file system of a Seawell 8" disk image.
+;
 detangler=Seawell
