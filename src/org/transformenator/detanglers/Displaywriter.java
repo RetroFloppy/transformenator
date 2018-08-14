@@ -20,7 +20,6 @@
 
 package org.transformenator.detanglers;
 
-import java.io.File;
 import java.util.Arrays;
 
 import org.transformenator.internal.EbcdicUtil;
@@ -95,14 +94,6 @@ public class Displaywriter extends ADetangler
 		 */
 		if ((clippedImage != null) && (locEHL1 > -1))
 		{
-			/*
-			 * If they wanted an output directory, go ahead and make it.
-			 */
-			File baseDirFile = new File(outDirectory + File.separator + inFile + ".files");
-			// System.err.println("DEBUG: baseDirFile = " + baseDirFile);
-			baseDirFile.mkdirs();
-			baseName = new String(baseDirFile + File.separator);
-			// System.err.println("DEBUG: baseName = " + baseName);
 			int offset = locEHL1;
 			int total = offset + processRecord(clippedImage, offset, true, debugLevel);
 			boolean done = false;
