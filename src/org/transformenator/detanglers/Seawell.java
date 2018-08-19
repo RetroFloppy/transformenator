@@ -27,6 +27,7 @@
 package org.transformenator.detanglers;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -133,9 +134,9 @@ public class Seawell
 							// Dump out the second chain
 							out.write(fnb, 0, dataLen2);
 						}
-						// All done with all files
+						// All done with this virtual file
 						out.close();
-						parent.emitFile(out.toByteArray(), filename);
+						parent.emitFile(out.toByteArray(), outDirectory + File.separator + filename);
 					}
 					catch (IOException io)
 					{
