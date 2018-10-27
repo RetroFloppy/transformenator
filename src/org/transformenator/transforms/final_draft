@@ -1,9 +1,11 @@
 ;
-description = "Final Draft - horribly incomplete."
+description = "Final Draft - Text Extraction Only."
 ;
 
-; Based on some examples... not a sound way of finding the SOF
-trim_leading = 11c
+; First one of these is the SOF
+03........................................00......2c = "{@@<FiLe_SoF>@@}"
+
+0d = 0d0a0d0a
 
 ; Apostrophe
 92 = "'"
@@ -19,7 +21,7 @@ d5 = "'"
 033030303430303030........3030303030 = "{@@<FiLe_EoF>@@}"
 
 ; Link tag
-03........................................00......2c = 
+03........................................00......2c =
 
 ; Special begin-end characters... maybe chevrons, etc.
 93 = "<"
