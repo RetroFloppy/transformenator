@@ -313,6 +313,11 @@ public class Transform
 				needsRenamed = true;
 				newName += c;
 				break;
+			case 13: // Newline
+				c = '_';
+				needsRenamed = true;
+				newName += c;
+				break;
 			case 32: // Space
 				if ((j == 0) || (j == (name.length() - 1))) // Leading or final space?  Baaaaad.
 				{
@@ -333,6 +338,11 @@ public class Transform
 				break;
 			case 63: // Some Crazy Mac crap
 				c = '_';
+				needsRenamed = true;
+				newName += c;
+				break;
+			case 92: // Backslash
+				c = '-';
 				needsRenamed = true;
 				newName += c;
 				break;
