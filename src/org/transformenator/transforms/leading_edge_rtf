@@ -24,19 +24,23 @@ tail = "}"
 ; Center: \g:\
 5c673a5c = "\qc "
 
+; Italics on
+5c71....000100....01715c = "\i1 "
+5c71....010100....01715c = "\i1 "
+
 ; Bold on
 5c71....000400....01715c = "\b1 "
 5c71....000c00....01715c = "\b1 "
 
 ; Bold/Underline/super/subscript off
-5c71....000000....01715c = "\b0\ul0\nosupersub "
+5c71....000000....01715c = "\b0\i0\ul0\nosupersub "
+5c71....010000....01715c = "\i0 "
 
 ; Need to ignore this - not sure what it is yet:
 5c71....0000002100..1105715c =
 
 ; Underline on
 5c71....000500....01715c = "\ul "
-5c71....000100....01715c = "\ul "
 
 ; Superscript on
 5c71....002000....01715c = "\super "
@@ -44,5 +48,5 @@ tail = "}"
 ; Start of text (bracketed by two "\s\" productions)
 5c735c = "{@@<FiLe_SoF_GrEeDy>@@}"
 
-; Endof file: 0x1a
+; End of file: 0x1a
 1a = "{@@<FiLe_EoF>@@}"
