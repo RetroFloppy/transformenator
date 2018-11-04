@@ -1,5 +1,5 @@
 ;
-description = "Leading Edge Word Processor."
+description = "Leading Edge Word Processor.  Telltale files are ')LEPWP.DDR' and 'STANDARD.DOC'"
 detangler = LeadingEdge
 ;
 
