@@ -1,5 +1,5 @@
 ;
-description = "C64 word processor Timeworks Word Writer"
+description = "C64 Timeworks Word Writer word processor."
 ;
 
 7a = "<Control>"

@@ -1,5 +1,6 @@
 ;
-description = "WordStar word processor, output in RTF."
+description = "WordStar word processor."
+commentary = "Helpful URL: http://justsolve.archiveteam.org/wiki/WordStar"
 ;
 ; Helpful URL: http://justsolve.archiveteam.org/wiki/WordStar
 ;

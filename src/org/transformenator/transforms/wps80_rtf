@@ -1,5 +1,5 @@
 ;
-description = "DEC Rainbow WPS-80 format."
+description = "DEC Rainbow WPS-80 word processor."
 detangler = WPS80
 ;
 

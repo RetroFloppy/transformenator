@@ -1,5 +1,5 @@
 ;
-description = "Valdocs from Epson QX-10 (CP/M) transform."
+description = "Epson QX-10 Valdocs (CP/M) word processor."
 detangler = Valdocs
 ;
 

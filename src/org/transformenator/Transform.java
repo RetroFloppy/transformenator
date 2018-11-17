@@ -52,6 +52,10 @@ public class Transform
 
 		if (args.length == 0)
 			help();
+		else if ((args.length == 1) && args[0].equalsIgnoreCase("describe"))
+		{
+			help(true);
+		}
 		else if ((args.length == 1) && args[0].equalsIgnoreCase("help"))
 		{
 			FileInterpreter.listExamples();
@@ -397,6 +401,11 @@ public class Transform
 
 	public static void help()
 	{
+		help(false);
+	}
+
+	public static void help(boolean verbose)
+	{
 		System.err.println();
 		System.err.println("Transform " + Version.VersionString + " - Apply transform specification to a file or directory");
 		System.err.println();
@@ -409,6 +418,6 @@ public class Transform
 		System.err.println("   https://github.com/RetroFloppy/transformenator/wiki/Transform-Specification");
 		System.err.println("   https://github.com/RetroFloppy/transformenator/wiki/CSV-Transform-Specification");
 		System.err.println();
-		FileInterpreter.listInternalTransforms();
+		FileInterpreter.listInternalTransforms(verbose);
 	}
 }

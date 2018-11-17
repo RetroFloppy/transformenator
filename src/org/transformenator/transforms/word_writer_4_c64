@@ -1,5 +1,5 @@
 ;
-description = "C64 word processor Word Writer 4"
+description = "C64 Word Writer 4 word processor."
 ;
 
 ; Remove first x101 bytes

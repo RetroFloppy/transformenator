@@ -1,5 +1,5 @@
 ;
-description = "IBM PC Writer's Choice word processor."
+description = "PC Writer's Choice word processor."
 ;
 
 ; Leading gorp until 0x400

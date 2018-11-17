@@ -1,5 +1,5 @@
 ;
-description = "XyWrite word processor, output in RTF."
+description = "XyWrite word processor."
 ;
 
 ; Header for RTF format

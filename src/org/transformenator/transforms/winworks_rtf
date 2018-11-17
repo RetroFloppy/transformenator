@@ -1,5 +1,6 @@
 ;
-description="Spinnaker/PFS:Window Works; documents start with "WINWORKS DOCUMENT" in the header, typically have WPD file suffix."
+description = "Spinnaker/PFS:Window Works word processor."
+commentary = "Documents start with "WINWORKS DOCUMENT" in the header, typically have WPD file suffix."
 ;
 
 ; Header for RTF format

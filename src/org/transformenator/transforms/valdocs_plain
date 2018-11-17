@@ -1,5 +1,6 @@
 ;
-description = "Valdocs file, but without the inedexing normally seen; mostly text, with 9b..9c productions."
+description = "Valdocs file without indexing."
+commentary = "Mostly text, with 9b..9c productions."
 ;
 
 9b="1ON2"

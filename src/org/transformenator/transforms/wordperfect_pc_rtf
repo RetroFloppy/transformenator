@@ -1,5 +1,5 @@
 ;
-description = "DOS WordPerfect 4.2 word processor, output in RTF.  Also known to cover Apple IIgs."
+description = "WordPerfect 4.2 word processor."
 ;
 
 ; Header for RTF format
