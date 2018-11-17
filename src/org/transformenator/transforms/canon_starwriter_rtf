@@ -1,5 +1,6 @@
 ;
-description = "Transform Canon StarWriter ETW1 word processor to RTF."
+description = "Canon StarWriter word processor."
+commentary = "Files start with ETW1."
 ;
 
 ; Header for RTF format

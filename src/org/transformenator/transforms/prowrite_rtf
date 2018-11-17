@@ -1,5 +1,5 @@
 ;
-description = "Amiga ProWrite to RTF."
+description = "Amiga ProWrite word processor."
 detangler = ProWrite
 ;
 

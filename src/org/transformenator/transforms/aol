@@ -1,5 +1,6 @@
 ;
-description = "AOL Macintosh message format - simply clips off the beginning and end cruft."
+description = "AOL Macintosh messages."
+commentary = "Simply clips off the beginning and end cruft."
 ;
 
 ; SOF

@@ -1,5 +1,6 @@
 ;
-description = "IBM 6580 8 inch Displaywriter disk image to files in plain text.  Notes: EBCDIC encoding, contains many printer-specific codes; non-understood data represented by a tilde character (~)."
+description = "IBM 6580 8 inch Displaywriter disk image decoder."
+commentary = "EBCDIC encoding, contains many printer-specific codes; non-understood data represented by a tilde character (~)."
 ;
 
 detangler = "Displaywriter"

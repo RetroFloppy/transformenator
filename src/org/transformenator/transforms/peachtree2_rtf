@@ -1,5 +1,6 @@
 ;
-description = "Transform for Peachtree word processor - step 2 of 2.  Use the peachtree2_rtf transform to pretty files up that had been conditioned with peachtree1 (i.e. transformutil peachtree2_rtf Step1 Converted)."
+description = "Peachtree word processor - step 2 of 2."
+commentary = "Use this to pretty files up that had been conditioned with peachtree1."
 ;
 
 ; Header for RTF format

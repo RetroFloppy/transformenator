@@ -1,5 +1,6 @@
 ;
-description = "CPT word processor to RTF."
+description = "CPT word processor."
+commentary = "Files typically come from 8 inch disks."
 ;
 
 ; Header for RTF format

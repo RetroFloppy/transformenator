@@ -1,5 +1,6 @@
 ;
-description = "Brother DOS-based Word Processor - typically with a WPT file suffix.  Files of this type start with 8f8101."
+description = "Brother DOS-based word processor."
+commentary = "Typically has a WPT file suffix.  Files of this type start with 8f8101."
 ;
 
 ; Header for RTF format

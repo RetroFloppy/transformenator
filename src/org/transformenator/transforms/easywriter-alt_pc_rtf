@@ -1,5 +1,6 @@
 ;
-description = "Transform very early PC (possibly) EasyWriter for PC, output in RTF.  File suffix is EWF."
+description = "Very early PC (possibly EasyWriter) word processor."
+commentary = "File suffix is EWF."
 ;
 
 ; Header for RTF format

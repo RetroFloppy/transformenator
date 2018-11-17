@@ -1,5 +1,6 @@
 ;
-description = "Transform for an unknown C64 word processor that wrote SEQ files."
+description = "Unknown C64 word processor."
+commentary = "Simple PETSCII transform for SEQ files."
 ;
 
 ; Transform capitals to lowercase

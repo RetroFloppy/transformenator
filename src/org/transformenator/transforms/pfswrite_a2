@@ -1,5 +1,5 @@
 ;
-description = "Transform for PFS:Write on the Apple II in Pascal format."
+description = "Apple II Pascal PFS:Write word processor."
 ;
 
 ; Trim the leading 0x400 bytes - this is a Pascal format file

@@ -1,5 +1,6 @@
 ;
-description = "Transform PC EasyWriter to RTF.  Based on extant files with no particular technical reference - may be breathtakingly incomplete."
+description = "PC EasyWriter word processor."
+commentary = "Based on extant PC files with no particular technical reference - may be breathtakingly incomplete."
 ;
 
 ; Header for RTF format

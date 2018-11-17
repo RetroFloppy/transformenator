@@ -1,5 +1,5 @@
 ;
-description = "OmniWriter for C-64 conversion to plain text."
+description = "C64 OmniWriter word processor."
 ;
 
 trim_leading = c7

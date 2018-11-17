@@ -1,5 +1,6 @@
 ;
-description = "Final Draft - Text Extraction Only."
+description = "Final Draft script processor."
+commentary = "Text Extraction Only."
 ;
 
 ; First one of these is the SOF

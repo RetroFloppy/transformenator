@@ -1,5 +1,6 @@
 ;
-description = "DEC RT11-based word processor to RTF; files use a WPS extension."
+description = "DEC RT11-based word processor."
+commentary = "Files use a WPS extension."
 ;
 0d = "\\r\\n\par \ql " 
 

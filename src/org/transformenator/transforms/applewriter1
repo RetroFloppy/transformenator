@@ -1,5 +1,6 @@
 ;
-description = "Transform binary Applewriter 1.0 to ASCII - mostly just strips high bits off.  When extracting files with CiderPress, ensure you pay attention to these attributes: "Convert to non-Apple II formats" is unchecked, "Don't convert text files" is checked."
+description = "Applewriter 1.0 word processor."
+commentary = "Mostly just strips high bits off.  When extracting files with CiderPress, ensure you pay attention to these attributes: "Convert to non-Apple II formats" is unchecked, "Don't convert text files" is checked.""
 ;
 
 ; Extended ASCII characters

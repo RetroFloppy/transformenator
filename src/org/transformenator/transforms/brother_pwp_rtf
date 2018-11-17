@@ -1,5 +1,6 @@
 ;
-description = "Brother DOS-based Word Processors - typically with a PWP file suffix."
+description = "Brother DOS-based word processor."
+commentary = "Typically has a PWP file suffix."
 ;
 
 ; Header for RTF format

@@ -1,5 +1,6 @@
 ;
-description = "Do-nothing 'transform' - except it wraps the output in RTF tags."
+description = "Do-nothing 'transform' to RTF."
+commentary = "Wraps the input in beginning and ending RTF tags."
 ;
 ; Header for RTF format
 head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "

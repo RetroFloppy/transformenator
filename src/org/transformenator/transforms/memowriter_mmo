@@ -1,5 +1,6 @@
 ;
-description = "PC Memowriter - files with .MMO suffix."
+description = "PC Memowriter word processor."
+commentary = "Files have .MMO suffix."
 ;
 
 trim_leading=5a

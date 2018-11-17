@@ -1,5 +1,6 @@
 ;
-description = "TRS-80 Scripsit word processor format found on Model 4 LDOS 6.x disks."
+description = "TRS-80 Scripsit word processor."
+commentary = "Found on Model 4 LDOS 6.x disks."
 ;
 
 ; Header for RTF format

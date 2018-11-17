@@ -1,5 +1,6 @@
 ;
-description = "DEC RX50K-based word processor (Rainbow?) to RTF."
+description = "DEC (possibly Rainbow) word processor."
+commentary = "Disks are RX50K-based."
 ;
 
 ; Header for RTF format

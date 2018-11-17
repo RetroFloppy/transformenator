@@ -1,5 +1,5 @@
 ;
-description = Extract Motorola EXOR MDOS files from an 8 inch disk image to plain text.
+description = "Extract Motorola EXOR MDOS files from disk image."
 ;
 detangler = MotorolaMdos
 ;

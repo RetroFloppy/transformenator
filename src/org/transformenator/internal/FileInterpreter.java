@@ -55,11 +55,6 @@ public class FileInterpreter
 		isOK = readTransform(transform_name);
 	}
 
-	public String describe()
-	{
-		return description;
-	}
-
 	public String detanglerName()
 	{
 		if (detangler != null)
@@ -373,7 +368,7 @@ public class FileInterpreter
 					skip = false;
 					// System.err.println("DEBUG Left side token: ["+leftTemp+"]");
 					// If you add a left side keyword that will get consumed, be sure to add it here, otherwise the fall through processing will try to eat it:
-					if (leftTemp.toLowerCase().equals("detangler") || leftTemp.toLowerCase().equals("description") || leftTemp.equals("head") || leftTemp.equals("tail") || leftTemp.equals("trim_leading") || leftTemp.equals("trim_trailing") || leftTemp.equals("eof_lo") || leftTemp.equals("eof_mid") || leftTemp.equals("eof_hi") || leftTemp.trim().charAt(0) == (';'))
+					if (leftTemp.toLowerCase().equals("detangler") || leftTemp.toLowerCase().equals("description") || leftTemp.toLowerCase().equals("commentary") || leftTemp.equals("head") || leftTemp.equals("tail") || leftTemp.equals("trim_leading") || leftTemp.equals("trim_trailing") || leftTemp.equals("eof_lo") || leftTemp.equals("eof_mid") || leftTemp.equals("eof_hi") || leftTemp.trim().charAt(0) == (';'))
 					{
 						if (leftTemp.trim().charAt(0) == (';'))
 						{
@@ -534,7 +529,11 @@ public class FileInterpreter
 						// System.err.println("DEBUG Right side token: ["+rightTemp1+"]");
 						if (leftTemp.toLowerCase().equals("description"))
 						{
-							description = rightTemp1;
+							short_description = rightTemp1;
+						}
+						else if (leftTemp.toLowerCase().equals("commentary"))
+						{
+							long_description = rightTemp1;
 						}
 						else if (leftTemp.toLowerCase().equals("detangler"))
 						{
@@ -925,7 +924,7 @@ public class FileInterpreter
 		}
 	}
 
-	public static void listInternalTransforms()
+	public static void listInternalTransforms(boolean describe)
 	{
 		String prefix = "org/transformenator/transforms/";
 		CodeSource src = FileInterpreter.class.getProtectionDomain().getCodeSource();
@@ -969,7 +968,7 @@ public class FileInterpreter
 				}
 			}
 			System.err.println("Available internal transforms:");
-			printElements(transforms);
+			printElements(transforms, describe);
 		}
 	}
 
@@ -1032,7 +1031,7 @@ public class FileInterpreter
 					}
 				}
 			}
-			printElements(utilities);
+			printElements(utilities, false);
 		}
 	}
 
@@ -1046,59 +1045,86 @@ public class FileInterpreter
 		return suffix;
 	}
 
-	public static void printElements(Vector<String> elements)
+	public static void printElements(Vector<String> elements, boolean describe)
 	{
 		/*
-		 *  Print out a vector of elements in two columns
-		 *   - is not smart enough to know terminal width; assumes 80 
-		 *   - is not smart enough to know if two columns actually fit; assumes 37 chars max name length
+		 *  Print out a vector of elements and their short descriptions
+		 *   - is not smart enough to know terminal width
 		 */
+		FileInterpreter fileTransform = null;
+		String interpName = null;
+			fileTransform = new FileInterpreter(interpName);
 		if (!elements.isEmpty())
 		{
-			int halfway = (int) elements.size() / 2;
-			if (elements.size() % 2 > 0)
-				halfway += 1;
-			for (int i = 0; i < halfway; i++)
+			for (int i = 0; i < elements.size(); i++)
 			{
-				System.err.print("  " + elements.get(i));
-				if (elements.size() > i + halfway) // If there is a final element (even number of elements)
-				{
-					for (int j = 0; j < 40 - (elements.get(i).length()); j++)
-					{
-						System.err.print(" ");
-					}
-					System.err.println("  " + elements.get(i + halfway));
-				}
-				else
-					System.err.println();
+				interpName = elements.get(i);
+				fileTransform = new FileInterpreter(interpName);
+				fileTransform.emitStatus(false, describe);
 			}
 		}
 	}
 
 	public void emitStatus()
 	{
-		if (isOK == false)
-			System.err.println("Unable to locate transform file named \"" + transformName + "\".");
+		emitStatus(true, true);
+	}
+
+	public void emitStatus(boolean decorate, boolean verbose)
+	{
+		if (decorate)
+		{
+			if (isOK == false)
+				System.err.println("Unable to locate transform file named \"" + transformName + "\".");
+			else
+			{
+				if (isInternal)
+					System.err.println("Using internal transform file \"" + transformName + "\".");
+				else
+					System.err.println("Using external transform file \"" + transformName + "\".");
+			}
+		}
 		else
 		{
-			if (isInternal)
-				System.err.println("Using internal transform file \"" + transformName + "\".");
+			System.out.print(transformName);
+			// Max size is currently 22 characters wide - so max 4 tabs.
+			int numTabs = (24 - transformName.length()) / 8;
+			if ((24 - transformName.length()) % 8 > 0)
+				numTabs ++;
+			for (int i = 0; i < numTabs; i++)
+				System.out.print("\t");
+		}
+		if ((short_description != null) && (short_description.trim().length() > 0))
+		{
+			if (decorate)
+			{
+				System.out.println();
+				System.out.println("Description: ");
+			}
+			System.out.print(short_description);
+			if ((long_description != null) && (long_description.trim().length() > 0) && (verbose))
+			{
+				System.out.println("  "+long_description);			
+			}
 			else
-				System.err.println("Using external transform file \"" + transformName + "\".");
+			{
+				System.out.println();
+			}
 		}
-
-		if (description != null)
+		else
 		{
-			System.out.println();
-			System.out.println("Description: ");
-			System.out.println(description);
+			if (!decorate)
+				System.out.println();
 		}
-		if (detanglerName() != null)
+		if (decorate)
 		{
-			// Only bother reporting the detangler if it's not the default one
-			System.out.println();
-			System.out.println("Detangler: ");
-			System.out.println(detanglerName());
+			if (detanglerName() != null)
+			{
+				// Only bother reporting the detangler if it's not the default one
+				System.out.println();
+				System.out.println("Detangler: ");
+				System.out.println(detanglerName());
+			}
 		}
 
 	}
@@ -1115,7 +1141,7 @@ public class FileInterpreter
 	Vector<RegSpec> leftSide = new Vector<RegSpec>();
 	Vector<byte[]> rightSide = new Vector<byte[]>();
 	Vector<byte[]> rightToggle = new Vector<byte[]>();
-	String description, prefix, suffix, messages = null;
+	String short_description, long_description, prefix, suffix, messages = null;
 	Class<ADetangler> detangler = null;
 	String inFile, transformName;
 	int trimLeading = 0, trimTrailing = 0, trimmedEnd;

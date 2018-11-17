@@ -1,5 +1,5 @@
 ;
-description = "Transform C-64 Data-20 word processor to text."
+description = "C64 Data-20 word processor."
 ;
 
 ; Transform capitals to lowercase

@@ -1,5 +1,6 @@
 ;
-description = "DisplayWrite (3?) format, EBCDIC input, output in RTF."
+description = "IBM DisplayWrite (3?) word processor."
+commentary = "EBCDIC input, output in RTF."
 detangler = DisplayWrite
 ;
 

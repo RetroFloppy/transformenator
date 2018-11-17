@@ -1,5 +1,6 @@
 ;
-description = "Perfect Writer from Kaypro CP/M (files with .mss suffix)"
+description = "Kaypro CP/M Perfect Writer word processor."
+commentary = "Files have .MSS suffix."
 ;
 
 ; Header for RTF format

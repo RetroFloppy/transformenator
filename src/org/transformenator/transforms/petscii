@@ -1,5 +1,5 @@
 ;
-description = "Transform PETSCII to ASCII"
+description = "Transform PETSCII to ASCII."
 ;
 
 ; Transform capitals to lowercase

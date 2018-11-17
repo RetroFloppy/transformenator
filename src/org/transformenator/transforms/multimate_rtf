@@ -1,5 +1,6 @@
 ;
-description = "Transform for early Multimate word processor to RTF - very skeletal so far."
+description = "Multimate word processor."
+commentary = "Early Multimate - very skeletal so far."
 ;
 
 ; Header for RTF format

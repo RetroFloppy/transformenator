@@ -1,5 +1,6 @@
 ;
-description = "Transform for an unknown C64 word processor to RTF.  Files begin with 00278193."
+description = "Unknown C64 word processor."
+commentary = "Files begin with 00278193."
 ;
 
 ; Header for RTF format

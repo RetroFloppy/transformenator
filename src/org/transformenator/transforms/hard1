@@ -1,5 +1,6 @@
 ;
-description = "Unknown word processor format found on a hard-sectored 8 inch disk."
+description = "Unknown word processor."
+commentary = "Found on a hard-sectored 8 inch disk."
 ;
 
 ; Special substitutions

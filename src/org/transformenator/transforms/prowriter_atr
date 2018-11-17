@@ -1,5 +1,6 @@
 ;
-description = "Atari Prowriter - Atari 5-1/4" disks"
+description = "Atari Prowriter word processor."
+commentary = "From Atari 5-1/4" disks."
 ;
 
 ; Preamble crap

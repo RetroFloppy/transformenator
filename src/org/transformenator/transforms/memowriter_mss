@@ -1,5 +1,6 @@
 ;
-description = "Memowriter - files with .MSS suffix."
+description = "PC Memowriter word processor."
+commentary = "Files have .MSS suffix."
 ;
 
 ; Header for RTF format

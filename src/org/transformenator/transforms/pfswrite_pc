@@ -1,5 +1,6 @@
 ;
-description = "Transform for PFS:Write on the PC to text."
+description = "PC PFS:Write word processor."
+commentary = "Start of file contains 'GERBILDOC3'"
 ;
 ; Start of file contains "GERBILDOC3"
 ;

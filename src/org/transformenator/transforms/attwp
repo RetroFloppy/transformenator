@@ -1,5 +1,6 @@
 ;
 description = "AT&T 5700/7700 / Olivetti ETV240/250 word processors."
+commentary = ""
 ;
 
 ; SOF is $d4 bytes in

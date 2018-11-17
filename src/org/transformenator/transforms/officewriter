@@ -1,5 +1,6 @@
 ;
-description = "PC OfficeWriter - just a few example files available."
+description = "OfficeWriter for PC word processor."
+commentary = "Just a few example files were available."
 ;
 
 trim_leading = 600

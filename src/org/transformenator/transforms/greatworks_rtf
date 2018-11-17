@@ -1,5 +1,6 @@
 ;
-description = "Symantec Greatworks (text portion only to RTF)."
+description = "Symantec Greatworks word processor."
+commentary = "Only the text portions are converted to RTF."
 ;
 
 ; Header for RTF format

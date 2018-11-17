@@ -1,5 +1,6 @@
 ;
-description = "Transform for basic readability of IBM 5520 Administrative System files extracted with ExtractAdministrativeSystemFile utility.  Notes: EBCDIC encoding, uses many printer-specific codes; non-understood data is represented by a tilde character (~)."
+description = "IBM 5520 Administrative System files."
+commentary = "Files are extracted with ExtractAdministrativeSystemFile utility.  EBCDIC encoding, uses many printer-specific codes; non-understood data is represented by a tilde character (~)."
 ;
 
 ; Header for RTF format

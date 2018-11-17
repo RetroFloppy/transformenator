@@ -1,5 +1,5 @@
 ;
-description = "Apple II Multiscribe 3.0.2."
+description = "Apple II Multiscribe 3.0.2 word processor."
 ;
 
 ;0100004c004c....000002....0a00110018001f0026002d0034003b00420046004a05......02 = "{@@<FiLe_SoF>@@}"

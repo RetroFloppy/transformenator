@@ -1,5 +1,6 @@
 ;
-description = "Very minor cleanup for Panasonic KX-* word processor files - works with ExtractPanasonicFiles utility."
+description = "Panasonic KX-* word processor."
+commentary = "Very minor file cleanup - works with ExtractPanasonicFiles utility."
 ;
 
 ; Likely double-space

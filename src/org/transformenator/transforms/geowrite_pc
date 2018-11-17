@@ -1,5 +1,6 @@
 ;
-description="GeoWrite (PC) word processor - part of the GeoWorks suite, also sold as the Canon StarWrier 5000/7000"
+description = "GeoWrite and Canon StarWriter 5000/7000 word processor."
+commentary = "Part of the GeoWorks suite."
 ;
 detangler=GeoWritePC
 
