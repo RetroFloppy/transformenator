@@ -394,8 +394,8 @@ public class Transform
 	public static String conditionFileName(String inName)
 	{
 		// Any sneaky characters getting in... replace them here.
-		String nameReplaced = inName.replace('½', '_');
-		nameReplaced = nameReplaced.replace('Â', '_');
+		String nameReplaced = inName.replace('ï¿½', '_');
+		nameReplaced = nameReplaced.replace('ï¿½', '_');
 		return nameReplaced;
 	}
 
@@ -410,6 +410,7 @@ public class Transform
 		System.err.println("Transform " + Version.VersionString + " - Apply transform specification to a file or directory");
 		System.err.println();
 		System.err.println("Usage: Transform <transform_spec> <input> <out_directory> [suffix]");
+		System.err.println("       Transform describe");
 		System.err.println("       Transform fix_filenames <in_directory>");
 		System.err.println("       Transform help");
 		System.err.println("       Transform help-csv");

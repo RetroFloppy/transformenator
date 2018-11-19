@@ -1051,9 +1051,10 @@ public class FileInterpreter
 		 *  Print out a vector of elements and their short descriptions
 		 *   - is not smart enough to know terminal width
 		 */
+		elements.sort(null);
 		FileInterpreter fileTransform = null;
 		String interpName = null;
-			fileTransform = new FileInterpreter(interpName);
+		fileTransform = new FileInterpreter(interpName);
 		if (!elements.isEmpty())
 		{
 			for (int i = 0; i < elements.size(); i++)
