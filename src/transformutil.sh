@@ -10,9 +10,24 @@ then
   export TRANSFORM_HOME="."
 fi
 
-if [ "$1" != "" ]
+if [ "$4" != "" ]
 then
-	java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.util."$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9"
+        java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.TransformUtility "$1" "$2" "$3" "$4"
 else
-	java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.TransformUtility
+        if [ "$3" != "" ]
+        then
+                java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.TransformUtility "$1" "$2" "$3"
+        else
+                if [ "$2" != "" ]
+                then
+                        java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.TransformUtility "$1" "$2"
+                else
+                        if [ "$1" != "" ]
+                        then
+                                java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.TransformUtility "$1"
+                        else
+                                java -cp $TRANSFORM_HOME/transformenator.jar org.transformenator.TransformUtility
+                        fi
+                fi
+        fi
 fi

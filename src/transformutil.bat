@@ -13,38 +13,38 @@
 :next
 @if "%1" == "" goto usage
 @if "%9" == "" goto eight
-@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.util."%1" "%2" "%3" "%4" "%5" "%6" "%7" "%8" "%9"
+@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.TransformUtility "%1" "%2" "%3" "%4" "%5" "%6" "%7" "%8" "%9"
 @goto end
 :eight
 @if "%8" == "" goto seven
-@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.util."%1" "%2" "%3" "%4" "%5" "%6" "%7" "%8"
+@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.TransformUtility "%1" "%2" "%3" "%4" "%5" "%6" "%7" "%8"
 @goto end
 :seven
 @if "%7" == "" goto six
-@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.util."%1" "%2" "%3" "%4" "%5" "%6" "%7"
+@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.TransformUtility "%1" "%2" "%3" "%4" "%5" "%6" "%7"
 @goto end
 :six
 @if "%6" == "" goto five
-@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.util."%1" "%2" "%3" "%4" "%5" "%6"
+@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.TransformUtility "%1" "%2" "%3" "%4" "%5" "%6"
 @goto end
 :five
 @if "%5" == "" goto four
-@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.util."%1" "%2" "%3" "%4" "%5"
+@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.TransformUtility "%1" "%2" "%3" "%4" "%5"
 @goto end
 :four
 @if "%4" == "" goto three
-@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.util."%1" "%2" "%3" "%4"
+@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.TransformUtility "%1" "%2" "%3" "%4"
 @goto end
 :three
 @if "%3" == "" goto two
-@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.util."%1" "%2" "%3"
+@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.TransformUtility "%1" "%2" "%3"
 @goto end
 :two
 @if "%2" == "" goto one
-@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.util."%1" "%2"
+@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.TransformUtility "%1" "%2"
 @goto end
 :one
-@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.util."%1"
+@java -cp %TRANSFORM_HOME%\transformenator.jar org.transformenator.TransformUtility "%1"
 @goto end
 
 :usage
