@@ -171,10 +171,16 @@ public class ExtractJPGFiles
 		
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Scrape off jpg files from a disk image in a totally brain-dead fashion."+
+				(verbose?"  Useful for some really crappy Mavica camera disks.":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractJPGFiles " + Version.VersionString + " - Scrape off jpg files from a disk image in a totally brain-dead fashion.");
+		System.err.println("ExtractJPGFiles " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractJPGFiles infile [out_directory]");
 	}

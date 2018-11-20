@@ -196,10 +196,16 @@ public class RevealValdocsEntries
 		return retval;
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Un-hide CP/M directory entries of Valdocs files in disk image files."+
+				(verbose?"  These typically come from Epson QX-10 TPM-II Valdocs disks and have a leading byte of 0x60.":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("RevealValdocsEntries " + Version.VersionString + " - un-hide CP/M directory entries of Valdocs files in disk image files.");
+		System.err.println("RevealValdocsEntries " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: RevealValdocsEntries infile outfile");
 	}

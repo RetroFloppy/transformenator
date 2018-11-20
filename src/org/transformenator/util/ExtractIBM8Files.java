@@ -323,10 +323,16 @@ public class ExtractIBM8Files
 	    attributes.setTimes(time, time, time);
 	}
 	
+	public static String describe(boolean verbose)
+	{
+		return "Extract files from IBM disk images."+
+				(verbose?"  These typically come from IBM System/32/34/36 or AS/400.":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractIBM8Files " + Version.VersionString + " - Extract files from IBM disk images.");
+		System.err.println("ExtractIBM8Files " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractIBM8Files infile [out_directory]");
 	}

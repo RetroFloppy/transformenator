@@ -187,10 +187,16 @@ public class ExtractMemoryWriterFiles
 		return Integer.toHexString(track) + "/" + sector;
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Extract files from some unknown word processor (possibly Xerox MemoryWriter) disk images."+
+				(verbose?"":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractMemoryWriterFiles " + Version.VersionString + " - Extract files from some unknown word processor (possibly Xerox MemoryWriter) disk images.");
+		System.err.println("ExtractMemoryWriterFiles " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractMemoryWriterFiles infile [out_directory]");
 	}

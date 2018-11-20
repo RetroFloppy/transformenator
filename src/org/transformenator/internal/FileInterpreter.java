@@ -972,7 +972,7 @@ public class FileInterpreter
 		}
 	}
 
-	public static void listUtilities()
+	public static void listUtilities(boolean describe)
 	{
 		boolean printedHeaderYet = false;
 		String prefix = "org/transformenator/util/";
@@ -1031,7 +1031,46 @@ public class FileInterpreter
 					}
 				}
 			}
-			printElements(utilities, false);
+			describeUtilities(utilities, describe);
+		}
+	}
+
+	public static void describeUtilities(Vector<String> elements, boolean describe)
+	{
+		/*
+		 *  Print out a vector of utilities and their descriptions
+		 *   - is not smart enough to know terminal width
+		 */
+		elements.sort(null);
+		if (!elements.isEmpty())
+		{
+			for (int i = 0; i < elements.size(); i++)
+			{
+				String utilName = elements.get(i);
+				System.out.print(utilName);
+				try
+				{
+					Class<?> utility = Class.forName("org.transformenator.util." + utilName);
+					Method describeMethod = utility.getMethod("describe", boolean.class);
+					Boolean param = describe ;
+					Object retVal = describeMethod.invoke(null, (Object) param); // static method doesn't have an instance
+					// Max size is currently 31 characters wide - so max 4 tabs.
+					int numTabs = (32 - utilName.length()) / 8;
+					if ((32 - utilName.length()) % 8 > 0)
+						numTabs ++;
+					for (int j = 0; j < numTabs; j++)
+						System.out.print("\t");
+					System.out.print(retVal);
+				} 
+				catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
+				{
+					// Class doesn't have a description/method yet; no big deal
+				}
+				finally
+				{
+					System.out.println();
+				}
+			}
 		}
 	}
 

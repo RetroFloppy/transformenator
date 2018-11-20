@@ -170,11 +170,16 @@ public class ExtractMagiFiles
 		}
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Extract files from Magi Major Leaguer disk images."+
+				(verbose?"":"");
+	}
 	
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractMagiFiles " + Version.VersionString + " - Extract files from Magi Major Leaguer disk images.");
+		System.err.println("ExtractMagiFiles " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractMagiFiles infile [out_directory]");
 	}

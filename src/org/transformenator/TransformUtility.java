@@ -28,14 +28,19 @@ public class TransformUtility
 
 	public static void main(String[] args)
 	{
+		boolean describe = false;
+		if (args.length > 0)
+			if (args[0].trim().toLowerCase().equals("describe"))
+				describe = true;
 		System.err.println();
 		System.err.println("TransformUtility " + Version.VersionString + " - perform transformation utility functions.");
 		System.err.println();
 		System.err.println("Usage: TransformUtility function parameter [parameter...]");
+		System.err.println("       TransformUtility describe");
 		System.err.println();
 		System.err.println("  For more details, see:");
 		System.err.println("  https://github.com/RetroFloppy/transformenator/wiki/Utility-Functions");
 		System.err.println();
-		FileInterpreter.listUtilities();
+		FileInterpreter.listUtilities(describe);
 	}
 }

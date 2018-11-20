@@ -178,10 +178,16 @@ public class Dmk2Raw
 		}
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Convert DMK disk image file to raw data."+
+				(verbose?"  Autodetects DEC RX01 format and halves the data.":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("Dmk2Raw " + Version.VersionString + " - Convert DMK disk image file to raw data.  Autodetects DEC RX01 format and halves data.");
+		System.err.println("Dmk2Raw " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: Dmk2Raw infile outfile");
 	}

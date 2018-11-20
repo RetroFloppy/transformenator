@@ -582,10 +582,16 @@ public class DOSImage
 		return ret;
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "View or update the BIOS Parameter Block of a PC DOS disk image."+
+				(verbose?"":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("DOSImage "+Version.VersionString+" - View or update the BIOS Parameter Block of a PC DOS disk image.");
+		System.err.println("DOSImage "+Version.VersionString+" - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: DOSImage display infile");
 		System.err.println("       DOSImage update infile outfile [force{160|180|320|360|360a|1200}]");

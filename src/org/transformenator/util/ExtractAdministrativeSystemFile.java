@@ -206,10 +206,16 @@ public class ExtractAdministrativeSystemFile
 		}
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Extract file from a IBM 5520 Administrative System disk image."+
+				(verbose?"  Text will need to be interpreted as EBCDIC.":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractAdministrativeSystemFile " + Version.VersionString + " - Extract file from a IBM 5520 Administrative System disk image.");
+		System.err.println("ExtractAdministrativeSystemFile " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractAdministrativeSystemFile infile outfile");
 	}

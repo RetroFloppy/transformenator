@@ -451,10 +451,16 @@ public class ExtractNBIFiles
 		}
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Extract files from NBI word processor disk images."+
+				(verbose?"":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractNBIFiles " + Version.VersionString + " - Extract files from NBI word processor disk images.");
+		System.err.println("ExtractNBIFiles " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractNBIFiles infile [out_directory]");
 	}

@@ -275,10 +275,16 @@ public class ExtractEasyWriterFiles
 		}
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Extract files from EasyWriter word processor .D13 disk images."+
+				(verbose?"":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractEasyWriterFiles " + Version.VersionString + " - Extract files from EasyWriter word processor .D13 disk images.");
+		System.err.println("ExtractEasyWriterFiles " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractEasyWriterFiles infile [out_directory]");
 	}

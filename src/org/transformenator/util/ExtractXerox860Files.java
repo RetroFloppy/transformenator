@@ -682,10 +682,16 @@ public class ExtractXerox860Files
 		System.err.println();
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Extract files from Xerox 860 word processor disk images."+
+				(verbose?"":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractXerox860Files " + Version.VersionString + " - Extract files from Xerox 860 word processor disk images.");
+		System.err.println("ExtractXerox860Files " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractXerox860Files infile [out_directory]");
 	}

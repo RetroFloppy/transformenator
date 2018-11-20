@@ -314,10 +314,16 @@ public class ExtractHPFiles
 		}
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Extract files from Hewlett-Packard disk images."+
+				(verbose?"  These are typically from HP instrument (not LIF) disks.":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractHPFiles " + Version.VersionString + " - Extract files from Hewlett-Packard disk images.");
+		System.err.println("ExtractHPFiles " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractHPFiles infile [out_directory]");
 	}

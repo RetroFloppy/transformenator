@@ -281,10 +281,16 @@ public class ExtractHardSectors
 		return ret;
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Extract files from an otherwise unknown word processor disk image from FC5025 hard-sector disk capture."+
+				(verbose?"":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractHardSectors " + Version.VersionString + " - Extract files from an otherwise unknown word processor disk image from FC5025 hard-sector disk capture.");
+		System.err.println("ExtractHardSectors " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractHardSectors infile outfile [out_directory]");
 	}

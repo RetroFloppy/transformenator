@@ -134,7 +134,7 @@ public class ExtractEnsoniqFiles
 				}
 				if (catalogStart > 0)
 				{
-					int len, startAddr, fileType = 0;
+					int len, startAddr;
 					byte fnb[];
 					for (int q = 0; q < 2; q++)
 					{
@@ -156,7 +156,6 @@ public class ExtractEnsoniqFiles
 						}
 						if (!filename.equals(""))
 						{
-							fileType = UnsignedByte.intValue(inData[i+0],inData[i+1]);
 							if (((inData[i+0] == 0) && (inData[i+1]== 0x29)))
 							{
 								// Sequence file
@@ -215,10 +214,16 @@ public class ExtractEnsoniqFiles
 		}
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Extract files from Ensoniq DD or HD disk images."+
+				(verbose?"  Files are emitted with a header compatible with MIDI translation software.":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractEnsoniqFiles " + Version.VersionString + " - Extract files from Ensoniq disk images.");
+		System.err.println("ExtractEnsoniqFiles " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractEnsoniqFiles infile [out_directory]");
 	}

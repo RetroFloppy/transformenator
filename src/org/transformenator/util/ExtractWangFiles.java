@@ -603,10 +603,16 @@ public class ExtractWangFiles
 		return track * 4096 + newSector * 256 + offset;
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Extract files from Wang word processor files or disk images."+
+				(verbose?"":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractWangFiles " + Version.VersionString + " - Extract files from Wang word processor files or disk images.");
+		System.err.println("ExtractWangFiles " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractWangFiles infile [outfile|out_directory]");
 	}

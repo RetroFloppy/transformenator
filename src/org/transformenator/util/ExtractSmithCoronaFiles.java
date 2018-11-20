@@ -422,10 +422,16 @@ public class ExtractSmithCoronaFiles
 		return '~'; //(char)myByte;
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Extract files from Smith-Corona typewriter disk images."+
+				(verbose?"":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractSmithCoronaFiles " + Version.VersionString + " - Extract files from Smith-Corona typewriter disk images.");
+		System.err.println("ExtractSmithCoronaFiles " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractSmithCoronaFiles infile [out_directory]");
 	}

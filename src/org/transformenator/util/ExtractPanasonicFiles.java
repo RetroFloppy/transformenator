@@ -217,10 +217,16 @@ public class ExtractPanasonicFiles
 		return fileContents;
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Extract files from Panasonic KX-* word processor disk images."+
+				(verbose?"":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractPanasonicFiles " + Version.VersionString + " - Extract files from Panasonic word processor disk images.");
+		System.err.println("ExtractPanasonicFiles " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractPanasonicFiles infile [out_directory]");
 	}

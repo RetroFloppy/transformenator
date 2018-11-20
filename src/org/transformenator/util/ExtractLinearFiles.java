@@ -186,10 +186,16 @@ public class ExtractLinearFiles
 		}
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Extract files from linear disk images."+
+				(verbose?"  From some kind of archival disk image - likely a proprietary archival/tape format.":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractLinearFiles " + Version.VersionString + " - Extract files from linear disk images.");
+		System.err.println("ExtractLinearFiles " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractLinearFiles infile [out_directory]");
 	}

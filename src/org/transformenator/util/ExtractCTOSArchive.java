@@ -193,10 +193,16 @@ public class ExtractCTOSArchive
 		}
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Extract files from CTOS NGEN archives."+
+				(verbose?"":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractCTOSArchive " + Version.VersionString + " - Extract files from CTOS archives.");
+		System.err.println("ExtractCTOSArchive " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractCTOSArchive infile [out_directory]");
 	}

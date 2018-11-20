@@ -273,10 +273,16 @@ public class ExtractZilogHardSectors
 		return ret;
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Extract files from a Zilog trainer (maybe) disk image from FC5025 hard-sector disk capture."+
+				(verbose?"  The expected data comes from the FC5025 (fcdumpwang), with two copies of each track: one as extracted and FM-decoded, and one that has been bit-shifted one bit and then FM-decoded.  This app will first find good copies of each sector (or substitute zeroes) and then retrieve the files from the expected filesystem.":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractZilogHardSectors " + Version.VersionString + " - Extract files from a Zilog trainer (maybe) disk image from FC5025 hard-sector disk capture.");
+		System.err.println("ExtractZilogHardSectors " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractZilogHardSectors infile outfile [out_directory]");
 	}

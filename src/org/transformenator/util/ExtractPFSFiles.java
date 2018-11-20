@@ -182,10 +182,16 @@ public class ExtractPFSFiles
 		}
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Extract files from Apple II PFS:Write disk images."+
+				(verbose?"Files will need to be further post-processed with the pfswrite transform.":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractPFSFiles " + Version.VersionString + " - Extract files from Apple II PFS:Write disk images.  Files will need to be further post-processed with the pfswrite transform.");
+		System.err.println("ExtractPFSFiles " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractPFSFiles infile [out_directory]");
 	}

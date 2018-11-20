@@ -275,10 +275,16 @@ public class ConvertCatweaselDatastream
 		return retVal;
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Convert Catweasel cwtool raw output to disk image file."+
+				(verbose?"":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ConvertCatweaselDatastream " + Version.VersionString + " - Convert Catweasel cwtool raw output to disk image file.");
+		System.err.println("ConvertCatweaselDatastream " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ConvertCatweaselDatastream infile [outfile]");
 	}

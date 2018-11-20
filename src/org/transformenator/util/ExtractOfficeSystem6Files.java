@@ -195,10 +195,16 @@ public class ExtractOfficeSystem6Files
 		return (offset - 0xd00) / 4096 + 1;
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Extract files from IBM Office System 6 disk images."+
+				(verbose?"  Files will need to be further post-processed with the office_system_6 transform.":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractOfficeSystem6Files " + Version.VersionString + " - Extract files from IBM Office System 6 disk images.  Files will need to be further post-processed with the office_system_6 transform.");
+		System.err.println("ExtractOfficeSystem6Files " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractOfficeSystem6Files infile [out_directory]");
 	}

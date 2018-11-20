@@ -108,6 +108,6 @@ public class UtilityDirectory
 		System.err.println();
 		System.err.println("Usage: UtilityDirectory <utility> <in_directory> <out_directory>");
 		System.err.println();
-		FileInterpreter.listUtilities();
+		FileInterpreter.listUtilities(false);
 	}
 }

@@ -328,10 +328,16 @@ public class ExtractCPTFiles
 		}
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Extract files from CPT word processor disk images."+
+				(verbose?"":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("ExtractCPTFiles " + Version.VersionString + " - Extract files from CPT word processor disk images.");
+		System.err.println("ExtractCPTFiles " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: ExtractCPTFiles infile [out_directory]");
 	}

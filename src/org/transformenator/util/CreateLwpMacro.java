@@ -134,10 +134,16 @@ public class CreateLwpMacro
 		}
 	}
 
+	public static String describe(boolean verbose)
+	{
+		return "Create a Lotus Word Pro macro to transform all files in a filesystem to Word .doc format."+
+				(verbose?"  Creates lotus2word.lss in the current working directory that Lotus Word Pro can consume to convert files it understands.":"");
+	}
+
 	public static void help()
 	{
 		System.err.println();
-		System.err.println("CreateLwpMacro " + Version.VersionString + " - Create a Lotus Word Pro macro to transform all files in a filesystem to Word .doc format");
+		System.err.println("CreateLwpMacro " + Version.VersionString + " - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: CreateLwpMacro <in_directory> <out_directory>");
 		System.err.println("Note: the specified <in_directory> and <out_directory> cannot be the same.");
