@@ -36,9 +36,10 @@ public class UtilityDirectory
 			try
 			{
 				Class<?> utility = Class.forName("org.transformenator.util." + args[0]);
-				utilDirectory(utility, args[1], args[2]);
+				Method main = utility.getMethod("main", String[].class);
+				utilDirectory(args[0], main, args[1], args[2]);
 			}
-			catch (ClassNotFoundException e)
+			catch (ClassNotFoundException | NoSuchMethodException | SecurityException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -48,10 +49,10 @@ public class UtilityDirectory
 			help();
 	}
 
-	public static void utilDirectory(Class<?> utility, String in_directory, String out_directory)
+	public static void utilDirectory(String utilName, Method main, String in_directory, String out_directory)
 	{
 		/*
-		 * Get the files in the in_directory For each file, check if it's a file or a directory. - If a file: Transform it - If a directory: recursively call tranformDirectory
+		 * Get the files in the in_directory For each file, check if it's a file or a directory. - If a file: Transform it - If a directory: recursively call utilDirectory
 		 */
 		File inDirFile = new File(in_directory);
 		if (inDirFile.exists())
@@ -68,15 +69,14 @@ public class UtilityDirectory
 					{
 						if (files[i].isDirectory())
 						{
-							utilDirectory(utility, in_directory + java.io.File.separator + files[i].getName(), out_directory + java.io.File.separator + files[i].getName());
+							utilDirectory(utilName, main, in_directory + java.io.File.separator + files[i].getName(), out_directory + java.io.File.separator + files[i].getName());
 						}
 						else if (!files[i].isHidden())
 						{
 							String newFileName = conditionFileName(files[i].getName());
-							System.out.println("Running "+utility.getSimpleName()+" on file: " + files[i] + " to file: " + out_directory + java.io.File.separator + newFileName);
-							Method meth = utility.getMethod("main", String[].class);
+							System.out.println("Running "+utilName+" on file: " + files[i] + " to file: " + out_directory + java.io.File.separator + newFileName);
 							String[] params = { files[i].toString(), out_directory + java.io.File.separator + newFileName };
-							meth.invoke(null, (Object) params); // static method doesn't have an instance
+							main.invoke(null, (Object) params); // static method doesn't have an instance
 						}
 					}
 				}
@@ -96,8 +96,8 @@ public class UtilityDirectory
 	public static String conditionFileName(String inName)
 	{
 		// Any sneaky characters getting in... replace them here.
-		String nameReplaced = inName.replace('½', '_');
-		nameReplaced = nameReplaced.replace('Â', '_');
+		String nameReplaced = inName.replace('ï¿½', '_');
+		nameReplaced = nameReplaced.replace('ï¿½', '_');
 		return nameReplaced;
 	}
 
