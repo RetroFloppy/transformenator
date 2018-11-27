@@ -39,7 +39,17 @@ public class UtilityDirectory
 				Method main = utility.getMethod("main", String[].class);
 				utilDirectory(args[0], main, args[1], args[2]);
 			}
-			catch (ClassNotFoundException | NoSuchMethodException | SecurityException e)
+			catch (ClassNotFoundException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (NoSuchMethodException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (SecurityException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -96,9 +106,9 @@ public class UtilityDirectory
 	public static String conditionFileName(String inName)
 	{
 		// Any sneaky characters getting in... replace them here.
-		String nameReplaced = inName.replace('�', '_');
-		nameReplaced = nameReplaced.replace('�', '_');
-		return nameReplaced;
+		// String nameReplaced = inName.replace('�', '_');
+		// nameReplaced = nameReplaced.replace('�', '_');
+		return inName;
 	}
 
 	public static void help()

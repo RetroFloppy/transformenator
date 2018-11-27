@@ -394,9 +394,9 @@ public class Transform
 	public static String conditionFileName(String inName)
 	{
 		// Any sneaky characters getting in... replace them here.
-		String nameReplaced = inName.replace('�', '_');
-		nameReplaced = nameReplaced.replace('�', '_');
-		return nameReplaced;
+		//String nameReplaced = inName.replace('�', '_');
+		//nameReplaced = nameReplaced.replace('�', '_');
+		return inName;
 	}
 
 	public static void help()

@@ -45,13 +45,37 @@ public class TransformUtility
 					for (int i = 1; i < args.length; i++)
 						newArgs[i-1] = args[i];
 					main.invoke(null, (Object) newArgs); // static method doesn't have an instance
-				} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				}
+				catch (ClassNotFoundException e1)
+				{
+					e1.printStackTrace();
+				}
+				catch (NoSuchMethodException e2)
+				{
+					e2.printStackTrace();
+				}
+				catch (SecurityException e3)
+				{
+					e3.printStackTrace();
+				}
+				catch (IllegalAccessException e4)
+				{
+					e4.printStackTrace();
+				}
+				catch (IllegalArgumentException e5)
+				{
+					e5.printStackTrace();
+				}
+				catch (InvocationTargetException e6)
+				{
+					e6.printStackTrace();
 				}
 			}
 		}
-		else help(false);
+		else
+		{
+			help(false);
+		}
 	}
 
 	public static void help(boolean describe)
