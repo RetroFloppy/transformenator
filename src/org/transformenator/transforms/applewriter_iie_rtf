@@ -8,6 +8,9 @@ head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transf
 ; Closing brace for RTF format
 tail = "}"
 
+; Unknown control
+1b21 =
+
 ; Indented
 regex = @\.[L|l][I|i]0@\\par\\li721\\par @
 
