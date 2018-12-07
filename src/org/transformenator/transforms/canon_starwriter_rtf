@@ -9,12 +9,17 @@ head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transf
 tail = "}"
 
 ; SOF indicator
-41420000434400004546000047480000494a00004b...... = "{@@<FiLe_SoF>@@}"
+41420000434400004546000047480000494a00004b.... = "{@@<FiLe_SoF>@@}"
+
+; Near SOF
+300c09311011841113 =
 
 1311811113 = "\par "
 131181811113 = "\par\par "
 
 ; Control sequences
+1030....3110 =
+1042....4310 =
 1011..1110 =
 1011....1110 =
 1310........1013 =
@@ -51,6 +56,7 @@ tail = "}"
 
 ; Newline in data makes our regex not work
 0a =
+13 =
 
 ; Character translations
 ; Inverted question mark
