@@ -8,8 +8,8 @@ head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transf
 ; Closing brace for RTF format
 tail = "}"
 
-; Trim the leading 0x162 bytes
-trim_leading = 162
+; SOF indicator
+41420000434400004546000047480000494a00004b...... = "{@@<FiLe_SoF>@@}"
 
 1311811113 = "\par "
 131181811113 = "\par\par "
