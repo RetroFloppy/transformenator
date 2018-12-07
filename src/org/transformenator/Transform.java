@@ -121,8 +121,12 @@ public class Transform
 					}
 					else if (args.length == 4)
 					{
-						if (args[3].startsWith("."))
+						if (args[3].startsWith(".") && args[3].length() > 1)
 							suffix_guess = args[3];
+						else if (args[3].equals("\"\"") || args[3].equals("."))
+						{
+						   suffix_guess = "";
+						}
 						else
 							suffix_guess = "."+args[3];
 						if (isCSV)
