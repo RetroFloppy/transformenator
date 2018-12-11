@@ -1,0 +1,5 @@
+;
+description = "Extract HP instrument (not LIF) files from disk image."
+;
+detangler = HPInstrument
+;
