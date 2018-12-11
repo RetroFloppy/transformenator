@@ -24,30 +24,20 @@
  * Floppy disk geometry: 2 sides, 256 bytes per sector, 16 sectors per track, 35 tracks
  * Bernoulli disk: as dumped by 'dd conv=noerror,sync" to ensure symmetric sizes; 20MB cartridge assumed
  *  - 10MB cartridge support could be trivially added if the start location of the FAT were known
- *
- * Text-based files can be further interpreted with the following transform:
-
-; Remove emphasis
-1a =
-; Newline productions
-2828 = 0d0a
-28 = 0d0a
-
  */
 
 package org.transformenator.detanglers;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
 import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.UnsignedByte;
 
-public class HPInstrument
+public class HPInstrument extends ADetangler
 {
-	public void detangle(FileInterpreter parent, byte inData[], String inFile, String outDirectory, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
 	{
 		int fileStart = 0, fileLength = 0, fileType = 0;
 		if (inData.length < 21430272) // If the image is smaller than a Bernoulli disk, assume it's a little floppy
@@ -110,17 +100,15 @@ public class HPInstrument
 						ByteArrayOutputStream out;
 						try
 						{
-							String fullName = new String(outDirectory + File.separator + inFile + File.separator + filename);
 							if (fileStart + fileLength < inData.length)
 							{
 								out = new ByteArrayOutputStream();
 								out.write(inData, fileStart, fileLength);
 								out.flush();
-								out.close();
-								parent.emitFile(out.toByteArray(), fullName);
+								parent.emitFile(out.toByteArray(), outDirectory, inFile, filename + fileSuffix);
 							}
 							else
-								System.err.println("Error: file " + fullName + " would exceed the capacity of the disk image.");
+								System.err.println("Error: file " + filename + " would exceed the capacity of the disk image.");
 						}
 						catch (IOException io)
 						{
@@ -196,19 +184,17 @@ public class HPInstrument
 						ByteArrayOutputStream out;
 						try
 						{
-							String fullName = new String(outDirectory + File.separator + filename);
-//							outputDirectory = "." + File.separator + file.getName().substring(0, file.getName().length() - 4);
 							if (fileStart + fileLength < inData.length)
 							{
 								out = new ByteArrayOutputStream();
-								System.err.println("Creating file: " + fullName);
+								System.err.println("Creating file: " + filename);
 								dumpFileChain(out, inData, fileStart, 0x10000, 1);
 								out.flush();
 								out.close();
-								parent.emitFile(out.toByteArray(), fullName);
+								parent.emitFile(out.toByteArray(), outDirectory, inFile, filename);
 							}
 							else
-								System.err.println("Error: file " + fullName + " would exceed the capacity of the disk image.");
+								System.err.println("Error: file " + filename + " would exceed the capacity of the disk image.");
 						}
 						catch (IOException io)
 						{

@@ -20,8 +20,6 @@
 
 package org.transformenator.detanglers;
 
-import java.io.File;
-
 import org.transformenator.internal.FileInterpreter;
 
 /*
@@ -30,8 +28,8 @@ import org.transformenator.internal.FileInterpreter;
 public class Null extends ADetangler
 {
 	@Override
-	public void detangle(FileInterpreter interpreter, byte[] inData, String inFile, String outDirectory, String fileSuffix)
+	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix)
 	{
-		interpreter.emitFile(inData, outDirectory + File.separator + inFile + fileSuffix);
+		interpreter.emitFile(inData, outDirectory, "", inFile + fileSuffix);
 	}
 }

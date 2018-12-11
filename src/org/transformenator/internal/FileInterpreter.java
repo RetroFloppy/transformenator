@@ -131,7 +131,7 @@ public class FileInterpreter
 					// Run the detangler if the transform specifies one
 					try
 					{
-						detangle.invoke(t, this, inData, file.getName(), outDirectory, fileSuffix);
+						detangle.invoke(t, this, inData, outDirectory, file.getName(), fileSuffix);
 					}
 					catch (IllegalAccessException e)
 					{
@@ -147,16 +147,41 @@ public class FileInterpreter
 					}
 				}
 				else
-					emitFile(inData, outDirectory + File.separator + file.getName() + fileSuffix);
+					emitFile(inData, outDirectory, "", file.getName() + fileSuffix);
 			}
 		}
 		return isOK;
 	}
 
-	public boolean emitFile(byte[] data, String filename)
+	/**
+	 * Writes out a file that has been processed by a transform or a detangler.
+	 * The output location is defined by the baseDirectory parameter.
+	 * 
+	 * @param  data         the byte array of file data to write
+	 * @param  outDirectory the filesystem location to emit the file
+	 * @param  imageName    an optional, additional filesystem qualifier to house resulting file
+	 * @param  fileName     the name of the resulting file
+	 * @return              boolean true if successful, false otherwise
+	 */
+	public boolean emitFile(byte[] data, String outDirectory, String imageName, String filename)
 	{
 		if (isOK)
 		{
+			/*
+			 * Make the output directory
+			 */
+			File baseDirFile = new File(outDirectory);
+			if (!baseDirFile.isAbsolute())
+			{
+				baseDirFile = new File("." + File.separator + outDirectory);
+			}
+			baseDirFile.mkdirs();
+			if ((imageName != null) && imageName.trim().length() > 0)
+			{
+				baseDirFile = new File(baseDirFile.getPath() + File.separator + File.separator + imageName);
+				baseDirFile.mkdirs();
+			}
+			filename = baseDirFile + File.separator + filename;
 			ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
 			foundSOF = false;
 			inData = data;
@@ -198,9 +223,6 @@ public class FileInterpreter
 			}
 			try
 			{
-				/*
-				 * We have a directory - so just append the newly discovered filename.
-				 */
 				System.out.println("Creating file: \"" + filename + "\"");
 				FileOutputStream out = new FileOutputStream(filename);
 				if (prefix != null)

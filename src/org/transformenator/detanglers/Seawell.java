@@ -27,16 +27,15 @@
 package org.transformenator.detanglers;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
 import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.UnsignedByte;
 
-public class Seawell
+public class Seawell extends ADetangler
 {
-	public void detangle(FileInterpreter parent, byte inData[], String inFile, String outDirectory, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
 	{
 		/*
 		 * Catalog starts on the 19th track - no idea how far it can stretch,
@@ -136,7 +135,7 @@ public class Seawell
 						}
 						// All done with this virtual file
 						out.close();
-						parent.emitFile(out.toByteArray(), outDirectory + File.separator + filename);
+						parent.emitFile(out.toByteArray(), outDirectory, "", filename);
 					}
 					catch (IOException io)
 					{

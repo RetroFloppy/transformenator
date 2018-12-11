@@ -20,7 +20,6 @@
 
 package org.transformenator.detanglers;
 
-import java.io.File;
 import java.util.Arrays;
 
 import org.transformenator.internal.FileInterpreter;
@@ -29,7 +28,7 @@ import org.transformenator.internal.UnsignedByte;
 public class ProWrite extends ADetangler
 {
 	@Override
-	public void detangle(FileInterpreter interpreter, byte[] inData, String inFile, String outDirectory, String fileSuffix)
+	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix)
 	{
 		byte[] newBuf = new byte[inData.length];
 		byte textEyecatcher[] = { 0x54, 0x45, 0x58, 0x54 }; // "TEXT"
@@ -69,7 +68,7 @@ public class ProWrite extends ADetangler
 			inData = new byte[newBufCursor];
 			for (int i = 0; i < newBufCursor; i++)
 				inData[i] = newBuf[i];
-			interpreter.emitFile(inData, outDirectory + File.separator + inFile + fileSuffix);
+			interpreter.emitFile(inData, outDirectory, "", inFile + fileSuffix);
 		}
 		else
 			System.err.println("Not a ProWrite file.");

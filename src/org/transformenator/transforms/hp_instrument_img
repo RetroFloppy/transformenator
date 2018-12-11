@@ -1,5 +1,6 @@
 ;
 description = "Extract HP instrument (not LIF) files from disk image."
+commentary = "Text files may need to be further processed to be readable."
 ;
 detangler = HPInstrument
 ;

@@ -100,6 +100,8 @@ public class Transform
 				suffix_guess = ".rtf";
 			else if (args[0].toLowerCase().endsWith("_html"))
 				suffix_guess = ".html";
+			else if (args[0].toLowerCase().endsWith("_img"))
+				suffix_guess = "";
 			if ((args.length == 2) && !isCSV)
 			{
 				fileTransform.emitStatus();
@@ -123,7 +125,7 @@ public class Transform
 					{
 						if (args[3].startsWith(".") && args[3].length() > 1)
 							suffix_guess = args[3];
-						else if (args[3].equals("\"\"") || args[3].equals("."))
+						else if (args[3].trim().equals("\"\"") || args[3].trim().equals(".") || args[3].trim().equals(""))
 						{
 						   suffix_guess = "";
 						}

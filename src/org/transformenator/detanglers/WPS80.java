@@ -20,7 +20,6 @@
 
 package org.transformenator.detanglers;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -38,7 +37,7 @@ import org.transformenator.internal.UnsignedByte;
 public class WPS80 extends ADetangler
 {
 	@Override
-	public void detangle(FileInterpreter interpreter, byte[] inData, String inFile, String outDirectory, String fileSuffix)
+	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix)
 	{
 		ByteBuffer bb = ByteBuffer.allocate(inData.length);
 		if ((inData.length % 256) > 0)
@@ -63,7 +62,7 @@ public class WPS80 extends ADetangler
 			}
 		}
 		inData = bb.array();
-		interpreter.emitFile(inData, outDirectory + File.separator + inFile + fileSuffix);
+		interpreter.emitFile(inData, outDirectory, "", inFile + fileSuffix);
 	}
 
 	static int nextWpsPage(byte[] inData, int thisPage)

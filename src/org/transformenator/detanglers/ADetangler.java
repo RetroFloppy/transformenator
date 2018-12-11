@@ -37,6 +37,10 @@ public abstract class ADetangler
 	 * detangle the file.  This may include creating multiple files (in 
 	 * the case of a disk image containing zero or more) or discovering
 	 * a new file name that should be used instead of the original name.
+	 * 
+	 * A detangler will call parent.emitFile() once for each file to be created,
+	 * supplying the file data, optionally a new directory to house it,
+	 * and the final file name.
 	 */
-	public abstract void detangle(FileInterpreter parent, byte inData[], String inFile, String outDirectory, String fileSuffix);
+	public abstract void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix);
 }

@@ -20,7 +20,6 @@
 
 package org.transformenator.detanglers;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -30,7 +29,7 @@ import org.transformenator.internal.UnsignedByte;
 public class GeoWritePC extends ADetangler
 {
 	@Override
-	public void detangle(FileInterpreter interpreter, byte[] inData, String inFile, String outDirectory, String fileSuffix) {
+	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix) {
 
 		/*
 		 * GeoWrite PC/Canon Starwriter 5000/7000
@@ -173,7 +172,7 @@ public class GeoWritePC extends ADetangler
 		}
 		else
 			System.err.println("ERROR: Not a GeoWritePC or Starwriter 5000/7000 file.");
-		interpreter.emitFile(inData, outDirectory + File.separator + newName + fileSuffix);
+		interpreter.emitFile(inData, outDirectory, "", newName + fileSuffix);
 	}
 
 	/*

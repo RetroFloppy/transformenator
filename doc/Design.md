@@ -22,4 +22,6 @@ In the case where there is computational reorganization of the file done prior t
 generated file may be completely changed.  
 In the case where a file is a disk image or other compound file, computational reorganization would typically result in
 multiple output files of names unrelated to the original file name.
-The same rules to add a file suffix apply.
+A file representing a disk image enveloping additional files will push the output one level deeper
+under `output_directory` into a new directory named similarly to the disk image file.
+The same rules adding file suffixes apply.

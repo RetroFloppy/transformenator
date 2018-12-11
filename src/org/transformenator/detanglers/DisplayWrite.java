@@ -20,27 +20,16 @@
 
 package org.transformenator.detanglers;
 
-import java.io.File;
-
 import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.UnsignedByte;
 
 public class DisplayWrite extends ADetangler
 {
 	@Override
-	public void detangle(FileInterpreter interpreter, byte[] inData, String inFile, String outDirectory, String fileSuffix)
+	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix)
 	{
 		if ((inData.length > 0x66) && ((UnsignedByte.intValue(inData[0x64]) == 0xaa) && (UnsignedByte.intValue(inData[0x65]) == 0xaa) && (UnsignedByte.intValue(inData[0x66]) == 0xaa)))
 		{
-			/*
-			 * Make the output directory
-			 */
-			File baseDirFile = new File(outDirectory);
-			if (!baseDirFile.isAbsolute())
-			{
-				baseDirFile = new File("." + File.separator + outDirectory);
-			}
-			baseDirFile.mkdirs();
 			/*
 			 * Pick apart the file chunk indices. Chunk indices start at 0x6b and follow 3 bytes of 0xaa. There are a maximum of 59 indices.
 			 * 
@@ -75,7 +64,7 @@ public class DisplayWrite extends ADetangler
 			for (int i = 0; i < newBufCursor; i++)
 				inData[i] = newBuf[i];
 			// System.err.println("DEBUG: Data length after de-indexing: "+inData.length);
-			interpreter.emitFile(inData, outDirectory + File.separator + inFile + fileSuffix);
+			interpreter.emitFile(inData, outDirectory, "", inFile + fileSuffix);
 		}
 		else
 		{

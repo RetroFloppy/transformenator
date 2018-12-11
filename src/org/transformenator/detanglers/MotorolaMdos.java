@@ -18,19 +18,15 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/*
- * 
- */
 package org.transformenator.detanglers;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 
 import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.UnsignedByte;
 
-public class MotorolaMdos
+public class MotorolaMdos extends ADetangler
 {
 	/*
 	Helpful info, from http://exorsim.sourceforge.net/mdos-tech.html:
@@ -87,7 +83,7 @@ public class MotorolaMdos
 	int SECTOR_DIR = 3;
 	int SECTOR_DIR_SIZE = 20;
 
-	public void detangle(FileInterpreter parent, byte inData[], String inFile, String outDirectory, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
 	{
 		boolean deleted1 = false;
 		boolean deleted2 = false;
@@ -130,13 +126,13 @@ public class MotorolaMdos
 					int sectorStart = UnsignedByte.intValue(inData[i * SECTOR_SIZE + j + 10]) * 256 + UnsignedByte.intValue(inData[i * SECTOR_SIZE + j + 11]) & 0xffff;
 					int fileType = UnsignedByte.intValue(inData[i * SECTOR_SIZE + j + 12]) & 7;
 
-					dumpFile(parent, inData, sectorStart, (deleted1 & deleted2), fileType, outDirectory + File.separator + fileName);
+					dumpFile(parent, inData, sectorStart, (deleted1 & deleted2), fileType, outDirectory, inFile, fileName);
 				}
 			}
 		}
 	}
 
-	public void dumpFile(FileInterpreter interpreter, byte[] inData, int ribStart, boolean deleted, int fileType, String fileName)
+	public void dumpFile(FileInterpreter interpreter, byte[] inData, int ribStart, boolean deleted, int fileType, String outDirectory, String inFile, String fileName)
 	{
 		if (deleted)
 		{
@@ -243,7 +239,7 @@ public class MotorolaMdos
 					}
 				}
 				out.close();
-				interpreter.emitFile(out.toByteArray(), fileName);
+				interpreter.emitFile(out.toByteArray(), outDirectory, inFile, fileName);
 				// System.out.println();
 			}
 			catch (IOException io)
