@@ -238,9 +238,9 @@ public class MotorolaMdos extends ADetangler
 						break;
 					}
 				}
-				out.close();
-				interpreter.emitFile(out.toByteArray(), outDirectory, inFile, fileName);
-				// System.out.println();
+				out.flush();
+				// Remove the (last) file suffix, if one exists, from the image file name before sending to emitFile()
+				interpreter.emitFile(out.toByteArray(), outDirectory, inFile.substring(0,(inFile.lastIndexOf('.')>0?inFile.lastIndexOf('.'):inFile.length())), fileName);
 			}
 			catch (IOException io)
 			{

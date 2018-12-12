@@ -191,7 +191,8 @@ public class HPInstrument extends ADetangler
 								dumpFileChain(out, inData, fileStart, 0x10000, 1);
 								out.flush();
 								out.close();
-								parent.emitFile(out.toByteArray(), outDirectory, inFile, filename);
+								// Remove the (last) file suffix, if one exists, from the image file name before sending to emitFile()
+								parent.emitFile(out.toByteArray(), outDirectory, inFile.substring(0,(inFile.lastIndexOf('.')>0?inFile.lastIndexOf('.'):inFile.length())), filename);
 							}
 							else
 								System.err.println("Error: file " + filename + " would exceed the capacity of the disk image.");

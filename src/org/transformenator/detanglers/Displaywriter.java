@@ -95,21 +95,21 @@ public class Displaywriter extends ADetangler
 		if ((clippedImage != null) && (locEHL1 > -1))
 		{
 			int offset = locEHL1;
-			int total = offset + processRecord(clippedImage, outDirectory, offset, true, debugLevel);
+			int total = offset + processRecord(clippedImage, outDirectory, inFile, offset, true, debugLevel);
 			boolean done = false;
 			while (!done)
 			{
 				offset += 256;
 				if (getRecordEyecatcher(clippedImage, offset).equals("DEXT (0xe0)"))
 				{
-					processRecord(clippedImage, outDirectory, offset, true, debugLevel);
+					processRecord(clippedImage, outDirectory, inFile, offset, true, debugLevel);
 				}
 				if (offset > total)
 				{
 					done = true;
 				}
 			}
-			startFile(outDirectory, "");
+			startFile(outDirectory, inFile, "");
 		}
 		else
 		{
@@ -122,7 +122,7 @@ public class Displaywriter extends ADetangler
 
 	}
 
-	public int processRecord(byte inData[], String outDirectory, int offset, boolean dive, int debugLevel)
+	public int processRecord(byte inData[], String outDirectory, String inFile, int offset, boolean dive, int debugLevel)
 	{
 		String ec = getRecordEyecatcher(inData, offset);
 		int ret = 0;
@@ -154,7 +154,7 @@ public class Displaywriter extends ADetangler
 							System.err.println();
 						}
 						if ((dive) && (newRec != locEHL1))
-							processRecord(inData, outDirectory, newRec, true, debugLevel);
+							processRecord(inData, outDirectory, inFile, newRec, true, debugLevel);
 					}
 				}
 				// Note - DEXT entries will not have others following it in the same sector
@@ -164,7 +164,7 @@ public class Displaywriter extends ADetangler
 				// Dig out the EHL1 length, return it when we pop back out
 				ret = UnsignedByte.intValue(inData[offset + 0x10]) * 65536 + UnsignedByte.intValue(inData[offset + 0x11]) * 256 + UnsignedByte.intValue(inData[offset + 0x12]);
 				if (dive)
-					processRecord(inData, outDirectory, offset + recLen, dive, debugLevel);
+					processRecord(inData, outDirectory, inFile, offset + recLen, dive, debugLevel);
 			}
 			else if (ec.equals("NAME (0x80)"))
 			{
@@ -173,24 +173,24 @@ public class Displaywriter extends ADetangler
 					System.err.println("  Document name: [" + newName + "]");
 				else
 				{
-					startFile(outDirectory, baseName + newName);
+					startFile(outDirectory, inFile, baseName + newName);
 				}
 				if (dive)
-					processRecord(inData, outDirectory, offset + recLen, dive, debugLevel);
+					processRecord(inData, outDirectory, inFile, offset + recLen, dive, debugLevel);
 			}
 			else if (ec.equals("DATE (0xa0)"))
 			{
 				if (debugLevel > 0)
 					System.err.println("  Date data: [" + EbcdicUtil.toAscii(inData, offset, recLen).trim() + "]");
 				if (dive)
-					processRecord(inData, outDirectory, offset + recLen, dive, debugLevel);
+					processRecord(inData, outDirectory, inFile, offset + recLen, dive, debugLevel);
 			}
 			else if (ec.equals("DOCS (0xc0)"))
 			{
 				if (debugLevel > 0)
 					System.err.println("  Docs data: [" + EbcdicUtil.toAscii(inData, offset, recLen).trim() + "]");
 				if (dive)
-					processRecord(inData, outDirectory, offset + recLen, dive, debugLevel);
+					processRecord(inData, outDirectory, inFile, offset + recLen, dive, debugLevel);
 			}
 			else if (ec.equals("TEXT (0xe8)"))
 			{
@@ -215,7 +215,7 @@ public class Displaywriter extends ADetangler
 						else
 						{
 							if (currentName == "")
-								startFile(outDirectory, baseName + "FileRecovery");
+								startFile(outDirectory, inFile, baseName + "FileRecovery");
 							newBuf[newBufCursor++] = inData[i];
 						}
 					}
@@ -224,20 +224,20 @@ public class Displaywriter extends ADetangler
 			else
 			{
 				if (dive)
-					processRecord(inData, outDirectory, offset + recLen, dive, debugLevel);
+					processRecord(inData, outDirectory, inFile, offset + recLen, dive, debugLevel);
 			}
 		}
 		return ret;
 	}
 
-	public void startFile(String outDirectory, String name)
+	public void startFile(String outDirectory, String inFile, String name)
 	{
 		if (newBufCursor > 0)
 		{
 			// System.err.println("DEBUG: Displaywriter finishing file: \"" + currentName + "\" with length "+newBufCursor);
 			// Clip out the "file", send to parent for interpretation
 			currentFile = Arrays.copyOfRange(newBuf, 0, newBufCursor);
-			_interpreter.emitFile(currentFile, outDirectory, "", currentName + _fileSuffix);
+			_interpreter.emitFile(currentFile, outDirectory, inFile.substring(0,(inFile.lastIndexOf('.')>0?inFile.lastIndexOf('.'):inFile.length())), currentName + _fileSuffix);
 			currentFile = null;
 		}
 		//if ((name != null) && (name.length() > 0))
@@ -246,14 +246,14 @@ public class Displaywriter extends ADetangler
 		currentName = name;
 	}
 
-	public int dumpBareRecord(byte inData[], String outDirectory, int offset, int debugLevel)
+	public int dumpBareRecord(byte inData[], String outDirectory, String inFile, int offset, int debugLevel)
 	{
 		String ec = getRecordEyecatcher(inData, offset);
 		int recLen = UnsignedByte.intValue(inData[offset + 0]) * 256 + UnsignedByte.intValue(inData[offset + 1]);
 		if (!ec.equals("----"))
 		{
 			if ((debugLevel == 2) || ((debugLevel == 3) && (ec.equals("TEXT (0xe8)"))))
-				processRecord(inData, outDirectory, offset, false, debugLevel);
+				processRecord(inData, outDirectory, inFile, offset, false, debugLevel);
 			offset += recLen;
 		}
 		else

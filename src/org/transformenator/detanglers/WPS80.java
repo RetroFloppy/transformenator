@@ -62,7 +62,8 @@ public class WPS80 extends ADetangler
 			}
 		}
 		inData = bb.array();
-		interpreter.emitFile(inData, outDirectory, "", inFile + fileSuffix);
+		// Remove the (last) file suffix, if one exists, from the image file name before sending to emitFile()
+		interpreter.emitFile(inData, outDirectory, inFile.substring(0,(inFile.lastIndexOf('.')>0?inFile.lastIndexOf('.'):inFile.length())), inFile + fileSuffix);
 	}
 
 	static int nextWpsPage(byte[] inData, int thisPage)
