@@ -173,7 +173,7 @@ public class Displaywriter extends ADetangler
 					System.err.println("  Document name: [" + newName + "]");
 				else
 				{
-					startFile(outDirectory, inFile, baseName + newName);
+					startFile(outDirectory, inFile, newName);
 				}
 				if (dive)
 					processRecord(inData, outDirectory, inFile, offset + recLen, dive, debugLevel);
@@ -215,7 +215,7 @@ public class Displaywriter extends ADetangler
 						else
 						{
 							if (currentName == "")
-								startFile(outDirectory, inFile, baseName + "FileRecovery");
+								startFile(outDirectory, inFile, "FileRecovery");
 							newBuf[newBufCursor++] = inData[i];
 						}
 					}
@@ -339,7 +339,6 @@ public class Displaywriter extends ADetangler
 	int newBufCursor = 0;
 	int locEHL1 = -1;
 	int delta = 0;
-	String baseName;
-	String currentName = null;
+	String currentName = "";
 	String _fileSuffix = "txt";
 }
