@@ -1,7 +1,8 @@
 ;
 description = "IBM 5520 Administrative System files."
-commentary = "Files are extracted with ExtractAdministrativeSystemFile utility.  EBCDIC encoding, uses many printer-specific codes; non-understood data is represented by a tilde character (~)."
+commentary = "EBCDIC encoding, uses many printer-specific codes; non-understood data is represented by a tilde character (~)."
 ;
+detangler = AdministrativeSystem
 
 ; Header for RTF format
 head = "{\rtf1{\*\generator David Schmidt - Transformenator ;}\f0 "
