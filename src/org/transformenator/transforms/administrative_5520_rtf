@@ -1,48 +1,59 @@
 ;
-description = "IBM 6580 8 inch Displaywriter files from disk image."
-commentary = "EBCDIC encoding, contains many printer-specific codes; non-understood data represented by a tilde character (~)."
+description = "Extract file from a IBM 5520 Administrative System disk image."
+commentary = "Text will need to be interpreted as EBCDIC."
 ;
 
-detangler = "Displaywriter"
+detangler = "IBM5520"
+
+; Header for RTF format
+head = "{\rtf1{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
 
 ; Horizontal tab
 05 = 09
 39 = 09
 
 ; Newline
-06 = "\\r\\n"
-15 = "\\r\\n"
-
+06 = "\par\par "
+;15 = "\par "
 ; Form feed
 0c = 
-3a =
+ca15 =
+ca =
 
-; Superscript (These are probably a cumulative platen half-shift-up and down)
-09 =
-38 =
+; Suberscript
+09 = "\super "
+38 = "\nosupersub "
 
-; Word underscore
-23 =
+; Italics
+1a = "\i1 "
+23 = "\i0 "
+
+; Productions that seem to have no use
+00..e80700 =
+01..e80700 =
+02..e80700 =
+03..e80700 =
+04..e80700 =
+2bd105150103b5 =
+
+15 = " "
 
 ; Backspace
 16 = 
 
 2d = "-"
-ca = "-"
-b7 = "-1/4"
-b8 = "-1/2"
+2f = 
 
-; Space
-40 = 20
-41 = 20
+40 = " "
+41 = " "
 
-; Cent sign
-4a =
 4b = "."
 4c = "<"
 4d = "("
 4e = "+"
-4f = "!"
+4f = "|"
 
 50 = "&"
 
@@ -144,6 +155,3 @@ f8 = "8"
 f9 = "9"
 
 .. = "~"
-
-; Apostrophes seem to be prefixed with backslashes
-regex=@\\'@'@
