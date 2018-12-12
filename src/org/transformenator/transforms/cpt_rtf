@@ -2,6 +2,7 @@
 description = "CPT word processor."
 commentary = "Files typically come from 8 inch disks."
 ;
+detangler = CPT
 
 ; Header for RTF format
 head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
