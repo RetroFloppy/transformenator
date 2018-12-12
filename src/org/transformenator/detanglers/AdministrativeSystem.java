@@ -29,7 +29,6 @@ import java.util.List;
 import org.transformenator.internal.EbcdicUtil;
 import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.UnsignedByte;
-import org.transformenator.util.ExtractAdministrativeSystemFile.TextRecord;
 
 public class AdministrativeSystem extends ADetangler
 {
@@ -141,4 +140,17 @@ public class AdministrativeSystem extends ADetangler
 			}
 		}
 	}
+
+    public static class TextRecord
+    {
+            public TextRecord(int begin, int end)
+            {
+                    beginOffset = begin;
+                    endOffset = end;
+            }
+
+            public int beginOffset;
+            public int endOffset;
+    }
+
 }
