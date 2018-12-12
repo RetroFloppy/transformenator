@@ -1,0 +1,5 @@
+;
+description = "Extract Magi Major Leaguer files from disk image."
+;
+detangler = Magi
+;
