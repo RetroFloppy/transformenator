@@ -1,7 +1,8 @@
 ;
 description = "Apple II EasyWriter word processor."
-commentary = "From John Draper (Cap'n Software). Based on extant files with no particular technical reference - may be breathtakingly incomplete."
+commentary = "Extract and convert files from EasyWriter by John Draper (Cap'n Software) word processor .D13 disk images. Based on extant files with no particular technical reference - may be breathtakingly incomplete."
 ;
+detangler = EasyWriterA2
 
 ; Header for RTF format
 head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator;}\f0 "
