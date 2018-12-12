@@ -2,6 +2,7 @@
 description = "Xerox 860 word processor."
 commentary = "Quite rudimentary, based on extant files."
 ;
+detangler = Xerox860
 
 ; Let's see what happens when 00 is EOF
 00000000 = "{@@<FiLe_EoF>@@}"
