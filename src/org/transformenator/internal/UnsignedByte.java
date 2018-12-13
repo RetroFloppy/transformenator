@@ -89,6 +89,21 @@ public class UnsignedByte
 	}
 
 	/**
+	 * Returns the value of the specified four bytes in unsigned form as a long.
+	 * 
+	 * @param b1    the least significant byte
+	 * @param b2    the next most significant byte after b1
+	 * @param b3    the next most significant byte after b2
+	 * @param b4    the most significant byte
+	 * @return long b1 through b4 represented as a long.
+	 */
+
+	public static long longValue(byte b1, byte b2, byte b3, byte b4)
+	{
+		return UnsignedByte.intValue(b4) * (long)4294967296.0 + UnsignedByte.intValue(b3) * 65536 + UnsignedByte.intValue(b2) * 256 + UnsignedByte.intValue(b1);
+	}
+
+	/**
 	 * Returns the string representation of the specified byte in unsigned form as a two-digit hex value.
 	 * 
 	 * @param b
