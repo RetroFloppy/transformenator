@@ -1,0 +1,19 @@
+;
+description = "Possibly the Xerox Memorywriter."
+commentary = "It might be something else altogether.  Disk geometry is 256 bytes per sector, 16 sectors per track, 40 tracks per side, one sided."
+;
+detangler = XeroxMemoryWriter
+;
+
+88 = "{@@<FiLe_SoF_GrEeDy>@@}"
+89 =
+
+2d9d2d = "--"
+a396 =
+96=
+97978c = 0d0a
+979799 = 0d0a0d0a
+99 = 0d0a0d0a
+9797 = 0d0a0d0a
+95 =
+97 =
