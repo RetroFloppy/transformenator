@@ -1,7 +1,7 @@
 ;
 description = "DOS-based Wang word processor."
-commentary = "Files will need to have gone through the Transformenator ExtractWangFiles process first to unwind their index structure."
 ;
+detangler = Wang
 
 ; Header for RTF format
 head = "{\rtf1{\*\generator David Schmidt - Transformenator;}\f0 "

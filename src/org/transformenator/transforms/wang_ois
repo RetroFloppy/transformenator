@@ -1,6 +1,7 @@
 ;
 description = "Wang OIS word processor."
 ;
+detangler = Wang
 
 ; Page control commands - one is probably page eject
 ; ^B^QT, ^B^QV...

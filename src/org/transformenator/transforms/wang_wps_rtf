@@ -1,6 +1,7 @@
 ;
 description = "Wang WPS word processor."
 ;
+detangler = Wang
 
 ; Header for RTF format
 head = "{\rtf1{\*\generator David Schmidt - Transformenator;}\f0 "
