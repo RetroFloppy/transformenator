@@ -2,6 +2,7 @@
 description = "IBM Office System 6 word processor."
 commentary = "Spin-code based."
 ;
+detangler = IBMOfficeSystem6
 
 00=
 02="-"
