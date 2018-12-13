@@ -1,6 +1,7 @@
 ;
 description = "Smith-Corona word processor."
 ;
+detangler = SmithCorona
 
 trim_leading = 40
 

@@ -2,6 +2,7 @@
 description = "Smith-Corona word processor."
 commentary = "Very preliminary, spin-code based.  Any unknown codes resolve to "~"; any unknown but extant control codes are removed."
 ;
+detangler = SmithCorona
 
 00=" "
 01=
