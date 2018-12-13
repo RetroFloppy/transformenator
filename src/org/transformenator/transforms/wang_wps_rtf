@@ -1,5 +1,6 @@
 ;
 description = "Wang WPS word processor."
+commentary = "Typical files come from 8" disk images."
 ;
 detangler = Wang
 
