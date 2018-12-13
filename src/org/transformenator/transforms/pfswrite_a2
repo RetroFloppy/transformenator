@@ -1,6 +1,8 @@
 ;
 description = "Apple II Pascal PFS:Write word processor."
+commentary = "Extract and convert files from Apple II PFS:Write disk image."
 ;
+detangler = PFS
 
 ; Trim the leading 0x400 bytes - this is a Pascal format file
 trim_leading = 400
@@ -36,5 +38,7 @@ a9 =
 82 =
 83 =
 ad = 20
+
+; Relocate ASCII
 [e1..fa] = 61
 [c1..da] = 41
