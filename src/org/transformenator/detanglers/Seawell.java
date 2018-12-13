@@ -27,7 +27,6 @@
 package org.transformenator.detanglers;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Arrays;
 
 import org.transformenator.internal.FileInterpreter;
