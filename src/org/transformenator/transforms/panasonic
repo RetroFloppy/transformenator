@@ -1,7 +1,8 @@
 ;
 description = "Panasonic KX-* word processor."
-commentary = "Very minor file cleanup - works with ExtractPanasonicFiles utility."
+commentary = "Very minor file cleanup."
 ;
+detangler = PanasonicKX
 
 ; Likely double-space
 D6 = 0d0a0d0a
