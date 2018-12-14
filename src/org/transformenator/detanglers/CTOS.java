@@ -37,13 +37,12 @@ public class CTOS extends ADetangler
 {
 	public void detangle(FileInterpreter parent, byte[] inData, String outDirectory, String inFile, String fileSuffix)
 	{
-		int pagesFH, alternatePageOffset;
+		int pagesFH;
 		long lfaFileHeadersBase, lfaWorkingVHB;
 		// Look at the initial VHB
 		lfaWorkingVHB = UnsignedByte.longValue(inData[46],inData[47],inData[48],inData[49]);
 		lfaFileHeadersBase = UnsignedByte.longValue(inData[(int)lfaWorkingVHB+78], inData[(int)lfaWorkingVHB+79], inData[(int)lfaWorkingVHB+80], inData[(int)lfaWorkingVHB+81]);
 		pagesFH = UnsignedByte.intValue(inData[(int)lfaWorkingVHB+82], inData[(int)lfaWorkingVHB+83]);
-		alternatePageOffset = UnsignedByte.intValue(inData[(int)lfaWorkingVHB+84], inData[(int)lfaWorkingVHB+85]);
 		// System.out.println("pagesFH: "+pagesFH);
 		// System.out.println("alternatePageOffset: "+alternatePageOffset);
 		// Fish out the volume name
