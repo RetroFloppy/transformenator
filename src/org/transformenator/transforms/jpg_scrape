@@ -1,0 +1,5 @@
+;
+description = "Scrape off jpg files from a disk image."
+commentary = "Works in a totally brain-dead fashion.  Useful for some really crappy Mavica camera disks."
+;
+detangler = JPGScrape
