@@ -1,0 +1,4 @@
+;
+description = "Extract files from a CTOS/BTOS archive."
+;
+detangler = CTOSArchive

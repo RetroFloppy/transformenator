@@ -85,19 +85,25 @@ public class CTOS extends ADetangler
 		}
 	}
 
-	String pascalString(byte[] inData, int offset, boolean clean)
+	String pascalString(byte[] inData, int offset, boolean sanitize)
 	{
 		StringBuffer s = new StringBuffer();
 		for (int i = 0; i < inData[offset]; i++)
 		{
 			char c = (char)inData[offset + i + 1];
-			switch (c)
+			if (sanitize)
 			{
-				case '<': c = '_'; break;
-				case '>': c = '_'; break;
-				case '/': c = '_'; break;
-				case '\\': c = '_'; break;
-				default: break;
+				switch (c)
+				{
+					case '<':
+					case '>':
+					case '/':
+					case '\\':
+					case '`':
+					case '*': c = '_'; break;
+					default: break;
+				}
+				if ((c > 127) || (c < 32)) c = '_';
 			}
 			s.append(c);
 		}
