@@ -20,11 +20,10 @@
 
 /*
  * Abstract class for detangler types.  Descendants of this class need to
- * take in a byte[] and send back a byte[] after having done whatever
- * detangling work is necessary on it.  They can optionally return a new
- * file name, potentially derived from the contents of the incoming data.
- * If there is no file name modification required, getNewName() can return
- * null.
+ * take in a byte[] and call back to emitFile() with a byte[] after having
+ * done whatever detangling work is necessary on it.  They can optionally
+ * return a new file name, potentially derived from the contents of the
+ * incoming data.
  */
 package org.transformenator.detanglers;
 

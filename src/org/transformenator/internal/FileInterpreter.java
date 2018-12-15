@@ -1194,7 +1194,6 @@ public class FileInterpreter
 	// Dynamic class loading for detangler
 	Object t;
 	Method detangle;
-	Method getNewName;
 
 	// Global variables
 	byte inData[] = null;
