@@ -15,7 +15,7 @@ For example:
 
 Where:
  - `transform` is the name of a file containing the set of transformations you want to make
- - `infile` is the original file
- - `out_directory` is the the directory location of the resulting file(s) after making all transformations 
+ - `infile` is the original file or directory to act on
+ - `out_directory` is the the directory location of the resulting file(s) after making all transforminations 
 
 See https://github.com/RetroFloppy/transformenator/wiki for details.
