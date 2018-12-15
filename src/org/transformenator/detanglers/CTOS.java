@@ -21,6 +21,9 @@
 package org.transformenator.detanglers;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.UnsignedByte;
@@ -43,10 +46,13 @@ public class CTOS extends ADetangler
 		lfaWorkingVHB = UnsignedByte.longValue(inData[46],inData[47],inData[48],inData[49]);
 		lfaFileHeadersBase = UnsignedByte.longValue(inData[(int)lfaWorkingVHB+78], inData[(int)lfaWorkingVHB+79], inData[(int)lfaWorkingVHB+80], inData[(int)lfaWorkingVHB+81]);
 		pagesFH = UnsignedByte.intValue(inData[(int)lfaWorkingVHB+82], inData[(int)lfaWorkingVHB+83]);
+		System.out.println("creation date bytes:     0x"+UnsignedByte.toString(inData[(int)lfaWorkingVHB+54])+UnsignedByte.toString(inData[(int)lfaWorkingVHB+55])+UnsignedByte.toString(inData[(int)lfaWorkingVHB+56])+UnsignedByte.toString(inData[(int)lfaWorkingVHB+57]));
+		System.out.println("modification date bytes: 0x"+UnsignedByte.toString(inData[(int)lfaWorkingVHB+58])+UnsignedByte.toString(inData[(int)lfaWorkingVHB+59])+UnsignedByte.toString(inData[(int)lfaWorkingVHB+60])+UnsignedByte.toString(inData[(int)lfaWorkingVHB+61]));
 		// System.out.println("pagesFH: "+pagesFH);
 		// System.out.println("alternatePageOffset: "+alternatePageOffset);
 		// Fish out the volume name
 		System.out.println("Volume name: "+pascalString(inData,20,false));
+		System.out.println("Creation date: "+ctosDate(inData,54));
 		for (int i = 0; i < pagesFH; i++)
 		{
 			// Rumble through all the File Headers and pull out files
@@ -55,7 +61,8 @@ public class CTOS extends ADetangler
 			int filenameLength = UnsignedByte.intValue(inData[(int)newBase + 4]);
 			if (filenameLength > 0)
 			{
-				ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				Date modificationDate = ctosDate(inData, newBase+96);
 				int fileLength = (int) UnsignedByte.longValue(inData[newBase+111],inData[newBase+112],inData[newBase+113],inData[newBase+114]);
 				int outputAccumulator = 0;
 				String directoryName = pascalString(inData,(int)lfaFileHeadersBase + (i*512) + 68, true);
@@ -80,7 +87,7 @@ public class CTOS extends ADetangler
 						outputAccumulator += copyLength;
 					}
 				}
-				parent.emitFile(out.toByteArray(), outDirectory, inFile.substring(0,(inFile.lastIndexOf('.')>0?inFile.lastIndexOf('.'):inFile.length())), fileName+fileSuffix);
+				parent.emitFile(out.toByteArray(), outDirectory, inFile.substring(0,(inFile.lastIndexOf('.')>0?inFile.lastIndexOf('.'):inFile.length())), fileName+fileSuffix, modificationDate);
 			}
 		}
 	}
@@ -109,4 +116,31 @@ public class CTOS extends ADetangler
 		}
 		return s.toString();
 	}
+
+	Date ctosDate(byte[] inData, int offset)
+	{
+		/*
+		 * CTOS/VM Concepts, p. 25-1
+		 * 
+		 * The system date/time format is represented in 32 bits to an accuracy of 1
+		 * second. The high-order 15 bits of the high-order word contain the count of
+		 * days since March 1, 1952. The use of a 15 bit field allows dates up to the
+		 * year 2042 to be represented. The low-order bit of the high-order word is 0 to
+		 * represent AM and 1 to represent PM. The low-order word contains the count of
+		 * seconds since midnight/ noon. Valid values are 0 to 43199.
+		 */
+		Calendar ctosEpoch = GregorianCalendar.getInstance();
+		ctosEpoch.set(52 + 1900, 03, 01, 0, 0, 0);
+		int days = UnsignedByte.intValue(inData[offset + 2], inData[offset + 3]);
+		int seconds = UnsignedByte.intValue(inData[offset + 0], inData[offset + 1]);
+		int noon = days & 1;
+		if (noon == 1)
+			seconds += 12 * 60 * 60;
+		days = days >> 1;
+		ctosEpoch.add(Calendar.DAY_OF_MONTH, days);
+		ctosEpoch.add(Calendar.SECOND, seconds);
+		Date date = new Date(ctosEpoch.getTimeInMillis());
+		return date;
+	}
+
 }

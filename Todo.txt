@@ -1,0 +1,5 @@
+$ trans Disk11.img out
+java.lang.StringIndexOutOfBoundsException: String index out of range: -2
+
+$ trans nonexistent Disk11.img out
+>> no output

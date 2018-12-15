@@ -36,6 +36,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.security.CodeSource;
+import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
@@ -165,6 +166,22 @@ public class FileInterpreter
 	 */
 	public boolean emitFile(byte[] data, String outDirectory, String imageName, String filename)
 	{
+		return emitFile(data, outDirectory, imageName, filename, null);
+	}
+
+	/**
+	 * Writes out a file that has been processed by a transform or a detangler.
+	 * The output location is defined by the baseDirectory parameter.
+	 * 
+	 * @param  data          the byte array of file data to write
+	 * @param  outDirectory  the filesystem location to emit the file
+	 * @param  imageName     an optional, additional filesystem qualifier to house resulting file
+	 * @param  fileName      the name of the resulting file
+	 * @param  signatureDate the date to assign to the resulting file
+	 * @return               boolean true if successful, false otherwise
+	 */
+	public boolean emitFile(byte[] data, String outDirectory, String imageName, String filename, Date signatureDate)
+	{
 		if (isOK)
 		{
 			/*
@@ -243,6 +260,11 @@ public class FileInterpreter
 				}
 				out.flush();
 				out.close();
+				if (signatureDate != null)
+				{
+					File file = new File (filename);
+					file.setLastModified(signatureDate.getTime());
+				}
 				//newName = null;
 			}
 			catch (Exception ex)
