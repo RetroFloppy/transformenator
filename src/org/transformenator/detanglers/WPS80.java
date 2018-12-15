@@ -20,8 +20,8 @@
 
 package org.transformenator.detanglers;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.UnsignedByte;
@@ -39,7 +39,6 @@ public class WPS80 extends ADetangler
 	@Override
 	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix)
 	{
-		ByteBuffer bb = ByteBuffer.allocate(inData.length);
 		if ((inData.length % 256) > 0)
 		{
 			System.err.println("Warning: file size is not an integral of 256, this may not be a WPS-80 file.");
@@ -52,18 +51,18 @@ public class WPS80 extends ADetangler
 		 * unknown (1 byte)
 		 * bytes-used (1 byte) 
 		 */
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		int nextPage = nextWpsPage(inData, 1);
 		while (nextPage > 0)
 		{
 			try {
-				nextPage = dumpWpsPage(bb, inData, nextPage);
+				nextPage = dumpWpsPage(inData, out, nextPage);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		inData = bb.array();
 		// Remove the (last) file suffix, if one exists, from the image file name before sending to emitFile()
-		interpreter.emitFile(inData, outDirectory, inFile.substring(0,(inFile.lastIndexOf('.')>0?inFile.lastIndexOf('.'):inFile.length())), inFile + fileSuffix);
+		interpreter.emitFile(out.toByteArray(), outDirectory, null, inFile + fileSuffix);
 	}
 
 	static int nextWpsPage(byte[] inData, int thisPage)
@@ -72,7 +71,7 @@ public class WPS80 extends ADetangler
 		return UnsignedByte.intValue(inData[thisOffset + 1]) + UnsignedByte.intValue(inData[thisOffset]);
 	}
 
-	static int dumpWpsPage(ByteBuffer bb, byte[] inData, int thisPage) throws IOException
+	static int dumpWpsPage(byte[] inData, ByteArrayOutputStream out, int thisPage) throws IOException
 	{
 		int nextPage = 0;
 		int thisOffset = (thisPage - 1) * 256;
@@ -82,7 +81,8 @@ public class WPS80 extends ADetangler
 			int numBytes = UnsignedByte.intValue(inData[thisOffset + 5]);
 			if (numBytes > 0)
 			{
-				bb.put(inData, thisOffset + 6, numBytes);
+				out.write(inData, thisOffset + 6, numBytes);
+				out.flush();
 			}
 		}
 		return nextPage;
