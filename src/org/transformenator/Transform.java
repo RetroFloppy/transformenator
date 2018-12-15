@@ -68,9 +68,17 @@ public class Transform
 		{
 			// Special case: describe the transform if they just give its name
 			if (isCSV)
+			{
 				csvTransform.emitStatus();
+				if (!csvTransform.isOK)
+					help();
+			}
 			else
+			{
 				fileTransform.emitStatus();
+				if (!fileTransform.isOK)
+					help();
+			}
 		}
 		else if (args.length == 2)
 		{
@@ -84,84 +92,92 @@ public class Transform
 		}
 		else if ((args.length == 3) || (args.length == 4))
 		{
-			/*
-			 * Make the output directory
-			 */
-			File baseDirFile = new File(args[2]);
-			if (!baseDirFile.isAbsolute())
+			if (csvTransform.isOK || fileTransform.isOK)
 			{
-				if (!args[2].equals("."))
-					baseDirFile = new File("." + File.separator + args[2]);
-			}
-			baseDirFile.mkdirs();
-
-			String suffix_guess = ".txt";
-			if (args[0].toLowerCase().endsWith("_rtf"))
-				suffix_guess = ".rtf";
-			else if (args[0].toLowerCase().endsWith("_html"))
-				suffix_guess = ".html";
-			else if (args[0].toLowerCase().endsWith("_img"))
-				suffix_guess = "";
-			if ((args.length == 2) && !isCSV)
-			{
-				fileTransform.emitStatus();
-				tranformDirectory(null, args[0], args[1]);
-			}
-			else
-			{
-				File whatisit = new File(args[1]);
-				if (whatisit.isDirectory())
+				/*
+				 * Make the output directory
+				 */
+				File baseDirFile = new File(args[2]);
+				if (!baseDirFile.isAbsolute())
 				{
-					// Directory-style processing
-					// System.err.println("DEBUG: starting directory processing.");
-					if (args.length == 3)
-					{
-						if (isCSV)
-							csvDirectory(csvTransform, args[0], args[1], args[2], ".csv", false);
-						else
-							tranformDirectory(fileTransform, args[0], args[1], args[2], suffix_guess, false);
-					}
-					else if (args.length == 4)
-					{
-						if (args[3].startsWith(".") && args[3].length() > 1)
-							suffix_guess = args[3];
-						else if (args[3].trim().equals("\"\"") || args[3].trim().equals(".") || args[3].trim().equals(""))
-						{
-						   suffix_guess = "";
-						}
-						else
-							suffix_guess = "."+args[3];
-						if (isCSV)
-							csvDirectory(csvTransform, args[0], args[1], args[2], suffix_guess, false);
-						else
-							tranformDirectory(fileTransform, args[0], args[1], args[2], suffix_guess, false);
-					}
-					else
-						help();
+					if (!args[2].equals("."))
+						baseDirFile = new File("." + File.separator + args[2]);
+				}
+				baseDirFile.mkdirs();
+
+				String suffix_guess = ".txt";
+				if (args[0].toLowerCase().endsWith("_rtf"))
+					suffix_guess = ".rtf";
+				else if (args[0].toLowerCase().endsWith("_html"))
+					suffix_guess = ".html";
+				else if (args[0].toLowerCase().endsWith("_img"))
+					suffix_guess = "";
+				if ((args.length == 2) && !isCSV)
+				{
+					fileTransform.emitStatus();
+					tranformDirectory(null, args[0], args[1]);
 				}
 				else
 				{
-					// File-style processing
-					// System.err.println("DEBUG: starting single-file processing.");
-					if (args.length == 4)
+					File whatisit = new File(args[1]);
+					if (whatisit.isDirectory())
 					{
-						if (args[3].startsWith("."))
-							suffix_guess = args[3];
-						else
-							suffix_guess = "."+args[3];
-						if (fileTransform != null)
+						// Directory-style processing
+						// System.err.println("DEBUG: starting directory processing.");
+						if (args.length == 3)
 						{
-							fileTransform.process(args[1], args[2], args[3]);
+							if (isCSV)
+								csvDirectory(csvTransform, args[0], args[1], args[2], ".csv", false);
+							else
+								tranformDirectory(fileTransform, args[0], args[1], args[2], suffix_guess, false);
 						}
-					}
-					else if (args.length == 3)
-					{
-						if (fileTransform != null)
+						else if (args.length == 4)
 						{
-							fileTransform.process(args[1], args[2], suffix_guess);
+							if (args[3].startsWith(".") && args[3].length() > 1)
+								suffix_guess = args[3];
+							else if (args[3].trim().equals("\"\"") || args[3].trim().equals(".") || args[3].trim().equals(""))
+							{
+								suffix_guess = "";
+							}
+							else
+								suffix_guess = "."+args[3];
+							if (isCSV)
+								csvDirectory(csvTransform, args[0], args[1], args[2], suffix_guess, false);
+							else
+								tranformDirectory(fileTransform, args[0], args[1], args[2], suffix_guess, false);
+						}
+						else
+							help();
+					}
+					else
+					{
+						// File-style processing
+						// System.err.println("DEBUG: starting single-file processing.");
+						if (args.length == 4)
+						{
+							if (args[3].startsWith("."))
+								suffix_guess = args[3];
+							else
+								suffix_guess = "."+args[3];
+							if (fileTransform != null)
+							{
+								fileTransform.process(args[1], args[2], args[3]);
+							}
+						}
+						else if (args.length == 3)
+						{
+							if (fileTransform != null)
+							{
+								fileTransform.process(args[1], args[2], suffix_guess);
+							}
 						}
 					}
 				}
+			}
+			else
+			{
+				fileTransform.emitStatus();
+				help();
 			}
 		}
 		else
