@@ -44,6 +44,7 @@
 		</copy>
 		<copy todir="${outdir}/${version}">
 			<fileset dir="${basedir}/doc">
+				<include name="*.sh"/>
 			</fileset>
 		</copy>
 		<jar jarfile="${outdir}/${version}/transformenator.jar"
