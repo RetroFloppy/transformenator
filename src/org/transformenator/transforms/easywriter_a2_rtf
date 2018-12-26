@@ -46,7 +46,6 @@ a346 = "\ql "
 00ae6c3636 = "\li725 "
 ; indent off: .l70
 00ae6c3730 = "\li0 "
-00 =
 
 ; Quote range
 a2 = 2022
@@ -130,7 +129,11 @@ f8 = 2078
 f9 = 2079
 fa = 207a
 
+; Remaining nulls - turn them into spaces
+00 = 20
+
 ; Newlines
+0d = "\\r\\n\par " 
 5d = "\\r\\n\par " 
 dd = "\\r\\n\par\par "
 
@@ -141,7 +144,24 @@ regex = @\\par  @\\par @
 regex = @\.i[\d]*@@
 
 ; Remove .l followed by digits
+regex = @\.lines[\d]*@@
 regex = @\.l[\d]*@@
 
 ; Remove .m followed by digits
+regex = @\.margin[\d]*@@
 regex = @\.m[\d]*@@
+
+; Remove .formstop directive
+regex = @\.formstop@@
+
+; Remove .page followed by d,d
+regex = @\.page[\d]*[,][\d]*@@
+
+; Remove .pagelines followed by digits
+regex = @\.pagelines[\d]*@@
+
+; Remove .space followed by digits
+regex = @\.space[\d]*@@
+
+; Remove .top followed by digits
+regex = @\.top[\d]*@@
