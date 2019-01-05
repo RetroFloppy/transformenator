@@ -7,10 +7,6 @@ Transform specification examples - all numbers are in hexadecimal:
 ; Simple replacement: replace all occurrences of 0x00 with 0x20
 00=20
 
-; Replace with repeat (#)
-8d # 0d0a
-0d0a9d = 0d0a0d0a
-
 ; Toggle replacement on every other occurrence (%)
 7f047f % "\i1 ","\i0 "
 
@@ -19,6 +15,10 @@ Transform specification examples - all numbers are in hexadecimal:
 
 ; Using a range, remove all occurrences of values
 [f0..ff] = 
+
+; Using replace with reconsider (#) and a range, strip high bits
+[80..ff] # 00
+0d = 0d0a
 
 ; Calculate the EOF based on file contents
 eof_hi = 00

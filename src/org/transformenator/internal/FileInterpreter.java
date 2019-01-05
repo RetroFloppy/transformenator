@@ -247,13 +247,23 @@ public class FileInterpreter
 					out.write(prefix.getBytes(), 0, prefix.length());
 				}
 				String tempStr = outBuf.toString();
+				Boolean anyReplacements = false;
 				for (int i = 0; i < regReplace.size(); i++)
 				{
 					// System.err.println("DEBUG Replacing ["+regPattern.elementAt(i)+"] with ["+regReplace.elementAt(i)+"].");
 					tempStr = tempStr.replaceAll("(?m)" + regPattern.elementAt(i), regReplace.elementAt(i));
+					anyReplacements = true;
 				}
-				byte[] stdout = tempStr.getBytes();
-				out.write(stdout, 0, stdout.length);
+				if (anyReplacements)
+				{
+					byte[] stdout = tempStr.getBytes();
+					out.write(stdout, 0, stdout.length);
+				}
+				else
+				{
+					// Avoid potential encoding problems by sending bytes straight out rather than using toString() when no regexes are involved
+					out.write(outBuf.toByteArray());				
+				}
 				if (suffix != null)
 				{
 					out.write(suffix.getBytes(), 0, suffix.length());
