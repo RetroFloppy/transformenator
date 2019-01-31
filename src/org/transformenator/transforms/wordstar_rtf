@@ -6,7 +6,7 @@ commentary = "Helpful URL: http://justsolve.archiveteam.org/wiki/WordStar"
 ;
 
 ; Header for RTF format
-head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+head = "{\rtf1{\fonttbl{\f0\fnil\fcharset0 Fixedsys;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
 ; Closing brace for RTF format
 tail = " }"
 
