@@ -119,7 +119,7 @@ public class Dmk2Raw
 					trackOffset = zeroOffset + track * trackLength;
 					accum1 = 0;
 					accum2 = 0;
-					for (i = 0; i < 26624; i += 2)
+					for (i = 40960; i < 40960+26624; i += 2)
 					{
 						accum1 = inData[dataIndex + i];
 						accum2 = inData[dataIndex + i + 1];
