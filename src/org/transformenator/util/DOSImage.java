@@ -147,7 +147,7 @@ public class DOSImage
 						if (args[0].equalsIgnoreCase("display"))
 						{
 							System.out.println("Signature - typically 0x000055AA: 0x"+UnsignedByte.toString(result[0x1fc])+UnsignedByte.toString(result[0x1fd])+UnsignedByte.toString(result[0x1fe])+UnsignedByte.toString(result[0x1ff]));
-							System.out.println("Jump byte [0x00]: "+UnsignedByte.toString(result[0]));
+							System.out.println("Jump byte - often 0xEB: [0x00]: 0x"+UnsignedByte.toString(result[0]));
 							System.out.println("OEM name [0x03-0x0a]: "+(char)result[3]+(char)result[4]+(char)result[5]+(char)result[6]+(char)result[7]+(char)result[8]+(char)result[9]+(char)result[10]);
 							System.out.println("Bytes per logical sector: "+(UnsignedByte.intValue(result[0x0b])+UnsignedByte.intValue(result[0x0c])*256));
 							System.out.println("Logical sectors per cluster [0x0d]: "+UnsignedByte.intValue(result[0x0d]));
