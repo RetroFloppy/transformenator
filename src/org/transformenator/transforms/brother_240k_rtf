@@ -1,0 +1,43 @@
+description = "Brother 240k word processor disk files."
+commentary = "240k, DOS-like filesystem."
+;
+
+; Header for RTF format
+head = "{\rtf1{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+trim_leading = 24
+
+; Space
+00 = 20
+
+; Line break
+1b =
+95 = 20
+db = 20
+
+; Newline
+02 = "\par "
+9d = "\par "
+da = "\par "
+
+; Bold on/off
+bd = "\b1 "
+bc = "\b0 "
+
+; Unknown
+8a =
+8c =
+8d =
+bc = 
+be =
+
+; Command structures
+980d = "<on>"
+0d98 = "<off>"
+980f = "<on>"
+0f98 = "<off>"
+
+; Remove all instances of <on>...<off>
+regex = @<on>.+?<off>@@
