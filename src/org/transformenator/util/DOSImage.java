@@ -65,6 +65,10 @@ public class DOSImage
 				{
 					force = 180;
 				}
+				else if (args[3].equalsIgnoreCase("force240"))
+				{
+					force = 240;
+				}
 				else if (args[3].equalsIgnoreCase("force320"))
 				{
 					force = 320;
@@ -199,6 +203,10 @@ public class DOSImage
 		{
 			return true;
 		}
+		else if (is240k(inData, force))
+		{
+			return true;
+		}
 		else if (is320k(inData, force))
 		{
 			return true;
@@ -253,6 +261,23 @@ public class DOSImage
 			return true;
 		}
 		// System.out.println("is180k is false.");
+		return false;
+	}
+	
+	public static boolean is240k(byte[] inData, int force)
+	{
+		if (((inData[512] == (byte)0xc0) && inData.length == 234*1024) || (force == 240))
+		{
+			// System.out.println("is240k is true!");
+			inData[0x15] = (byte)0xf0;
+			inData[0x100] = (byte)0xf0;
+			//inData[0x01fc] = 0x00;
+			//inData[0x01fd] = 0x00;
+			//inData[0x01fe] = 0x55;
+			//inData[0x01ff] = (byte)0xaa;
+			return true;
+		}
+		// System.out.println("is240k is false.");
 		return false;
 	}
 	
@@ -411,6 +436,7 @@ public class DOSImage
 			 */
 			retval = isMediaDescriptor(UnsignedByte.loByte(inData[0x200]));
 		}
+		// System.err.println("isFAT12() returning "+retval);
 		return retval;
 	}
 
@@ -467,6 +493,7 @@ public class DOSImage
 	{
 		boolean retval = false;
 		if (
+			mediaDescriptor == UnsignedByte.loByte(0xc0) || // Brother
 			mediaDescriptor == UnsignedByte.loByte(0xe5) ||
 			mediaDescriptor == UnsignedByte.loByte(0xed) ||
 			mediaDescriptor == UnsignedByte.loByte(0xf0) ||
@@ -521,6 +548,7 @@ public class DOSImage
 				retval = true;
 			}
 		}
+		// System.err.println("hasBPB() returning  "+retval);
 		return retval;
 	}
 
@@ -529,6 +557,9 @@ public class DOSImage
 		String ret = null;
 		switch (UnsignedByte.intValue(md))
 		{
+			case 0x58:
+				ret = "3.5-inch SS, 78 tracks/side, 12 sectors/track, 256 bytes/sector (240 KiB) (Brother only)";
+				break;
 			case 0xe5:
 				ret = "8-inch SS, 77 tracks/side, 26 sectors/track, 128 bytes/sector (250.25 KiB) (DR-DOS only)";
 				break;
@@ -594,6 +625,6 @@ public class DOSImage
 		System.err.println("DOSImage "+Version.VersionString+" - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: DOSImage display infile");
-		System.err.println("       DOSImage update infile outfile [force{160|180|320|360|360a|1200}]");
+		System.err.println("       DOSImage update infile outfile [force{160|180|240|320|360|360a|1200}]");
 	}
 }
