@@ -1,0 +1,17 @@
+description = "Brother 120k word processor disk files."
+commentary = "120k, proprietary filesystem; very preliminary."
+;
+detangler = Brother120k
+
+trim_leading = c1
+f4 =
+f6 = "-"
+; 06 = 0d0a
+f20f = 
+020f = 0d0a
+
+; Bold each character with 0xfd
+fd = 
+
+; EOF is 0xff
+ff = "{@@<FiLe_EoF>@@}"
