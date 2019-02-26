@@ -24,6 +24,14 @@ trim_leading = 80
 1a = "{@@<FiLe_EoF>@@}"
 
 ; Directives
-regex = @\.SPACE[0-2]@@
-regex = @\.EOL@@
-regex = @\.PAGE@@
+regex = @\.[S|s][P|p][A|a][C|c][E|e][0-2]@@
+regex = @\.[E|e][O|o][L|l]@@
+regex = @\.[P|p][A|a][G|g][E|e].*$@@
+regex = @\.TOP.*$@@
+regex = @\.top.*$@@
+regex = @\.TITLEA.*$@@
+regex = @\.titlea.*$@@
+regex = @\.MARGIN.*$@@
+regex = @\.margin.*$@@
+regex = @\.LINES.*$@@
+regex = @\.lines.*$@@
