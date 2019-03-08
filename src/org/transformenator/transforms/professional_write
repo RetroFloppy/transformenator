@@ -1,0 +1,18 @@
+;
+description = "PFS Professional Write word processor."
+commentary = "Files start with "TYPE 4  2.00""
+;
+
+trim_leading=413
+00=0d0a
+01=0d0a
+07 = "{@@<FiLe_EoF>@@}"
+81=
+82=
+83=
+
+; Strip high bits
+[80..ff]=00
+01=
+02=
+03=
