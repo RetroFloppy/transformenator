@@ -1,0 +1,5 @@
+;
+description = "Kermit operating system"
+commentary = "Tar-like archive; disk is 2-sided, 10x256 for the first track, then 18x256 for the rest."
+;
+detangler = Kermit
