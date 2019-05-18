@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.InputStream;
 
 import org.transformenator.internal.UnsignedByte;
@@ -40,7 +41,7 @@ public class Dmk2Raw
 {
 	public static void main(java.lang.String[] args)
 	{
-		FileOutputStream out = null;
+		BufferedOutputStream out = null;
 		String outputFile = "";
 		Boolean rx01Mode = false;
 		if (args.length == 2)
@@ -90,7 +91,7 @@ public class Dmk2Raw
 				outputFile = args[1];
 				try
 				{
-					out = new FileOutputStream(outputFile);
+					out = new BufferedOutputStream(new FileOutputStream(outputFile));
 				}
 				catch (FileNotFoundException e1)
 				{
@@ -109,26 +110,18 @@ public class Dmk2Raw
 				int i;
 				sectorOffset = UnsignedByte.intValue(result[trackOffset],result[trackOffset+1]);
 				dataIndex = trackOffset + sectorOffset + 50;
-				int accum1 = 0, accum2 = 1;
+				long accum1 = 0, accum2 = 0;
 				boolean hasData = false;
-				int track = 1;
 				// Search for non-zero data, and see if it repeats 000011112222 (i.e. rx01)
 				// or differs: 00112233 (i.e. rx02)
-				while (hasData == false)
+				for (i = 40960; i < 40960+26624; i += 2)
 				{
-					trackOffset = zeroOffset + track * trackLength;
-					accum1 = 0;
-					accum2 = 0;
-					for (i = 40960; i < 40960+26624; i += 2)
-					{
-						accum1 = inData[dataIndex + i];
-						accum2 = inData[dataIndex + i + 1];
-						if (accum1 > 0)
-							hasData = true;
-					}
-					track ++;
+					accum1 += UnsignedByte.intValue(inData[dataIndex + i]);
+					accum2 += UnsignedByte.intValue(inData[dataIndex + i + 1]);
+					if (accum1 > 0)
+						hasData = true;
 				}
-				if (accum1 == accum2)
+				if ((accum1 == accum2) && hasData)
 				{
 					System.out.println("Repeating data found; assuming RX01 format.");
 					rx01Mode = true;
@@ -159,6 +152,7 @@ public class Dmk2Raw
 								out.write(inData, dataIndex, 256);
 							}
 							// System.err.println("  Offset to data in sector "+index/2+": "+Integer.toHexString(dataIndex)+ "  "+Integer.toHexString(sectorOffset));
+							out.flush();
 						} 
 						catch (IOException e)
 						{
