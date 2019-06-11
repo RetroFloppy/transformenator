@@ -1,0 +1,40 @@
+;
+description = "PC PFS:Write word processor."
+commentary = "Start of file contains 'GERBILDOC4'"
+;
+
+; Trim the leading 0x400 bytes
+trim_leading = 400
+
+; End of text
+0e = "{@@<FiLe_EoF>@@}"
+
+; Here and below are primarily PC DOS-based changes
+032002 = "\\r\\n"
+032003 = "\\r\\n"
+00 = "\\r"
+01 = "\\r"
+03 = "\\r"
+0d = "\\r\\n"
+0c = "\\r\\n"
+
+; 0xae is some sort of emphasis; couldn't find the mating pair
+ba = "-"
+90c0 = "* "
+c0 =
+
+; Underline on/off
+a8 =
+a9 =
+
+; Line beginnings
+80 =
+e0 =
+
+; Backspace/bold
+81 = 
+82 =
+83 =
+ad = 20
+[e1..fa] = 61
+[a0..da] = 20
