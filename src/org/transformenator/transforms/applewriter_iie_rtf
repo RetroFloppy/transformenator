@@ -20,30 +20,36 @@ regex = @\.[L|l][I|i]1@\\par\\li0\\par @
 ; Italic toggle
 5c % " \i1 "," \i0 "
 
+; Sometimes follows an italic closure
+08 =
+
 ; Superscript
 1b3b = "\super "
 1b3a = "\nosupersub "
 
-; Sometimes follows an italic closure
-08 =
+; Paragraph centered
+regex = @\\par \.[C|c][J|j].*@\\par\\qc @
+
+; Paragraph left justified
+regex = @\\par \.[L|l][J|j]@\\gl @
+
+; Paragragh right justified
+regex = @\\par \.[R|r][J|j]@\\gr @
 
 0d0a = "\\r\\n\par "
 
 ; Consume other productions
 regex = @\\par \.[B|b][L|l]@@
 regex = @\\par \.[B|b][M|m].*@@
-regex = @\\par \.[C|c][J|j].*@@
 regex = @\\par \.[E|e][P|p].*@@
 regex = @\\par \.[F|f][F|f].*@@
 regex = @\\par \.[F|f][J|j].*@@
 regex = @\\par \.[L|l][I|i].*@@
-regex = @\\par \.[L|l][J|j]@\\gl @
 regex = @\\par \.[L|l][M|m].*@@
 regex = @\\par \.[P|p][I|i].*@@
 regex = @\\par \.[P|p][L|l].*@@
 regex = @\\par \.[P|p][M|m].*@@
 regex = @\\par \.[P|p][N|n].*@@
-regex = @\\par \.[R|r][J|j]@\\gr @
 regex = @\\par \.[R|r][M|m].*@@
 regex = @\\par \.[T|t][L|l].*@@
 regex = @\\par \.[T|t][M|m].*@@
