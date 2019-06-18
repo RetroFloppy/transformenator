@@ -10,8 +10,8 @@ head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transf
 tail = "}"
 
 ; Emphasis on/off
-89="\b1 "
-80="\b0 "
+89="\ul1 "
+80="\ul0 "
 
 20="{GWAR}"
 1f=20
