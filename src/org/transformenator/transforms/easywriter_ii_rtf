@@ -1,0 +1,20 @@
+;
+description = "PC EasyWriter II word processor."
+commentary = "A file is in fact a collection of files."
+detangler=EasyWriterII
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Emphasis on/off
+89="\b1 "
+80="\b0 "
+
+20="{GWAR}"
+1f=20
+00=
+
+regex = @(\{GWAR\})+@\\par @
