@@ -27,6 +27,16 @@ import java.io.IOException;
 
 public class EasyWriterII extends ADetangler
 {
+	/*
+	 * EasyWriter II word processor by Information Unlimited Software (IUS)
+	 * 
+	 * A single file is really a "folder" of child files - there's a "directory"
+	 * of file names, and the content is in 0x200 byte "sectors" within that file,
+	 * all indexed with a file identifier in the sector header.  The file identifier  
+	 * is actually that file's position in the directory.  It's very much
+	 * like a disk image in and of itself: it's a little filesystem buried within
+	 * the file.
+	 */
 	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
 	{
 		/* Pull the files out of the image. */
@@ -54,6 +64,7 @@ public class EasyWriterII extends ADetangler
 					// System.err.println("Adding file num: " + fileNum);
 					for (int b = 0; b < inData.length; b += 0x200)
 					{
+						/* 0x01 in the zeroeth byte of a "sector" signifies a data sector; the file identifier is the 4th byte */
 						if ((inData[b] == 0x01) && (inData[b + 9] == 0x00) && (UnsignedByte.intValue(inData[b + 4]) == fileNum))
 						{
 							try

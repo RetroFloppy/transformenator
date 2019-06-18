@@ -1,6 +1,6 @@
 ;
 description = "PC EasyWriter II word processor."
-commentary = "A file is in fact a collection of files."
+commentary = "A file is in fact a collection of files.  First four bytes are 0x64000A00."
 detangler=EasyWriterII
 ;
 
@@ -13,8 +13,29 @@ tail = "}"
 89="\ul1 "
 80="\ul0 "
 
-20="{GWAR}"
+; Not the real space
+20=
+
+; The real newline
+1d="\\r\\n\par "
+
+; Some whitespace or space control
+1e=
+
+; The real space
 1f=20
+
+; Ends of "sectors" have nulls - remove them
 00=
 
-regex = @(\{GWAR\})+@\\par @
+; Unknown productions, may include footnoting
+01=
+02=
+06=
+08=
+0a=
+0e=
+1c=
+ef=
+bf=
+bd=
