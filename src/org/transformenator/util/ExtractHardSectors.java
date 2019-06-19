@@ -1,6 +1,27 @@
+/*
+ * Transformenator - perform transformation operations on binary files
+ * Copyright (C) 2019 by David Schmidt
+ * 32302105+RetroFloppySupport@users.noreply.github.com
+ *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the 
+ * Free Software Foundation; either version 2 of the License, or (at your 
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along 
+ * with this program; if not, write to the Free Software Foundation, Inc., 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
+
 package org.transformenator.util;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,7 +50,7 @@ public class ExtractHardSectors
 	public static void main(java.lang.String[] args)
 	{
 		String outputDirectory = "";
-		FileOutputStream out = null;
+		BufferedOutputStream out = null;
 		if ((args.length == 2) || (args.length == 3))
 		{
 			byte[] inData = null;
@@ -54,7 +75,7 @@ public class ExtractHardSectors
 						}
 					}
 					inData = result;
-					out = new FileOutputStream(args[1]);
+					out = new BufferedOutputStream(new FileOutputStream(args[1]));
 				}
 				finally
 				{
@@ -211,7 +232,7 @@ public class ExtractHardSectors
 										String fullname = new String(outputDirectory + File.separator + filename);
 										if (fileEnd * 128 * 26 < inData.length)
 										{
-											out = new FileOutputStream(fullname);
+											out = new BufferedOutputStream(new FileOutputStream(fullname));
 											System.err.println("Creating file: " + fullname);
 											out.write(inData, fileStart * 128 * 26 + 128, (fileEnd - fileStart)  * 128 * 26);
 											out.flush();

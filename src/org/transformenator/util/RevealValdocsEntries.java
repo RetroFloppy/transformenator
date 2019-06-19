@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2013 - 2016 by David Schmidt
+ * Copyright (C) 2013 - 2019 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.InputStream;
 
 import org.transformenator.internal.Version;
@@ -129,10 +130,11 @@ public class RevealValdocsEntries
 				else
 					System.err.println("Did not find any Valdocs entries.");
 				// Cleaned up the directory - now write the resulting image
-				FileOutputStream out;
+				BufferedOutputStream out;
 				try
 				{
-					out = new FileOutputStream(args[1]);
+					out = new BufferedOutputStream(new FileOutputStream(args[1]));
+
 					if (isIMGDISK)
 					{
 						// Since these were (short) IMGDISK-produced images, fatten them out for cpmtools

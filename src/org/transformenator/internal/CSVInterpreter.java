@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2016 by David Schmidt
+ * Copyright (C) 2016 - 2019 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -21,6 +21,7 @@
 package org.transformenator.internal;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -87,7 +88,7 @@ public class CSVInterpreter
 
 					String outFile = outDirectory + File.separator + file.getName() + "." + fileSuffix;
 					System.err.println("Creating CSV file: \"" + outFile + "\"");
-					FileOutputStream out = new FileOutputStream(outFile);
+					BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outFile));
 					Iterator<FieldSpec> header = fields.iterator();
 					FieldSpec fs;
 					String hf;

@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2014 - 2015 by David Schmidt
+ * Copyright (C) 2014 - 2019 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.InputStream;
 
 import org.transformenator.internal.Version;
@@ -143,11 +144,11 @@ public class ExtractLinearFiles
 								fileName += (char)inData[k];
 						}
 						System.out.println(outputDirectory+fileName);
-						FileOutputStream out;
+						BufferedOutputStream out;
 						try
 						{
 							String fullname = new String(outputDirectory + fileName);
-							out = new FileOutputStream(fullname);
+							out = new BufferedOutputStream(new FileOutputStream(fullname));
 							System.err.println("Creating file: " + fullname);
 							int x = j+1;
 							char ch = (char)inData[x];

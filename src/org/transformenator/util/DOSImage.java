@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.InputStream;
 
 import org.transformenator.internal.UnsignedByte;
@@ -115,10 +116,10 @@ public class DOSImage
 							{
 								if (modifyImage(inData, force))
 								{
-									FileOutputStream out;
+									BufferedOutputStream out;
 									try
 									{
-										out = new FileOutputStream(args[2]);
+										out = new BufferedOutputStream(new FileOutputStream(args[2]));
 										out.write(inData);
 										out.flush();
 										out.close();

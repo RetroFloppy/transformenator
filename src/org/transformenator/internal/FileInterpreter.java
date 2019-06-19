@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on files
- * Copyright (C) 2013 - 2018 by David Schmidt
+ * Copyright (C) 2013 - 2019 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -21,6 +21,7 @@
 package org.transformenator.internal;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -241,7 +242,7 @@ public class FileInterpreter
 			try
 			{
 				System.out.println("Creating file: \"" + filename + "\"");
-				FileOutputStream out = new FileOutputStream(filename);
+				BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(filename));
 				if (prefix != null)
 				{
 					out.write(prefix.getBytes(), 0, prefix.length());

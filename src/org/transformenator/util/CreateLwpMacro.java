@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2016 by David Schmidt
+ * Copyright (C) 2016 - 2019 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -20,6 +20,7 @@
 
 package org.transformenator.util;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -57,8 +58,8 @@ public class CreateLwpMacro
 			{
 				try
 				{
-					FileOutputStream dirs = new FileOutputStream("CreateDirectories.bat");
-					FileOutputStream lss = new FileOutputStream("lotus2word.lss");
+					BufferedOutputStream dirs = new BufferedOutputStream(new FileOutputStream("CreateDirectories.bat"));
+					BufferedOutputStream lss = new BufferedOutputStream(new FileOutputStream("lotus2word.lss"));
 					lss.write("Sub Main\r\n".getBytes());
 					if (!out_dir_root.isAbsolute())
 					{
@@ -90,7 +91,7 @@ public class CreateLwpMacro
 		}
 	}
 
-	public static void descendDirectory(FileOutputStream dirs, FileOutputStream lss, int offset, File in_directory, File out_directory)
+	public static void descendDirectory(BufferedOutputStream dirs, BufferedOutputStream lss, int offset, File in_directory, File out_directory)
 	{
 		/*
 		 * Get the files in the in_directory For each file, check if it's a file or a directory.
