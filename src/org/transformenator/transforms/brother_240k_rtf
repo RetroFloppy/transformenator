@@ -7,7 +7,7 @@ head = "{\rtf1{\*\generator David Schmidt - Transformenator ;}\f0 "
 ; Closing brace for RTF format
 tail = "}"
 
-trim_leading = 24
+trim_leading = 20
 
 ; Space
 00 = 20
@@ -32,6 +32,7 @@ bc = "\b0 "
 8d =
 bc = 
 be =
+dc =
 
 ; Command structures
 980d = "<on>"
