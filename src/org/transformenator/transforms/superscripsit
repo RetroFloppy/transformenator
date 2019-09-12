@@ -1,0 +1,27 @@
+;
+description = "TRS-80 SuperSCRIPSIT word processor."
+commentary = ""
+;
+detangler = SuperSCRIPSIT
+
+fc=0d0a
+fd=0d0a
+f7=2020
+f8=20
+f9=2020
+f2=2020202020
+ef=
+f0=
+f1=
+f6=
+; EOF indicator
+ff = "{@@<FiLe_EoF>@@}"
+
+095509....=
+014c01..02=
+0261020102=
+144f1800..=
+0c540c01..=
+
+; Printer control codes: f52d is one
+f5..=
