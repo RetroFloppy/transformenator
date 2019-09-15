@@ -21,13 +21,14 @@
 package org.transformenator.detanglers;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.UnsignedByte;
 
 /*
  * SuperSCRIPTSIT file interpreter
+ * 
+ * Info from http://www.trs-80.com/wordpress/zaps-patches-pokes-tips/superscripsit-document-files/
  * 
  */
 

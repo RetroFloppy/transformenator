@@ -1,6 +1,6 @@
 ;
 description = "TRS-80 SuperSCRIPSIT word processor."
-commentary = ""
+commentary = "Info from http://www.trs-80.com/wordpress/zaps-patches-pokes-tips/superscripsit-document-files/"
 ;
 detangler = SuperSCRIPSIT
 
