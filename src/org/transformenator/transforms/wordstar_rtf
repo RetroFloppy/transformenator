@@ -94,6 +94,8 @@ regex = @\.[u|U][j|J].*@@
 regex = @\.[s|S][r|R].*@@
 regex = @\.[x|X][t|T].*@@
 regex = @\.[x|X][b|B].*@@
+regex = @\.[o|O][j|J].*@@
+regex = @\.[l|L][s|S].*@@
 regex = @\.[f|F].*@@
 
 ; Header directive removal
