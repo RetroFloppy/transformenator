@@ -18,7 +18,6 @@ Transform specification examples - all numbers are in hexadecimal:
 
 ; Using replace with reconsider (#) and a range, strip high bits
 [80..ff] # 00
-0d = 0d0a
 
 ; Calculate the EOF based on file contents
 eof_hi = 00
