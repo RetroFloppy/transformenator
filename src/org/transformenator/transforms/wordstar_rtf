@@ -10,15 +10,18 @@ head = "{\rtf1{\fonttbl{\f0\fnil\fcharset0 Fixedsys;}}{\*\generator David Schmid
 ; Closing brace for RTF format
 tail = " }"
 
+; production of 35 bytes bracketed by 0x1d
+1d..................................................................1d=
+
 ; Any time a curly braces appear... we need to escape them
 7d = "\}"
 7b = "\{"
 
 ; Newlines
-0d0a = "\\r\\n\par "
-0d8a = "\\r\\n\par "
-8d0a = "\\r\\n\par "
-8d8a = "\\r\\n\par "
+0d0a = "\\r\\n\par \\r\\n\par "
+0d8a = ""
+8d0a = ""
+8d8a = ""
 
 ; Ruler line removal
 2e72720d =
