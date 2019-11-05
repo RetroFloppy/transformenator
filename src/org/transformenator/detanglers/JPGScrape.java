@@ -29,15 +29,18 @@ public class JPGScrape extends ADetangler {
 	@Override
 	public void detangle(FileInterpreter parent, byte[] inData, String outDirectory, String inFile, String fileSuffix)
 	{
-		byte jfifheader[] = { -0x01, -0x28, -0x01, -0x20, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46 }; // JFIF header
+		byte jfifheader1[] = { -0x01, -0x28, -0x01, -0x20, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46 }; // JFIF header
+		// FF E0 00 10 4A 46 49 46
+		byte jfifheader2[] = { -0x01, -0x27, -0x01, -0x20, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46 }; // JFIF header
 		int begin = 0, end = 0;
 		int filenum = 1;
-		for (int i = 0; i < inData.length - jfifheader.length; i++)
+		for (int i = 0; i < inData.length - jfifheader1.length; i++)
 		{
-			byte range[] = Arrays.copyOfRange(inData, i, i + jfifheader.length);
-			if (Arrays.equals(range, jfifheader)) // Is the WANG eyecatcher in the disk image?
+			byte range1[] = Arrays.copyOfRange(inData, i, i + jfifheader1.length);
+			byte range2[] = Arrays.copyOfRange(inData, i, i + jfifheader2.length);
+			if ((Arrays.equals(range1, jfifheader1)) || (Arrays.equals(range2, jfifheader2))) // Is the JPG eyecatcher in the disk image?
 			{
-				// System.out.println("DEBUG: Found JFIF header at offset 0x"+Integer.toHexString(i));
+				System.out.println("DEBUG: Found JFIF header at offset 0x"+Integer.toHexString(i));
 				if (begin == 0)
 					begin = i;
 				else
@@ -47,7 +50,7 @@ public class JPGScrape extends ADetangler {
 					byte[] out = new byte[end-begin];
 					System.arraycopy(inData, begin, out, 0, end-begin);
 					parent.emitFile(out , outDirectory, inFile.substring(0,(inFile.lastIndexOf('.')>0?inFile.lastIndexOf('.'):inFile.length())), ""+filenum++);
-					// System.out.println("DEBUG: Write JFIF file from 0x"+Integer.toHexString(begin)+" to 0x"+Integer.toHexString(end));
+					System.out.println("DEBUG: Write JFIF file from 0x"+Integer.toHexString(begin)+" to 0x"+Integer.toHexString(end));
 				}
 				end = 0;
 				begin = i;
@@ -57,7 +60,7 @@ public class JPGScrape extends ADetangler {
 		{
 			byte[] out = new byte[inData.length-begin];
 			System.arraycopy(inData, begin, out, 0, inData.length-begin);
-			// System.out.println("DEBUG: Write JFIF file from 0x"+Integer.toHexString(begin)+" to 0x"+Integer.toHexString(inData.length));
+			System.out.println("DEBUG: Write JFIF file from 0x"+Integer.toHexString(begin)+" to 0x"+Integer.toHexString(inData.length));
 			parent.emitFile(out, outDirectory, inFile.substring(0,(inFile.lastIndexOf('.')>0?inFile.lastIndexOf('.'):inFile.length())), ""+filenum++);
 		}
 	}
