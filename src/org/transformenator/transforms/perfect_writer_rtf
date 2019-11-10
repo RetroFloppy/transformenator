@@ -11,6 +11,9 @@ tail = "}"
 ; Pick off line endings so we can take care of @x(...) productions that span "lines."
 0d0a = "\par "
 
+; Bold: @B<...>
+regex = #@B\<(.+?)\>#\\ul $1\\ul0 #
+
 ; Underline: @U(...)
 regex = #@U\((.+?)\)#\\ul $1\\ul0 #
 regex = #@U\[(.+?)\]#\\ul $1\\ul0 #
@@ -33,8 +36,16 @@ regex = #@UN\[(.+?)\]#\\ul $1\\ul0 #
 regex = #@un\((.+?)\)#\\ul $1\\ul0 #
 regex = #@un\[(.+?)\]#\\ul $1\\ul0 #
 
+; Chapter Heading: @CHAPTER(...)
+regex = #@CHAPTER\((.+?)\)#\\qc $1\\ql #
+regex = #@[C|c][H|h][A|a][P|p][T|t][E|e][R|r]\((.+?)\)#\\qc $1 \\par \\ql #
+
+; Major Heading: @MAJORHEADING(...)
+regex = #@[M|m][A|a][J|j][O|o][R|r][H|h][E|e][A|a][D|d][I|i][N|n][G|g]\((.+?)\)#\\qc $1 \\par \\ql #
+
 ; Centering: @CENTER(...)
 ; Saw this once: [center = "@value(page)"] - no idea if this is valid or not
+regex = #@[C|c][E|e][N|n][T|t][E|e][R|r]\((.+?)\)#\\qc $1 \\par \\ql #
 regex = #@CENTER\((.+?)\)#\\qc $1\\ql #
 regex = #@CENTER\{(.+?)\}#\\qc $1\\ql #
 regex = #@CENTER\[(.+?)\]#\\qc $1\\ql #
@@ -45,6 +56,8 @@ regex = #@center\[(.+?)\]#\\qc $1\\ql #
 ; Style: @STYLE(...)
 regex = #@STYLE\[(.+?)\]##
 regex = #@STYLE\((.+?)\)##
+regex = #@Style\[(.+?)\]##
+regex = #@Style\((.+?)\)##
 regex = #@style\[(.+?)\]##
 regex = #@style\((.+?)\)##
 
@@ -61,6 +74,7 @@ regex = #@pageheading\[(.+?)\]#\\qc $1\\ql #
 regex = #@pageheading\((.+?)\)#\\qc $1\\ql #
 
 ; Flush left: @FLUSHLEFT(...)
+regex = #@[F|f][L|l][U|u][S|s][H|h][L|l][E|e][F|f][T|t]\((.+?)\)#$1 #
 regex = #@flushleft\((.+?)\)#$1 #
 regex = #@flushleft\[(.+?)\]#$1 #
 regex = #@FLUSHLEFT\((.+?)\)#$1 #
@@ -68,6 +82,7 @@ regex = #@FLUSHLEFT\[(.+?)\]#$1 #
 
 ; Flush right: @FLUSHRIGHT(...)
 regex = #@FLUSHRIGHT\((.+?)\)#\\qr $1 \\par\\slmulti #
+regex = #@[F|f][L|l][U|u][S|s][H|h][R|r][I|i][G|g][H|h][T|t]\((.+?)\)#\\qr $1 \\par \\pard \\slmulti #
 regex = #@FLUSHRIGHT\[(.+?)\]#\\qr $1 \\par\\slmulti #
 regex = #@FLUSHRIGHT\{(.+?)\}#\\qr $1 \\par\\slmulti #
 regex = #@flushright\((.+?)\)#\\qr $1 \\par\\slmulti #
@@ -165,6 +180,9 @@ regex = #@pageheading\(.*\)##
 ; Ignore page eject
 regex = #@NEWPAGE##
 regex = #@newpage##
+
+; Ignore Verbatim
+regex = #@VERBATIM##
 
 ; End of file is EOF
 1a = "{@@<FiLe_EoF>@@}"
