@@ -21,10 +21,19 @@ ae = "\par "
 ;af = 09
 ; 1a = tab
 1a = 09
+
 ; Emphasis on
 ff01 = "\b1 "
 ; Emphasis off
 ff03 = "\b0 "
+
+; Emphasis on
+ef = "\b1 "
+; Emphasis off
+eb = "\b0 "
+
+; Unknown cruft
+ff83 =
 
 ; Header gorp - may be leading with 2e's rather than trailing behind the af.
 af2e2e2e2e2e2e2e2e2e =
