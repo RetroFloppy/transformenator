@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2013 - 2018 by David Schmidt
+ * Copyright (C) 2013 - 2019 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -152,21 +152,29 @@ public class Transform
 					else
 					{
 						// File-style processing
-						// System.err.println("DEBUG: starting single-file processing.");
+						// System.err.println("DEBUG: starting single-file processing. args.length = "+args.length);
 						if (args.length == 4)
 						{
 							if (args[3].startsWith("."))
 								suffix_guess = args[3];
 							else
 								suffix_guess = "."+args[3];
-							if (fileTransform != null)
+							if (isCSV)
 							{
-								fileTransform.process(args[1], args[2], args[3]);
+								csvTransform.createOutput(args[1], args[2], suffix_guess);
+							}
+							else if (fileTransform != null)
+							{
+								fileTransform.process(args[1], args[2], suffix_guess);
 							}
 						}
 						else if (args.length == 3)
 						{
-							if (fileTransform != null)
+							if (isCSV)
+							{
+								csvTransform.createOutput(args[1], args[2], ".csv");
+							}
+							else if (fileTransform != null)
 							{
 								fileTransform.process(args[1], args[2], suffix_guess);
 							}
