@@ -86,7 +86,7 @@ public class CSVInterpreter
 					// System.err.println("Making directory: ["+baseDirFile+"]");
 					baseDirFile.mkdir();
 
-					String outFile = outDirectory + File.separator + file.getName() + "." + fileSuffix;
+					String outFile = outDirectory + File.separator + file.getName() + fileSuffix;
 					System.err.println("Creating CSV file: \"" + outFile + "\"");
 					BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outFile));
 					Iterator<FieldSpec> header = fields.iterator();
@@ -159,9 +159,9 @@ public class CSVInterpreter
 							{
 								String fieldString = new String("");
 								field = it2.next();
-								// System.out.println("Field name:   " + field.fieldName);
-								// System.out.println("Field origin: " + field.fieldOrigin);
-								// System.out.println("Field length: " + field.fieldLength);
+								// System.err.println("DEBUG Field name:   " + field.fieldName);
+								// System.err.println("DEBUG Field origin: " + field.fieldOrigin);
+								// System.err.println("DEBUG Field length: " + field.fieldLength);
 								byte[] fieldBytes = new byte[field.fieldLength];
 								System.arraycopy(result, i + field.fieldOrigin, fieldBytes, 0, field.fieldLength);
 								String temp;

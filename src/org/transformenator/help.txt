@@ -37,6 +37,9 @@ trim_leading = 0400
 ; Trim trailing bytes
 trim_trailing = df
 
+; Remove everything between two hex delimiters
+remove_between = 414141,4242
+
 ; Regular expression replacement - first character is taken as delimiter
 regex = @regspec@replacement@
 

@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2013-2015 by David Schmidt
+ * Copyright (C) 2013-2019 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -25,12 +25,17 @@ public class RegSpec
 	// Just struct-ifying this data type
 	public byte[] leftCompare;
 	public byte[] leftMask;
+	
+	// For remove_between
+	public byte[] removeEndCompare;
+	public byte[] removeEndMask;
 	/*
 	 * Commands: 
 	 * 0 = Normal search
 	 * 1 = EOF
 	 * 2 = SOF
 	 * 3 = SOF (greedy)
+	 * 4 = remove_between
 	 */
 	public int command = 0;
 	public boolean backtrack = true;

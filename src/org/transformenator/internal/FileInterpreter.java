@@ -383,7 +383,7 @@ public class FileInterpreter
 				String rightTemp1 = "";
 				String rightTemp2 = "";
 				byte[] rightBytes = null;
-				// System.err.println("Splits on '=': "+equalsSplits.length+" splits on '#': "+hashSplits.length+" splits on '%': "+toggleSplits.length+"\n line.indexOf('='): "+line.indexOf("=")+ " line.indexOf('#'): "+line.indexOf("#")+ " line.indexOf('%'): "+line.indexOf("%"));
+				// System.err.println("DEBUG Splits on '=': "+equalsSplits.length+" splits on '#': "+hashSplits.length+" splits on '%': "+toggleSplits.length+"\n line.indexOf('='): "+line.indexOf("=")+ " line.indexOf('#'): "+line.indexOf("#")+ " line.indexOf('%'): "+line.indexOf("%"));
 				if ((line.indexOf("%") > 0 && line.indexOf("=") < 0 && line.indexOf("#") < 0) || (line.indexOf("%") > 0 && (line.indexOf("%") < line.indexOf("=")) && (line.indexOf("%") < line.indexOf("#"))))
 				{
 					// System.err.println("DEBUG This is a toggle production.");
@@ -395,10 +395,18 @@ public class FileInterpreter
 				else if ((line.indexOf("=") > 0 && line.indexOf("%") < 0 && line.indexOf("#") < 0) || (line.indexOf("=") > 0 && (line.indexOf("=") < line.indexOf("%")) && (line.indexOf("=") < line.indexOf("#"))))
 				{
 					// System.err.println("DEBUG This is an equals production.");
-					st = new StringTokenizer(equalsSplits[0]);
-					result = equalsSplits;
-					newRegSpec.backtrack = false;
-					newRegSpec.toggle = false;
+					if (leftTemp.equals("remove_between"))
+					{
+						st = new StringTokenizer(toggleSplits[0]);
+						result = toggleSplits;						
+					}
+					else
+					{
+						st = new StringTokenizer(equalsSplits[0]);
+						result = equalsSplits;
+						newRegSpec.backtrack = false;
+						newRegSpec.toggle = false;
+					}
 				}
 				else if ((line.indexOf("#") > 0 && line.indexOf("=") < 0 && line.indexOf("%") < 0) || (line.indexOf("#") > 0 && (line.indexOf("#") < line.indexOf("=")) && (line.indexOf("#") < line.indexOf("%"))))
 
@@ -421,8 +429,8 @@ public class FileInterpreter
 				{
 					leftTemp = st.nextToken();
 					skip = false;
+					// If you add a left side keyword that needs to be honored, be sure to add it here, otherwise the fall through processing will try to eat it:
 					// System.err.println("DEBUG Left side token: ["+leftTemp+"]");
-					// If you add a left side keyword that will get consumed, be sure to add it here, otherwise the fall through processing will try to eat it:
 					if (leftTemp.toLowerCase().equals("detangler") || leftTemp.toLowerCase().equals("description") || leftTemp.toLowerCase().equals("commentary") || leftTemp.equals("head") || leftTemp.equals("tail") || leftTemp.equals("trim_leading") || leftTemp.equals("trim_trailing") || leftTemp.equals("eof_lo") || leftTemp.equals("eof_mid") || leftTemp.equals("eof_hi") || leftTemp.trim().charAt(0) == (';'))
 					{
 						if (leftTemp.trim().charAt(0) == (';'))
@@ -433,6 +441,10 @@ public class FileInterpreter
 					else if (leftTemp.equals("regex"))
 					{
 						// System.err.println("DEBUG Left side token: ["+leftTemp+"]");
+					}
+					else if (leftTemp.equals("remove_between"))
+					{
+						addLeft = true;
 					}
 					else if ((leftTemp.trim().startsWith("[")) && leftTemp.trim().endsWith("]") && leftTemp.trim().length() == 8)
 					{
@@ -499,7 +511,7 @@ public class FileInterpreter
 							}
 						}
 					}
-					else
+					else // This is a plain old byte-based specification to search for
 					{
 						// System.err.println("DEBUG leftCompare: ["+leftTemp+"]");
 						newRegSpec.leftCompare = asBytes(leftTemp);
@@ -509,7 +521,22 @@ public class FileInterpreter
 				}
 				if (result != null && (result.length > 1) && !skip)
 				{
-					if (result == equalsSplits) // We are using '=' as separator
+					if (leftTemp.equals("remove_between"))
+					{
+						// truly a hybrid command... uses equals, has a comma separated list
+						String rightTemp = line.substring(line.indexOf("=") + 1);
+						// System.err.println("DEBUG remove_between... right side is: "+rightTemp);
+						rightTemp1 = rightTemp.substring(0, rightTemp.indexOf(","));
+						rightTemp2 = rightTemp.substring(rightTemp.indexOf(",") + 1);
+						// System.err.println("DEBUG remove start: ["+rightTemp1+"]");
+						// System.err.println("DEBUG remove end  : ["+rightTemp2+"]");
+						// System.err.println("DEBUG Right side token: ["+rightTemp1+"]");
+						newRegSpec.leftCompare = asBytes(rightTemp1);
+						newRegSpec.leftMask = maskBytes(rightTemp1);
+						newRegSpec.removeEndCompare = asBytes(rightTemp2); 
+						newRegSpec.removeEndMask = maskBytes(rightTemp2); 
+					}
+					else if (result == equalsSplits) // We are using '=' as separator
 					{
 						rightTemp1 = line.substring(line.indexOf("=") + 1);
 					}
@@ -547,8 +574,9 @@ public class FileInterpreter
 							// Need to add an SOF command to the left side spec.
 							newRegSpec.command = 3;
 						}
-						else if (rightTemp1.trim().length() > 0 && rightTemp1.trim().charAt(0) == '"')
+						else if ((rightTemp1.trim().length() > 0 && rightTemp1.trim().charAt(0) == '"') && !leftTemp.equals("remove_between"))
 						{
+							// System.err.println("DEBUG command: "+newRegSpec.command);
 							String newString = "";
 							rightTemp1 = rightTemp1.trim();
 							rightTemp1 = rightTemp1.substring(1, rightTemp1.length() - 1);
@@ -575,6 +603,13 @@ public class FileInterpreter
 								regReplace.add("");
 								// System.err.println("DEBUG Regex replacement token 2 is blank.");
 							}
+						}
+						else if (leftTemp.equals("remove_between"))
+						{
+							newRegSpec.command = 4; // We know the command level now
+							// System.err.println("DEBUG remove_between found.");
+							// System.err.println("DEBUG rightTemp1: "+rightTemp1);
+							// System.err.println("DEBUG rightTemp2: "+rightTemp2);
 						}
 						else
 						{
@@ -814,6 +849,17 @@ public class FileInterpreter
 				continue;
 			byte[] compLeft = leftSide.elementAt(i).leftCompare;
 			byte[] maskLeft = leftSide.elementAt(i).leftMask;
+			if (!betweenPending)
+			{
+				compLeft = leftSide.elementAt(i).leftCompare;
+				maskLeft = leftSide.elementAt(i).leftMask;
+			}
+			else
+			{
+				compLeft = leftSide.elementAt(i).removeEndCompare;
+				maskLeft = leftSide.elementAt(i).removeEndMask;
+				
+			}
 			byte[] replRight = rightSide.elementAt(i);
 			byte[] replRightToggle = rightToggle.elementAt(i);
 
@@ -916,9 +962,61 @@ public class FileInterpreter
 					outBuf.reset();
 					break;
 				}
+				else if (currentSpec.command == 4)
+				{
+					if (!betweenPending)
+					{
+						// System.err.println("DEBUG starting work on a remove_between.");
+						int j = 0;
+						for (j = 0; j < compLeft.length; j++)
+						{
+							if (((compLeft[j]) != inData[offset + j]) && (maskLeft[j] == 0))
+							{
+								// If the byte doesn't match and there's no mask...
+								// Then it's not a match.
+								match = false;
+							}
+							else if ((inData[offset + j] == 0) && (maskLeft[j] == 2))
+							{
+								// System.err.println("DEBUG Found a non-zero byte at "+j);
+								match = false;
+							}
+							else
+							{
+								// System.err.println("DEBUG: inter-match found");
+								// remove_between active
+								betweenPending = true;
+								betweenStartIndex = offset;
+								match = false;
+							}
+						}
+					}
+					else
+					{
+						// System.err.println("DEBUG ending work on a remove_between.");
+						int j = 0;
+						for (j = 0; j < compLeft.length; j++)
+						{
+							if (((compLeft[j]) != inData[offset + j]) && (maskLeft[j] == 0))
+							{
+								// If the byte doesn't match and there's no mask...
+								// Then it's not a match.
+								match = false;
+							}
+							else if ((inData[offset + j] == 0) && (maskLeft[j] == 2))
+							{
+								// System.err.println("DEBUG Found a non-zero byte at "+j);
+								match = false;
+							}
+						}
+						bytesMatched = compLeft.length;
+						betweenPending = false;
+						break;
+					}
+				}
 			}
 		}
-		if (bytesMatched == 0)
+		if ((bytesMatched == 0) && (!betweenPending))
 		{
 			// System.err.println("DEBUG Writing out original byte, no comparisons to make.");
 			outBuf.write(inData[offset]);
@@ -1240,6 +1338,7 @@ public class FileInterpreter
 	String inFile, transformName;
 	int trimLeading = 0, trimTrailing = 0, trimmedEnd;
 	int eofHi = 0, eofMid = 0, eofLo = 0, eofOffset = 0;
-	boolean foundSOF;
+	int betweenStartIndex = 0;
+	boolean foundSOF, betweenPending;
 	int backupBytes;
 }
