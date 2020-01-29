@@ -15,6 +15,8 @@ tail = "}"
 5c71....0002..715c = "\page "
 ; Manual pagination from word processor... ignore
 5c71........03715c =
+; Not sure... ignore
+5C7105..000000........05715C =
 
 ; Newline: \gn\ (also turn centering, bold, and underlining off)
 5c676e5c = "\\r\\n\par\ul0\b0\ql "
