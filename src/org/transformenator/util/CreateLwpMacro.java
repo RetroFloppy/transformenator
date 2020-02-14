@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2016 - 2019 by David Schmidt
+ * Copyright (C) 2016 - 2020 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -70,6 +70,10 @@ public class CreateLwpMacro
 					else
 						help();
 					lss.write("End Sub\r\n".getBytes());
+					dirs.flush();
+					dirs.close();
+					lss.flush();
+					lss.close();
 				}
 				catch (FileNotFoundException e)
 				{
@@ -98,6 +102,7 @@ public class CreateLwpMacro
 		 *  - If a file: emit it
 		 *  - If a directory: recursively call descendDirectory
 		 */
+		// System.out.println("DEBUG: descendDirectory; in_directory: " + in_directory.getPath() + " out_directory: " + out_directory.getPath());
 		if (in_directory.exists())
 		{
 			try
