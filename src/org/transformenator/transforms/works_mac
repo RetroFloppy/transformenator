@@ -1,0 +1,15 @@
+;
+description = "Early MS Works for Mac."
+commentary = "Later than version 2.0, but prior to version 3.0. App creator/type MSWK/AWWP."
+;
+
+;trim_leading=012c
+000004=
+0004=
+000005=0d0a
+0005=
+1000..=0d0a
+020003=
+0c..ff=
+60=
+00=
