@@ -8,8 +8,9 @@ head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transf
 ; Closing brace for RTF format
 tail = "}"
 
-; Unknown control
+; Unknown controls
 1b21 =
+137f =
 
 ; Indented
 regex = @\.[L|l][I|i]0@\\par\\li721\\par @
@@ -19,13 +20,24 @@ regex = @\.[L|l][I|i]1@\\par\\li0\\par @
 
 ; Italic toggle
 5c % " \i1 "," \i0 "
+; Italics on
+1b57="\i1 "
+; Italics off
+1b26="\i0 "
 
 ; Sometimes follows an italic closure
 08 =
 
 ; Superscript
 1b3b = "\super "
+1b44 = "\super "
 1b3a = "\nosupersub "
+1b55 = "\nosupersub "
+
+; Bold on
+1b34="\b1 "
+; Bold off
+1b35="\b0 "
 
 ; Paragraph centered
 regex = @\\par \.[C|c][J|j].*@\\par\\qc @
