@@ -15,8 +15,10 @@ tail = "}"
 5c71....0002..715c = "\page "
 ; Manual pagination from word processor... ignore
 5c71........03715c =
+
 ; Not sure... ignore
-5C7105..000000........05715C =
+5c71....00..00........05715c =
+5c71....00..00..715c =
 
 ; Newline: \gn\ (also turn centering, bold, and underlining off)
 5c676e5c = "\\r\\n\par\ul0\b0\ql "
@@ -38,9 +40,6 @@ tail = "}"
 ; Bold/Underline/super/subscript off
 5c71....000000....01715c = "\b0\i0\ul0\nosupersub "
 5c71....010000....01715c = "\i0 "
-
-; Need to ignore this - not sure what it is yet:
-5c71....0000002100..1105715c =
 
 ; Underline on
 5c71....000500....01715c = "\ul "
