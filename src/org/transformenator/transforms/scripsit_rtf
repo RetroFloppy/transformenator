@@ -17,7 +17,7 @@ tail = "}"
 9b =
 
 ; Line break
-8d = "\\n\par\par "
+8d = "\\n\par "
 
 ; Indented paragraph
 8e % "\par\li1\par ","\par\li0\par "
@@ -31,6 +31,9 @@ regex = @J=N@@
 
 ; Line spacing
 regex = @LS=[0-9]*@@
+
+; Unknown; must come before C, though
+regex = @VC=[Y|N]@\\qc @
 
 ; Center on
 regex = @C=Y@\\qc @
@@ -51,6 +54,7 @@ regex = @PF=[0-9]*@@
 regex = @PN=[0-9]*@@
 regex = @TM=[0-9]*@@
 regex = @WS=[Y|N]@@
+regex = @FR=[Y|N]@@
 
 ; Remove footers/page numbers
 regex = @%%Footer%%.*[0-9]*\n\\par\\par @@
