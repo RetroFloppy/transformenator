@@ -18,7 +18,7 @@ tail = " }"
 7b = "\{"
 
 ; Newlines
-0d0a = "\\r\\n\par \\r\\n\par "
+0d0a = "\\r\\n\par "
 0d8a = ""
 8d0a = ""
 8d8a = ""
