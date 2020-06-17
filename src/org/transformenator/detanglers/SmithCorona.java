@@ -82,6 +82,9 @@ public class SmithCorona extends ADetangler
 				case '&':
 					newName[i] = '_';
 					break;
+				case '?':
+					newName[i] = '_';
+					break;
 				}
 			}
 		}
