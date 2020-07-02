@@ -1,0 +1,55 @@
+;
+description = "Unknown 8-inch word processor"
+commentary = "Preliminary input, output in RTF."
+detangler = EightInch8x512
+;
+
+; Header for RTF format
+head = "{\rtf1{\*\generator David Schmidt - Transformenator;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+00=
+
+; 82=bold begin
+82="\b1 "
+; 83=bold end
+83="\b0 "
+
+; 84=italic begin
+84="\i1 "
+; 85=italic end
+85="\i0 "
+
+; 91..91=start of a heading
+91..91=
+
+; 94=part of a footnote reference
+94=
+
+; 96=line return
+96=20
+; 97=newline
+97="\\r\\n\par "
+
+; 9a=tab
+9a="\tab "
+
+; 99=unknown emphasis (seen at the beginning of a line)
+99=
+
+9a=2020202020
+
+; Super/subscript
+; 9d9d=super
+9d9d=
+9d=
+; 9c9c=done with super
+9c9c=
+9c=
+
+
+9030=3c3c
+FD90=3e3e
+
+regex = @<<.*>>@@
