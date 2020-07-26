@@ -188,6 +188,8 @@ public class SmithCorona extends ADetangler
 			return 'O';
 		case 0x10:
 			return 'P';
+		case 0x34:
+			return 'Q';
 		case 0x33:
 			return 'R';
 		case 0x38:
@@ -204,6 +206,8 @@ public class SmithCorona extends ADetangler
 			return 'X';
 		case 0x12:
 			return 'Y';
+		case 0x1C:
+			return 'Z';
 
 		case 0x06:
 			return 'a';
@@ -298,6 +302,8 @@ public class SmithCorona extends ADetangler
 			return '+';
 		case 0x30:
 			return '@';
+		case 0x50:
+			return '_';
 		case 0x51:
 			return ';';
 		case 0x53:

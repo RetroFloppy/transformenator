@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2017 by David Schmidt
+ * Copyright (C) 2017 - 2019 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -110,16 +110,30 @@ public class Dmk2Raw
 				int i;
 				sectorOffset = UnsignedByte.intValue(result[trackOffset],result[trackOffset+1]);
 				dataIndex = trackOffset + sectorOffset + 50;
+				System.out.println("Data index: "+dataIndex);
 				long accum1 = 0, accum2 = 0;
 				boolean hasData = false;
 				// Search for non-zero data, and see if it repeats 000011112222 (i.e. rx01)
 				// or differs: 00112233 (i.e. rx02)
-				for (i = 40960; i < 40960+26624; i += 2)
+				for (i = 4; i < 8; i++)
 				{
-					accum1 += UnsignedByte.intValue(inData[dataIndex + i]);
-					accum2 += UnsignedByte.intValue(inData[dataIndex + i + 1]);
-					if (accum1 > 0)
-						hasData = true;
+					trackOffset = zeroOffset + i * trackLength;
+					sectorOffset = UnsignedByte.intValue(result[trackOffset],result[trackOffset+1]);
+					int index = 0;
+					dataIndex = 0;
+					while (sectorOffset > 0)
+					{
+						dataIndex = trackOffset + sectorOffset + 50;
+						for (int j = 0; j < 256; j += 2)
+						{
+							accum1 += UnsignedByte.intValue(inData[dataIndex + j]);
+							accum2 += UnsignedByte.intValue(inData[dataIndex + j + 1]);
+							if (accum1 > 0)
+								hasData = true;
+						}
+						index += 2;
+						sectorOffset = UnsignedByte.intValue(result[trackOffset+index],result[trackOffset+index+1]);
+					}
 				}
 				if ((accum1 == accum2) && hasData)
 				{
