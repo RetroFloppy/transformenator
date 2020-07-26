@@ -29,3 +29,10 @@ ff.. =
 
 ; Not sure what these are... seem to be page breaks of some sort
 2e2e2e092e2e2e2e092e2e2e2e092e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e =
+
+; Lop off high bytes for italics
+d1=
+[e1..ff]=61
+[c1..db]=41
+
+0e="{@@<FiLe_EoF>@@}"
