@@ -252,7 +252,7 @@ public class FileInterpreter
 				for (int i = 0; i < regReplace.size(); i++)
 				{
 					// System.err.println("DEBUG Replacing ["+regPattern.elementAt(i)+"] with ["+regReplace.elementAt(i)+"].");
-					tempStr = tempStr.replaceAll("(?m)" + regPattern.elementAt(i), regReplace.elementAt(i));
+					tempStr = tempStr.replaceAll(regPattern.elementAt(i), regReplace.elementAt(i));
 					anyReplacements = true;
 				}
 				if (anyReplacements)
@@ -395,21 +395,12 @@ public class FileInterpreter
 				else if ((line.indexOf("=") > 0 && line.indexOf("%") < 0 && line.indexOf("#") < 0) || (line.indexOf("=") > 0 && (line.indexOf("=") < line.indexOf("%")) && (line.indexOf("=") < line.indexOf("#"))))
 				{
 					// System.err.println("DEBUG This is an equals production.");
-					if (leftTemp.equals("remove_between"))
-					{
-						st = new StringTokenizer(toggleSplits[0]);
-						result = toggleSplits;						
-					}
-					else
-					{
-						st = new StringTokenizer(equalsSplits[0]);
-						result = equalsSplits;
-						newRegSpec.backtrack = false;
-						newRegSpec.toggle = false;
-					}
+					st = new StringTokenizer(equalsSplits[0]);
+					result = equalsSplits;
+					newRegSpec.backtrack = false;
+					newRegSpec.toggle = false;
 				}
 				else if ((line.indexOf("#") > 0 && line.indexOf("=") < 0 && line.indexOf("%") < 0) || (line.indexOf("#") > 0 && (line.indexOf("#") < line.indexOf("=")) && (line.indexOf("#") < line.indexOf("%"))))
-
 				{
 					// System.err.println("DEBUG This is a hash production.");
 					st = new StringTokenizer(hashSplits[0]);
@@ -526,8 +517,8 @@ public class FileInterpreter
 						// truly a hybrid command... uses equals, has a comma separated list
 						String rightTemp = line.substring(line.indexOf("=") + 1);
 						// System.err.println("DEBUG remove_between... right side is: "+rightTemp);
-						rightTemp1 = rightTemp.substring(0, rightTemp.indexOf(","));
-						rightTemp2 = rightTemp.substring(rightTemp.indexOf(",") + 1);
+						rightTemp1 = rightTemp.substring(0, rightTemp.indexOf(",")).trim();
+						rightTemp2 = rightTemp.substring(rightTemp.indexOf(",") + 1).trim();
 						// System.err.println("DEBUG remove start: ["+rightTemp1+"]");
 						// System.err.println("DEBUG remove end  : ["+rightTemp2+"]");
 						// System.err.println("DEBUG Right side token: ["+rightTemp1+"]");
@@ -849,20 +840,20 @@ public class FileInterpreter
 				continue;
 			byte[] compLeft = leftSide.elementAt(i).leftCompare;
 			byte[] maskLeft = leftSide.elementAt(i).leftMask;
-			if (!betweenPending)
+			// If we're looking for the end of a "between", and this a between command...
+			if (betweenPending && (leftSide.elementAt(i).command == 4))
+			{
+				compLeft = leftSide.elementAt(i).removeEndCompare;
+				maskLeft = leftSide.elementAt(i).removeEndMask;
+			}
+			else
 			{
 				compLeft = leftSide.elementAt(i).leftCompare;
 				maskLeft = leftSide.elementAt(i).leftMask;
 			}
-			else
-			{
-				compLeft = leftSide.elementAt(i).removeEndCompare;
-				maskLeft = leftSide.elementAt(i).removeEndMask;
-				
-			}
+			
 			byte[] replRight = rightSide.elementAt(i);
 			byte[] replRightToggle = rightToggle.elementAt(i);
-
 			match = true;
 			for (int j = 0; j < compLeft.length; j++)
 			{
