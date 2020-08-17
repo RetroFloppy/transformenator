@@ -3,6 +3,7 @@ description = "C64 Speedscript word processor."
 ;
 
 ; Start of text
+0025 =
 0028 =
 
 ; Random directives
