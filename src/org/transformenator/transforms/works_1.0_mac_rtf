@@ -1,0 +1,20 @@
+;
+description = "MS Works 1.0 for Mac."
+commentary = "App creator/types PSIP/AWWP."
+;
+
+; Header for RTF format
+head = "{\rtf1{\*\generator David Schmidt - Transformenator;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+trim_leading=41
+
+80=
+b0=
+
+0100040904="\b1 "
+0100040900="\b0 "
+00000000!!="\\r\\n\par\pard "
+4C0100000000=
+430100000000=
