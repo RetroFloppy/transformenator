@@ -8,7 +8,10 @@ head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transf
 
 8e = 20
 00 =
+01 =
+02 =
 03 =
+ff =
 
 ; Closing brace for RTF format
 tail = "}"
@@ -24,6 +27,7 @@ tail = "}"
 
 ; Shifted spaces
 a0 = 20
+c0 = 20
 e0 = 20
 
 ; Remove 80..
