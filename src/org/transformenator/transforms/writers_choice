@@ -7,4 +7,4 @@ skip_leading = 400
 
 01 = 0d0a
 
-eof = 0e
+0e = "{@@<FiLe_EoF>@@}"

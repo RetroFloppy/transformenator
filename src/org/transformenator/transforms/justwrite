@@ -1,5 +1,6 @@
 ;
 description = "JustWrite word processor."
+commentary = "Preabmble text contains the string WRD PCPCPC"
 ;
 
 ; Trim the leading 0x0400 bytes
