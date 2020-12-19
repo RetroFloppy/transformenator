@@ -1,0 +1,67 @@
+description = "Brother 120k word processor disk files."
+commentary = "120k, proprietary filesystem."
+;
+detangler = Brother120k
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fnil\fcharset0 Courier New;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; New paragraph
+0b.. =  "\par\pard\ul0\ql \\r\\n"
+02 =  "\par\pard\ul0\ql \\r\\n"
+
+; Inherit old paragraph characteristics
+0f =
+
+; Eject page
+0e =
+
+; New paragraph characteristics
+remove_between = f1,f2
+
+; Next tab position
+01 = "\tab "
+
+; Save -
+f6 = "-"
+
+; Letter set (KB I, II, III)
+06 =
+07 =
+08 =
+
+; Center
+09 = "\qc "
+
+; Right justified
+0a = "\qr "
+
+; Trim leading in case we don't have an SOF
+trim_leading = c1
+
+; SOF is 0xf0f1
+f0 = "{@@<FiLe_SoF>@@}"
+
+; Nothing
+0d = 20
+f0 =
+
+; Bold on/off
+f7 = "\b1 "
+f8 = "\b0 "
+
+; Underline on/off
+f9 = "\ul "
+fa = "\ul0 "
+
+; Super/Subscript
+fb =
+fd =
+
+; Empty but not blank
+f4 =
+
+; EOF is 0xff
+ff = "{@@<FiLe_EoF>@@}"
