@@ -1,0 +1,52 @@
+;
+; Philips/Magnavox VideoWRITER
+;
+detangler = VideoWRITER
+
+; May introduce a list
+a7=
+
+; Emphasis open
+93=
+95=
+97=
+; Emphasis close (communal)
+91=
+
+; Newline
+99=0d0a
+0000....9B=
+
+; Double-wide letters
+aa01="A"
+ab02="B"
+ac03="C"
+ad04="D"
+ab05="E"
+ae06="F"
+ac07="G"
+af08="H"
+ba09="I"
+bb0a="J"
+af0b="K"
+bc0c="L"
+bd0d="M"
+be0e="N"
+ac0f="O"
+ae10="P"
+ae11="Q"
+ae12="R"
+bf13="S"
+c014="T"
+db15="U"
+dc16="V"
+dd17="W"
+de18="X"
+df19="Y"
+e01a="Z"
+
+; Some high-bits are set for emphasis sometimes
+[e1..ff]=61
+[b0..b9]=30
+
+00=
