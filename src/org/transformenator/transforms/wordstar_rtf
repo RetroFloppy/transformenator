@@ -6,7 +6,7 @@ commentary = "Helpful URL: http://justsolve.archiveteam.org/wiki/WordStar"
 ;
 
 ; Header for RTF format
-head = "{\rtf1{\fonttbl{\f0\fnil\fcharset0 Fixedsys;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+head = "{\rtf1{\fonttbl{\f0\fnil\fcharset0 Courier New;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
 ; Closing brace for RTF format
 tail = " }"
 
@@ -91,6 +91,7 @@ regex = @\\par \.[i|I][e|E]@@
 regex = @\\par \.[i|I][t|T]@@
 regex = @\.[l|L][h|H].*@@
 regex = @\.[m|M][t|T].*@@
+regex = @\.[m|M][b|B].*@@
 regex = @\\par \.[m|M][b|B].*@@
 regex = @\.[p|P][s|S].*@@
 regex = @\.[a|A][w|W].*@@
