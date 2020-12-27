@@ -365,6 +365,9 @@ public class Transform
 				needsRenamed = true;
 				newName += c;
 				break;
+			case 46: // Final period?  Baaaaad.  Leave it off.  Almost always an abbreviation.
+				needsRenamed = true;
+				break;
 			case 58: // Backslash
 				c = '-';
 				needsRenamed = true;
