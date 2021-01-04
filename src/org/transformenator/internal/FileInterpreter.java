@@ -941,6 +941,8 @@ public class FileInterpreter
 					if (foundSOF == false)
 					{
 						bytesMatched = currLeftLength;
+						if (currentSpec.backtrack)
+						  backupBytes = currentSpec.leftCompare.length;
 						outBuf.reset();
 						foundSOF = true;
 						break;
