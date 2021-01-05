@@ -1,0 +1,15 @@
+;
+description = "Extract and convert files from Microdata 8 inch disk images."
+commentary = "Disks are FM encoded, single sided, 256 bytes x 16 sectors x 77 tracks."
+; 
+detangler=Microdata
+
+; The first category marker would also signify the start of a database (but don't consume the token) 
+1e # "{@@<FiLe_SoF>@@}"
+
+; Category marker (2 byte length follows)
+1e.... = 0d0a0d0a
+; Record marker
+1f = 0d0a
+; Field marker
+1d = ","
