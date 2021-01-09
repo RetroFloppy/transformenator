@@ -29,16 +29,20 @@ public class JPGScrape extends ADetangler {
 	@Override
 	public void detangle(FileInterpreter parent, byte[] inData, String outDirectory, String inFile, String fileSuffix)
 	{
+    // FF D8 FF E0 00 10 4A 46 49 46
 		byte jfifheader1[] = { -0x01, -0x28, -0x01, -0x20, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46 }; // JFIF header
-		// FF E0 00 10 4A 46 49 46
+		// FF D9 FF E0 00 10 4A 46 49 46
 		byte jfifheader2[] = { -0x01, -0x27, -0x01, -0x20, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46 }; // JFIF header
+		// FF D8 FF E1 0F EF 45 78 69 66
+    byte exifheader[] = { -0x01, -0x28, -0x01, -0x1f, 0x0f, -0x11, 0x45, 0x78, 0x69, 0x66 }; // Exif header
 		int begin = 0, end = 0;
 		int filenum = 1;
 		for (int i = 0; i < inData.length - jfifheader1.length; i++)
 		{
 			byte range1[] = Arrays.copyOfRange(inData, i, i + jfifheader1.length);
-			byte range2[] = Arrays.copyOfRange(inData, i, i + jfifheader2.length);
-			if ((Arrays.equals(range1, jfifheader1)) || (Arrays.equals(range2, jfifheader2))) // Is the JPG eyecatcher in the disk image?
+      byte range2[] = Arrays.copyOfRange(inData, i, i + jfifheader2.length);
+      byte range3[] = Arrays.copyOfRange(inData, i, i + exifheader.length);
+			if ((Arrays.equals(range1, jfifheader1)) || (Arrays.equals(range2, jfifheader2)) || (Arrays.equals(range3, exifheader))) // Is the JPG eyecatcher in the disk image?
 			{
 				System.out.println("DEBUG: Found JFIF header at offset 0x"+Integer.toHexString(i));
 				if (begin == 0)
