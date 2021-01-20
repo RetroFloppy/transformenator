@@ -16,9 +16,9 @@ tail = "}"
 bd =
 bf = 
 
-; Not sure what this is - something extra for linefeeds
-800d =
-80 =
+; Not sure what this is - seems to separate doc descriptions from doc body
+[80..84]=
+b3=
 
 ; Seems to be SOF or so
 c0 =
