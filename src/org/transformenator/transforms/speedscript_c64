@@ -8,7 +8,6 @@ description = "C64 Speedscript word processor."
 
 ; Random directives
 9c =
-9331 =
 8803 =
 8883 =
 
@@ -20,8 +19,14 @@ description = "C64 Speedscript word processor."
 1d = "]"
 1f = 0a
 
-; Center
+; Center (c)
 83 =
+
+; Right edge (e)
+85 = 
 
 ; Page eject
 8e =
+
+; Line spacing (s)
+93.. =
