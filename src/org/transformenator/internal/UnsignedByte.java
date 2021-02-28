@@ -83,11 +83,25 @@ public class UnsignedByte
 		return (byte) (loByte((int) value));
 	}
 
-	public static byte hiByte(long value)
-	{
-		return (byte) (hiByte((int) value));
-	}
+  public static byte hiByte(long value)
+  {
+    return (byte) (hiByte((int) value));
+  }
 
+  public static byte loNibble(byte value)
+  {
+    return (byte) (value & 0x0f);
+  }
+
+  public static byte hiNibble(byte value)
+  {
+    return (byte) ((value & 0xf0)/16);
+  }
+
+  public static byte composeByte(byte hiNibble, byte loNibble)
+  {
+    return (byte) (UnsignedByte.intValue(loNibble) + (UnsignedByte.intValue(hiNibble) * 16));
+  }
 	/**
 	 * Returns the value of the specified four bytes in unsigned form as a long.
 	 * 
