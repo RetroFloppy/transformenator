@@ -19,6 +19,9 @@ F9 =
 FB =
 FE = """
 
+; New page
+da =
+
 ; Newline
 0d = 0d0a
 
