@@ -1,0 +1,39 @@
+;
+description = "Select (CP/M) word proessor to RTF"
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fnil\fcharset0 Courier New;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+8d # 0d
+
+; Toggle bold
+5e % "\b1 ","\b0 "
+
+; Toggle underscore
+5f % "\ul ","\ul0 "
+
+; EOF indicator
+1a = "{@@<FiLe_EoF>@@}"
+
+0d0a = "\\r\\n\par "
+
+regex = @\\E@@
+regex = @\\F@@
+regex = @\\I.*@@
+regex = @\\L.*@@
+regex = @\\N.*@@
+regex = @\\S.*@@
+regex = @\\T.*@@
+; Right margin?
+regex = @\\R.*@@
+; Justify Left
+regex = @\\JL@\\ql @
+; Justify Center
+regex = @\\JC@@
+; Justify Right
+regex = @\\JR@@
+; Comment
+regex = @\\\*.*@@
