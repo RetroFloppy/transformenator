@@ -5,9 +5,13 @@ commentary = "Minimal cleanup."
 
 12 =
 14 =
-
+1f =
+ 
 ; soft(?) word break
 16 = "-"
+
+; 18 is a toggle for superscript
+18 =
 
 ; Commands start a line with two periods
 regex = @^\.\..*@@
