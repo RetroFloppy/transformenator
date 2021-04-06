@@ -32,6 +32,9 @@ ef = "\b1 "
 ; Emphasis off
 eb = "\b0 "
 
+; Space
+ed = 20
+
 ; Unknown cruft
 ff83 =
 
@@ -62,7 +65,10 @@ af =
 0f.. =
 11.. =
 12.. =
+13.. =
+15.. =
 
 b3...... =
 00 =
 03 =
+18 =
