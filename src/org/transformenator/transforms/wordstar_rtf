@@ -20,7 +20,7 @@ tail = " }"
 ; Newlines
 0d0a = "\\r\\n\par "
 0d8a = ""
-8d0a = ""
+8d0a = "\\r\\n\par "
 8d8a = ""
 
 ; Ruler line removal
@@ -80,6 +80,7 @@ regex = @\\par \.[p|P][n|N].*@@
 regex = @\.[r|R][m|M].*@@
 regex = @\.[h|H][m|M].*@@
 regex = @\.[p|P][c|C].*@@
+regex = @\.[p|P][l|L].*@@
 regex = @\.[p|P][o|O].*@@
 regex = @\.[p|P][n|N].*@@
 regex = @\.[c|C][w|W].*@@
