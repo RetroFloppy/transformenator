@@ -1,0 +1,15 @@
+;
+description = "MouseWrite for the Apple II"
+;
+
+trim_leading = 0200
+
+; Header
+0A=
+0B=
+0F=
+
+; Emphasis toggle
+04=
+
+0d=0d0a
