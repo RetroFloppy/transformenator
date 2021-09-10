@@ -1,0 +1,18 @@
+;
+description = "Unknown C64 (Spinnaker?) word processor."
+commentary = "Simple PETSCII transform for SEQ files."
+;
+
+; Transform capitals to lowercase
+[41..5a] = 61
+
+; Transform lowercase to capitals
+[61..7a] = 41
+
+ff = "{@@<FiLe_SoF>@@}"
+00 = "{@@<FiLe_EoF>@@}"
+10 = 0d0a
+
+; We're not dealing with line spacing
+regex = @!1ls@@
+regex = @!2ls@@
