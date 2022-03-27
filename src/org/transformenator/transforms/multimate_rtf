@@ -18,7 +18,7 @@ trim_leading = 400
 ae = "\par "
 
 ; af = tab
-;af = 09
+af = 09
 ; 1a = tab
 1a = 09
 
