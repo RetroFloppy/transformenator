@@ -3,6 +3,7 @@ description = "PaperClip C64 word processor."
 ;
 
 ; Commands:
+; zcm - filename?
 ; zhd - header?
 ; zft - footer?
 ; zcn0 - Center off?
@@ -30,9 +31,15 @@ tail = "}"
 regex = @[z|:]h[l|r][0-9]*@@
 ; Remove unknown spec: :ofxx
 regex = @[z|:]of[0-9]*@@
-; Remove left/right margin specs: zlmxx, :rmxx
+; Remove filename spec: zcm:nnn
+regex = @Q[z|:]cm:@@
+; Remove left/right margin specs: zlmxx, zlnxx, :rmxx
+regex = @[z|:][l|r]a[0-9]*@@
 regex = @[z|:][l|r]m[0-9]*@@
+regex = @[z|:][l|r]n[0-9]*@@
 regex = @[z|:]ls[0-9]*@@
+; Remove Justify spec: :ju0, :ju1
+regex = @[z|:]ju[0-9]*@@
 ; Remove page spec: :ppxx :pgxx :p#xx
 regex = @[z|:]p[p|g|\#][0-9]*@@
 ; Remove page spec: :ppxx :pgxx :p#xx
@@ -121,4 +128,4 @@ regex = @zhd[0-9]*@@
 
 ; End of line/paragraph becomes \r\n (plus) \par \par \li0 \b0 \fs24
 ; Need to turn off some things that don't have an explicit off switch (i.e. headings)
-1f = "\par\par\li0\b0\fs24 "
+1f = "\par\li0\b0\fs24 "

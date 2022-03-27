@@ -32,6 +32,9 @@ ef = "\b1 "
 ; Emphasis off
 eb = "\b0 "
 
+; Emphasis toggle
+c7 % "\b1 ","\b0 "
+
 ; Space
 ed = 20
 

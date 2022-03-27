@@ -41,15 +41,11 @@ tail = "}"
 2bd402020068 =
 2bd4040a0100 =
 2bd8026640 =
-2bd4030b03 =
 2bd40206 =
 
 ; Unknown emphasis pair
 2bd1060100670100 =
 2bd10601015401038d =
-
-; Unknown emphasis (no matching pair)
-2bd4030b03 = 
 
 ; Had to do with an indented quotation
 2bd40202 =
@@ -173,13 +169,16 @@ f9 = "9"
 00.. =
 
 ; Line breaks
-06 = "\\r\\n\par "
-05 = 09
+05 = "\tab "
+06 = "\\r\\n\par\pard "
+15 = "\\r\\n\par\pard "
+
+; Center on
+2bd4030b03 = "\pard\qc " 
 
 ; Standalone bytes
 01 =
 0c =
-15 =
 16 =
 23 =
 ca =

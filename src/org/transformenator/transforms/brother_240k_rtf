@@ -18,18 +18,30 @@ trim_leading = 20
 db = 20
 
 ; Newline
-02 = "\par "
-9d = "\par "
-da = "\par "
+01 = "\par\pard\ul0 \\r\\n"
+0292 = "\par\pard\ul0\qr  \\r\\n"
+02 = "\par\pard\ul0 \\r\\n"
+9d = "\par\pard\ul0 \\r\\n"
+da = "\par\pard\ul0 \\r\\n"
+de = "\par\pard\ul0 \\r\\n"
 
 ; Bold on/off
 bd = "\b1 "
 bc = "\b0 "
+8c = "\b1 "
+8d = "\b0 "
+
+; Underline on/off
+8a = "\ul "
+8b = "\ul0 "
+
+; "Degree" symbol
+60 = "\'b0"
+
+7b = "1"
+7c = "1"
 
 ; Unknown
-8a =
-8c =
-8d =
 bc = 
 be =
 dc =
@@ -39,6 +51,10 @@ dc =
 0d98 = "<off>"
 980f = "<on>"
 0f98 = "<off>"
+9811 = "<on>"
+1198 = "<off>"
 
 ; Remove all instances of <on>...<off>
 regex = @<on>.+?<off>@@
+regex = @<on>@@
+regex = @<off>@@
