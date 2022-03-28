@@ -1,0 +1,6 @@
+;
+description = "DECmate (II) word processor."
+commentary = "Disks are 12-bit encoded, RX50K-based."
+;
+
+detangler = DECmate
