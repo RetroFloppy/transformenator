@@ -1,0 +1,74 @@
+;
+description = "Muse Super-Text II word processor."
+commentary = "When extracting files with CiderPress, ensure you pay attention to these attributes: "Convert to non-Apple II formats" is unchecked, "Don't convert text files" is checked."
+;
+
+; Newline
+dd=0d0a
+
+; Paragraph begin
+10=0d0a
+13=
+
+; Formatting start
+06="[formatting]"
+
+; Capital letters
+01c1="A"
+01c2="B"
+01c3="C"
+01c4="D"
+01c5="E"
+01c6="F"
+01c7="G"
+01c8="H"
+01c9="I"
+01ca="J"
+01cb="K"
+01cc="L"
+01cd="M"
+01ce="N"
+01cf="O"
+01d0="P"
+01d1="Q"
+01d2="R"
+01d3="S"
+01d4="T"
+01d5="U"
+01d6="V"
+01d7="W"
+01d8="X"
+01d9="Y"
+01da="Z"
+03c1="A"
+03c2="B"
+03c3="C"
+03c4="D"
+03c5="E"
+03c6="F"
+03c7="G"
+03c8="H"
+03c9="I"
+03ca="J"
+03cb="K"
+03cc="L"
+03cd="M"
+03ce="N"
+03cf="O"
+03d0="P"
+03d1="Q"
+03d2="R"
+03d3="S"
+03d4="T"
+03d5="U"
+03d6="V"
+03d7="W"
+03d8="X"
+03d9="Y"
+03da="Z"
+
+; Punctuation, numbers, etc.
+[a0..c0] = 20
+
+; Strip high bits from lower case letters
+[c1..da] = 61
