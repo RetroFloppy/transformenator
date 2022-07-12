@@ -1,0 +1,13 @@
+;
+description = "Unknown Atari ST word processor."
+commentary = "Spaces are 0x1f.  From Atari 3-1/2" disks."
+;
+
+; SOF indicator
+5d = "{@@<FiLe_SoF>@@}"
+
+; Space
+1f=20
+
+; Unknown productions
+1b..=
