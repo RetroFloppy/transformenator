@@ -1,0 +1,5 @@
+;
+description = "Extract and convert files from Interdata 8 inch disk images."
+commentary = "Disks are FM encoded, single sided, 128 bytes x 26 sectors x 77 tracks - but the OS deals in 256 byte chunks."
+; 
+detangler=Interdata
