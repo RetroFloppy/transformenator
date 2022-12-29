@@ -47,10 +47,9 @@
 				<include name="*.sh"/>
 			</fileset>
 		</copy>
-		<jar jarfile="${outdir}/${version}/transformenator.jar"
+		<jar jarfile="${outdir}/${version}/transformenator.jar" basedir="bin"
 			manifest="build/manifest.mf"
-			includes="org/**/*.class org/**/*.java org/**/*.properties org/**/*.png org/**/*.dmp org/**/**/* LICENSE"
-			excludes="org/**/**/test org/**/**/.gitignore" />
+			includes="org/**/*" />
 	</target>
 
 	<target name="zip" description="Zip it up!">
