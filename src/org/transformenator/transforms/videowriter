@@ -10,12 +10,14 @@ a7=
 93=
 95=
 97=
+
 ; Emphasis close (communal)
 91=
 
 ; Newline
 99=0d0a
 0000....9B=
+080806080000010202=0d0a
 
 ; Double-wide letters
 aa01="A"
