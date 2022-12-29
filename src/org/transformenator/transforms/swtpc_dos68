@@ -1,0 +1,5 @@
+;
+description = "Extract SWTPC 6800 DOS68 files from disk image."
+;
+detangler = SWTPCDOS68
+;
