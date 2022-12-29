@@ -1,0 +1,13 @@
+;
+description = "Tandy PDD/PDD2 disk image extractor."
+commentary = "Filesystem indicators can disagree on where a file ends."
+detangler = TandyPDD
+;
+
+; Maybe emphasis
+8e = 
+8f = 
+92 = 
+
+; EOF indicator
+8c = "{@@<FiLe_EoF>@@}"

@@ -1,0 +1,4 @@
+;
+description = "Tandy Color Computer BASIC detokenizer."
+detangler = TandyCoCo
+;
