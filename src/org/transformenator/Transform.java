@@ -387,7 +387,10 @@ public class Transform
 				if (c > 255) // In case we have unicode characters - replace them
 				{
 					needsRenamed = true;
-					c = '_';
+					if (c == 402) // Cursive f - used to signify "folder" typically on Mac
+						c = 'f';
+					else
+						c = '_';
 				}
 				else if (c == 127) // Let's fix this one
 				{
