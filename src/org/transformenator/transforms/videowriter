@@ -3,6 +3,8 @@
 ;
 detangler = VideoWRITER
 
+description = "Philips/Magnavox VideoWRITER."
+
 ; May introduce a list
 a7=
 

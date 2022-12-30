@@ -2,12 +2,14 @@
 <project name="transformenator" default="all" basedir=".." >
 	<property name="builddir" value="${basedir}/build" />
 	<property name="outdir" value="${basedir}/out" />
+	<property name="bindir" value="${basedir}/bin" />
 	<target name="all" depends="wipe,ver,build,zip" description="" />
 	<target name="wipe" description="Delete the Distribution Directory" >
 		<!--
 		Really, really clean up everything
 		-->
 		<echo message="wipe"/>	
+		<delete dir="${bindir}" />
 		<delete dir="${outdir}" />
 	</target>
 
@@ -29,6 +31,10 @@
 	</target>
 
 	<target name="build" depends="wipe,ver" description="">
+		<mkdir dir="${bindir}"/>
+		<javac sourcepath="" srcdir="${basedir}/src" destdir="${bindir}" >
+			<include name="**/*.java"/>
+		</javac>
 		<mkdir dir="${outdir}/${version}" />
 		<copy todir="${outdir}/${version}">
 			<fileset dir="${basedir}">
@@ -47,7 +53,12 @@
 				<include name="*.sh"/>
 			</fileset>
 		</copy>
-		<jar jarfile="${outdir}/${version}/transformenator.jar" basedir="bin"
+		<copy todir="${bindir}">
+			<fileset dir="${basedir}/src">
+				<include name="**/*"/>
+			</fileset>
+		</copy>
+		<jar jarfile="${outdir}/${version}/transformenator.jar" basedir="${bindir}"
 			manifest="build/manifest.mf"
 			includes="org/**/*" />
 	</target>

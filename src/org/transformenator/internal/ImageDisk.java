@@ -55,7 +55,18 @@ public class ImageDisk
   static String[] modetbl =
   { "500K FM", "300K FM", "250K FM", "500K MFM", "300K MFM", "250K MFM" };
 
+  // Do the conversion noisily by default
   public static byte[] imd2raw(byte[] inData)
+  {
+    // Default verbosity is true
+    return imd2raw(inData, true);
+  }
+
+  // Convert an incoming byte array from IMD to raw format
+  //  - Return a new byte array if successful
+  //  - Return null if not
+  // Be verbose or not verbose (i.e. silent) based on boolean
+  public static byte[] imd2raw(byte[] inData, boolean verbose)
   {
     byte[] outData = null;
     ByteArrayOutputStream out = null;
@@ -88,7 +99,7 @@ public class ImageDisk
         mode = UnsignedByte.intValue(inData[cursor]);
         if (mode > 6)
         {
-          System.err.println("Unexpected mode, got " + mode + ", expecting 1-5.");
+          if (verbose) System.err.println("Unexpected mode, got " + mode + ", expecting 1-5.");
           return null;
         }
 
@@ -96,7 +107,7 @@ public class ImageDisk
         cyl = UnsignedByte.intValue(inData[cursor]);
         if (cyl > 80)
         {
-          System.err.println("Unexpected cylinder count, got " + cyl + ", expecting <= 80.");
+          if (verbose) System.err.println("Unexpected cylinder count, got " + cyl + ", expecting <= 80.");
           return null;
         }
 
@@ -104,7 +115,7 @@ public class ImageDisk
         hd = UnsignedByte.intValue(inData[cursor]);
         if (hd > 1)
         {
-          System.err.println("Unexpected head count, got " + hd + ", expecting 0-1.");
+          if (verbose) System.err.println("Unexpected head count, got " + hd + ", expecting 0-1.");
           return null;
         }
 
@@ -135,7 +146,7 @@ public class ImageDisk
             secsiz = 4096;
             break;
           default:
-            System.err.println("Unknown sector size indicator " + c);
+            if (verbose) System.err.println("Unknown sector size indicator " + c);
             break;
         }
         // System.err.println(
@@ -209,16 +220,16 @@ public class ImageDisk
           cylpad = "  ";
         else
           cylpad = " ";
-        System.err.print("Cyl" + cylpad + cyl + " Hd " + hd + " " + secsiz + " ");
+        if (verbose) System.err.print("Cyl" + cylpad + cyl + " Hd " + hd + " " + secsiz + " ");
         for (int i = 0; i < seccnt; i++)
         {
-          System.err.print(secdisp[i]);
+          if (verbose) System.err.print(secdisp[i]);
           for (int j = 0; j < secsiz; j++)
             out.write(secdata[sectormapsorted[i]][j]);
         }
         for (int i = 0; i < seccnt; i++)
-          System.err.print(" " + sectormap[i]);
-        System.err.println();
+          if (verbose) System.err.print(" " + sectormap[i]);
+        if (verbose) System.err.println();
         // Process until the end of the file data
         if (cursor == inData.length - 1)
           break;

@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import org.transformenator.internal.FileInterpreter;
 import org.transformenator.internal.UnsignedByte;
+import org.transformenator.internal.ImageDisk;
 
 public class SWTPCDOS68 extends ADetangler
 {
@@ -37,6 +38,11 @@ public class SWTPCDOS68 extends ADetangler
 
   public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
   {
+    // First, is our data stream in ImageDisk (i.e. .IMD) format?
+    byte imdData[] = null;
+    imdData = ImageDisk.imd2raw(inData, false);
+    if (imdData != null)
+      inData = imdData;
     String fileName = "";
     int nextTrack = 0;
     int nextSector = 1;

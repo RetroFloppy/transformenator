@@ -1,5 +1,6 @@
 ;
 description = "Extract SWTPC 6800 DOS68 files from disk image."
+commentary = "Autodetects linear binary images or ImageDisk .IMD images."
 ;
 detangler = SWTPCDOS68
 ;
