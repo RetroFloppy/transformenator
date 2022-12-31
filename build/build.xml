@@ -53,11 +53,14 @@
 				<include name="*.sh"/>
 			</fileset>
 		</copy>
-		<copy todir="${bindir}">
-			<fileset dir="${basedir}/src">
-				<include name="**/*"/>
+		<chmod perm="755" type="file">
+			<fileset dir="${bindir}">
+				<include name="**/*.sh"/>
 			</fileset>
-		</copy>
+			<fileset dir="${outdir}">
+				<include name="**/*.sh"/>
+			</fileset>
+		</chmod>
 		<jar jarfile="${outdir}/${version}/transformenator.jar" basedir="${bindir}"
 			manifest="build/manifest.mf"
 			includes="org/**/*" />
