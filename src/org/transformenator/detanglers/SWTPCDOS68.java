@@ -30,7 +30,14 @@ import org.transformenator.internal.ImageDisk;
 public class SWTPCDOS68 extends ADetangler
 {
   /*
-   *
+   * SWTPC 6800
+   * Smoke Signal Broadcasting DOS68 used with SSB BFD-68 disk controller
+   * 
+   * DOS is based heavily on linked lists.  One sector in is the start of file allocation entries, and it
+   * points to the next sector that contains file entries and so on until the "next" pointer is zero.
+   * Next/previous pointers are two bytes each, occupying the first four bytes of any 128-byte sector.
+   * Bytes are laid out thus: NextTrack | NextSector | PrevTrack | PrevSector
+   * Tracks are the value minus 0x80, and sectors are the value minus 0x40.
    */
 
   int SECTOR_SIZE = 128;
@@ -43,6 +50,7 @@ public class SWTPCDOS68 extends ADetangler
     imdData = ImageDisk.imd2raw(inData, false);
     if (imdData != null)
       inData = imdData;
+    // Now we know we have a linear disk image in memory
     String fileName = "";
     int nextTrack = 0;
     int nextSector = 1;
@@ -93,9 +101,11 @@ public class SWTPCDOS68 extends ADetangler
           int fileLastTrack = UnsignedByte.intValue(inData[cursor + offset + 0x0d]) - 0x80;
           int fileLastSector = UnsignedByte.intValue(inData[cursor + offset + 0x0e]) - 0x40;
           int fileLastOffset = (fileLastTrack * TRACK_SIZE) + (fileLastSector * SECTOR_SIZE);
+          /*
           System.out.println("T/S: " + fileFirstTrack + "/" + fileFirstSector + "," + fileLastTrack + "/"
               + fileLastSector + " First: 0x" + Integer.toHexString(fileFirstOffset) + " Last: 0x"
               + Integer.toHexString(fileLastOffset) + " file: " + fileName + " type: " + fileType);
+          */
           dumpFile(parent, inData, fileFirstTrack, fileFirstSector, deleted, outDirectory, inFile, fileName);
           deleted = false;
         }
@@ -110,7 +120,9 @@ public class SWTPCDOS68 extends ADetangler
   {
     if (deleted)
     {
-      System.out.println("*** Noting deleted file: \"" + fileName + "\"");
+      // Not sure how valuable it is to emit deleted filenames... 
+      //   disks always have one or two seemingly system-ish deleted files with no name at all
+      // System.out.println("*** Noting deleted file: \"" + fileName + "\"");
     }
     else
     {
