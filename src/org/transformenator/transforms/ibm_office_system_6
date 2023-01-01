@@ -1,5 +1,5 @@
 ;
-description = "IBM Office System 6 word processor."
+description = "Extract IBM Office System 6 word processor files from disk image."
 commentary = "Spin-code based."
 ;
 detangler = IBMOfficeSystem6

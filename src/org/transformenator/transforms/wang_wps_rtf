@@ -1,6 +1,6 @@
 ;
-description = "Wang WPS word processor."
-commentary = "Typical files come from 8" disk images."
+description = "Extract and convert Wang WPS word processor files from disk image."
+commentary = ""
 ;
 detangler = Wang
 

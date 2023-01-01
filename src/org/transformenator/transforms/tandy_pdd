@@ -1,5 +1,5 @@
 ;
-description = "Tandy PDD/PDD2 disk image extractor."
+description = "Extract Tandy PDD/PDD2 files from disk image."
 commentary = "Filesystem indicators can disagree on where a file ends."
 detangler = TandyPDD
 ;

@@ -1,5 +1,5 @@
 ;
-description = "Extract and convert files from Microdata 8 inch disk images."
+description = "Extract and convert Microdata 8 inch disk files from disk image."
 commentary = "Disks are FM encoded, single sided, 256 bytes x 16 sectors x 77 tracks."
 ; 
 detangler=Microdata

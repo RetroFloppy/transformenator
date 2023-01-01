@@ -1,5 +1,5 @@
 ;
-description = "IBM 5520 Administrative System files."
+description = "Extract IBM 5520 Administrative System files from disk image."
 commentary = "EBCDIC encoding, uses many printer-specific codes; non-understood data is represented by a tilde character (~)."
 ;
 detangler = AdministrativeSystem

@@ -1,4 +1,4 @@
 ;
-description = "Extract files from a Seawell 8" disk image."
+description = "Extract Seawell 8" files from disk image."
 ;
 detangler=Seawell

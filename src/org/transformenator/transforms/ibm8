@@ -1,5 +1,5 @@
 ;
-description = "Extract files from an IBM (typically 8") disk image."
+description = "Extract IBM (typically 8") files from disk image."
 commentary = "These typically come from an IBM System/32/34/36 or AS/400."
 ;
 detangler = IBM8

@@ -1,4 +1,4 @@
 ;
-description = "Extract files from a CTOS/BTOS disk image."
+description = "Extract CTOS/BTOS files from disk image."
 ;
 detangler = CTOS

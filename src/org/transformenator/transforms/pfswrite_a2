@@ -1,6 +1,6 @@
 ;
-description = "Apple II Pascal PFS:Write word processor."
-commentary = "Extract and convert files from Apple II PFS:Write disk image."
+description = "Extract and convert Apple II PFS:Write word processor files from disk image."
+commentary = "Files are in Apple II Pascal format."
 ;
 detangler = PFS
 

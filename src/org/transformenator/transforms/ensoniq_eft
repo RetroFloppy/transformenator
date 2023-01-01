@@ -1,5 +1,5 @@
 ;
-description = "Extract files from Ensoniq DD or HD disk images."
+description = "Extract Ensoniq files from DD or HD disk images."
 commentary = "Files are emitted with a header compatible with MIDI translation software."
 detangler = Ensoniq
 ;
