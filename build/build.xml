@@ -35,6 +35,11 @@
 		<javac sourcepath="" srcdir="${basedir}/src" destdir="${bindir}" >
 			<include name="**/*.java"/>
 		</javac>
+		<copy todir="${bindir}/org/transformenator/transforms">
+			<fileset dir="${basedir}/src/org/transformenator/transforms">
+				<include name="*"/>
+			</fileset>
+		</copy>
 		<mkdir dir="${outdir}/${version}" />
 		<copy todir="${outdir}/${version}">
 			<fileset dir="${basedir}">

@@ -3,3 +3,4 @@
 .classpath
 bin/
 out/
+**/.DS_Store
