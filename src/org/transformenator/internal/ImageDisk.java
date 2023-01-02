@@ -133,17 +133,20 @@ public class ImageDisk
           case 1:
             secsiz = 256;
             break;
-          case 3:
+          case 2:
             secsiz = 512;
             break;
-          case 4:
+          case 3:
             secsiz = 1024;
             break;
-          case 5:
+          case 4:
             secsiz = 2048;
             break;
-          case 6:
+          case 5:
             secsiz = 4096;
+            break;
+          case 6:
+            secsiz = 8192;
             break;
           default:
             if (verbose) System.err.println("Unknown sector size indicator " + c);
@@ -185,7 +188,11 @@ public class ImageDisk
             case 7:
               secdisp[i] = 'X';
               for (int j = 0; j < secsiz; j++)
+              {
+                if (c > 0)
+                  cursor++;
                 secdata[sectormap[i]][j] = (byte) 0xE5;
+              }
               break;
             case 1: // Normal data 'secsiz' bytes to follow
               secdisp[i] = '.';
@@ -213,6 +220,9 @@ public class ImageDisk
               for (int j = 0; j < secsiz; j++)
                 secdata[sectormap[i]][j] = value;
               break;
+            default:
+              if (verbose) System.err.println("Unexpected sector data flags, got "+c+", expected 0-8");
+              return null;
           }
         }
         // Pad out the output so it lines up nicely
