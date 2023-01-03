@@ -47,7 +47,7 @@ public class SWTPCDOS68 extends ADetangler
   {
     // First, is our data stream in ImageDisk (i.e. .IMD) format?
     byte imdData[] = null;
-    imdData = ImageDisk.imd2raw(inData, false);
+    imdData = ImageDisk.imd2raw(inData, false, false);
     if (imdData != null)
       inData = imdData;
     // Now we know we have a linear disk image in memory

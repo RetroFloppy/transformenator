@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2022 by David Schmidt
+ * Copyright (C) 2022, 2023 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -41,12 +41,12 @@ import java.util.Arrays;
  * for each track
  *  byte mode (0-5)
  *  byte cylinder
- *  byte head
+ *  byte head (including additional optional bits, below)
  *  byte sector count
  *  byte sector size (0-6)
  *  sector numbering map
- *  optional cylinder map
- *  optional head map
+ *  optional cylinder map (head & 0x40)
+ *  optional head map (head & 0x80)
  *  sector data records (type) (val, or data)
  */
 
@@ -58,15 +58,15 @@ public class ImageDisk
   // Do the conversion noisily by default
   public static byte[] imd2raw(byte[] inData)
   {
-    // Default verbosity is true
-    return imd2raw(inData, true);
+    // Default verbosity is true, debug is false
+    return imd2raw(inData, true, false);
   }
 
   // Convert an incoming byte array from IMD to raw format
   //  - Return a new byte array if successful
   //  - Return null if not
   // Be verbose or not verbose (i.e. silent) based on boolean
-  public static byte[] imd2raw(byte[] inData, boolean verbose)
+  public static byte[] imd2raw(byte[] inData, boolean verbose, boolean debug)
   {
     byte[] outData = null;
     ByteArrayOutputStream out = null;
@@ -76,7 +76,7 @@ public class ImageDisk
         && ((char) inData[3] == ' '))
     {
       int cursor = 0;
-      int c, mode, cyl, hd, seccnt;
+      int c, mode, cyl, hd, seccnt, sectorflags, headflags;
       int secsiz = 0;
       int[] sectormap;
       int[] sectormapsorted;
@@ -97,6 +97,8 @@ public class ImageDisk
       {
         cursor++;
         mode = UnsignedByte.intValue(inData[cursor]);
+        if (debug)
+          System.err.print("Mode: " + mode + " (" + (String) modetbl[mode] + ")");
         if (mode > 6)
         {
           if (verbose) System.err.println("Unexpected mode, got " + mode + ", expecting 1-5.");
@@ -105,6 +107,7 @@ public class ImageDisk
 
         cursor++;
         cyl = UnsignedByte.intValue(inData[cursor]);
+        if (debug) System.err.print(" Cylinder: "+cyl);
         if (cyl > 80)
         {
           if (verbose) System.err.println("Unexpected cylinder count, got " + cyl + ", expecting <= 80.");
@@ -112,7 +115,10 @@ public class ImageDisk
         }
 
         cursor++;
-        hd = UnsignedByte.intValue(inData[cursor]);
+        c = UnsignedByte.intValue(inData[cursor]);
+        hd = c & 0x0f;
+        headflags = c & 0xf0;
+        if (debug) System.err.print(" Head: "+hd+" headflags: "+headflags);
         if (hd > 1)
         {
           if (verbose) System.err.println("Unexpected head count, got " + hd + ", expecting 0-1.");
@@ -121,9 +127,11 @@ public class ImageDisk
 
         cursor++;
         seccnt = UnsignedByte.intValue(inData[cursor]);
+        if (debug) System.err.print(" Sector count: "+seccnt);
 
         cursor++;
         c = UnsignedByte.intValue(inData[cursor]);
+        if (debug) System.err.print(" Sector type: "+c);
 
         switch (c)
         {
@@ -152,8 +160,10 @@ public class ImageDisk
             if (verbose) System.err.println("Unknown sector size indicator " + c);
             break;
         }
-        // System.err.println(
-        //   "Cyl:" + cyl + " Hd:" + hd + " " + (String) modetbl[mode] + " " + seccnt + " sectors size " + secsiz);
+        if (debug) System.err.println();
+        if (debug)
+          System.err.println(
+            "Cyl:" + cyl + " Hd:" + hd + " " + (String) modetbl[mode] + " " + seccnt + " sectors size " + secsiz);
 
         // copy sector/interleave map
         sectormap = new int[seccnt];
@@ -165,22 +175,36 @@ public class ImageDisk
           sectormapsorted[i] = UnsignedByte.intValue(inData[cursor]);
         }
         Arrays.sort(sectormapsorted);
-        /*
-        System.err.print("Tbl ");
-        for (int num : sectormap)
-          System.err.print(num + " ");
-        System.err.println();
-        System.err.print("Srt ");
-        for (int num : sectormapsorted)
-          System.err.print(num + " ");
-        System.err.println();
-        */
+        if (debug)
+        {
+          System.err.print("Tbl ");
+          for (int num : sectormap)
+            System.err.print(num + " ");
+          System.err.println();
+          System.err.print("Srt ");
+          for (int num : sectormapsorted)
+            System.err.print(num + " ");
+          System.err.println();
+        }
+        if ((headflags & 64) == 64)
+        {
+          // Pull and discard "optional" cylinder map
+          for (int i = 0; i < seccnt; i++)
+            cursor ++;
+        }
+        if ((headflags & 128) == 128)
+        {
+          // Pull and discard "optional" head map
+          for (int i = 0; i < seccnt; i++)
+            cursor ++;
+        }
 
         // copy sector information indexed by the sector number
         for (int i = 0; i < seccnt; i++)
         {
           cursor++;
           c = UnsignedByte.intValue(inData[cursor]);
+          if (debug) System.err.print("\nSector "+i+" flags: 0x"+Integer.toHexString(c));
           switch (c)
           {
             case 0: // Sector data unavailable - could not be read
@@ -196,11 +220,14 @@ public class ImageDisk
               break;
             case 1: // Normal data 'secsiz' bytes to follow
               secdisp[i] = '.';
+              if (debug) System.err.println();
               for (int j = 0; j < secsiz; j++)
               {
                 cursor++;
                 secdata[sectormap[i]][j] = (byte) UnsignedByte.intValue(inData[cursor]);
+                if ((debug)) System.err.print(" 0x"+Integer.toHexString(UnsignedByte.intValue(inData[cursor])));
               }
+              if (debug) System.err.println();
               break;
             case 3: // Data with 'deleted data' address mark
               secdisp[i] = 'd';
@@ -217,6 +244,7 @@ public class ImageDisk
               secdisp[i] = 'C';
               cursor++;
               byte value = inData[cursor];
+              if (debug) System.err.println(" fill value: 0x"+Integer.toHexString(UnsignedByte.intValue(value)));
               for (int j = 0; j < secsiz; j++)
                 secdata[sectormap[i]][j] = value;
               break;
