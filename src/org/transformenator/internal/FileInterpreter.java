@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on files
- * Copyright (C) 2013 - 2019 by David Schmidt
+ * Copyright (C) 2013 - 2023 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -1279,6 +1279,9 @@ public class FileInterpreter
 				numTabs ++;
 			for (int i = 0; i < numTabs; i++)
 				System.out.print("\t");
+			// If we bump into the description with the tranform, at least space it out once
+			if (numTabs == 0)
+				System.out.print(" ");
 		}
 		if ((short_description != null) && (short_description.trim().length() > 0))
 		{
