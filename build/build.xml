@@ -32,7 +32,7 @@
 
 	<target name="build" depends="wipe,ver" description="">
 		<mkdir dir="${bindir}"/>
-		<javac sourcepath="" srcdir="${basedir}/src" destdir="${bindir}" >
+		<javac source="10" target="10" sourcepath="" srcdir="${basedir}/src" destdir="${bindir}" >
 			<include name="**/*.java"/>
 		</javac>
 		<copy todir="${bindir}/org/transformenator/transforms">
