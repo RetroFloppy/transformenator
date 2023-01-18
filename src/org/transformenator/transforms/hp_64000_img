@@ -1,0 +1,6 @@
+;
+description = "Extract HP 64000 files from disk image."
+commentary = "EOF within the final block not detected."
+;
+detangler = HP64000
+;
