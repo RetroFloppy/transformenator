@@ -156,12 +156,14 @@ public class HP64000 extends ADetangler
   ByteArrayOutputStream dumpTextFile(byte inData[])
   {
     /*
-     * Text files are bracketed: 0x00 begin and end the file
-     * Each "line" has a length (in 2-byte words) at the beginning and end.  Example:
+     * Text files are bracketed with 0x00 at the head and tail of the file.
+     * Each "line" has a length byte (in 2-byte words) at the beginning and end.
+     * If a line has an odd number of bytes, there is a padding space at the end.
+     * There are no line endings in the current sense.  Example:
      * "Hello, world!"
      * is 7 words long, so it becomes:
-     *(len) H  e  l  l  o  ,     w  o  r  l  d  ! (len) 
-     * 07   48 65 6C 6C 6F 2C 20 77 6F 72 6C 64 21 07
+     * (len) H  e  l  l  o  ,     w  o  r  l  d  ! (sp) (len) 
+     *    07 48 65 6C 6C 6F 2C 20 77 6F 72 6C 64 21 20  07
      * 
      * So here we just peel off each line and send it to the output stream.
      * If things go off the rails, we return null so we know not to trust it.
@@ -189,8 +191,8 @@ public class HP64000 extends ADetangler
             for (j = 0; j < 2 * run; j++)
               out.write(inData[i+j]);
             i += j + 1;
-            out.write(0x0a);
             out.write(0x0d);
+            out.write(0x0a);
           }
           else
           {
