@@ -132,15 +132,17 @@ public class HP64000 extends ADetangler
           ByteArrayOutputStream out;
           try
           {
-            if (typeByte != 0x00)
+            out = new ByteArrayOutputStream();
+            dumpFileChain(inData, out, startBlock, typeByte);
+            out.flush();
+            if (typeByte == 0x02)
             {
-              out = new ByteArrayOutputStream();
-              dumpFileChain(inData, out, startBlock, typeByte);
-              out.flush();
-              parent.emitFile(out.toByteArray(), outDirectory, inFile, filename + fileSuffix);
+              ByteArrayOutputStream textRender = null;
+              textRender = dumpTextFile(out.toByteArray());
+              if (textRender != null)
+                out = textRender;
             }
-            else
-              System.err.println("Error: file " + filename + " would exceed the capacity of the disk image.");
+            parent.emitFile(out.toByteArray(), outDirectory, inFile, filename + fileSuffix);
           }
           catch (IOException io)
           {
@@ -149,6 +151,71 @@ public class HP64000 extends ADetangler
         }
       }
     }
+  }
+
+  ByteArrayOutputStream dumpTextFile(byte inData[])
+  {
+    /*
+     * Text files are bracketed: 0x00 begin and end the file
+     * Each "line" has a length (in 2-byte words) at the beginning and end.  Example:
+     * "Hello, world!"
+     * is 7 words long, so it becomes:
+     *(len) H  e  l  l  o  ,     w  o  r  l  d  ! (len) 
+     * 07   48 65 6C 6C 6F 2C 20 77 6F 72 6C 64 21 07
+     * 
+     * So here we just peel off each line and send it to the output stream.
+     * If things go off the rails, we return null so we know not to trust it.
+     */
+    boolean valid = true;
+    ByteArrayOutputStream out = null;
+    try
+    {
+      out = new ByteArrayOutputStream();
+      int i = 0;
+      int j = 0;
+      while (true)
+      {
+        byte b = inData[i];
+        if (b > 0x00)
+        {
+          int run = UnsignedByte.intValue(b);
+          i++;
+          if (i + (run * 2) > inData.length)
+          {
+            break;
+          }
+          if (UnsignedByte.intValue(inData[i + (run * 2)]) == run)
+          {
+            for (j = 0; j < 2 * run; j++)
+              out.write(inData[i+j]);
+            i += j + 1;
+            out.write(0x0d);
+          }
+          else
+          {
+            System.out.println("Run: "+run);
+            valid = false;
+            break;
+          }
+        }
+        else // b == 0x00
+        {
+          if (i > 0) // This is the second null, so it terminates the file
+            break;
+          i++;
+        }
+        if (i >= inData.length)
+          break;
+      }
+      out.flush();
+    }
+    catch (IOException io)
+    {
+      io.printStackTrace();
+      valid = false;
+    }
+    if (!valid) out = null;
+    return out;
   }
 
   void dumpFileChain(byte inData[], ByteArrayOutputStream out, int startBlock, int fileType) throws IOException
