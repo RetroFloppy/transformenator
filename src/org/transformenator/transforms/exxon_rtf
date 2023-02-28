@@ -1,0 +1,48 @@
+;
+description = "Exxon 5xx word processor."
+;
+detangler = Exxon
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+; Unknown
+05=
+
+; Newline
+0a=" "
+
+; Unknown
+0b=
+
+; Return
+0d="\\r\\n\par\i0 "
+
+; Space
+11=20
+
+; Italics
+14 % "\i1 ","\i0 "
+
+; Word split
+18=
+
+; Space-ish
+1b31=20
+1b=
+
+; Numbering?
+1c2e="\bullet "
+
+; Unknown control
+remove_between = 004f,4f00
+
+; Header signifying the start of a file
+remove_between = 0060,6000
+
+; Unknown control
+remove_between = 0067,6700
+
+00=

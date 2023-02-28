@@ -23,29 +23,50 @@ package org.transformenator.detanglers;
 import java.io.ByteArrayOutputStream;
 
 import org.transformenator.internal.FileInterpreter;
-import org.transformenator.internal.UnsignedByte;
 
 public class Exxon extends ADetangler
 {
   /*
-   * 
+   * Exxon 5xx disks have two giant (hard) sectors
    *
-   * 
+   * There's a catalog area, consisting of 28 entries starting at 0x1100:
+   *   First filename entry starts at 0x13 bytes in; filenames run for 0x26 bytes
+   *   Filename entries start 0x42 bytes later, one right after the other
    */
 
   public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
   {
     ByteArrayOutputStream out = null;
     /* Extant examples had exactly 28 entries */
-    for (int cursor = 0x1113; cursor < 0x1113 + (0x42 * 28); cursor+=0x42)
+    int num = 0;
+    String fileName = "";
+    for (int cursor = 0x1113; cursor < 0x1113 + (0x42 * 28); cursor += 0x42)
     {
-      String filename = "";
+      fileName = "";
+      num++;
       for (int name = 0; name < 0x26; name++)
-        filename += (char)inData[cursor + name];
-      System.out.println("Found filename: ["+filename.trim()+"]");
+        fileName += (char)inData[cursor + name];
+      fileName = fileName.trim();
+      System.out.println("Found filename "+num+": ["+fileName.trim()+"]");
     }
-    for (int sector = 0x1100; sector < inData.length / 256; sector++)
+    num = 0;
+    for (int cursor = 0x1900; (cursor + 0x100) < inData.length; cursor+=0x100)
     {
+      if (inData[cursor] == 0x00 && inData[cursor+1] == 0x60)
+      {
+        num++;
+        System.out.println("File "+num+" found at 0x"+Integer.toHexString(cursor));
+        int fileCursor = 0;
+        for (fileCursor = 0; cursor + fileCursor < inData.length; fileCursor++)
+          if (inData[cursor + fileCursor] != 0x1a)
+            continue;
+          else
+            break;
+        out = new ByteArrayOutputStream();
+        fileName = Integer.toString(num);
+        out.write(inData, cursor, fileCursor);
+        parent.emitFile(out.toByteArray(), outDirectory, inFile.substring(0,(inFile.lastIndexOf('.')>0?inFile.lastIndexOf('.'):inFile.length())), fileName+fileSuffix);
+      }
       //			parent.emitFile(out.toByteArray(), outDirectory, inFile.substring(0,(inFile.lastIndexOf('.')>0?inFile.lastIndexOf('.'):inFile.length())), fileName+fileSuffix);
     }
   }
