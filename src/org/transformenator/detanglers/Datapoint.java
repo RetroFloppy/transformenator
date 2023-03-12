@@ -26,6 +26,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;             
 import java.util.Arrays;                                        
 
+/*
+ * Datapoint DOS.C Version 2.3 8" disk image extractor
+ *
+ * Expects disks in Datapoint format, which is overlaid on top of IBM SSSD format:
+ * One side, 26 sectors of 128 bytes each, 77 tracks (image is 256,256 bytes long)
+ *
+ * Segment/cluster/(logical) sector information and math derived from:
+ * http://bitsavers.org/pdf/datapoint/software/50216_DOS_Users_Guide_Version_2.3_Mar1977.pdf
+ */
+
 public class Datapoint extends ADetangler 
 {
   @Override

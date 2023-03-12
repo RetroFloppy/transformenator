@@ -1,5 +1,5 @@
 ;
-description = "Extract Datapoint files from disk image."
+description = "Extract Datapoint DOS.C v2.3 files from disk image."
 commentary = ""
 ;
 detangler = Datapoint
