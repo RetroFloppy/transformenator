@@ -1,0 +1,6 @@
+;
+description = "Extract Datapoint files from disk image."
+commentary = ""
+;
+detangler = Datapoint
+debug = false
