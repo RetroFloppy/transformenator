@@ -33,7 +33,7 @@ import org.transformenator.internal.UnsignedByte;
 
 public class Microdata extends ADetangler
 {
-	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		/*
 		 * Catalog starts 2 tracks in; first sector is informational, actual

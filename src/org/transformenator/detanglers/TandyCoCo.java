@@ -26,7 +26,7 @@ public class TandyCoCo extends ADetangler
   /*
    * A Tandy Color Computer filesystem
    */
-  public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+  public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
   {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     if (UnsignedByte.intValue(inData[0]) != 0xff)

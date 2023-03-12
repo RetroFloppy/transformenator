@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on files
- * Copyright (C) 2013 - 2018 by David Schmidt
+ * Copyright (C) 2013 - 2023 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -40,7 +40,7 @@ public class Wang extends ADetangler
 	static String _inFile = null;
 	static String _fileSuffix = null;
 
-	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		// Save off our globals
 		_parent = parent;
@@ -146,7 +146,8 @@ public class Wang extends ADetangler
 							int fileID = UnsignedByte.intValue(inData[dataOffset + 4]) * 256 + UnsignedByte.intValue(inData[dataOffset + 5]);
 							if (fileID != 0)
 							{
-								Integer fid = new Integer(fileID);
+								// Integer fid = new Integer(fileID);
+								Integer fid = Integer.valueOf(fileID);
 								if (!hash.containsKey(fid))
 								{
 									hash.put(fid, new ArrayList<Integer>());
@@ -244,7 +245,8 @@ public class Wang extends ADetangler
 						int fileID = UnsignedByte.intValue(inData[dataOffset + 4]) * 256 + UnsignedByte.intValue(inData[dataOffset + 5]);
 						if (fileID != 0)
 						{
-							Integer fid = new Integer(fileID);
+							// Integer fid = new Integer(fileID);
+							Integer fid = Integer.valueOf(fileID);
 							if (!hash.containsKey(fid))
 							{
 								hash.put(fid, new ArrayList<Integer>());

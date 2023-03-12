@@ -27,7 +27,7 @@ public class LeadingEdge extends ADetangler
 {
 
 	@Override
-	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		/*
 		 * Pick apart the file hunk indices. Hunk indices start at 0x1200.

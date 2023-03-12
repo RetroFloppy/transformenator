@@ -28,7 +28,7 @@ import org.transformenator.internal.FileInterpreter;
 public class Null extends ADetangler
 {
 	@Override
-	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		interpreter.emitFile(inData, outDirectory, "", inFile + fileSuffix);
 	}

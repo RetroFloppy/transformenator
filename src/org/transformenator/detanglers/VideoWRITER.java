@@ -30,7 +30,7 @@ public class VideoWRITER extends ADetangler
 {
   public static ByteArrayOutputStream out = null;
 
-  public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+  public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
   {
     // Philips/Magnavox VideoWRITER disks are 368,640 bytes in length.
     // System.err.println("DEBUG: inData.length: " + inData.length);

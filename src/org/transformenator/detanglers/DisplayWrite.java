@@ -26,7 +26,7 @@ import org.transformenator.internal.UnsignedByte;
 public class DisplayWrite extends ADetangler
 {
 	@Override
-	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		if ((inData.length > 0x66) && ((UnsignedByte.intValue(inData[0x64]) == 0xaa) && (UnsignedByte.intValue(inData[0x65]) == 0xaa) && (UnsignedByte.intValue(inData[0x66]) == 0xaa)))
 		{

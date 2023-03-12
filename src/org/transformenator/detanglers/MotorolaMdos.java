@@ -83,7 +83,7 @@ public class MotorolaMdos extends ADetangler
 	int SECTOR_DIR = 3;
 	int SECTOR_DIR_SIZE = 20;
 
-	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		boolean deleted1 = false;
 		boolean deleted2 = false;

@@ -34,7 +34,7 @@ import org.transformenator.internal.UnsignedByte;
 
 public class SuperSCRIPSIT extends ADetangler
 {
-	public void detangle(FileInterpreter parent, byte[] inData, String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte[] inData, String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		if (UnsignedByte.intValue(inData[0]) == 0xe0)
 		{

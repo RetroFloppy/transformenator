@@ -27,7 +27,7 @@ import org.transformenator.internal.UnsignedByte;
 
 public class Kermit
 {
-	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		/*
 		 * Ostensibly a "Kermit" filesystem - maybe it's a tar-like archive.

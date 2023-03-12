@@ -29,7 +29,7 @@ import org.transformenator.internal.UnsignedByte;
 
 public class IBMOfficeSystem6 extends ADetangler
 {
-	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		int indexOffset = 0x591b;
 		// System.err.println("DEBUG: initial indexOffset: " + indexOffset + " max indexOffset: " + 0x597d);
