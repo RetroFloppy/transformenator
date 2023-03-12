@@ -30,7 +30,7 @@ public class TandyPDD extends ADetangler
    * files and reused sectors, but I can't seem to find any indication of how
    * that would work.
    */
-  public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+  public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
   {
     int num_catalog_sectors = 1;
     int i, j, k;

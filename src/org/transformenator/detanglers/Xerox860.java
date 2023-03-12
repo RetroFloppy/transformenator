@@ -40,7 +40,7 @@ public class Xerox860 extends ADetangler
 {
 	public static boolean DEBUG = false;
 
-	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		int directoryArray[] = new int[1024 * 1024];
 		int fileCount = 0, directoryAccumulator = 0;

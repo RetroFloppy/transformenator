@@ -42,5 +42,5 @@ public abstract class ADetangler
 	 * optionally a new directory one level deeper to house it, and the final
 	 * file name.
 	 */
-	public abstract void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix);
+	public abstract void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean debugMode);
 }

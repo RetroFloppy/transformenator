@@ -37,7 +37,7 @@ import org.transformenator.internal.UnsignedByte;
 public class WPS80 extends ADetangler
 {
 	@Override
-	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		if ((inData.length % 256) > 0)
 		{

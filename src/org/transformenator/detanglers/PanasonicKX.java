@@ -37,7 +37,7 @@ public class PanasonicKX extends ADetangler
 	static int fileHeadOffset[] = { 0x1110, 0x1510 };
   static int headerLength[] = {0x110, 0x510 };
 
-	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
     List<Integer> sectorChain = new ArrayList<Integer>();
 		ByteArrayOutputStream currentOut = null;

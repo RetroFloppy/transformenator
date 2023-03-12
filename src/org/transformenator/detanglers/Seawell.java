@@ -34,7 +34,7 @@ import org.transformenator.internal.UnsignedByte;
 
 public class Seawell extends ADetangler
 {
-	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		/*
 		 * Catalog starts on the 19th track - no idea how far it can stretch, so be

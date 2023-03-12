@@ -37,7 +37,7 @@ public class EasyWriterII extends ADetangler
 	 * like a disk image in and of itself: it's a little filesystem buried within
 	 * the file.
 	 */
-	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		/* Pull the files out of the image. */
 		int fileNum = 0;

@@ -41,7 +41,7 @@ import org.transformenator.internal.UnsignedByte;
 
 public class Interdata extends ADetangler
 {
-  public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+  public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
   {
     /*
      * Filesystem is based on 4-byte pointers to "blocks" (256 byte chunks). 

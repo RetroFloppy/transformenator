@@ -28,7 +28,7 @@ import org.transformenator.internal.UnsignedByte;
 public class SmithCorona extends ADetangler
 {
 	public static ByteArrayOutputStream out = null;
-	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		byte[] systemChain = null;
 		systemChain = followFile(inData, (byte) 0x00);

@@ -26,7 +26,7 @@ import org.transformenator.internal.UnsignedByte;
 public class Valdocs extends ADetangler 
 {
 	@Override
-	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		// Figure out the original file name
 		char[] name = new char[110];

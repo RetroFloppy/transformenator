@@ -27,7 +27,7 @@ public class JustWrite extends ADetangler
 {
 
 	@Override
-	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		// Re-assemble the file based on index before starting
 		/*

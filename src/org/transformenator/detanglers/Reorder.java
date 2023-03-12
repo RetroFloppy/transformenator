@@ -29,7 +29,7 @@ import org.transformenator.internal.TrackReorger;
 public class Reorder extends ADetangler
 {
 	@Override
-	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter interpreter, byte[] inData, String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		int skewedSectorMap[] = { 0,2,4,6,8,10,12,14,16,18,20,22,24,1,3,5,7,9,11,13,15,17,19,21,23,25 };
 		//int skewedSectorMap[] = { 3,5,7,9,11,13,15,17,19,21,23,25,0,2,4,6,8,10,12,14,16,18,20,22,24,1 };

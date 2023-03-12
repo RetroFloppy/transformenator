@@ -33,7 +33,7 @@ import org.transformenator.internal.UnsignedByte;
 
 public class IBM5520 extends ADetangler
 {
-	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		int track0Offset = 3328;
 		if (inData.length > 1000000)

@@ -38,7 +38,7 @@ import org.transformenator.internal.UnsignedByte;
 
 public class CTOS extends ADetangler
 {
-	public void detangle(FileInterpreter parent, byte[] inData, String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte[] inData, String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		int pagesFH;
 		long lfaFileHeadersBase, lfaWorkingVHB;

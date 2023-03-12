@@ -26,7 +26,7 @@ import org.transformenator.internal.UnsignedByte;
 public class Brother120k extends ADetangler
 {
 
-	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		// Brother disks came in 120k and 240k sizes. Inspect the image size; we only
 		// want to work on the 120k ones.

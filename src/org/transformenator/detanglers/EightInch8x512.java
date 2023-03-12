@@ -45,7 +45,7 @@ public class EightInch8x512 extends ADetangler
 	 * 
 	 */
 
-	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		int key = 0;
 

@@ -36,7 +36,7 @@ import org.transformenator.internal.UnsignedByte;
 
 public class HP64000 extends ADetangler
 {
-  public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+  public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
   {
     /*
      * Catalog starts on track 0, second sector and stretches to the

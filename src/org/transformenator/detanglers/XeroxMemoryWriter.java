@@ -35,7 +35,7 @@ import org.transformenator.internal.UnsignedByte;
 
 public class XeroxMemoryWriter extends ADetangler
 {
-	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		/* Now pull the files out of the image. */
 		for (int i = 0x10100 + 25; i < 0x10100 + 0x100 + 25; i += 19)

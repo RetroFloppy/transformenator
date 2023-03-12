@@ -28,7 +28,7 @@ import org.transformenator.internal.UnsignedByte;
 
 public class CPT extends ADetangler
 {
-	public void detangle(FileInterpreter parent, byte skewedData[], String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte skewedData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		if (skewedData.length % (256 * 16) == 0)
 		{

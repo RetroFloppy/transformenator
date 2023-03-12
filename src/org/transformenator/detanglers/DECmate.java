@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on files
- * Copyright (C) 2022 by David Schmidt
+ * Copyright (C) 2022 - 2023 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -42,7 +42,7 @@ public class DECmate extends ADetangler
 
   static int MAX_DOC = 90;
 
-  public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+  public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
   {
     byte[] inData8bit = new byte[inData.length];
     // Save off our globals
@@ -83,7 +83,8 @@ public class DECmate extends ADetangler
       int doc_count = 0;
       for (int loop = 16; loop <= MAX_DOC; loop += 2)
       {
-        int val = new Integer(inData8bit[cursor + loop] * 64 + inData8bit[cursor + loop + 1]);
+        // int val = new Integer(inData8bit[cursor + loop] * 64 + inData8bit[cursor + loop + 1]);
+        int val = Integer.valueOf(inData8bit[cursor + loop] * 64 + inData8bit[cursor + loop + 1]);
         indexv[index_count++] = val;
         if (val != 0)
         {

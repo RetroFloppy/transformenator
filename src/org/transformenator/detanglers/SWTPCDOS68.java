@@ -43,7 +43,7 @@ public class SWTPCDOS68 extends ADetangler
   int SECTOR_SIZE = 128;
   int TRACK_SIZE = 18 * SECTOR_SIZE;
 
-  public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix)
+  public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
   {
     // First, is our data stream in ImageDisk (i.e. .IMD) format?
     byte imdData[] = null;

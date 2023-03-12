@@ -41,7 +41,7 @@ public class IBM8 extends ADetangler
 	 * specialized extractor.
 	 *
 	 */
-	public void detangle(FileInterpreter parent, byte[] inData, String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte[] inData, String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		// Ready to go.  Time to face the music.
 		int cylinderSize = 0;

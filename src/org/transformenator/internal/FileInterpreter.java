@@ -50,6 +50,7 @@ public class FileInterpreter
 {
 	public boolean isOK = false;
 	public boolean isInternal = false;
+	public boolean isDebugMode = false;
 
 	public FileInterpreter(String transform_name)
 	{
@@ -133,7 +134,7 @@ public class FileInterpreter
 					// Run the detangler if the transform specifies one
 					try
 					{
-						detangle.invoke(t, this, inData, outDirectory, file.getName(), fileSuffix);
+						detangle.invoke(t, this, inData, outDirectory, file.getName(), fileSuffix, isDebugMode);
 					}
 					catch (IllegalAccessException e)
 					{
@@ -334,7 +335,7 @@ public class FileInterpreter
 			try
 			{
 				t = detangler.newInstance();
-				detangle = detangler.getDeclaredMethod("detangle", FileInterpreter.class, byte[].class, String.class, String.class, String.class);
+				detangle = detangler.getDeclaredMethod("detangle", FileInterpreter.class, byte[].class, String.class, String.class, String.class, boolean.class);
 			}
 			catch (NoSuchMethodException e)
 			{
@@ -422,7 +423,7 @@ public class FileInterpreter
 					skip = false;
 					// If you add a left side keyword that needs to be honored, be sure to add it here, otherwise the fall through processing will try to eat it:
 					// System.err.println("DEBUG Left side token: ["+leftTemp+"]");
-					if (leftTemp.toLowerCase().equals("detangler") || leftTemp.toLowerCase().equals("description") || leftTemp.toLowerCase().equals("commentary") || leftTemp.equals("head") || leftTemp.equals("tail") || leftTemp.equals("trim_leading") || leftTemp.equals("trim_trailing") || leftTemp.equals("eof_lo") || leftTemp.equals("eof_mid") || leftTemp.equals("eof_hi") || leftTemp.trim().charAt(0) == (';'))
+					if (leftTemp.toLowerCase().equals("detangler") || leftTemp.toLowerCase().equals("description") || leftTemp.toLowerCase().equals("debug") || leftTemp.toLowerCase().equals("commentary") || leftTemp.equals("head") || leftTemp.equals("tail") || leftTemp.equals("trim_leading") || leftTemp.equals("trim_trailing") || leftTemp.equals("eof_lo") || leftTemp.equals("eof_mid") || leftTemp.equals("eof_hi") || leftTemp.trim().charAt(0) == (';'))
 					{
 						if (leftTemp.trim().charAt(0) == (';'))
 						{
@@ -615,6 +616,11 @@ public class FileInterpreter
 						else if (leftTemp.toLowerCase().equals("commentary"))
 						{
 							long_description = rightTemp1;
+						}
+						else if (leftTemp.toLowerCase().equals("debug"))
+						{
+							if (rightTemp1.trim().toLowerCase().equals("true"))
+								isDebugMode = true;
 						}
 						else if (leftTemp.toLowerCase().equals("detangler"))
 						{

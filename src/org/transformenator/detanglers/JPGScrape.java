@@ -28,7 +28,7 @@ public class JPGScrape extends ADetangler
 {
 
   @Override
-  public void detangle(FileInterpreter parent, byte[] inData, String outDirectory, String inFile, String fileSuffix)
+  public void detangle(FileInterpreter parent, byte[] inData, String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
   {
     System.out.println("Here!");
     // FF D8 FF E0 00 10 4A 46 49 46

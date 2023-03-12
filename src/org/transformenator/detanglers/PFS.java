@@ -28,7 +28,7 @@ import org.transformenator.internal.UnsignedByte;
 
 public class PFS extends ADetangler
 {
-	public void detangle(FileInterpreter parent, byte skewed[], String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte skewed[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		byte[] inData = new byte[skewed.length];
 		int skew[] = {0,14,13,12,11,10,9,8,7,6,5,4,3,2,1,15};

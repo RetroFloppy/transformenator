@@ -28,7 +28,7 @@ import org.transformenator.internal.FileInterpreter;
 
 public class CTOSArchive extends ADetangler
 {
-	public void detangle(FileInterpreter parent, byte[] inData, String outDirectory, String inFile, String fileSuffix)
+	public void detangle(FileInterpreter parent, byte[] inData, String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
 	{
 		int indexSearch;
 		byte[] fileIndex = new byte[4];
