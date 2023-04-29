@@ -7,7 +7,15 @@ head = "{\rtf1{\*\generator David Schmidt - Transformenator ;}\f0 "
 ; Closing brace for RTF format
 tail = "}"
 
-trim_leading = 20
+trim_leading = 02
+
+; Metadata productions
+remove_between = 1e11,111e
+remove_between = 980d,0d98
+remove_between = 980f,0f98
+remove_between = 9811,1198
+remove_between = 9813,1398
+remove_between = 9815,1598
 
 ; Space
 00 = 20
@@ -46,15 +54,9 @@ bc =
 be =
 dc =
 
-; Command structures
-980d = "<on>"
-0d98 = "<off>"
-980f = "<on>"
-0f98 = "<off>"
-9811 = "<on>"
-1198 = "<off>"
-
-; Remove all instances of <on>...<off>
-regex = @<on>.+?<off>@@
-regex = @<on>@@
-regex = @<off>@@
+; Might be merge record locations
+a0=
+a1=
+a2=
+a3=
+a4=
