@@ -11,7 +11,7 @@ tail = "}"
 00=
 1b=
 
-; Itallics on/off
+; Italics on/off
 81="\i1 "
 80="\i0 "
 
