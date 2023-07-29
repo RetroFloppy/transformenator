@@ -1,0 +1,5 @@
+;
+description = "Convert ImageDisk .IMD disk image file to raw, linear data."
+commentary = ""
+;
+detangler = Imd2Raw

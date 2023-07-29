@@ -334,7 +334,7 @@ public class FileInterpreter
 		{
 			try
 			{
-				t = detangler.newInstance();
+				t = detangler.getDeclaredConstructor().newInstance();
 				detangle = detangler.getDeclaredMethod("detangle", FileInterpreter.class, byte[].class, String.class, String.class, String.class, boolean.class);
 			}
 			catch (NoSuchMethodException e)
@@ -357,6 +357,10 @@ public class FileInterpreter
 			{
 				e.printStackTrace();
 			}
+      catch (InvocationTargetException e)
+      {
+        e.printStackTrace();
+      }
 		}
 		return isOK;
 	}

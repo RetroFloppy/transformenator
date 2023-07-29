@@ -1,0 +1,5 @@
+;
+description = "Convert DMK disk image file to raw data."
+commentary = "Autodetects DEC RX01 format and halves the data."
+;
+detangler = Dmk2Raw
