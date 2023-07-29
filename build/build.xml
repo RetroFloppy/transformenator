@@ -43,7 +43,8 @@
         </copy>
 	        <copy todir="${bindir}/org/transformenator">
 	            <fileset dir="${basedir}/src/org/transformenator">
-	                <include name="help.txt"/>
+                    <include name="help.txt"/>
+                    <include name="help-csv.txt"/>
 	            </fileset>
 	        </copy>
 		<mkdir dir="${outdir}/${version}" />
