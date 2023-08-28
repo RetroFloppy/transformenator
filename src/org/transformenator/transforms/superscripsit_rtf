@@ -1,0 +1,56 @@
+;
+description = "TRS-80 SuperSCRIPSIT word processor."
+commentary = "Info from https://www.trs-80.com/wordpress/tips/formats/#scripsit"
+;
+detangler = SuperSCRIPSIT
+
+; Byte  Description
+; E5    Null – deleted text
+; EC    Soft page marker
+; ED    Hard page marker
+; EF    End of paragraph control info
+; F0    Start block marker (shows as “[” on screen)
+; F1    End block marker (shows as “]” on screen)
+; F2    Normal tab
+; F3    Align tab
+; F5    ‘Code’ for printer control (underline, bold, etc)
+; F6    Filler bytes for insert mode
+; F7    Space compression for two succeeding spaces (delta)
+; F8    Soft carriage return replacing a space
+; F9    Soft carriage return replacing a double space
+; FA    Hard hyphen
+; FB    Hard space (for hyhenation)
+; FC    Hard carriage return during inserting
+; FD    Hard carriage return
+; FF    End of file/text
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fmodern\fprq1;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = "}"
+
+e5=
+ec=
+ed=
+ef=
+f0=
+f1=
+f2="\tab "
+f6=
+f7=2020
+f8=20
+f9=2020
+; Mix paragraph control (indentation) with line endings
+fc14........EF="\\r\\n\\r\\n\par\par\li0 "
+fc1b........EF="\\r\\n\\r\\n\par\par\li1440 "
+fd14........EF="\\r\\n\\r\\n\par\par\li0 "
+fd1b........EF="\\r\\n\\r\\n\par\par\li1440 "
+fd..........EF="\\r\\n\\r\\n\par\par\li0 "
+
+; Printer control codes: f5..
+; Underline
+f52d % "\ul1 ","\ul0 "
+f5..=
+
+; EOF indicator
+ff = "{@@<FiLe_EoF>@@}"
