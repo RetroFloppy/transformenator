@@ -56,13 +56,20 @@ public class Linolex extends ADetangler
 				for (int j = 0x00; j < 0x39; j++)
 				{
 				  char proposedChar = (char)inData[j + i + 0x07];
+				  // Correct for special characters in filenames
 				  switch (proposedChar)
 				  {
 				    case '\\':
 				      proposedChar = '-';
 				      break;
-				    case '/':
-              proposedChar = '-';
+            case '/':
+              proposedChar = '_';
+              break;
+            case '*':
+              proposedChar = '_';
+              break;
+            case '"':
+              proposedChar = '_';
               break;
             default:
               break;
