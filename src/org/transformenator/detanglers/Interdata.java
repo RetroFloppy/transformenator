@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on files
- * Copyright (C) 2022 by David Schmidt
+ * Copyright (C) 2022-2024 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -37,12 +37,20 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.transformenator.internal.FileInterpreter;
+import org.transformenator.internal.ImageDisk;
 import org.transformenator.internal.UnsignedByte;
 
 public class Interdata extends ADetangler
 {
-  public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix, boolean isDebugMode)
+  public void detangle(FileInterpreter parent, byte inData[], String outDirectory, String inFile, String fileSuffix,
+      boolean isDebugMode)
   {
+    // First, is our data stream in ImageDisk (i.e. .IMD) format?
+    byte imdData[] = null;
+    imdData = ImageDisk.imd2raw(inData, false, false);
+    if (imdData != null)
+      inData = imdData;
+    // Now we know we have a linear disk image in memory
     /*
      * Filesystem is based on 4-byte pointers to "blocks" (256 byte chunks). 
      * The very first pointer to a block of interest is the FAT - which sits 0x08 bytes in.
@@ -169,8 +177,8 @@ public class Interdata extends ADetangler
 
   void dumpExtent(byte inData[], int index, int lrecl, ByteArrayOutputStream out)
   {
-    int ixPrev = numAt(inData, index) * 0x100;
-    int ixNext = numAt(inData, index + 0x04) * 0x100;
+    // int ixPrev = numAt(inData, index) * 0x100;
+    // int ixNext = numAt(inData, index + 0x04) * 0x100;
     byte range[];
     // System.out.println(" next block: 0x"+Integer.toHexString(ixNext)+"; prev: 0x"+Integer.toHexString(ixPrev));
     for (int i = 0x08; i < 0x100; i += 0x04)
