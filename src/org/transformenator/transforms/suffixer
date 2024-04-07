@@ -1,0 +1,5 @@
+;
+description = "Give well-known file formats a suffix."
+commentary = "Helps out things like PDF files without suffixes."
+;
+detangler = Suffixer
