@@ -125,7 +125,10 @@ public class Suffixer extends ADetangler
           (Arrays.equals(comrange10, comtable_doc3)))
       {
         //System.out.println("   ...and it's a DOC");
-        suffix = ".DOC";
+        if (!inFile.toUpperCase().endsWith("DOC"))
+        {
+          suffix = ".DOC";
+        }
       }
       else if ((Arrays.equals(comrange4, comtable_ppt1)) ||
           (Arrays.equals(comrange5, comtable_ppt2)) ||
@@ -135,14 +138,20 @@ public class Suffixer extends ADetangler
           (Arrays.equals(comrange11, comtable_ppt6)))
       {
         //System.out.println("   ...and it's a PPT");
-        suffix = ".PPT";
+        if (!inFile.toUpperCase().endsWith("PPT"))
+        {
+          suffix = ".PPT";
+        }
       }
       // Check for XLS after checking for PPT because they overlap a bit
       else if ((Arrays.equals(comrange2, comtable_xls1)) ||
           (Arrays.equals(comrange3, comtable_xls2)))
       {
         //System.out.println("   ...and it's an XLS");
-        suffix = ".XLS";
+        if (!inFile.toUpperCase().endsWith("XLS"))
+        {
+          suffix = ".XLS";
+        }
       }
       // else System.out.println ("Didn't find an MS match");
     }
