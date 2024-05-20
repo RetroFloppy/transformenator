@@ -1,0 +1,18 @@
+;
+description = "Word Writer word processor for PC and Atari ST."
+commentary = "Files might include WWRITER.INF"
+;
+
+; SOF indicator - the end of the ruler is an "R"
+52 = "{@@<FiLe_SoF>@@}"
+
+0c=
+; 0d0a="\\r\\n\par "
+1b..=
+1d=
+1e=20
+
+80=
+82=
+86=
+8a=
