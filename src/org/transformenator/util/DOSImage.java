@@ -78,10 +78,14 @@ public class DOSImage
 				{
 					force = 360;
 				}
-				else if (args[3].equalsIgnoreCase("force360a")) // For Atari 3.5" single sided disks
-				{
-					force = 361;
-				}
+        else if (args[3].equalsIgnoreCase("force360a")) // For Atari 3.5" single sided disks
+        {
+          force = 361;
+        }
+        else if (args[3].equalsIgnoreCase("force720a")) // For Atari 3.5" single sided disks
+        {
+          force = 721;
+        }
 				else if (args[3].equalsIgnoreCase("force1200"))
 				{
 					force = 1200;
@@ -212,10 +216,14 @@ public class DOSImage
 		{
 			return true;
 		}
-		else if (is360k(inData, force))
-		{
-			return true;
-		}
+    else if (is360k(inData, force))
+    {
+      return true;
+    }
+    else if (is720k(inData, force))
+    {
+      return true;
+    }
 		else if (is1200k(inData, force))
 		{
 			return true;
@@ -361,7 +369,36 @@ public class DOSImage
 		// System.err.println("is360k is false.");
 		return false;
 	}
-	
+
+  public static boolean is720k(byte[] inData, int force)
+  {
+    byte bpb_720k_atari[]={
+      (byte)0xEB, 0x3C, (byte)0x90, 0x4D, 0x53, 0x44, 0x4F, 0x53,
+      0x35, 0x2E, 0x30, 0x00, 0x02, 0x02, 0x01, 0x00,
+      0x02, 0x70, 0x00, (byte)0xA0, 0x05, (byte)0xF9, 0x05, 0x00,
+      0x09, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x29, (byte)0xCE
+    };
+
+    /* Signature at 508-511 */
+    byte signature[] = {
+        0x00, 0x00, 0x55, (byte)0xAA
+    };
+
+    if (((inData[512] == (byte)0xf3) && inData.length == 720*1024) || (force == 721))
+    {
+      for (int i = 0; i < bpb_720k_atari.length; i++)
+        inData[i] = bpb_720k_atari[i];
+      for (int i = 0; i < signature.length; i++)
+        inData[i+508] = signature[i];
+      // System.out.println("is720k (atari) is true!");
+      return true;
+    }
+    // System.out.println("is720k is false.");
+    return false;
+  }
+  
+
 	/**
 	 * is1200k - the only thing a 1.2MB disk can do is remove boot block viruses.
 	 */
@@ -626,6 +663,6 @@ public class DOSImage
 		System.err.println("DOSImage "+Version.VersionString+" - " + describe(true));
 		System.err.println();
 		System.err.println("Usage: DOSImage display infile");
-		System.err.println("       DOSImage update infile outfile [force{160|180|240|320|360|360a|1200}]");
+		System.err.println("       DOSImage update infile outfile [force{160|180|240|320|360|360a|720a|1200}]");
 	}
 }
