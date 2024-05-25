@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2016 - 2020 by David Schmidt
+ * Copyright (C) 2016 - 2024 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -47,12 +47,25 @@ public class CreateLwpMacro
 	public static void main(String[] args)
 	{
 		String in_directory = null, out_directory = null;
-		if (args.length == 2)
+		Boolean should_import = false;
+		if ((args.length == 2) || (args.length == 3))
 		{
 			in_directory = args[0];
 			out_directory = args[1];
 			File in_root_dir = new File(in_directory);
 			File out_dir_root = new File(out_directory);
+			if (args.length == 3)
+			{
+			  if (args[2].toLowerCase().equals("import"))
+			  {
+			    should_import = true;
+			  }
+			  else
+			  {
+			    help();
+			    System.exit(1);
+			  }
+			}
 			// Remember... path can't be the same (though it probably could, since we append the .doc suffix)
 			if (!in_root_dir.getAbsolutePath().equals(out_dir_root.getAbsolutePath()))
 			{
@@ -66,7 +79,7 @@ public class CreateLwpMacro
 						out_dir_root = new File(out_dir_root.getAbsolutePath());
 					}
 					if (!in_directory.equals(out_directory))
-						descendDirectory(dirs, lss, in_root_dir.getAbsolutePath().length(), in_root_dir, out_dir_root);
+						descendDirectory(dirs, lss, in_root_dir.getAbsolutePath().length(), in_root_dir, out_dir_root, should_import);
 					else
 						help();
 					lss.write("End Sub\r\n".getBytes());
@@ -95,7 +108,7 @@ public class CreateLwpMacro
 		}
 	}
 
-	public static void descendDirectory(BufferedOutputStream dirs, BufferedOutputStream lss, int offset, File in_directory, File out_directory)
+	public static void descendDirectory(BufferedOutputStream dirs, BufferedOutputStream lss, int offset, File in_directory, File out_directory, boolean should_import)
 	{
 		/*
 		 * Get the files in the in_directory For each file, check if it's a file or a directory.
@@ -117,14 +130,24 @@ public class CreateLwpMacro
 					{
 						if (files[i].isDirectory())
 						{
-							descendDirectory(dirs, lss, offset, files[i], out_directory);
+							descendDirectory(dirs, lss, offset, files[i], out_directory, should_import);
 						}
 						else if (!files[i].isHidden())
 						{
-							lss.write((".OpenDocument \"" + files[i].getAbsoluteFile() + "\", \"\", \"\"\r\n").getBytes());
-							// Work this file
-							lss.write((".SaveAs \"" + out_directory.getPath() + in_directory.getAbsolutePath().substring(offset, in_directory.getAbsolutePath().length()) + File.separator + files[i].getName() + ".doc\", \"\", \"MS Word 2000\", False, True, False\r\n").getBytes());
-							lss.write((".Close\r\n").getBytes());
+						  if (should_import)
+						  {
+						    lss.write((".NewDocument \"\", \"\", \"default.mwp\", \"\", \"\", \"\"\r\n").getBytes());
+						    lss.write((".ImportGraphic \"" + files[i].getAbsoluteFile() + "\", \".drw\", False, False, \"Default Graphic/OLE\"\r\n").getBytes());
+                lss.write((".SaveAs \"" + out_directory.getPath() + in_directory.getAbsolutePath().substring(offset, in_directory.getAbsolutePath().length()) + File.separator + files[i].getName() + ".doc\", \"\", \"MS Word 2000\", False, True, False\r\n").getBytes());
+                lss.write((".Close\r\n").getBytes());
+						  }
+						  else
+						  {
+	              lss.write((".OpenDocument \"" + files[i].getAbsoluteFile() + "\", \"\", \"\"\r\n").getBytes());
+	              // Work this file
+	              lss.write((".SaveAs \"" + out_directory.getPath() + in_directory.getAbsolutePath().substring(offset, in_directory.getAbsolutePath().length()) + File.separator + files[i].getName() + ".doc\", \"\", \"MS Word 2000\", False, True, False\r\n").getBytes());
+	              lss.write((".Close\r\n").getBytes());
+						  }
 						}
 					}
 				}
@@ -143,7 +166,7 @@ public class CreateLwpMacro
 	public static String describe(boolean verbose)
 	{
 		return "Create a Lotus Word Pro macro to transform all files in a filesystem to Word .doc format."+
-				(verbose?"  Creates lotus2word.lss in the current working directory that Lotus Word Pro can consume to convert files it understands.":"");
+				(verbose?"  Creates CreateDirectories.bat and lotus2word.lss in the current working directory that Lotus Word Pro can consume to convert files it understands.":"");
 	}
 
 	public static void help()
@@ -151,7 +174,9 @@ public class CreateLwpMacro
 		System.err.println();
 		System.err.println("CreateLwpMacro " + Version.VersionString + " - " + describe(true));
 		System.err.println();
-		System.err.println("Usage: CreateLwpMacro <in_directory> <out_directory>");
-		System.err.println("Note: the specified <in_directory> and <out_directory> cannot be the same.");
+		System.err.println("Usage: CreateLwpMacro <in_directory> <out_directory> [import]");
+    System.err.println("Note: the specified <in_directory> and <out_directory> cannot be the same.");
+    System.err.println("Specifying the keyword 'import' will perform an 'import graphic' function instead of 'open document'.");
+    System.err.println("Be sure to run the generated 'CreateDirectories.bat' file to create the required output directory tree.");
 	}
 }
