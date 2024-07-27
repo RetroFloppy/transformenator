@@ -28,6 +28,12 @@ tail = " }"
 2e2e0d = "{ruler}"
 0b = "{ruler}"
 
+; Doublestrike
+04 % "\b1 ","\b0 "
+
+; Strikeout
+18 % "\strike1 ","\strike0 "
+
 ; Bold (Note - not always a toggle)
 02 % "\b1 ","\b0 "
 82 % "\b1 ","\b0 "
@@ -41,7 +47,6 @@ tail = " }"
 
 ; Unknown emphasis
 03 =
-04 =
 0c =
 0e =
 0f =
