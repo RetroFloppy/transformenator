@@ -1,0 +1,35 @@
+;
+description = "Split up a file into bite-sized chunks with eyecatchers."
+commentary = "File index/layout is unknown."
+detangler = Split
+;
+
+; Unknown productions
+2E1D1D=
+
+00........04=
+01........04=
+0D........07=
+11........11=
+1C........09=
+1C........0D=
+1D........05=
+1D........11=
+80........04=
+81........04=
+
+00f6=
+00fc=
+00ea=
+
+FF00=0d0a
+FF0A=
+FFEF66=
+
+; Single quote
+B9="'"
+; Double quote
+aa="""
+
+; Newline
+1d=0a0d
