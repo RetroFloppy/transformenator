@@ -1,0 +1,4 @@
+;
+description = "Extract Rockwell AIM-65 files from disk image."
+;
+detangler=Rockwell
