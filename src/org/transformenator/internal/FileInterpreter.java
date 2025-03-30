@@ -287,6 +287,69 @@ public class FileInterpreter
 		return isOK;
 	}
 
+	public boolean dumpTransform(String filename)
+	{
+		isOK = true;
+		FileReader fr = null;
+		InputStreamReader isr = null;
+		Reader reader = null;
+		// First try to load an external transform file. That should take
+		// precedence over an internal one.
+		try
+		{
+			fr = new FileReader(filename);
+			if (fr != null)
+			{
+				reader = fr;
+				isOK = true;
+			}
+		}
+		catch (Exception e)
+		{
+			isOK = false;
+		}
+		if (isOK == false)
+		{
+			// Didn't find an external one; how about that same specification as an internal one?
+			try
+			{
+				InputStream is;
+				is = Transform.class.getResourceAsStream("/org/transformenator/transforms/" + filename);
+				if (is != null)
+				{
+					isr = new InputStreamReader(is);
+					reader = isr;
+					isOK = true;
+				}
+				else
+					isOK = false;
+			}
+			catch (Exception e)
+			{
+				isOK = false;
+			}
+		}
+
+		if (isOK == true)
+		{
+			try
+			{
+				String line;
+				BufferedReader br = new BufferedReader(reader);
+				StringTokenizer st;
+				while ((line = br.readLine()) != null)
+				{
+					System.out.println(line);
+				}
+			}
+			catch (Throwable t)
+			{
+				
+			}
+		}
+		return(isOK);
+	}
+
 	public boolean readTransform(String filename)
 	{
 		isOK = true;

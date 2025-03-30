@@ -87,6 +87,13 @@ public class Transform
 			{
 				tranformDirectory(null, args[0], args[1], null, "", true);
 			}
+			// Special case: dump transform file
+			else if (args[0].equals("dump"))
+			{
+				fileTransform = new FileInterpreter(args[1]);
+				fileTransform.emitStatus();
+				fileTransform.dumpTransform(args[1]);
+			}
 			else
 				help();
 		}
@@ -449,6 +456,7 @@ public class Transform
 		System.err.println("Usage: Transform <transform_spec> <input> <out_directory> [suffix]");
 		System.err.println("       Transform describe");
 		System.err.println("       Transform fix_filenames <in_directory>");
+		System.err.println("       Transform dump <transform_spec>");
 		System.err.println("       Transform help");
 		System.err.println("       Transform help-csv");
 		System.err.println();
