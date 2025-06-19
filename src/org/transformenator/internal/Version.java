@@ -22,5 +22,5 @@ package org.transformenator.internal;
 
 public class Version
 {
-	public static String VersionString = "v2.0.4beta";
+	public static String VersionString = "v2.0.4";
 }
