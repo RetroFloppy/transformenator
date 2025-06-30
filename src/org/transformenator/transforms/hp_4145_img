@@ -1,0 +1,6 @@
+;
+description = "Extract HP 4145 (a or b) files from disk image."
+commentary = "Text files may need to be further processed to be readable."
+;
+detangler = HP4145
+;
