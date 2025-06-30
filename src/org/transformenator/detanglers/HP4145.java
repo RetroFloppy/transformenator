@@ -53,7 +53,7 @@ public class HP4145 extends ADetangler
        * 
        * Catalog entries are 20 (0x14) bytes long; stuff we know/care
        * about: bytes 0x00-0x05: Filename (space padded) bytes
-       * 0x0e-0x0f: File start (in sectors) bytes 0x12-0x13: File
+       * 0x07-0x07: File start (in sectors) bytes 0x0a: File
        * length (in sectors)
        */
       for (int i = 0xc980; i < 0xd180; i += 0x14)
@@ -63,7 +63,7 @@ public class HP4145 extends ADetangler
         {
           // System.out.println("Location: "+Integer.toHexString(i));
           fileStart = UnsignedByte.intValue(inData[i + 0x08], inData[i + 0x07]) * 256;
-          fileLength = UnsignedByte.intValue(inData[i + 0x1a]) * 256;
+          fileLength = UnsignedByte.intValue(inData[i + 0x0a]) * 256;
           if (fileStart + fileLength > inData.length)
             fileLength = inData.length - fileStart;
 
