@@ -1,0 +1,8 @@
+# Null transform - copies input to output unchanged
+# This is used for testing the transform framework itself
+
+# Transform specification format:
+# FIND: <hex_pattern>
+# REPLACE: <replacement_text>
+
+# No actual transformations - null transform passes through unchanged

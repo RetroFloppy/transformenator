@@ -2,5 +2,6 @@
 .settings/
 .classpath
 bin/
+bin-test/
 out/
 **/.DS_Store

@@ -1,0 +1,4 @@
+Hello World!
+This is a simple test document.
+Line 3 with some special chars: àáâã
+End of document.

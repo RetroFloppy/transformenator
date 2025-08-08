@@ -3,13 +3,17 @@
 	<property name="builddir" value="${basedir}/build" />
 	<property name="outdir" value="${basedir}/out" />
 	<property name="bindir" value="${basedir}/bin" />
-	<target name="all" depends="wipe,ver,build,zip" description="" />
+	<property name="testdir" value="${basedir}/test" />
+	<property name="testbindir" value="${basedir}/bin-test" />
+	<property name="libdir" value="${basedir}/lib" />
+	<target name="all" depends="wipe,ver,build,test,zip" description="" />
 	<target name="wipe" description="Delete the Distribution Directory" >
 		<!--
 		Really, really clean up everything
 		-->
 		<echo message="wipe"/>	
 		<delete dir="${bindir}" />
+		<delete dir="${testbindir}" />
 		<delete dir="${outdir}" />
 	</target>
 
@@ -32,7 +36,7 @@
 
 	<target name="build" depends="wipe,ver" description="">
 		<mkdir dir="${bindir}"/>
-		<javac source="10" target="10" sourcepath="" srcdir="${basedir}/src" destdir="${bindir}" >
+		<javac source="8" target="8" sourcepath="" srcdir="${basedir}/src" destdir="${bindir}" >
 			<compilerarg value="-Xlint:deprecation"/>
 			<include name="**/*.java"/>
 		</javac>
@@ -76,6 +80,23 @@
 		<jar jarfile="${outdir}/${version}/transformenator.jar" basedir="${bindir}"
 			manifest="build/manifest.mf"
 			includes="org/**/*" />
+	</target>
+
+	<target name="compile-tests" depends="build" description="Compile unit tests">
+		<mkdir dir="${testbindir}"/>
+		<javac source="8" target="8" sourcepath="" srcdir="${testdir}" destdir="${testbindir}"
+			   classpath="${bindir}:${libdir}/junit-platform-console-standalone-1.10.0.jar">
+			<compilerarg value="-Xlint:deprecation"/>
+			<include name="**/*.java"/>
+		</javac>
+	</target>
+
+	<target name="test" depends="compile-tests" description="Run unit tests">
+		<java jar="${libdir}/junit-platform-console-standalone-1.10.0.jar" fork="true" failonerror="true">
+			<arg value="--class-path"/>
+			<arg value="${bindir}:${testbindir}"/>
+			<arg value="--scan-class-path"/>
+		</java>
 	</target>
 
 	<target name="zip" description="Zip it up!">

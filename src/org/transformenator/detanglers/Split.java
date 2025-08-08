@@ -23,7 +23,6 @@ package org.transformenator.detanglers;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.HexFormat;
 
 import org.transformenator.internal.FileInterpreter;
 
@@ -58,8 +57,7 @@ public class Split extends ADetangler
             		if (i + j < inData.length)
             		{
         		        value = inData[i+j];
-        		        HexFormat hexFormat = HexFormat.of();
-        		        String hexString = hexFormat.formatHex(ByteBuffer.allocate(2).putShort(value).array());
+        		        String hexString = String.format("%02x", value & 0xFF);
         				System.out.print(hexString);
             		}
             	}

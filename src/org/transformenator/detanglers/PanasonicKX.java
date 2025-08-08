@@ -197,10 +197,9 @@ public class PanasonicKX extends ADetangler
 					System.out.println("        00     01     02     03     04     05     06     07     08     09     0a     0b     0c     0d     0e     0f");
 					System.out.print("0000  ");
 				}
-		        short value = (short)bam[i];
-		        HexFormat hexFormat = HexFormat.of();
-		        String hexString = hexFormat.formatHex(ByteBuffer.allocate(2).putShort(value).array());
-		        localSum += bam[i];
+		    short value = (short)bam[i];
+		    String hexString = String.format("%04x", value & 0xFFFF);
+		    localSum += bam[i];
 				System.out.print("0x"+hexString+" ");
 				if (j++ > 14)
 				{
@@ -209,7 +208,7 @@ public class PanasonicKX extends ADetangler
 						break;
 					localSum = 0;
 					System.out.println();
-			        hexString = hexFormat.formatHex(ByteBuffer.allocate(2).putShort((short)(i+1)).array());
+					hexString = String.format("%04x", (i + 1) & 0xFFFF);
 					System.out.print(hexString+"  ");
 				}
 			}

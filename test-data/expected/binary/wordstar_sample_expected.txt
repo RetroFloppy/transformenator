@@ -1,0 +1,9 @@
+WordStar Sample Document
+
+This is a sample document that might be found in a WordStar file.
+It contains some basic formatting codes and text.
+
+Bold text would be marked with special characters.
+Underlined text has different markers.
+
+End of sample document.
