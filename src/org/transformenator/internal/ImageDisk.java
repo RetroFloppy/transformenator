@@ -60,6 +60,7 @@ public class ImageDisk
   {
     // Default verbosity is true, debug is false
     return imd2raw(inData, true, false);
+    
   }
 
   // Convert an incoming byte array from IMD to raw format
@@ -71,12 +72,12 @@ public class ImageDisk
     byte[] outData = null;
     ByteArrayOutputStream out = null;
 
-    // First test: does it start with an 'IMD '?
-    if (((char) inData[0] == 'I') && ((char) inData[1] == 'M') && ((char) inData[2] == 'D')
-        && ((char) inData[3] == ' '))
+    // First test: does it start with an 'IMD '?  Edit: Don't care, turns out this is a construct added later
+    if (true) // (((char) inData[0] == 'I') && ((char) inData[1] == 'M') && ((char) inData[2] == 'D')
+        //&& ((char) inData[3] == ' '))
     {
       int cursor = 0;
-      int c, mode, cyl, hd, seccnt, sectorflags, headflags;
+      int c, mode, cyl, hd, seccnt, headflags;
       int secsiz = 0;
       int[] sectormap;
       int[] sectormapsorted;
