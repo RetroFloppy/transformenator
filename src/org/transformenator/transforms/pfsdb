@@ -1,0 +1,5 @@
+;
+description = "Extract PFS:First Choice database (.FOL) to CSV format."
+commentary = "PFS:First Choice v3 database files contain a GERBILDB3 signature."
+;
+detangler = PFSDB
