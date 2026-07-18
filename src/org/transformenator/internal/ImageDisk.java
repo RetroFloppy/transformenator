@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on binary files
- * Copyright (C) 2022, 2023 by David Schmidt
+ * Copyright (C) 2022 - 2026 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it 
@@ -36,7 +36,7 @@ import java.util.Arrays;
 /*
  * IMD image format
  * 
- * IMD v.v: dd/mm/yyy hh:mm:ss (ascii header)
+ * IMD v.v: dd/mm/yyy hh:mm:ss (ascii header, optional)
  * comment terminated with 0x1a
  * for each track
  *  byte mode (0-5)
@@ -60,13 +60,20 @@ public class ImageDisk
   {
     // Default verbosity is true, debug is false
     return imd2raw(inData, true, false);
+    
   }
 
   // Convert an incoming byte array from IMD to raw format
   //  - Return a new byte array if successful
-  //  - Return null if not
+  //  - Pad missing sectors with zeroes; it makes no sense to have a non-square raw image with no indication of where problems were
+  //  - Return null if unsuccessful
   // Be verbose or not verbose (i.e. silent) based on boolean
   public static byte[] imd2raw(byte[] inData, boolean verbose, boolean debug)
+  {
+    return imd2raw(inData, verbose, debug, true);
+  }
+
+  public static byte[] imd2raw(byte[] inData, boolean verbose, boolean debug, boolean fillMissing)
   {
     byte[] outData = null;
     ByteArrayOutputStream out = null;
@@ -76,16 +83,15 @@ public class ImageDisk
         //&& ((char) inData[3] == ' '))
     {
       int cursor = 0;
-      int c, mode, cyl, hd, seccnt, sectorflags, headflags;
+      int c, mode, cyl, hd, seccnt, headflags;
       int secsiz = 0;
       int[] sectormap;
       int[] sectormapsorted;
       byte[][] secdata = new byte[64][8192];
-      char[] secdisp = new char[32];
+      char[] secdisp = new char[64];
       String cylpad = " ";
-      int maxSectors = 0;
-      int minSectorNumber = 0;
       out = new ByteArrayOutputStream();
+      int[] highwater = new int[7];
 
       while (true)
       {
@@ -133,6 +139,7 @@ public class ImageDisk
 
         cursor++;
         c = UnsignedByte.intValue(inData[cursor]);
+        int sizecode = c;
         if (debug) System.err.print(" Sector type: "+c);
 
         switch (c)
@@ -162,35 +169,31 @@ public class ImageDisk
             if (verbose) System.err.println("Unknown sector size indicator " + c);
             break;
         }
+        if (seccnt > highwater[sizecode])
+          highwater[sizecode] = seccnt;
         if (debug) System.err.println();
         if (debug)
           System.err.println(
             "Cyl:" + cyl + " Hd:" + hd + " " + (String) modetbl[mode] + " " + seccnt + " sectors size " + secsiz);
 
         // copy sector/interleave map
-        sectormap = new int[seccnt];
-        sectormapsorted = new int[seccnt];
+        sectormap = new int[64];
+        sectormapsorted = new int[64];
         for (int i = 0; i < seccnt; i++)
         {
           cursor++;
           sectormap[i] = UnsignedByte.intValue(inData[cursor]);
           sectormapsorted[i] = UnsignedByte.intValue(inData[cursor]);
         }
-        Arrays.sort(sectormapsorted);
-        if (seccnt > maxSectors)
-        {
-          maxSectors = seccnt;
-          minSectorNumber = sectormapsorted[0];
-        }
         if (debug)
         {
           System.err.print("Tbl ");
-          for (int num : sectormap)
-            System.err.print(num + " ");
+          for (int i = 0; i < seccnt; i++)
+            System.err.print(sectormap[i] + " ");
           System.err.println();
           System.err.print("Srt ");
-          for (int num : sectormapsorted)
-            System.err.print(num + " ");
+          for (int i = 0; i < seccnt; i++)
+            System.err.print(sectormapsorted[i] + " ");
           System.err.println();
         }
         if ((headflags & 64) == 64)
@@ -260,36 +263,25 @@ public class ImageDisk
               return null;
           }
         }
-        int fileSeccnt = seccnt;
-        if (seccnt < maxSectors)
+        if (fillMissing && seccnt < highwater[sizecode])
         {
           boolean[] present = new boolean[64];
-          char[] dispBySector = new char[64];
           for (int i = 0; i < seccnt; i++)
+            present[sectormap[i]] = true;
+          for (int i = 1; i <= highwater[sizecode]; i++)
           {
-            present[sectormapsorted[i]] = true;
-            dispBySector[sectormap[i]] = secdisp[i];
-          }
-          int[] expandedMap = new int[maxSectors];
-          int idx = 0;
-          for (int s = minSectorNumber; s < minSectorNumber + maxSectors; s++)
-          {
-            expandedMap[idx] = s;
-            if (present[s])
+            if (!present[i])
             {
-              secdisp[idx] = dispBySector[s];
-            }
-            else
-            {
-              secdisp[idx] = '0';
               for (int j = 0; j < secsiz; j++)
-                secdata[s][j] = 0;
+                secdata[i][j] = 0x00;
+              sectormap[seccnt] = i;
+              sectormapsorted[seccnt] = i;
+              secdisp[seccnt] = '0';
+              seccnt++;
             }
-            idx++;
           }
-          sectormapsorted = expandedMap;
-          seccnt = maxSectors;
         }
+        Arrays.sort(sectormapsorted, 0, seccnt);
         // Pad out the output so it lines up nicely
         if (cyl < 10)
           cylpad = "  ";
@@ -302,9 +294,8 @@ public class ImageDisk
           for (int j = 0; j < secsiz; j++)
             out.write(secdata[sectormapsorted[i]][j]);
         }
-        for (int i = 0; i < fileSeccnt; i++)
+        for (int i = 0; i < seccnt; i++)
           if (verbose) System.err.print(" " + sectormap[i]);
-        if (verbose && fileSeccnt < seccnt) System.err.print(" [+" + (seccnt - fileSeccnt) + " blank]");
         if (verbose) System.err.println();
         // Process until the end of the file data
         if (cursor == inData.length - 1)
