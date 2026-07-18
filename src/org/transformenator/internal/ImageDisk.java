@@ -60,7 +60,6 @@ public class ImageDisk
   {
     // Default verbosity is true, debug is false
     return imd2raw(inData, true, false);
-    
   }
 
   // Convert an incoming byte array from IMD to raw format
@@ -77,13 +76,15 @@ public class ImageDisk
         //&& ((char) inData[3] == ' '))
     {
       int cursor = 0;
-      int c, mode, cyl, hd, seccnt, headflags;
+      int c, mode, cyl, hd, seccnt, sectorflags, headflags;
       int secsiz = 0;
       int[] sectormap;
       int[] sectormapsorted;
       byte[][] secdata = new byte[64][8192];
       char[] secdisp = new char[32];
       String cylpad = " ";
+      int maxSectors = 0;
+      int minSectorNumber = 0;
       out = new ByteArrayOutputStream();
 
       while (true)
@@ -176,6 +177,11 @@ public class ImageDisk
           sectormapsorted[i] = UnsignedByte.intValue(inData[cursor]);
         }
         Arrays.sort(sectormapsorted);
+        if (seccnt > maxSectors)
+        {
+          maxSectors = seccnt;
+          minSectorNumber = sectormapsorted[0];
+        }
         if (debug)
         {
           System.err.print("Tbl ");
@@ -254,6 +260,36 @@ public class ImageDisk
               return null;
           }
         }
+        int fileSeccnt = seccnt;
+        if (seccnt < maxSectors)
+        {
+          boolean[] present = new boolean[64];
+          char[] dispBySector = new char[64];
+          for (int i = 0; i < seccnt; i++)
+          {
+            present[sectormapsorted[i]] = true;
+            dispBySector[sectormap[i]] = secdisp[i];
+          }
+          int[] expandedMap = new int[maxSectors];
+          int idx = 0;
+          for (int s = minSectorNumber; s < minSectorNumber + maxSectors; s++)
+          {
+            expandedMap[idx] = s;
+            if (present[s])
+            {
+              secdisp[idx] = dispBySector[s];
+            }
+            else
+            {
+              secdisp[idx] = '0';
+              for (int j = 0; j < secsiz; j++)
+                secdata[s][j] = 0;
+            }
+            idx++;
+          }
+          sectormapsorted = expandedMap;
+          seccnt = maxSectors;
+        }
         // Pad out the output so it lines up nicely
         if (cyl < 10)
           cylpad = "  ";
@@ -266,8 +302,9 @@ public class ImageDisk
           for (int j = 0; j < secsiz; j++)
             out.write(secdata[sectormapsorted[i]][j]);
         }
-        for (int i = 0; i < seccnt; i++)
+        for (int i = 0; i < fileSeccnt; i++)
           if (verbose) System.err.print(" " + sectormap[i]);
+        if (verbose && fileSeccnt < seccnt) System.err.print(" [+" + (seccnt - fileSeccnt) + " blank]");
         if (verbose) System.err.println();
         // Process until the end of the file data
         if (cursor == inData.length - 1)
