@@ -1,0 +1,5 @@
+;
+description = "Extract files from an Intel ISIS-II disk image."
+commentary = "Double-sided, 77 tracks, 26 sectors/track, 128 bytes/sector (512,512 bytes total). Supports raw and IMD images."
+;
+detangler = IntelISIS
