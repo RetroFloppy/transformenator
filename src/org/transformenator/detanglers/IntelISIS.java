@@ -1,6 +1,6 @@
 /*
  * Transformenator - perform transformation operations on files
- * Copyright (C) 2024 by David Schmidt
+ * Copyright (C) 2026 by David Schmidt
  * 32302105+RetroFloppySupport@users.noreply.github.com
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,12 @@ import org.transformenator.internal.UnsignedByte;
 
 public class IntelISIS extends ADetangler
 {
+	/*
+	 * Based on code from OS2Museum which was placed in the public domain:
+	 *   https://www.os2museum.com/wp/the-ibm-pc-bios-and-intel-isis-ii/
+	 *   https://www.os2museum.com/files/i2img.c
+	 */
+
 	static final int SECT_SZ = 128;
 	static final int SECTS_PER_TRACK = 52;
 	static final int NUM_TRACKS = 77;
@@ -147,6 +153,8 @@ public class IntelISIS extends ADetangler
 				break;
 			if (ch >= 0x20 && ch <= 0x7E)
 				sb.append((char) ch);
+			else
+			  sb.append('_');
 		}
 		return sb.toString().trim();
 	}
