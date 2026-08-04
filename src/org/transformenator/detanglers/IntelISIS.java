@@ -35,13 +35,17 @@ public class IntelISIS extends ADetangler
 	 */
 
 	static final int SECT_SZ = 128;
-	static final int SECTS_PER_TRACK = 52;
 	static final int NUM_TRACKS = 77;
-	static final int DISK_SIZE = NUM_TRACKS * SECTS_PER_TRACK * SECT_SZ;
+	static final int SECTS_PER_TRACK_SS = 26;
+	static final int SECTS_PER_TRACK_DS = 52;
+	static final int DISK_SIZE_SS = NUM_TRACKS * SECTS_PER_TRACK_SS * SECT_SZ;
+	static final int DISK_SIZE_DS = NUM_TRACKS * SECTS_PER_TRACK_DS * SECT_SZ;
 	static final int DBLK_PER_LBLK = 62;
 	static final int MAX_DIR_ENTRIES = 128;
 
 	static final int DS_VALID = 0x00;
+
+	int sectsPerTrack;
 
 	@Override
 	public void detangle(FileInterpreter parent, byte[] inData, String outDirectory, String inFile, String fileSuffix, boolean debugMode)
@@ -50,9 +54,13 @@ public class IntelISIS extends ADetangler
 		if (rawData != null)
 			inData = rawData;
 
-		if (inData.length != DISK_SIZE)
+		if (inData.length == DISK_SIZE_SS)
+			sectsPerTrack = SECTS_PER_TRACK_SS;
+		else if (inData.length == DISK_SIZE_DS)
+			sectsPerTrack = SECTS_PER_TRACK_DS;
+		else
 		{
-			System.err.println("Incorrect ISIS-II image size: expected " + DISK_SIZE + ", got " + inData.length);
+			System.err.println("Incorrect ISIS-II image size: expected " + DISK_SIZE_SS + " or " + DISK_SIZE_DS + ", got " + inData.length);
 			return;
 		}
 
@@ -135,7 +143,7 @@ public class IntelISIS extends ADetangler
 	{
 		if (sector < 1)
 			return null;
-		int offset = (track * SECTS_PER_TRACK + sector - 1) * SECT_SZ;
+		int offset = (track * sectsPerTrack + sector - 1) * SECT_SZ;
 		if (offset + SECT_SZ > inData.length)
 			return null;
 		byte[] result = new byte[SECT_SZ];
