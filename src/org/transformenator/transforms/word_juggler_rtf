@@ -1,0 +1,31 @@
+;
+description = "Word Juggler word processor by Quark."
+commentary = "Versions exist for the //e and III."
+;
+
+; Header for RTF format
+head = "{\rtf1{\fonttbl{\f0\fnil\fcharset0 Courier New;}}{\*\generator David Schmidt - Transformenator ;}\f0 "
+; Closing brace for RTF format
+tail = " }"
+
+; Tab stops (normally at the SOF)
+14................................................................................................................................................................0D =
+
+; Controls
+1B23........0D =	
+1B......0D =
+1B..0D =
+
+; Variable definition
+remove_between = 17,19
+
+; Newline
+02="\\r\\n\par\par "
+
+; Bold on/off
+10="\b1 "
+11="\b0 "
+
+; Underline on/off
+0e="\ul "
+0f="\ul0 "
