@@ -198,14 +198,24 @@ public class IBM8 extends ADetangler
             	// Eat it - no big deal, we just don't get the HDR1 dates
             }
             */
-            // int lrecl = Integer.parseInt(EbcdicUtil.toAscii(inData,directoryOffset + i + 0x35,4));
+            // IBM 3740 Diskette 1: one logical record per 128-byte sector.
+            // Do not assume this packing for the other diskette variants.
+            int lrecl = 0;
+            if ((sectorSize == 128) && (headSize == 0))
+              lrecl = logicalRecordLength(inData, directoryOffset + i, sectorSize);
             fileLength = fileEnd - fileStart;
             if ((fileName.length() > 0) && (fileLength > 0))
             {
+              // Validate before probing the first sector for FMT1.
+              if ((fileStart < 0) || (fileEnd > inData.length))
+              {
+                System.err.println("Error: file " + fileName + fileSuffix + " has an invalid disk extent.");
+                continue;
+              }
               ByteArrayOutputStream out;
               try
               {
-                if ((UnsignedByte.intValue(inData[fileStart]) == 0xc6)
+                if ((fileLength >= 4) && (UnsignedByte.intValue(inData[fileStart]) == 0xc6)
                     && (UnsignedByte.intValue(inData[fileStart + 1]) == 0xd4)
                     && (UnsignedByte.intValue(inData[fileStart + 2]) == 0xe3)
                     && (UnsignedByte.intValue(inData[fileStart + 3]) == 0xf1))
@@ -223,6 +233,8 @@ public class IBM8 extends ADetangler
                   	// Eat it - no big deal, we just don't get the FMT1 dates
                   }
                   */
+                  // FMT1 describes another layout; preserve its existing extraction.
+                  lrecl = 0;
                   // Since we have a FMT record, let's spin past it.
                   fileStart += sectorSize;
                   fileLength = fileEnd - fileStart;
@@ -230,7 +242,7 @@ public class IBM8 extends ADetangler
                 if (fileStart + fileLength <= inData.length)
                 {
                   out = new ByteArrayOutputStream();
-                  out.write(inData, fileStart, fileLength);
+                  writeRecords(out, inData, fileStart, fileLength, sectorSize, lrecl);
                   out.flush();
                   parent.emitFile(out.toByteArray(), outDirectory,
                       inFile.substring(0, (inFile.lastIndexOf('.') > 0 ? inFile.lastIndexOf('.') : inFile.length())),
@@ -262,5 +274,43 @@ public class IBM8 extends ADetangler
         }
       }
     }
+  }
+
+  /**
+   * IBM 3740 HDR1 positions 23-27 (one-based) contain five EBCDIC digits.
+   * Zero means missing, invalid, or unsupported: retain the physical sectors.
+   */
+  static int logicalRecordLength(byte[] data, int labelOffset, int sectorSize)
+  {
+    if ((labelOffset < 0) || (labelOffset > data.length - 0x1b)
+        || !"HDR1".equals(EbcdicUtil.toAscii(data, labelOffset, 4)))
+      return 0;
+    int length = 0;
+    for (int i = 0; i < 5; i++)
+    {
+      int digit = UnsignedByte.intValue(data[labelOffset + 0x16 + i]) - 0xf0;
+      if ((digit < 0) || (digit > 9))
+        return 0;
+      length = length * 10 + digit;
+    }
+    return ((length > 0) && (length <= sectorSize)) ? length : 0;
+  }
+
+  /** Copy unblocked records, adding LF after shortened records, or preserve the original bytes if unsupported. */
+  static void writeRecords(ByteArrayOutputStream out, byte[] data, int start,
+      int length, int sectorSize, int lrecl)
+  {
+    if ((sectorSize > 0) && (lrecl > 0) && (lrecl <= sectorSize)
+        && (length % sectorSize == 0))
+    {
+      for (int offset = 0; offset < length; offset += sectorSize)
+      {
+        out.write(data, start + offset, lrecl);
+        if (lrecl < sectorSize)
+          out.write(0x0a); // ASCII LF, including after the final record
+      }
+    }
+    else
+      out.write(data, start, length);
   }
 }
